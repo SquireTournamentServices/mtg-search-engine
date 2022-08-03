@@ -1,0 +1,6 @@
+*.orig
+build/
+*.cbin
+*.json
+*.pyc
+
