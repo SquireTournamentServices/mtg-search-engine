@@ -61,7 +61,20 @@ else()
   set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE})
 endif()
 
-set(SRC ./src/card.h ./src/card.c)
+set(SRC
+    ./testing_h/ansi_colour.h
+    ./testing_h/testing.h
+    ./testing_h/testing.c
+    ./testing_h/logger.h
+    ./testing_h/logger.c
+    ./src/card.h
+    ./src/card.c
+    ./src/set.h
+    ./src/set.c
+    ./src/uuid.h
+    ./src/uuid.c
+    ./src/io_utils.h
+    ./src/io_utils.c)
 set(TESTS ${SRC} ./tests/main.c)
 
 set(LIBS "pthread")
