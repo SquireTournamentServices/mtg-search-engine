@@ -3,7 +3,7 @@ import os
 import sys
 
 NO_LEAKS = "All heap blocks were freed -- no leaks are possible"
-TEST_EXEC_NAME = "SquireDesktopTests"
+TEST_EXEC_NAME = "mtg-search-engine-tests"
 VALGRIND_OPTS = "--leak-check=full --show-leak-kinds=all --track-fds=yes"  # all" silly ubuntu has no all
 
 

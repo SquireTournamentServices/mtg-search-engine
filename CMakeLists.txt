@@ -113,8 +113,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "TEST")
   target_include_directories(mtg-search-engine-tests
                              PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-  file(COPY mem_tests.sh DESTINATION ${CMAKE_BINARY_DIR})
-  file(COPY mem_tests.py DESTINATION ${CMAKE_BINARY_DIR})
+  file(COPY mem_tests.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  file(COPY mem_tests.py DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
   enable_testing()
   add_test(NAME main-tests COMMAND mtg-search-engine-tests)
