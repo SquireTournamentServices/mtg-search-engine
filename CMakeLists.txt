@@ -29,15 +29,15 @@ execute_process(
 message(STATUS "Commit info: ${GIT_COMMIT_HASH}@${GIT_BRANCH}")
 
 # Version info
-add_definitions("-DGIT_COMMIT_HASH=\"${GIT_COMMIT_HASH}\"")
-add_definitions("-DGIT_BRANCH=\"${GIT_BRANCH}\"")
+add_definitions("-DMSE_GIT_COMMIT_HASH=\"${GIT_COMMIT_HASH}\"")
+add_definitions("-DMSE_GIT_BRANCH=\"${GIT_BRANCH}\"")
 add_definitions(
-  "-DVERSION=\"${CMAKE_PROJECT_VERSION} (${GIT_COMMIT_HASH}@${GIT_BRANCH})\"")
+  "-DMSE_VERSION=\"${CMAKE_PROJECT_VERSION} (${GIT_COMMIT_HASH}@${GIT_BRANCH})\"")
 add_definitions("-DOS=\"${CMAKE_SYSTEM_NAME}\"")
-add_definitions("-DREPO_URL=\"${REPO_URL}\"")
+add_definitions("-DMSE_REPO_URL=\"${REPO_URL}\"")
 add_definitions("-DBUFFER_LENGTH=4096")
-add_definitions("-DPROJECT_VERSION=\"${CMAKE_PROJECT_VERSION}\"")
-add_definitions("-DPROJECT_NAME=\"${CMAKE_PROJECT_NAME}\"")
+add_definitions("-DMSE_PROJECT_VERSION=\"${CMAKE_PROJECT_VERSION}\"")
+add_definitions("-DMSE_PROJECT_NAME=\"${CMAKE_PROJECT_NAME}\"")
 
 # __FILENAME__
 string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
@@ -97,7 +97,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "TEST")
   append_coverage_compiler_flags()
   setup_target_for_coverage_gcovr_xml(
     NAME
-    coverage
+    coverage_mtg_search_engine
     EXECUTABLE
     SquireDesktopTests
     EXCLUDE
