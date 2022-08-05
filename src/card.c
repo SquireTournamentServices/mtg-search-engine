@@ -2,21 +2,6 @@
 #include "./io_utils.h"
 #include "../testing_h/testing.h"
 
-/*
-typedef struct mtg_card_t {
-    uuid_t id;
-    char *name;
-    char *mana_cost;
-    size_t types_count;
-    char **types;
-    double power;
-    double toughness;
-    double cmc;
-    mtg_colour_flags_t colours;
-    mtg_colour_flags_t colour_identity;
-} mtg_card_t;
-*/
-
 int write_card(FILE *f, mtg_card_t card)
 {
     ASSERT(write_uuid(f, card.id));

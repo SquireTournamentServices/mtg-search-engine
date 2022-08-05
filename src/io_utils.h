@@ -1,4 +1,5 @@
 #pragma once
+#include <time.h>
 #include <stdio.h>
 // Writes binary in my arbitary format. Strings are pascal strings when
 // written, then c strings when read. Simple as.
@@ -16,4 +17,7 @@ int read_size_t(FILE *f, size_t *i);
 
 int write_str(FILE *f, char *str);
 int read_str(FILE *f, char **str);
+
+int write_tm(FILE *f, struct tm t);
+int read_tm(FILE *f, struct tm *t);
 

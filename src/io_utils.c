@@ -60,3 +60,15 @@ int read_str(FILE *f, char **str)
     return r == sizeof ** str * len;
 }
 
+int write_tm(FILE *f, struct tm t)
+{
+    int w = fwrite(&t, sizeof(t), 1, f);
+    return w == sizeof(t);
+}
+
+int read_tm(FILE *f, struct tm *t)
+{
+    int r = fread(t, sizeof(*t), 1, f);
+    return r == sizeof(*t);
+}
+
