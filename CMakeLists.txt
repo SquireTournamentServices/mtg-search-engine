@@ -77,7 +77,7 @@ set(SRC
     ./src/io_utils.c)
 set(TESTS ${SRC} ./tests/main.c)
 
-set(LIBS "pthread")
+set(LIBS)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 
 add_library(mtg-search-engine ${SRC})
