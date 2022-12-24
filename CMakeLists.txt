@@ -45,22 +45,6 @@ add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 add_definitions("-D__FILENAME__=(__FILE__ + SOURCE_PATH_SIZE)")
 add_definitions("-DMTG_BINARY_VERSION=1")
 
-# Define proper compilation flags
-if(MSVC)
-  # Visual Studio: Maximum optimization, disable warning C4251, establish C++17
-  # compatibility
-  set(CMAKE_CXX_FLAGS_RELEASE
-      "/Ox /MD /wd4251 /Zc:__cplusplus /std:c++17 /permissive-")
-  # Generate complete debugging information set(CMAKE_CXX_FLAGS_DEBUG "/Zi")
-else()
-  # Compiler settings compiler flags
-  set(COMPILER_FLAGS "-Wall -Wextra -Wpedantic")
-  set(CMAKE_C_FLAGS_DEBUG "-g -O0 ${COMPILER_FLAGS} -DDEBUG")
-  set(CMAKE_CXX_FLAGS_DEBUG ${CMAKE_C_FLAGS_DEBUG})
-  set(CMAKE_C_FLAGS_RELEASE "-O2 ${COMPILER_FLAGS}")
-  set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE})
-endif()
-
 set(SRC
     ./testing_h/ansi_colour.h
     ./testing_h/testing.h
