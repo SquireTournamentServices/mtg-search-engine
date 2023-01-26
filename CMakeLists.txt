@@ -32,7 +32,8 @@ message(STATUS "Commit info: ${GIT_COMMIT_HASH}@${GIT_BRANCH}")
 add_definitions("-DMSE_GIT_COMMIT_HASH=\"${GIT_COMMIT_HASH}\"")
 add_definitions("-DMSE_GIT_BRANCH=\"${GIT_BRANCH}\"")
 add_definitions(
-  "-DMSE_VERSION=\"${CMAKE_PROJECT_VERSION} (${GIT_COMMIT_HASH}@${GIT_BRANCH})\"")
+  "-DMSE_VERSION=\"${CMAKE_PROJECT_VERSION} (${GIT_COMMIT_HASH}@${GIT_BRANCH})\""
+)
 add_definitions("-DOS=\"${CMAKE_SYSTEM_NAME}\"")
 add_definitions("-DMSE_REPO_URL=\"${REPO_URL}\"")
 add_definitions("-DBUFFER_LENGTH=4096")
@@ -44,6 +45,9 @@ string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
 add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 add_definitions("-D__FILENAME__=(__FILE__ + SOURCE_PATH_SIZE)")
 add_definitions("-DMTG_BINARY_VERSION=1")
+
+set(COMPILER_FLAGS "-Wall -Wextra -Wpedantic -Werror")
+set(CMAKE_C_FLAGS_DEBUG "${COMPILER_FLAGS} -DDEBUG")
 
 set(SRC
     ./testing_h/ansi_colour.h
@@ -70,38 +74,15 @@ target_link_libraries(mtg-search-engine ${LIBS})
 add_executable(mtg-search-engine-cli ${SRC} ./src/main.c)
 target_link_libraries(mtg-search-engine-cli ${LIBS})
 
-if(CMAKE_BUILD_TYPE STREQUAL "TEST")
-  include(CodeCoverage)
+add_executable(mtg-search-engine-tests ${TESTS})
+target_link_libraries(mtg-search-engine-tests PUBLIC ${LIBS})
+target_include_directories(mtg-search-engine-tests
+                           PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-  # Setup coverage (using gcovr so needs gcc/g++) set(CMAKE_C_COMPILER
-  # /usr/bin/gcc) set(CMAKE_CXX_COMPILER /usr/bin/g++)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG} -DTEST")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG} -DTEST")
+file(COPY mem_tests.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY mem_tests.py DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-  append_coverage_compiler_flags()
-  setup_target_for_coverage_gcovr_xml(
-    NAME
-    coverage_mtg_search_engine
-    EXECUTABLE
-    SquireDesktopTests
-    EXCLUDE
-    "build/*"
-    "tests/*")
-
-  # tests, set the flags manually
-  set(CMAKE_C_FLAGS_RELEASE ${CMAKE_C_FLAGS_DEBUG})
-  set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_DEBUG})
-
-  add_executable(mtg-search-engine-tests ${TESTS})
-  target_link_libraries(mtg-search-engine-tests PUBLIC ${LIBS})
-  target_include_directories(mtg-search-engine-tests
-                             PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-
-  file(COPY mem_tests.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-  file(COPY mem_tests.py DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
-  enable_testing()
-  add_test(NAME main-tests COMMAND mtg-search-engine-tests)
-  add_test(NAME memory-tests COMMAND bash mem_tests.sh)
-  message(STATUS "TEST build setup")
-endif()
+enable_testing()
+add_test(NAME main-tests COMMAND mtg-search-engine-tests)
+add_test(NAME memory-tests COMMAND bash mem_tests.sh)
+message(STATUS "TEST build setup")
