@@ -72,3 +72,7 @@ int read_tm(FILE *f, struct tm *t)
     return r == sizeof(*t);
 }
 
+int basic_http_get(int *http_code, char **ret, char *url)
+{
+
+}

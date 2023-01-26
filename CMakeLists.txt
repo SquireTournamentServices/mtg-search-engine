@@ -61,11 +61,13 @@ set(SRC
     ./src/set.c
     ./src/uuid.h
     ./src/uuid.c
+    ./src/mtg_json.h
+    ./src/mtg_json.c
     ./src/io_utils.h
     ./src/io_utils.c)
 set(TESTS ${SRC} ./tests/main.c)
 
-set(LIBS)
+set(LIBS jansson curl)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 
 add_library(mtg-search-engine ${SRC})
