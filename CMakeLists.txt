@@ -32,7 +32,8 @@ message(STATUS "Commit info: ${GIT_COMMIT_HASH}@${GIT_BRANCH}")
 add_definitions("-DMSE_GIT_COMMIT_HASH=\"${GIT_COMMIT_HASH}\"")
 add_definitions("-DMSE_GIT_BRANCH=\"${GIT_BRANCH}\"")
 add_definitions(
-  "-DMSE_VERSION=\"${CMAKE_PROJECT_VERSION} (${GIT_COMMIT_HASH}@${GIT_BRANCH})\"")
+  "-DMSE_VERSION=\"${CMAKE_PROJECT_VERSION} (${GIT_COMMIT_HASH}@${GIT_BRANCH})\""
+)
 add_definitions("-DOS=\"${CMAKE_SYSTEM_NAME}\"")
 add_definitions("-DMSE_REPO_URL=\"${REPO_URL}\"")
 add_definitions("-DBUFFER_LENGTH=4096")
@@ -57,11 +58,13 @@ set(SRC
     ./src/set.c
     ./src/uuid.h
     ./src/uuid.c
+    ./src/thread_pool.h
+    ./src/thread_pool.c
     ./src/io_utils.h
     ./src/io_utils.c)
 set(TESTS ${SRC} ./tests/main.c)
 
-set(LIBS)
+set(LIBS jansson curl pthread)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 
 add_library(mtg-search-engine ${SRC})
@@ -71,22 +74,16 @@ add_executable(mtg-search-engine-cli ${SRC} ./src/main.c)
 target_link_libraries(mtg-search-engine-cli ${LIBS})
 
 if(CMAKE_BUILD_TYPE STREQUAL "TEST")
-  include(CodeCoverage)
+  # include(CodeCoverage)
 
   # Setup coverage (using gcovr so needs gcc/g++) set(CMAKE_C_COMPILER
   # /usr/bin/gcc) set(CMAKE_CXX_COMPILER /usr/bin/g++)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG} -DTEST")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG} -DTEST")
 
-  append_coverage_compiler_flags()
-  setup_target_for_coverage_gcovr_xml(
-    NAME
-    coverage_mtg_search_engine
-    EXECUTABLE
-    SquireDesktopTests
-    EXCLUDE
-    "build/*"
-    "tests/*")
+  # append_coverage_compiler_flags() setup_target_for_coverage_gcovr_xml( NAME
+  # coverage_mtg_search_engine EXECUTABLE SquireDesktopTests EXCLUDE "build/*"
+  # "tests/*")
 
   # tests, set the flags manually
   set(CMAKE_C_FLAGS_RELEASE ${CMAKE_C_FLAGS_DEBUG})
