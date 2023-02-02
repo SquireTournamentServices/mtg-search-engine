@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <signal.h>
 #include <string.h>
+#include <signal.h>
 #include "./thread_pool.h"
 #include "../testing_h/testing.h"
 
@@ -9,7 +9,7 @@
 #include <win32.h>
 #endif
 
-#ifdef __UNIX
+#ifdef __unix
 #include <unistd.h>
 #endif
 
@@ -67,7 +67,6 @@ int task_queue_enque(task_queue_t *queue, task_t task)
     node->payload = task;
 
     // Lock the queue
-    int r = 0;
     pthread_mutex_lock(&queue->lock);
 
     // Add to the end of the queue
@@ -79,10 +78,8 @@ int task_queue_enque(task_queue_t *queue, task_t task)
     }
 
     sem_post(&queue->semaphore);
-    r = 1;
-cleanup:
     pthread_mutex_unlock(&queue->lock);
-    return r;
+    return 1;
 }
 
 void *thread_pool_consumer_func(void *pool_raw)
@@ -105,7 +102,7 @@ int init_queue(task_queue_t *queue)
     pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
     queue->lock = lock;
     queue->head = queue->tail = NULL;
-    ASSERT(sem_init(&queue->semaphore, 0, 0));
+    ASSERT(sem_init(&queue->semaphore, 0, 0) == 0);
     return 1;
 }
 
@@ -113,15 +110,14 @@ int init_pool(thread_pool_t *p)
 {
     ASSERT(p != NULL);
 
-    int cpus = 1;
 #ifdef __WIN32
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
-    cpus = sysinfo.dwNumberOfProcessors;
+    int cpus = sysinfo.dwNumberOfProcessors;
 #endif
 
-#ifdef __UNIX
-    cpus = sysconf(_SC_NPROCESSORS_ONLN);
+#ifdef __unix
+    int cpus = sysconf(_SC_NPROCESSORS_ONLN);
 #endif
 
     lprintf(LOG_INFO, "Created a thread pool with %d workers\n", cpus);
@@ -148,8 +144,12 @@ int free_pool(thread_pool_t *p)
 
     // Slaughter all threads
     for (size_t i = 0; i < p->threads_count; i++) {
-        ASSERT(pthread_kill(p->threads[i], 0) == 0);
+        ASSERT(pthread_detach(p->threads[i]) == 0);
+        ASSERT(pthread_kill(p->threads[i], SIGUSR1) == 0);
     }
+
+    pthread_mutex_unlock(&queue->lock);
+    pthread_mutex_destroy(&queue->lock);
 
     // Free the rest of the queue
     size_t cnt = 0;
@@ -162,12 +162,12 @@ int free_pool(thread_pool_t *p)
         cnt++;
     }
 
-    lprintf(LOG_WARNING, "%ld tasks are left un-executed\n", cnt);
+    if (cnt > 0) {
+        lprintf(LOG_WARNING, "%ld tasks are left un-executed\n", cnt);
+    }
 
-    // Free the semaphore and, the mutex
+    // Free the semaphore
     sem_destroy(&queue->semaphore);
-    pthread_mutex_unlock(&queue->lock);
-    pthread_mutex_destroy(&queue->lock);
 
     free(p->threads);
     memset(p, 0, sizeof * p);

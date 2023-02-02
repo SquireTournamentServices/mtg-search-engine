@@ -20,5 +20,3 @@ int read_str(FILE *f, char **str);
 
 int write_tm(FILE *f, struct tm t);
 int read_tm(FILE *f, struct tm *t);
-
-int basic_http_get(int *http_code, char **ret, char *url);
