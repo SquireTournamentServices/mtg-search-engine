@@ -1,10 +1,10 @@
 #pragma once
+/// Writes binary in my arbitary format. Strings are pascal strings when
+/// written, then c strings when read. Simple as.
+
+/// All return 1 on success, 0 on fail.
 #include <time.h>
 #include <stdio.h>
-// Writes binary in my arbitary format. Strings are pascal strings when
-// written, then c strings when read. Simple as.
-
-// All return 1 on success, 0 on fail.
 
 int write_double(FILE *f, double d);
 int read_double(FILE *f, double *d);
@@ -21,3 +21,4 @@ int read_str(FILE *f, char **str);
 int write_tm(FILE *f, struct tm t);
 int read_tm(FILE *f, struct tm *t);
 
+int basic_http_get(int *http_code, char **ret, char *url);

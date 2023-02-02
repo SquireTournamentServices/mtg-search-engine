@@ -24,7 +24,7 @@ int read_card(FILE *f, mtg_card_t *card)
     ASSERT(read_uuid(f, &card->id));
     ASSERT(read_str(f, &card->name));
     ASSERT(read_size_t(f, &card->types_count));
-    for (size_t i = 0; i < &card->types_count; i++) {
+    for (size_t i = 0; i < card->types_count; i++) {
         ASSERT(read_str(f, &card->types[i]));
     }
 

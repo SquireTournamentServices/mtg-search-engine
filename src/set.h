@@ -9,6 +9,6 @@ typedef struct mtg_set_t {
     struct tm release;
 } mtg_set_t;
 
-int write_set(FILE *f, mtg_set_t set);
+int write_set(FILE *f, mtg_set_t *set);
 int read_set(FILE *f, mtg_set_t *set);
 
