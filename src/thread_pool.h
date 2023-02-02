@@ -26,10 +26,14 @@ typedef struct task_queue_t {
     /// This is a lock used to allow for thread safe operation on the queue
     pthread_mutex_t lock;
     /// This is a counter semaphore used to wake threads up when there are jobs to do
-    sem_t *semaphore;
+    sem_t semaphore;
     task_node_t *head;
     task_node_t *tail;
 } task_queue_t;
+
+/// Inits a queue
+int init_queue(task_queue_t *queue);
+// There is no free as that is done by the pool to make sure that consumers are killed
 
 /// Takes the front of the queue and removes it, places it into ret.
 /// 0 on failure
@@ -51,3 +55,11 @@ typedef struct thread_pool_t {
     task_queue_t queue;
 } thread_pool_t;
 
+/// Starts some consumer thrads and, inits an empty pool
+int init_pool(thread_pool_t *p);
+
+/// Frees the pool and, kills all consumer threads
+int free_pool(thread_pool_t *p);
+
+/// The definition of the consumer thread
+void *thread_pool_consumer_f(void *pool);
