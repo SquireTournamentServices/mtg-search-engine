@@ -62,4 +62,4 @@ int init_pool(thread_pool_t *p);
 int free_pool(thread_pool_t *p);
 
 /// The definition of the consumer thread
-void *thread_pool_consumer_f(void *pool);
+void *thread_pool_consumer_func(void *pool);
