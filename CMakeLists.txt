@@ -46,7 +46,7 @@ add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 add_definitions("-D__FILENAME__=(__FILE__ + SOURCE_PATH_SIZE)")
 add_definitions("-DMTG_BINARY_VERSION=1")
 
-set(COMPILER_FLAGS "-Wall -Wextra -Wpedantic -Werror -g")
+set(COMPILER_FLAGS "-Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter -g")
 set(CMAKE_C_FLAGS_DEBUG "${COMPILER_FLAGS} -DDEBUG")
 
 set(SRC

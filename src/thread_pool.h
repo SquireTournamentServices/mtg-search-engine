@@ -49,10 +49,15 @@ int task_queue_front(task_queue_t *queue, task_t *ret);
 /// This will wake up any waiting threads.
 int task_queue_enque(task_queue_t *queue, task_t task);
 
+/// This will reset the task queue, it is used for freeing the pool safely by cancelling
+/// all pending tasks
+void reset_pool(task_queue_t *queue);
+
 typedef struct thread_pool_t {
     size_t threads_count;
     pthread_t *threads;
     task_queue_t queue;
+    int running;
 } thread_pool_t;
 
 /// Starts some consumer thrads and, inits an empty pool
