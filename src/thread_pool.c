@@ -93,6 +93,8 @@ void *thread_pool_consumer_func(void *pool_raw)
             lprintf(LOG_ERROR, "Error consuming from the thread pool\n");
         }
     }
+    pthread_exit(NULL);
+    return NULL;
 }
 
 int init_queue(task_queue_t *queue)

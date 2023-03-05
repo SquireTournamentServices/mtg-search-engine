@@ -1,6 +1,7 @@
 #include "./mtg_json.h"
 #include "./io_utils.h"
 #include "../testing_h/testing.h"
+#include <stdio.h>
 #include <unistd.h>
 #include <curl/curl.h>
 
@@ -8,11 +9,11 @@ int get_atomic_cards(mtg_json_query_result_t *ret, thread_pool_t *pool)
 {
   // Create the pipe that will be used for IPC
   int fid[2];
-  int r = pipe();
-  ASSERT(r == 0);
+  int c = pipe(fid);
+  ASSERT(c == 0);
 
   FILE *r = fdopen(fid[0], "r");
-  ASSERT(r != NULL):
+  ASSERT(r != NULL);
 
   FILE *w = fdopen(fid[1], "w");
   ASSERT(w != NULL);
