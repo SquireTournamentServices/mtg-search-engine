@@ -111,11 +111,18 @@ int init_queue(task_queue_t *queue)
 void reset_pool(task_queue_t *queue)
 {
     pthread_mutex_lock(&queue->lock);
+    size_t cnt = 0;
+
     // Free all of the nodes
     while (queue->head != NULL) {
         task_node_t *node = queue->head;
         queue->head = queue->head->next;
         free(node);
+        cnt++;
+    }
+
+    if (cnt > 0) {
+        lprintf(LOG_WARNING, "%ld tasks are left un-executed\n", cnt);
     }
 
     // Mark the queue as empty
@@ -173,24 +180,8 @@ int free_pool(thread_pool_t *p)
         ASSERT(pthread_join(p->threads[i], &__ret) == 0);
     }
 
+    // Clear up the IPC  stuff
     pthread_mutex_destroy(&queue->lock);
-
-    // Free the rest of the queue
-    size_t cnt = 0;
-    task_node_t *node = queue->head;
-    while (node != NULL) {
-        task_node_t *tmp = node;
-        node = node->next;
-        free(tmp);
-
-        cnt++;
-    }
-
-    if (cnt > 0) {
-        lprintf(LOG_WARNING, "%ld tasks are left un-executed\n", cnt);
-    }
-
-    // Free the semaphore
     sem_destroy(&queue->semaphore);
 
     free(p->threads);
