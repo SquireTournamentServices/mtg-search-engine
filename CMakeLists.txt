@@ -67,8 +67,9 @@ set(SRC
     ./src/thread_pool.c
     ./src/io_utils.h
     ./src/io_utils.c)
-set(TESTS ${SRC} ./tests/main.c ./tests/test_thread_pool.h
-          ./tests/test_thread_pool.c)
+set(TESTS
+    ${SRC} ./tests/main.c ./tests/test_thread_pool.h ./tests/test_thread_pool.c
+    ./tests/test_mtg_json.h ./tests/test_mtg_json.c)
 
 set(LIBS jansson curl pthread m)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)

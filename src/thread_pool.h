@@ -47,7 +47,7 @@ int task_queue_front(task_queue_t *queue, task_t *ret);
 ///
 /// This is a blocking call. The caller will be locked whilst the queue is locked.
 /// This will wake up any waiting threads.
-int task_queue_enque(task_queue_t *queue, task_t task);
+int task_queue_enqueue(task_queue_t *queue, task_t task);
 
 /// This will reset the task queue, it is used for freeing the pool safely by cancelling
 /// all pending tasks

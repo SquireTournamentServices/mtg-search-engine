@@ -56,7 +56,7 @@ cleanup:
     return r;
 }
 
-int task_queue_enque(task_queue_t *queue, task_t task)
+int task_queue_enqueue(task_queue_t *queue, task_t task)
 {
     ASSERT(queue != NULL);
 
