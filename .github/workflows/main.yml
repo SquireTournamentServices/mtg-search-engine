@@ -1,0 +1,242 @@
+name: "Main"
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 5'
+
+jobs:
+  configure:
+    name: Configure
+    runs-on: ubuntu-22.04
+    outputs:
+      tag: ${{steps.configure.outputs.tag}}
+      sha: ${{steps.configure.outputs.sha}}
+      upload_url: ${{steps.create_release.outputs.upload_url}}
+
+    steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.6.0
+        with:
+          access_token: ${{github.token}} # needs other token https://github.com/styfle/cancel-workflow-action/issues/7
+
+      - name: Configure
+        id: configure
+        shell: bash
+        run: |
+          tag_regex='^refs/tags/'
+          if [[ $GITHUB_EVENT_NAME == pull-request ]]; then # pull request
+            sha="${{github.event.pull_request.head.sha}}"
+          elif [[ $GITHUB_REF =~ $tag_regex ]]; then # release
+            sha="$GITHUB_SHA"
+            tag="${GITHUB_REF/refs\/tags\//}"
+            echo "::set-output name=tag::$tag"
+          else # push to branch
+            sha="$GITHUB_SHA"
+          fi
+          echo "::set-output name=sha::$sha"
+
+      - name: Checkout
+        if: steps.configure.outputs.tag != null
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Prepare release parameters
+        id: prepare
+        if: steps.configure.outputs.tag != null
+        shell: bash
+        env:
+          TAG: ${{steps.configure.outputs.tag}}
+        run: .ci/prep_release.sh
+
+      - name: Create release
+        if: steps.configure.outputs.tag != null
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{github.token}}
+        with:
+          tag_name: ${{github.ref}}
+          release_name: ${{steps.prepare.outputs.title}}
+          body_path: ${{steps.prepare.outputs.body_path}}
+          draft: true
+          prerelease: ${{steps.prepare.outputs.is_beta == 'yes'}}
+
+  build-linux:
+    needs: configure
+    runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'cpp' ]
+      
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: ${{matrix.language}}
+        
+    - name: Install deps
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends build-essential \
+          cmake gcovr valgrind python3 astyle \
+          libgl1-mesa-dev libjemalloc-dev libcurl4-openssl-dev \
+          libdwarf-dev libelf-dev
+          
+    - name: Make Release
+      shell: bash
+      run : |
+        rm -rf build
+        mkdir -p build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=RELEASE
+        cmake --build . -j
+
+  build-macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: Debug # tests only
+            os: macos-latest
+            xcode: 12.5.1
+            type: Debug
+            do_tests: 0
+
+          - target: 10.14_Mojave
+            os: macos-10.15 # runs on Catalina
+            xcode: 10.3 # allows compatibility with macOS 10.14
+            type: Release
+            do_tests: 0
+            make_package: 1
+
+          - target: 10.15_Catalina
+            os: macos-10.15
+            xcode: 12.4
+            type: Release
+            do_tests: 0
+            make_package: 1
+
+          - target: 11_Big_Sur
+            os: macos-11
+            xcode: 13.2
+            type: Release
+            do_tests: 0
+            make_package: 1
+
+    name: macOS ${{matrix.target}}
+    needs: configure
+    runs-on: ${{matrix.os}}
+    env:
+      DEVELOPER_DIR:
+        /Applications/Xcode_${{matrix.xcode}}.app/Contents/Developer
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install dependencies using homebrew
+        shell: bash
+        run: |
+          brew update
+          brew install llvm
+          brew install gcc
+          brew install python3
+          brew install curl
+          brew install openssl
+          
+      - name: Build on Xcode ${{matrix.xcode}}
+        shell: bash
+        id: build
+        env:
+          BUILDTYPE: '${{matrix.type}}'
+          MAKE_TEST: '${{matrix.do_tests}}'
+          MAKE_PACKAGE: '${{matrix.make_package}}'
+          PACKAGE_SUFFIX: '-macOS-${{matrix.target}}'
+        run: mkdir build; cd build; cmake ..; cmake --build . -j
+
+  build-windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: Win-32bit
+            arch: 32
+            vcpkg_default_triplet: x86
+            cmake_generator_platform: Win32
+
+          - target: Win7+-64bit
+            arch: 64
+            vcpkg_default_triplet: x64
+            cmake_generator_platform: x64
+
+          - target: Win10+-64bit
+            arch: 64
+            vcpkg_default_triplet: x64
+            cmake_generator_platform: x64
+
+    name: ${{matrix.target}}
+    needs: configure
+    runs-on: windows-2019
+    env:
+      CMAKE_GENERATOR: 'Visual Studio 16 2019'
+
+    steps:          
+      - name: Add msbuild to PATH
+        id: add-msbuild
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Chocolatey
+        run: Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+
+      - name: Install OpenSSL
+        run: choco install openssl -y
+        
+      - name: Install curl
+        run: choco install curl -y
+        
+      - name: Build Squire Desktop
+        id: build
+        shell: bash
+        env:
+          PACKAGE_SUFFIX: '-${{matrix.target}}'
+          CMAKE_GENERATOR: '${{env.CMAKE_GENERATOR}}'
+          CMAKE_GENERATOR_PLATFORM: '${{matrix.cmake_generator_platform}}'
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          cmake --build . -j
+
+      - name: Generate release assets
+        shell: bash
+        run: |
+          mkdir -p debug-build
+          cp -f build/Debug/SquireDesktop.exe debug-build/
+          cp -f lib/x86_64/discord_game_sdk.dll debug-build/
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: SquireDesktop.exe
+          path: debug-build
