@@ -38,6 +38,8 @@ typedef struct mtg_card_t {
     mtg_set_code_t *set_codes;
 } mtg_card_t;
 
-int write_card(FILE *f, mtg_card_t card);
+int write_card(FILE *f, mtg_card_t *card);
 int read_card(FILE *f, mtg_card_t *card);
+
+void free_card(mtg_card_t *card);
 

@@ -14,8 +14,6 @@ static int test_init_free()
 
     ASSERT(free_pool(&pool));
     return 1;
-
-    return 1;
 }
 
 SUB_TEST(test_mtg_json, {&test_init_free, "Test init and, free"})
