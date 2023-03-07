@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <curl/curl.h>
+#include <jansson.h>
 
 static size_t __write_callback(char *ptr,
                                size_t size,
@@ -60,7 +61,7 @@ static void __get_atomic_cards_curl_thread(void *data, struct thread_pool_t *poo
     fclose(w);
 }
 
-int get_atomic_cards(mtg_json_query_result_t *ret, thread_pool_t *pool)
+int get_atomic_cards(mtg_atomic_cards_t *ret, thread_pool_t *pool)
 {
     // Create the pipe that will be used for IPC
     int fid[2];
@@ -80,17 +81,28 @@ int get_atomic_cards(mtg_json_query_result_t *ret, thread_pool_t *pool)
     // Start reading the json in this thread
     json_error_t error;
     size_t flags = 0;
-    ret->json = json_loadf(r, flags, &error);
-
+    json_t *json = json_loadf(r, flags, &error);
     int ret_code = 1;
-    if (ret->json == NULL) {
-        lprintf(LOG_ERROR, "Cannot parse atomic json, %100s\n", error.text);
-        ret_code = 0;
-    }
 
     // If the json cannot be read due to an error, then the curl request failed, its thread should have cleared
     // that bit up
+    if (json == NULL) {
+        lprintf(LOG_ERROR, "Cannot parse atomic json, %100s\n", error.text);
+        ret_code = 0;
+        goto cleanup;
+    }
 
+    // This only runs if there was no error
+    // TODO: process the json innit mate.
+    json_decref(json);
+
+cleanup:
+    ;
     fclose(r);
     return ret_code;
+}
+
+void free_atomic_cards(mtg_atomic_cards_t *cards)
+{
+
 }

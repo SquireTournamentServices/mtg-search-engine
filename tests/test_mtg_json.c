@@ -8,9 +8,9 @@ static int test_init_free()
     thread_pool_t pool;
     ASSERT(init_pool(&pool));
 
-    mtg_json_query_result_t ret;
+    mtg_atomic_cards_t ret;
     ASSERT(get_atomic_cards(&ret, &pool));
-    ASSERT(ret.json != NULL);
+    free_atomic_cards(&ret);
 
     ASSERT(free_pool(&pool));
     return 1;
