@@ -90,7 +90,9 @@ void *thread_pool_consumer_func(void *pool_raw)
         if (task_queue_front(&pool->queue, &task)) {
             task.exec_func(task.data, pool);
         } else {
-            lprintf(LOG_ERROR, "Error consuming from the thread pool\n");
+            if (pool->running) {
+                lprintf(LOG_ERROR, "Error consuming from the thread pool\n");
+            }
         }
     }
     pthread_exit(NULL);
