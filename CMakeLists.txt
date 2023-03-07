@@ -46,7 +46,7 @@ add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 add_definitions("-D__FILENAME__=(__FILE__ + SOURCE_PATH_SIZE)")
 add_definitions("-DMTG_BINARY_VERSION=1")
 
-set(COMPILER_FLAGS "-Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter -g")
+set(COMPILER_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -g")
 set(CMAKE_C_FLAGS_DEBUG "${COMPILER_FLAGS} -DDEBUG")
 
 set(SRC
@@ -90,10 +90,18 @@ setup_target_for_coverage_gcovr_xml(
   NAME coverage EXECUTABLE mtg-search-engine-tests EXCLUDE ${GCOVR_EXCLUDE})
 
 set(LIBS jansson curl pthread m)
+
+add_subdirectory(jansson)
+include_directories(${CMAKE_BINARY_DIR}/squire_ffi ${JANSSON_INCLUDE_DIRS})
+
+add_subdirectory(curl)
+include_directories(${CURL_INCLUDE_DIR})
+
+set(LIBS jansson CURL::libcurl pthread m)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 
 add_library(mtg-search-engine ${SRC})
-target_link_libraries(mtg-search-engine ${LIBS})
+target_link_libraries(mtg-search-engine PRIVATE ${LIBS})
 
 add_executable(mtg-search-engine-cli ${SRC} ./src/main.c)
 target_link_libraries(mtg-search-engine-cli ${LIBS})
