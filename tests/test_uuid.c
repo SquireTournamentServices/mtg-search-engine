@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 
-int test_uuid_read_write()
+static int test_uuid_read_write()
 {
     uuid_t uuid;
     for (size_t i = 0; i < sizeof(uuid); i++) {
@@ -33,7 +33,7 @@ int test_uuid_read_write()
 
 #define UUID_1_STR "7cfbdb70-96dd-49ac-8f7a-4658996b2c2b"
 #define UUID_2_STR "7CFBDB70-96DD-49AC-8F7A-4658996B2C2B"
-int test_uuid_from_string()
+static int test_uuid_from_string()
 {
     int status = 0;
     uuid_t uuid_1 = from_string(UUID_1_STR, &status);
@@ -58,7 +58,7 @@ int test_uuid_from_string()
     return 1;
 }
 
-int test_set_code_read_write()
+static int test_set_code_read_write()
 {
     mtg_set_code_t set = {'M', '2', '0'};
 

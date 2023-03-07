@@ -75,7 +75,9 @@ set(TESTS
     ./tests/test_mtg_json.h
     ./tests/test_mtg_json.c
     ./tests/test_uuid.h
-    ./tests/test_uuid.c)
+    ./tests/test_uuid.c
+    ./tests/test_io_utils.h
+    ./tests/test_io_utils.c)
 
 set(LIBS jansson curl pthread m)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
