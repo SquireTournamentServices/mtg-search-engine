@@ -20,5 +20,5 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 int main()
 {
     tzset();
-    return tests() == 0 ? 0 : 1;
+    return tests() ? 0 : 1;
 }

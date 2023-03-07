@@ -79,6 +79,16 @@ set(TESTS
     ./tests/test_io_utils.h
     ./tests/test_io_utils.c)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
+include(CodeCoverage)
+
+set(GCOVR_EXCLUDE "build/*" "tests/*" "src/main.c")
+
+append_coverage_compiler_flags()
+setup_target_for_coverage_gcovr_xml(
+  NAME coverage EXECUTABLE mtg-search-engine-tests EXCLUDE ${GCOVR_EXCLUDE})
+
 set(LIBS jansson curl pthread m)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 
