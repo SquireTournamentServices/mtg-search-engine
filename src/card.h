@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <limits.h>
 #include "./uuid.h"
+#include "./set.h"
 
 // Evil macros
 #ifdef british
@@ -33,8 +34,12 @@ typedef struct mtg_card_t {
     double cmc;
     mtg_colour_flags_t colours;
     mtg_colour_flags_t colour_identity;
+    size_t set_codes_len;
+    mtg_set_code_t *set_codes;
 } mtg_card_t;
 
-int write_card(FILE *f, mtg_card_t card);
+int write_card(FILE *f, mtg_card_t *card);
 int read_card(FILE *f, mtg_card_t *card);
+
+void free_card(mtg_card_t *card);
 

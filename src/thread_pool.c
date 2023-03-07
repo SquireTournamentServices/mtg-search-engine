@@ -56,7 +56,7 @@ cleanup:
     return r;
 }
 
-int task_queue_enque(task_queue_t *queue, task_t task)
+int task_queue_enqueue(task_queue_t *queue, task_t task)
 {
     ASSERT(queue != NULL);
 
@@ -85,14 +85,18 @@ int task_queue_enque(task_queue_t *queue, task_t task)
 void *thread_pool_consumer_func(void *pool_raw)
 {
     thread_pool_t *pool = (thread_pool_t *) pool_raw;
-    while (1) {
+    while (pool->running) {
         task_t task;
         if (task_queue_front(&pool->queue, &task)) {
             task.exec_func(task.data, pool);
         } else {
-            lprintf(LOG_ERROR, "Error consuming from the thread pool\n");
+            if (pool->running) {
+                lprintf(LOG_ERROR, "Error consuming from the thread pool\n");
+            }
         }
     }
+    pthread_exit(NULL);
+    return NULL;
 }
 
 int init_queue(task_queue_t *queue)
@@ -104,6 +108,28 @@ int init_queue(task_queue_t *queue)
     queue->head = queue->tail = NULL;
     ASSERT(sem_init(&queue->semaphore, 0, 0) == 0);
     return 1;
+}
+
+void reset_pool(task_queue_t *queue)
+{
+    pthread_mutex_lock(&queue->lock);
+    size_t cnt = 0;
+
+    // Free all of the nodes
+    while (queue->head != NULL) {
+        task_node_t *node = queue->head;
+        queue->head = queue->head->next;
+        free(node);
+        cnt++;
+    }
+
+    if (cnt > 0) {
+        lprintf(LOG_WARNING, "%ld tasks are left un-executed\n", cnt);
+    }
+
+    // Mark the queue as empty
+    queue->head = queue->tail = NULL;
+    pthread_mutex_unlock(&queue->lock);
 }
 
 int init_pool(thread_pool_t *p)
@@ -123,6 +149,7 @@ int init_pool(thread_pool_t *p)
     lprintf(LOG_INFO, "Created a thread pool with %d workers\n", cpus);
 
     ASSERT(init_queue(&p->queue));
+    p->running = 1;
     p->threads_count = cpus;
     p->threads = malloc(sizeof * p->threads * p->threads_count);
     for (size_t i = 0; i < p->threads_count; i++) {
@@ -134,39 +161,29 @@ int init_pool(thread_pool_t *p)
 
 int free_pool(thread_pool_t *p)
 {
+    lprintf(LOG_INFO, "Stopping all worker threads\n");
     ASSERT(p != NULL);
 
     // Local alias for the queue
     task_queue_t *queue = &p->queue;
+    p->running = 0;
 
-    // Lock the thread pool
-    pthread_mutex_lock(&queue->lock);
+    // Empty the queue
+    reset_pool(queue);
+
+    // Wake up all the threads as the queue will be empty they should fail soon
+    for (size_t i = 0; i < p->threads_count; i++) {
+        sem_post(&queue->semaphore);
+    }
 
     // Slaughter all threads
     for (size_t i = 0; i < p->threads_count; i++) {
-        ASSERT(pthread_detach(p->threads[i]) == 0);
-        ASSERT(pthread_kill(p->threads[i], SIGUSR1) == 0);
+        void *__ret;
+        ASSERT(pthread_join(p->threads[i], &__ret) == 0);
     }
 
-    pthread_mutex_unlock(&queue->lock);
+    // Clear up the IPC  stuff
     pthread_mutex_destroy(&queue->lock);
-
-    // Free the rest of the queue
-    size_t cnt = 0;
-    task_node_t *node = queue->head;
-    while (node != NULL) {
-        task_node_t *tmp = node;
-        node = node->next;
-        free(tmp);
-
-        cnt++;
-    }
-
-    if (cnt > 0) {
-        lprintf(LOG_WARNING, "%ld tasks are left un-executed\n", cnt);
-    }
-
-    // Free the semaphore
     sem_destroy(&queue->semaphore);
 
     free(p->threads);

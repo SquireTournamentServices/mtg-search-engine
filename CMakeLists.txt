@@ -46,7 +46,7 @@ add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 add_definitions("-D__FILENAME__=(__FILE__ + SOURCE_PATH_SIZE)")
 add_definitions("-DMTG_BINARY_VERSION=1")
 
-set(COMPILER_FLAGS "-Wall -Wextra -Wpedantic -Werror -g")
+set(COMPILER_FLAGS "-Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter -g")
 set(CMAKE_C_FLAGS_DEBUG "${COMPILER_FLAGS} -DDEBUG")
 
 set(SRC
@@ -67,8 +67,17 @@ set(SRC
     ./src/thread_pool.c
     ./src/io_utils.h
     ./src/io_utils.c)
-set(TESTS ${SRC} ./tests/main.c ./tests/test_thread_pool.h
-          ./tests/test_thread_pool.c)
+set(TESTS
+    ${SRC}
+    ./tests/main.c
+    ./tests/test_thread_pool.h
+    ./tests/test_thread_pool.c
+    ./tests/test_mtg_json.h
+    ./tests/test_mtg_json.c
+    ./tests/test_uuid.h
+    ./tests/test_uuid.c
+    ./tests/test_io_utils.h
+    ./tests/test_io_utils.c)
 
 set(LIBS jansson curl pthread m)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)

@@ -37,7 +37,7 @@ static int test_pool_enqueue()
 
     for (size_t i = 0; i < 100 * pool.threads_count; i++) {
         task_t task = {(void *) 5L, &basic_calc};
-        ASSERT(task_queue_enque(&pool.queue, task));
+        ASSERT(task_queue_enqueue(&pool.queue, task));
     }
 
     ASSERT(free_pool(&pool));
