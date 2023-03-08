@@ -12,7 +12,7 @@ def escape(s: str) -> str:
     for i in range(len(s)):
         ret += s[i]
         if i % 200 == 0:
-            ret += '\n'
+            ret += "\n"
 
     # Escape \ to \\, Escape " to \", Fix new lines
     ret = ret.replace("\\", "\\\\").replace('"', '\\"').replace("\n", '"\n"')
