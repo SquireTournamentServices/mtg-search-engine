@@ -2,6 +2,7 @@ import json
 import requests
 import tempfile
 import zipfile
+from iso639.exceptions import InvalidLanguageValue
 from iso639 import Lang
 from typing import List
 
@@ -46,7 +47,7 @@ def get_atomic_cards() -> str:
     raise RuntimeError("Shit is fucked")
 
 
-def get_langs_from_card(card_object) -> List[str]:
+def get_langs_from_card(card_object: dict) -> List[str]:
     f_data = card_object["foreignData"]
     output = []
     for translation in f_data:
@@ -56,7 +57,7 @@ def get_langs_from_card(card_object) -> List[str]:
     return output
 
 
-def get_langs_from_set(set_object) -> List[str]:
+def get_langs_from_set(set_object: dict) -> List[str]:
     cards = set_object["cards"]
     output = []
     for card in cards:
@@ -67,19 +68,39 @@ def get_langs_from_set(set_object) -> List[str]:
     return output
 
 
-def get_lang_code(lang_name) -> str:
-    return Lang(lang_name).pt2t
+def get_lang_code(lang_name: str) -> str:
+    try:
+        return Lang(lang_name).pt1
+    except InvalidLanguageValue as e:
+        tmp: List[str] = lang_name.split(" ")
+        if len(tmp) == 0:
+            raise e
+        if tmp[0] == "":
+            raise e
+        return get_lang_code(" ".join(tmp[0:-1]))
 
 
 def get_languages_from_cards(data: str) -> List[str]:
-    data_j = json.loads(data)
-    codes = dict()
+    data_j: dict = json.loads(data)
+    codes: dict = dict()
+
+    # English is not in foreign data (as it isn't classed as foreign?)
+    ENGLISH: str = "English"
+    codes[get_lang_code(ENGLISH)] = ENGLISH
+    error_langs: List[str] = []
 
     for set_k in data_j["data"]:
-        set_o = data_j["data"][set_k]
-        langs = get_langs_from_set(set_o)
+        set_o: dict = data_j["data"][set_k]
+        langs: List[str] = get_langs_from_set(set_o)
+
         for lang_name in langs:
-            lang_code = get_lang_code(lang_name)
+            try:
+                lang_code: str = get_lang_code(lang_name)
+            except InvalidLanguageValue:
+                if lang_name not in error_langs:
+                    print(f"Cannot find language {lang_name}, skipping")
+                    error_langs.append(lang_name)
+                continue
             if lang_code not in codes:
                 codes[lang_code] = lang_name
 
