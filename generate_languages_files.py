@@ -243,8 +243,7 @@ const char *{GET_LANG_NAME_FUNC}({LANG_CODES_ENUM_T} code)
 
 // Code str getter
 const char *{GET_LANG_CODE_FUNC}({LANG_CODES_ENUM_T} code)
-{lang_code_body}
-    """
+{lang_code_body}"""
     return output
 
 
