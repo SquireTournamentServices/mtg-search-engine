@@ -68,6 +68,13 @@ def get_langs_from_set(set_object: dict) -> List[str]:
     return output
 
 
+def get_first_letter(word: str) -> str:
+    for c in word:
+        if c.isalnum():
+            return c.lower()
+    return ""
+
+
 def get_lang_code(lang_name: str) -> str:
     try:
         return Lang(lang_name).pt1
@@ -77,7 +84,10 @@ def get_lang_code(lang_name: str) -> str:
             raise e
         if tmp[0] == "":
             raise e
-        return get_lang_code(" ".join(tmp[0:-1]))
+        suffix = []
+        if len(tmp) >= 2:
+            suffix = get_first_letter(tmp[-1])
+        return get_lang_code(" ".join(tmp[0:-1])) + suffix
 
 
 def get_languages_from_cards(data: str) -> List[str]:
