@@ -3,3 +3,9 @@ build/
 *.cbin
 *.json
 *.pyc
+
+*.gch
+
+mse_langs.c
+
+mse_langs.h
