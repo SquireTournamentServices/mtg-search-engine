@@ -173,8 +173,7 @@ extern const char *{ERROR_VAR};
 const char *{GET_LANG_NAME_FUNC}({LANG_CODES_ENUM_T} code);
 
 /// Gets the language code as a string
-const char *{GET_LANG_CODE_FUNC}({LANG_CODES_ENUM_T} code);
-"""
+const char *{GET_LANG_CODE_FUNC}({LANG_CODES_ENUM_T} code);"""
     return output
 
 

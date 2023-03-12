@@ -49,6 +49,14 @@ add_definitions("-DMTG_BINARY_VERSION=1")
 set(COMPILER_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -g")
 set(CMAKE_C_FLAGS_DEBUG "${COMPILER_FLAGS} -DDEBUG")
 
+set(LANG_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.h
+                      ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.c)
+add_custom_command(
+  OUTPUT ${LANG_SOURCE_FILES}
+  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_languages_files.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+add_custom_target(LANGS_FILES DEPENDS ${LANG_SOURCE_FILES})
+
 set(SRC
     ./testing_h/ansi_colour.h
     ./testing_h/testing.h
@@ -66,7 +74,8 @@ set(SRC
     ./src/thread_pool.h
     ./src/thread_pool.c
     ./src/io_utils.h
-    ./src/io_utils.c)
+    ./src/io_utils.c
+    ${LANG_SOURCE_FILES})
 set(TESTS
     ${SRC}
     ./tests/main.c
@@ -102,14 +111,22 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 
 add_library(mtg-search-engine ${SRC})
 target_link_libraries(mtg-search-engine PRIVATE ${LIBS})
+target_include_directories(mtg-search-engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
+                                                    ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(mtg-search-engine-cli ${SRC} ./src/main.c)
 target_link_libraries(mtg-search-engine-cli ${LIBS})
+target_include_directories(
+  mtg-search-engine-cli PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
+                               ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(mtg-search-engine-tests ${TESTS})
 target_link_libraries(mtg-search-engine-tests PUBLIC ${LIBS})
 target_include_directories(mtg-search-engine-tests
                            PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(
+  mtg-search-engine-tests PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
+                                 ${CMAKE_CURRENT_SOURCE_DIR})
 
 file(COPY mem_tests.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY mem_tests.py DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
