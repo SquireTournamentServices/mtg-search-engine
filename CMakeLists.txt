@@ -55,7 +55,6 @@ add_custom_command(
   OUTPUT ${LANG_SOURCE_FILES}
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_languages_files.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-add_custom_target(LANGS_FILES DEPENDS ${LANG_SOURCE_FILES})
 
 set(SRC
     ./testing_h/ansi_colour.h
