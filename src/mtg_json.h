@@ -6,6 +6,12 @@
 #define MSE_GZ_SUFFIX ".gz"
 #define ATOMIC_CARDS_URL "https://mtgjson.com/api/v5/AtomicCards.json"
 
+/// Exposed internal method for use within internal testing
+size_t __mtg_json_write_callback(char *ptr,
+                                 size_t size,
+                                 size_t nmemb,
+                                 void *data);
+
 /// This will store the atomic cards and, sets. Each card is stored once and,
 /// only once. cards and, sets are both stored as binary trees sorted by UUIDs.
 /// other indices need to be generated afterwards.

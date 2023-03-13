@@ -7,10 +7,10 @@
 #include <curl/curl.h>
 #include <jansson.h>
 
-static size_t __write_callback(char *ptr,
-                               size_t size,
-                               size_t nmemb,
-                               void *data)
+size_t __mtg_json_write_callback(char *ptr,
+                                 size_t size,
+                                 size_t nmemb,
+                                 void *data)
 {
     FILE *w = (FILE *) data;
     fwrite(ptr, size, nmemb, w);
@@ -37,7 +37,7 @@ static void __do_get_atomic_cards_curl(FILE *w)
         curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
 
         // Set response write
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &__write_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &__mtg_json_write_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) w);
 
         res = curl_easy_perform(curl);
