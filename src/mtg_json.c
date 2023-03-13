@@ -4,6 +4,7 @@
 #include "../testing_h/testing.h"
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 #include <curl/curl.h>
 #include <jansson.h>
 
@@ -61,8 +62,17 @@ static void __get_atomic_cards_curl_thread(void *data, struct thread_pool_t *poo
     fclose(w);
 }
 
+int __parse_atomic_cards(mtg_atomic_cards_t *ret, json_t *cards)
+{
+    ASSERT(json_is_array(cards));
+
+    return 1;
+}
+
 int get_atomic_cards(mtg_atomic_cards_t *ret, thread_pool_t *pool)
 {
+    memset(&ret, 0, sizeof(ret));
+
     // Create the pipe that will be used for IPC
     int fid[2];
     int c = pipe(fid);
@@ -93,12 +103,22 @@ int get_atomic_cards(mtg_atomic_cards_t *ret, thread_pool_t *pool)
     }
 
     // This only runs if there was no error
-    // TODO: process the json innit mate.
+    int status = __parse_atomic_cards(ret, json);
     json_decref(json);
+
+    if (!status) {
+        lprintf(LOG_ERROR, "Cannot parse atomic json into cards and, sets\n");
+        ret_code = 0;
+        goto cleanup;
+    }
 
 cleanup:
     ;
     fclose(r);
+    if (!ret_code) {
+        lprintf(LOG_INFO, "Could not get atomic cards\n");
+        free_atomic_cards(ret);
+    }
     return ret_code;
 }
 

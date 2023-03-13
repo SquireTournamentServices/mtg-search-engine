@@ -2,6 +2,7 @@
 #include "./thread_pool.h"
 #include "./card.h"
 #include "./set.h"
+#include <jansson.h>
 
 #define MSE_GZ_SUFFIX ".gz"
 #define ATOMIC_CARDS_URL "https://mtgjson.com/api/v5/AtomicCards.json"
@@ -22,8 +23,15 @@ typedef struct mtg_atomic_cards_t {
     mtg_set_t *sets;
 } mtg_atomic_cards_t;
 
+/// Exposed internal method for use within internal testing
+/// This method will parse the json cards and create an index for set names
+int __parse_atomic_cards(mtg_atomic_cards_t *ret, json_t *cards);
+
 /// Returns 1 on success, 0 on failure
+/// Do not call free_atomic_cards on fail
 int get_atomic_cards(mtg_atomic_cards_t *ret, thread_pool_t *pool);
+
+/// Frees atomic cards
 void free_atomic_cards(mtg_atomic_cards_t *cards);
 
 /// This will store all cards  and, their indexes

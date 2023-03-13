@@ -5,6 +5,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <jansson.h>
+
+static int test_free_atomic_cards()
+{
+    mtg_atomic_cards_t ret;
+    memset(&ret, 0, sizeof(ret));
+    free_atomic_cards(&ret);
+    return 1;
+}
 
 static int test_init_free()
 {
@@ -13,10 +22,9 @@ static int test_init_free()
 
     mtg_atomic_cards_t ret;
     ASSERT(get_atomic_cards(&ret, &pool));
-
-    sleep(2);
     free_atomic_cards(&ret);
 
+    sleep(1); // This lets the cURL thread clean itself up before being killed
     ASSERT(free_pool(&pool));
     return 1;
 }
@@ -46,5 +54,37 @@ static int test_curl_write_callback()
     return 1;
 }
 
-SUB_TEST(test_mtg_json, {&test_init_free, "Test init and, free"},
-{&test_curl_write_callback, "Test cURL write callback"})
+static json_t *get_atomic_cards_from_file()
+{
+    FILE *f = fopen("./AllPrintings.json", "rb");
+    json_error_t error;
+    json_t *ret = json_loadf(f, 0, &error);
+
+    if (ret == NULL) {
+        lprintf(LOG_ERROR, "Error: %100s\n", error.text);
+    }
+    fclose(f);
+    return ret;
+}
+
+static int test_parse_atomic_cards_sets()
+{
+    json_t *json = get_atomic_cards_from_file();
+    ASSERT(json != NULL);
+
+    mtg_atomic_cards_t ret;
+    memset(&ret, 0, sizeof(ret));
+    ASSERT(__parse_atomic_cards(&ret, json));
+
+    // TODO: Check the sets
+
+    free_atomic_cards(&ret);
+
+    json_decref(json);
+    return 1;
+}
+
+SUB_TEST(test_mtg_json, {&test_free_atomic_cards, "Test free zeroed atomic cards struct"},
+{&test_init_free, "Test init and, free"},
+{&test_curl_write_callback, "Test cURL write callback"},
+{&test_parse_atomic_cards_sets, "Test that __parse_atomic_cards reads the sets correctly"})
