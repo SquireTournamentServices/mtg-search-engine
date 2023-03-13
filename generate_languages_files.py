@@ -165,8 +165,6 @@ def generate_output_header(langs: dict) -> str:
 // Language codes strings
 {langs_codes_consts}
 
-const char *{ERROR_VAR} = "Error - Language not found";
-
 extern const char *{ERROR_VAR};
 
 /// Gets the language name for a code as a string
@@ -185,6 +183,9 @@ def generate_output_unit(langs: dict) -> str:
             for lang in langs
         ]
     )
+    lang_name_cases += f"""
+    case MSE_LANGS_END:
+        return {ERROR_VAR};"""
     lang_name_body: str = (
         """{
     switch(code) {
@@ -205,6 +206,9 @@ def generate_output_unit(langs: dict) -> str:
             for lang in langs
         ]
     )
+    lang_code_cases += f"""
+    case MSE_LANGS_END:
+        return {ERROR_VAR};"""
     lang_code_body: str = (
         """{
     switch(code) {
@@ -235,6 +239,8 @@ def generate_output_unit(langs: dict) -> str:
 
 // Name consts
 {langs_names_consts}
+
+const char *{ERROR_VAR} = "Error - Language not found";
 
 // Name str getter
 const char *{GET_LANG_NAME_FUNC}({LANG_CODES_ENUM_T} code)
