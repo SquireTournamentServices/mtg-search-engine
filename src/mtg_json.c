@@ -98,7 +98,7 @@ int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards)
     size_t count = 0;
     json_object_foreach(data, key, value) {
         __handle_all_printings_cards_set(ret, key, value);
-        count ++;
+        count++;
     }
 
     lprintf(LOG_INFO, "Found %ud sets\n", count);
