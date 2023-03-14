@@ -2,11 +2,36 @@
 #include "./io_utils.h"
 #include "../testing_h/testing.h"
 #include <string.h>
+#include <stdlib.h>
+
+int parse_card_json(json_t *json, mtg_card_t *card)
+{
+    ASSERT(json != NULL);
+    ASSERT(card != NULL);
+
+    memset(card, 0, sizeof(*card));
+
+    // Read name
+    json_t *name_o = json_object_get(json, "name");
+    ASSERT(name_o != NULL);
+    ASSERT(json_is_string(name_o));
+    card->name = strdup(json_string_value(name_o));
+
+    // Read oracle
+    json_t *oracle_o = json_object_get(json, "originalText");
+    ASSERT(oracle_o != NULL);
+    ASSERT(json_is_string(oracle_o));
+    card->oracle_text = json_string_value(oracle_o);
+
+    return 1;
+}
 
 int write_card(FILE *f, mtg_card_t *card)
 {
     ASSERT(write_uuid(f, card->id));
     ASSERT(write_str(f, card->name));
+    ASSERT(write_str(f, card->mana_cost));
+    ASSERT(write_str(f, card->oracle_text));
     ASSERT(write_size_t(f, card->types_count));
     for (size_t i = 0; i < card->types_count; i++) {
         ASSERT(write_str(f, card->types[i]));
@@ -30,6 +55,8 @@ int read_card(FILE *f, mtg_card_t *card)
     memset(card, 0, sizeof(*card));
     ASSERT(read_uuid(f, &card->id));
     ASSERT(read_str(f, &card->name));
+    ASSERT(read_str(f, &card->mana_cost));
+    ASSERT(read_str(f, &card->oracle_text));
     ASSERT(read_size_t(f, &card->types_count));
     for (size_t i = 0; i < card->types_count; i++) {
         ASSERT(read_str(f, &card->types[i]));
@@ -53,5 +80,35 @@ int read_card(FILE *f, mtg_card_t *card)
 
 void free_card(mtg_card_t *card)
 {
+    if (card == NULL) {
+        return;
+    }
 
+    if (card->name != NULL) {
+        free(card->name);
+    }
+
+    if (card->mana_cost != NULL) {
+        free(card->mana_cost);
+    }
+
+    if (card->oracle_text != NULL) {
+        free(card->oracle_text);
+    }
+
+    if (card->flavour_text != NULL) {
+        free(card->flavour_text);
+    }
+
+    for (size_t i = 0; i < card->types_count; i++) {
+        if (card->types[i] != NULL) {
+            free(card->types[i]);
+        }
+    }
+
+    for (size_t i = 0; i < card->set_codes_len; i++) {
+        if(card->set_codes[i] != NULL) {
+            free(card->set_codes[i]);
+        }
+    }
 }

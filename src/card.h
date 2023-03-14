@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <limits.h>
+#include <jansson.h>
 #include "./uuid.h"
 #include "./set.h"
 
@@ -27,6 +28,7 @@ typedef struct mtg_card_t {
     uuid_t id;
     char *name;
     char *mana_cost;
+    char *oracle_text;
     size_t types_count;
     char **types;
     double power;
@@ -38,6 +40,7 @@ typedef struct mtg_card_t {
     mtg_set_code_t *set_codes;
 } mtg_card_t;
 
+int parse_card_json(json_t *json, mtg_card_t *card);
 int write_card(FILE *f, mtg_card_t *card);
 int read_card(FILE *f, mtg_card_t *card);
 
