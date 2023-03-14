@@ -10,6 +10,7 @@
 
 int parse_set_json(json_t *set_node, mtg_set_t *ret, const char *code)
 {
+    memset(ret, 0, sizeof(*ret));
     ASSERT(set_node != NULL);
     ASSERT(ret != NULL);
 
@@ -49,3 +50,10 @@ int read_set(FILE *f, mtg_set_t *set)
     return 1;
 }
 
+void free_set(mtg_set_t *set)
+{
+    if (set->name != NULL) {
+        free(set->name);
+        set->name = NULL;
+    }
+}

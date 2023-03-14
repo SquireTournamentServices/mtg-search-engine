@@ -70,6 +70,7 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret, const char 
 {
     mtg_set_t set;
     ASSERT(parse_set_json(set_node, &set, set_code));
+    free_set(&set);
     return 1;
 }
 

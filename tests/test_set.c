@@ -23,6 +23,8 @@ static int test_parse_set_json()
     ASSERT(set.release.tm_year == 2002 - 1900);
     ASSERT(set.release.tm_mon == 7 - 1);
     ASSERT(set.release.tm_mday == 10);
+
+    free_set(&set);
     return 1;
 }
 
@@ -43,6 +45,8 @@ static int test_parse_set_json_long_code()
     ASSERT(set.release.tm_year == 2002 - 1900);
     ASSERT(set.release.tm_mon == 7 - 1);
     ASSERT(set.release.tm_mday == 10);
+
+    free_set(&set);
     return 1;
 }
 
