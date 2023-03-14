@@ -115,6 +115,31 @@ static int test_tree_insert_2()
     return 1;
 }
 
+static int test_tree_insert_3()
+{
+    time_t t1 = time(NULL);
+    tree_node *tree = init_tree_node(NULL, &cmp_size_t, (void *) 1L);
+    ASSERT(tree != NULL);
+
+    // Add to tree
+    for (size_t i = 0; i < 16; i++) {
+        tree_node *node = init_tree_node(NULL, &cmp_size_t, (void *) random());
+        ASSERT(node != NULL);
+        insert_node(tree, node);
+    }
+
+    time_t t2 = time(NULL);
+    ASSERT(t2 - t1 <= MAX_TIME);
+
+    print_tree(tree);
+    lprintf(LOG_INFO, "Tree height %lu for %lu nodes\n", tree->height, MAX_NODES);
+    ASSERT(test_heights(tree));
+
+    free_tree(tree);
+    return 1;
+}
+
 SUB_TEST(test_avl_tree, {&test_tree_init_free, "Test AVL tree init free"},
 {&test_tree_insert, "Test tree insert"},
-{&test_tree_insert_2, "Test tree insert 2"})
+{&test_tree_insert_2, "Test tree insert 2"},
+{&test_tree_insert_3, "Test tree insert 3"})
