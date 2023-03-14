@@ -76,6 +76,8 @@ set(SRC
     ./src/thread_pool.c
     ./src/io_utils.h
     ./src/io_utils.c
+    ./src/avl_tree.h
+    ./src/avl_tree.c
     ${LANG_SOURCE_FILES})
 set(TESTS
     ./tests/main.c
@@ -88,7 +90,9 @@ set(TESTS
     ./tests/test_io_utils.h
     ./tests/test_io_utils.c
     ./tests/test_set.h
-    ./tests/test_set.c)
+    ./tests/test_set.c
+    ./tests/test_avl_tree.h
+    ./tests/test_avl_tree.c)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)

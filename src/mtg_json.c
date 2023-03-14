@@ -150,7 +150,6 @@ int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
     }
 
 cleanup:
-    ;
     fclose(r);
     if (!ret_code) {
         lprintf(LOG_INFO, "Could not get atomic cards\n");
