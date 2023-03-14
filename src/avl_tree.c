@@ -5,6 +5,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+static size_t __tree_height(tree_node *node)
+{
+    if (node == NULL) {
+        return 0;
+    }
+    return node->height;
+}
+
 void free_tree(tree_node *tree)
 {
     if (tree->l) {
@@ -28,40 +36,13 @@ int tree_balance(tree_node *root)
     lh = rh = 0;
 
     if (root->l) {
-        lh = tree_height(root->l);
+        lh = __tree_height(root->l);
     }
     if (root->r) {
-        rh = tree_height(root->r);
+        rh = __tree_height(root->r);
     }
 
     return lh - rh;
-}
-
-static size_t __tree_height(tree_node *node, int h)
-{
-    int h1, h2;
-    h2 = h1 = 0;
-
-    if (node->l) {
-        h1 = __tree_height(node->l, h + 1);
-    }
-
-    if (node->r) {
-        h2 = __tree_height(node->r, h + 1);
-    }
-
-    int ret = MAX(h1, h2);
-    // Check for leaf
-    if (ret == 0) {
-        return h + 1;
-    } else {
-        return ret;
-    }
-}
-
-size_t tree_height(tree_node *node)
-{
-    return __tree_height(node, 0);
 }
 
 tree_node *init_tree_node(void (*free_payload)(void *payload),
@@ -82,23 +63,23 @@ tree_node *init_tree_node(void (*free_payload)(void *payload),
     tree->payload = payload;
     tree->cmp_payload = cmp_payload;
     tree->free_payload = free_payload;
+    tree->height = 1;
+
     return tree;
 }
 
 static void __print_tree(tree_node *tree, int h)
 {
-    for (int i = 0; i < h; i++) printf("  |");
-    printf("  |> %p\n", tree->payload);
+    for (int i = 0; i < h; i++) {
+        printf("  |");
+    }
+    printf("  |> %p %lu\n", tree->payload, tree->height);
 
     if (tree->l)  {
         __print_tree(tree->l, h + 1);
-    } else  {
-        puts("--");
     }
     if (tree->r) {
         __print_tree(tree->r, h + 1);
-    } else {
-        puts("--");
     }
 }
 
@@ -121,6 +102,12 @@ static void __rotate_l(tree_node *root)
     tree_node *tmp2 = root->l->r;
     root->l->r = root->r;
     root->r = tmp2;
+
+    // Update heights
+    root->l->height = MAX(__tree_height(root->l->l),
+                          __tree_height(root->l->r)) + 1;
+    root->height = MAX(__tree_height(root->l),
+                       __tree_height(root->r)) + 1;
 }
 
 static void __rotate_r(tree_node *root)
@@ -137,10 +124,19 @@ static void __rotate_r(tree_node *root)
     tree_node *tmp2 = root->r->l;
     root->r->l = root->l;
     root->l = tmp2;
+
+    // Update heights
+    root->r->height = MAX(__tree_height(root->r->l),
+                          __tree_height(root->r->r)) + 1;
+    root->height = MAX(__tree_height(root->l),
+                       __tree_height(root->r)) + 1;
 }
 
 void insert_node(tree_node *root, tree_node *node)
 {
+    root->height++;
+
+    // BST insert
     if (root->cmp_payload(node->payload, root->payload) <= 0) {
         // Add left
         if (root->l) {
@@ -158,6 +154,10 @@ void insert_node(tree_node *root, tree_node *node)
             return;
         }
     }
+
+    // Set height
+    root->height = MAX(__tree_height(root->l),
+                       __tree_height(root->r)) + 1;
 
     // Balance trees
     int balance = tree_balance(root);

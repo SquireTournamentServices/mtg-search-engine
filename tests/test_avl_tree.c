@@ -2,6 +2,24 @@
 #include "../testing_h/testing.h"
 #include "../src/avl_tree.h"
 #include <string.h>
+#include <time.h>
+
+static int __test_heights(tree_node *root, size_t h)
+{
+    if (root == NULL) {
+        return 1;
+    }
+
+    ASSERT(root->height < h);
+    ASSERT(__test_heights(root->l, h - 1));
+    ASSERT(__test_heights(root->r, h - 1));
+    return 1;
+}
+
+static int test_heights(tree_node *root)
+{
+    return __test_heights(root, root->height + 1);
+}
 
 static int cmp_size_t(void *_a, void *_b)
 {
@@ -20,15 +38,19 @@ static int test_tree_init_free()
 {
     tree_node *node = init_tree_node(NULL, &cmp_size_t, (void *) 1L);
     ASSERT(node != NULL);
+    ASSERT(node->height == 1);
     free_tree(node);
 
     return 1;
 }
 
-#define MAX_NODES 10000
+// There will be about 30,000 MTG cards at some point, it should be perform somewhat well with them
+#define MAX_NODES 30000
+#define MAX_TIME 3
 
 static int test_tree_insert()
 {
+    time_t t1 = time(NULL);
     tree_node *tree = init_tree_node(NULL, &cmp_size_t, (void *) 1L);
     ASSERT(tree != NULL);
 
@@ -39,7 +61,12 @@ static int test_tree_insert()
         insert_node(tree, node);
     }
 
-    lprintf(LOG_INFO, "Tree height %lu for %lu nodes\n", tree_height(tree), MAX_NODES);
+    time_t t2 = time(NULL);
+    ASSERT(t2 - t1 <= MAX_TIME);
+
+    lprintf(LOG_INFO, "Tree height %lu for %lu nodes\n", tree->height, MAX_NODES);
+    ASSERT(test_heights(tree));
+
     free_tree(tree);
     return 1;
 }
@@ -59,6 +86,7 @@ static int cmp_int_pointer(void *_a, void *_b)
 
 static int test_tree_insert_2()
 {
+    time_t t1 = time(NULL);
     int *ptr = malloc(sizeof(*ptr));
     ASSERT(ptr != NULL);
     *ptr = random();
@@ -77,7 +105,12 @@ static int test_tree_insert_2()
         insert_node(tree, node);
     }
 
-    lprintf(LOG_INFO, "Tree height %lu for %lu node\n", tree_height(tree), MAX_NODES);
+    time_t t2 = time(NULL);
+    ASSERT(t2 - t1 <= MAX_TIME);
+
+    lprintf(LOG_INFO, "Tree height %lu for %lu node\n", tree->height, MAX_NODES);
+    ASSERT(test_heights(tree));
+
     free_tree(tree);
     return 1;
 }
