@@ -9,9 +9,12 @@ typedef struct tree_node {
     struct tree_node *r;
     void *payload;
     void (*free_payload)(void *payload);
+    int (*cmp_payload)(void *a, void *b);
 } tree_node;
 
-tree_node *init_tree_node();
+tree_node *init_tree_node(void (*free_payload)(void *payload),
+                          int (*cmp_payload)(void *a, void *b),
+                          void *payload);
 size_t tree_height(tree_node *node);
 int tree_balance(tree_node *node);
 void free_tree(tree_node *tree);

@@ -1,4 +1,5 @@
 #include "./avl_tree.h"
+#include "../testing_h/testing.h"
 #include <sys/param.h> // MAX
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,10 +64,24 @@ size_t tree_height(tree_node *node)
     return __tree_height(node, 0);
 }
 
-tree_node *init_tree_node()
+tree_node *init_tree_node(void (*free_payload)(void *payload),
+                          int (*cmp_payload)(void *a, void *b),
+                          void *payload)
 {
+    if (cmp_payload == NULL) {
+        lprintf(LOG_ERROR, "Cannot have a NULL comparison function\n");
+        return NULL;
+    }
+
     tree_node *tree = malloc(sizeof * tree);
+    if (tree == NULL) {
+        lprintf(LOG_ERROR, "Cannot init tree node\n");
+        return tree;
+    }
     memset(tree, 0, sizeof * tree);
+    tree->payload = payload;
+    tree->cmp_payload = cmp_payload;
+    tree->free_payload = free_payload;
     return tree;
 }
 
@@ -126,7 +141,7 @@ static void __rotate_r(tree_node *root)
 
 void insert_node(tree_node *root, tree_node *node)
 {
-    if (node->payload < root->payload) {
+    if (root->cmp_payload(node->payload, root->payload) <= 0) {
         // Add left
         if (root->l) {
             insert_node(root->l, node);
