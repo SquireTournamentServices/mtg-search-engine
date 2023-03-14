@@ -9,4 +9,4 @@
 	url = https://github.com/curl/curl
 [submodule "strptime"]
 	path = strptime
-	url = https://github.com/res2001/strptime
+	url = https://github.com/djpiper28/strptime
