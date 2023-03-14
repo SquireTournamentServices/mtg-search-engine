@@ -83,6 +83,25 @@ static int test_set_code_read_write()
     return 1;
 }
 
+static int test_uuid_cmp()
+{
+    uuid_t a, b;
+    memset(a.bytes, 0, sizeof(a.bytes));
+    memset(b.bytes, 0, sizeof(b.bytes));
+
+    ASSERT(uuid_cmp(&a, &b) == 0);
+
+    a.bytes[0] = 0xFF;
+    ASSERT(uuid_cmp(&a, &b) > 1);
+
+    a.bytes[0] = 0;
+    b.bytes[0] = 0xFF;
+    ASSERT(uuid_cmp(&a, &b) < 1);
+
+    return 1;
+}
+
 SUB_TEST(test_uuid, {&test_uuid_read_write, "UUID read and, write"},
 {&test_uuid_from_string, "UUID from string"},
-{&test_set_code_read_write, "Set code read and, write"})
+{&test_set_code_read_write, "Set code read and, write"},
+{&test_uuid_cmp, "Test UUID compare"})

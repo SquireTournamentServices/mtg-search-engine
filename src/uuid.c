@@ -77,3 +77,8 @@ int read_set_code(FILE *f, mtg_set_code_t *code)
     size_t r = fread(code, sizeof(mtg_set_code_t), 1, f);
     return r == 1;
 }
+
+int uuid_cmp(uuid_t *a, uuid_t *b)
+{
+    return memcmp(a->bytes, b->bytes, sizeof(a->bytes));
+}
