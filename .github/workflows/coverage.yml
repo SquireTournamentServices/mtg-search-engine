@@ -102,6 +102,12 @@ jobs:
           valgrind python3 astyle qt6-l10n-tools \
           libgl1-mesa-dev libjemalloc-dev libcurl4-openssl-dev \
           libdwarf-dev libelf-dev
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'pip' # caching pip dependencies
+    - run: pip install -r requirements.txt
         
     - name: Run Tests and Coverage
       shell: bash

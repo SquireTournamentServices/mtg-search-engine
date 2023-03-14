@@ -95,6 +95,12 @@ jobs:
           cmake gcovr valgrind python3 astyle \
           libgl1-mesa-dev libjemalloc-dev libcurl4-openssl-dev \
           libdwarf-dev libelf-dev libjansson-dev
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'pip' # caching pip dependencies
+    - run: pip install -r requirements.txt
           
     - name: Make Release
       shell: bash
@@ -159,6 +165,12 @@ jobs:
           brew install python3
           brew install curl
           brew install openssl
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+      - run: pip install -r requirements.txt
           
       - name: Build on Xcode ${{matrix.xcode}}
         shell: bash
@@ -214,6 +226,12 @@ jobs:
         
       - name: Install curl
         run: choco install curl -y
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+      - run: pip install -r requirements.txt
         
       - name: Build Squire Desktop
         id: build
