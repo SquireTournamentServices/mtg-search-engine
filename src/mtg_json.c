@@ -95,10 +95,13 @@ int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards)
     // A nice macro in jansson <3
     const char *key;
     json_t *value;
+    size_t count = 0;
     json_object_foreach(data, key, value) {
-        lprintf(LOG_INFO, "Found set %s\n", key);
         __handle_all_printings_cards_set(ret, key, value);
+        count ++;
     }
+
+    lprintf(LOG_INFO, "Found %ud sets\n", count);
 
     return 1;
 }
