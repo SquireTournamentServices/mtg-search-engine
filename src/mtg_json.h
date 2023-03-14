@@ -4,7 +4,7 @@
 #include "./set.h"
 #include <jansson.h>
 
-#define ATOMIC_CARDS_URL "https://mtgjson.com/api/v5/AllPrintings.json.bz2"
+#define ATOMIC_CARDS_URL "https://mtgjson.com/api/v5/AllPrintings.json"
 
 /// Exposed internal method for use within internal testing
 size_t __mtg_json_write_callback(char *ptr,
