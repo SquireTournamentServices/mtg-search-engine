@@ -13,7 +13,7 @@ int read_uuid(FILE *f, uuid_t *uuid); // Returns 0 on error
 // Future prrof it a bit by subtracting one from the number
 #define MIN_SET_CODE_LEN (3 - __MSE_FUTURE_PROOF)
 // Future proof it a bit by adding one to the number
-#define MAX_SET_CODE_LEN (4 + __MSE_FUTURE_PROOF)
+#define MAX_SET_CODE_LEN (6 + __MSE_FUTURE_PROOF)
 typedef unsigned char mtg_set_code_t[MAX_SET_CODE_LEN];
 
 int write_set_code(FILE *f, mtg_set_code_t code); // Returns 0 on error
