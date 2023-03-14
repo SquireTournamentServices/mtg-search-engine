@@ -99,12 +99,6 @@ setup_target_for_coverage_gcovr_xml(
 
 set(LIBS jansson curl pthread m)
 
-add_subdirectory(jansson)
-include_directories(${CMAKE_BINARY_DIR}/squire_ffi ${JANSSON_INCLUDE_DIRS})
-
-add_subdirectory(curl)
-include_directories(${CURL_INCLUDE_DIR})
-
 set(LIBS jansson CURL::libcurl pthread m)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 
@@ -113,8 +107,8 @@ target_link_libraries(mtg-search-engine PRIVATE ${LIBS})
 target_include_directories(mtg-search-engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
                                                     ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(mtg-search-engine-cli ${SRC} ./src/main.c)
-target_link_libraries(mtg-search-engine-cli ${LIBS})
+add_executable(mtg-search-engine-cli ./src/main.c)
+target_link_libraries(mtg-search-engine-cli ${LIBS} mtg-search-engine)
 target_include_directories(
   mtg-search-engine-cli PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
                                ${CMAKE_CURRENT_SOURCE_DIR})
