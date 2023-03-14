@@ -48,7 +48,7 @@ uuid_t from_string(char *str, int *status)
 
     if (*status && j != 2 * sizeof(ret.bytes)) {
         *status = 0;
-        lprintf(LOG_ERROR, "UUID has incorrect length %s - read %d nibbles\n", str, j);
+        lprintf(LOG_ERROR, "UUID has incorrect length %s - read %lu nibbles\n", str, j);
     }
 
     return ret;
