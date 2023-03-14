@@ -7,11 +7,11 @@
 #include <unistd.h>
 #include <jansson.h>
 
-static int test_free_atomic_cards()
+static int test_free_all_printings_cards()
 {
-    mtg_atomic_cards_t ret;
+    mtg_all_printings_cards_t ret;
     memset(&ret, 0, sizeof(ret));
-    free_atomic_cards(&ret);
+    free_all_printings_cards(&ret);
     return 1;
 }
 
@@ -20,9 +20,9 @@ static int test_init_free()
     thread_pool_t pool;
     ASSERT(init_pool(&pool));
 
-    mtg_atomic_cards_t ret;
-    ASSERT(get_atomic_cards(&ret, &pool));
-    free_atomic_cards(&ret);
+    mtg_all_printings_cards_t ret;
+    ASSERT(get_all_printings_cards(&ret, &pool));
+    free_all_printings_cards(&ret);
 
     sleep(1); // This lets the cURL thread clean itself up before being killed
     ASSERT(free_pool(&pool));
@@ -54,7 +54,7 @@ static int test_curl_write_callback()
     return 1;
 }
 
-static json_t *get_atomic_cards_from_file()
+static json_t *get_all_printings_cards_from_file()
 {
     FILE *f = fopen("./AllPrintings.json", "rb");
     json_error_t error;
@@ -67,24 +67,32 @@ static json_t *get_atomic_cards_from_file()
     return ret;
 }
 
-static int test_parse_atomic_cards_sets()
+// Some vile testing globals
+mtg_all_printings_cards_t test_cards;
+json_t *json;
+
+static int test_all_printings_cards_sets_found()
 {
-    json_t *json = get_atomic_cards_from_file();
+    return 1;
+}
+
+SUB_TEST(__test_atomic_card_props, {&test_all_printings_cards_sets_found, "Test atomic cards found sets"})
+
+static int test_parse_all_printings_cards_sets()
+{
+    json = get_all_printings_cards_from_file();
     ASSERT(json != NULL);
 
-    mtg_atomic_cards_t ret;
-    memset(&ret, 0, sizeof(ret));
-    ASSERT(__parse_atomic_cards(&ret, json));
+    memset(&test_cards, 0, sizeof(test_cards));
+    ASSERT(__parse_all_printings_cards(&test_cards, json));
+    ASSERT(__test_atomic_card_props() == 0);
 
-    // TODO: Check the sets
-
-    free_atomic_cards(&ret);
-
+    free_all_printings_cards(&test_cards);
     json_decref(json);
     return 1;
 }
 
-SUB_TEST(test_mtg_json, {&test_free_atomic_cards, "Test free zeroed atomic cards struct"},
+SUB_TEST(test_mtg_json, {&test_free_all_printings_cards, "Test free zeroed atomic cards struct"},
 {&test_init_free, "Test init and, free"},
 {&test_curl_write_callback, "Test cURL write callback"},
-{&test_parse_atomic_cards_sets, "Test that __parse_atomic_cards reads the sets correctly"})
+{&test_parse_all_printings_cards_sets, "Test that __parse_all_printings_cards reads the sets correctly"})
