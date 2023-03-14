@@ -1,6 +1,9 @@
 #include "./test_set.h"
 #include "../testing_h/testing.h"
 #include "../src/set.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <jansson.h>
 
@@ -28,7 +31,7 @@ static int test_parse_set_json()
     return 1;
 }
 
-#define SET_CODE_2 "POOP"
+#define SET_CODE_2 "UPLIST"
 
 // Some set codes are 4 characters wrong, lets test they work
 static int test_parse_set_json_long_code()
@@ -50,5 +53,46 @@ static int test_parse_set_json_long_code()
     return 1;
 }
 
+static int test_write_read_set()
+{
+    json_t *json = json_pack("{s:s, s:s}", "name", SET_NAME, "releaseDate", SET_RELEASE_DATE);
+    ASSERT(json != NULL);
+
+    mtg_set_t set;
+    ASSERT(parse_set_json(json, &set, SET_CODE_2));
+    json_decref(json);
+
+    ASSERT(memcmp(set.code, SET_CODE_2, strlen(SET_CODE_2)) == 0);
+    ASSERT(strcmp(set.name, SET_NAME) == 0);
+    ASSERT(set.release.tm_year == 2002 - 1900);
+    ASSERT(set.release.tm_mon == 7 - 1);
+    ASSERT(set.release.tm_mday == 10);
+
+    int fid[2];
+    ASSERT(pipe(fid) == 0);
+
+    FILE *r = fdopen(fid[0], "rb");
+    ASSERT(r != NULL);
+
+    FILE *w = fdopen(fid[1], "wb");
+    ASSERT(w != NULL);
+
+    ASSERT(write_set(w, set));
+    fclose(w);
+
+    mtg_set_t set_2;
+    ASSERT(read_set(r, &set_2));
+    fclose(r);
+
+    ASSERT(memcmp(set.code, set_2.code, sizeof(set.code)) == 0);
+    ASSERT(strcmp(set.name, set_2.name) == 0);
+    ASSERT(memcmp(&set.release, &set_2.release, sizeof(set.release)) == 0);
+
+    free_set(&set);
+    free_set(&set_2);
+    return 1;
+}
+
 SUB_TEST(test_set, {&test_parse_set_json, "Test parse set from JSON"},
-{&test_parse_set_json_long_code, "Test parse set from JSON with 4 letter code"})
+{&test_parse_set_json_long_code, "Test parse set from JSON with 6 letter code"},
+{&test_write_read_set, "Test write and read set"})

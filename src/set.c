@@ -34,11 +34,11 @@ int parse_set_json(json_t *set_node, mtg_set_t *ret, const char *code)
     return 1;
 }
 
-int write_set(FILE *f, mtg_set_t *set)
+int write_set(FILE *f, mtg_set_t set)
 {
-    ASSERT(write_str(f, set->name));
-    ASSERT(write_set_code(f, set->code));
-    ASSERT(write_tm(f, set->release));
+    ASSERT(write_str(f, set.name));
+    ASSERT(write_set_code(f, set.code));
+    ASSERT(write_tm(f, set.release));
     return 1;
 }
 
