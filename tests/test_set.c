@@ -121,6 +121,7 @@ static int test_set_cmp()
 
     json_decref(json);
     free_set(&set);
+    free_set(&set_2);
     return 1;
 }
 
