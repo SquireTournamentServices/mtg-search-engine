@@ -67,7 +67,7 @@ static void __get_all_printings_cards_curl_thread(void *data, struct thread_pool
 }
 
 int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret, json_t *set_node)
-{  
+{
     return 1;
 }
 
@@ -81,8 +81,8 @@ int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards)
     ASSERT(json_is_string(meta_date));
     ASSERT(json_is_string(meta_version));
 
-    lprintf(LOG_INFO, "Reading cards from MTGJSON (%s) released at: %s\n", 
-            json_string_value(meta_date), 
+    lprintf(LOG_INFO, "Reading cards from MTGJSON (%s) released at: %s\n",
+            json_string_value(meta_date),
             json_string_value(meta_version));
 
     // Iterate over all of the sets
