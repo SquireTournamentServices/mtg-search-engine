@@ -85,7 +85,7 @@ static int test_parse_all_printings_cards_sets()
 
     memset(&test_cards, 0, sizeof(test_cards));
     ASSERT(__parse_all_printings_cards(&test_cards, json));
-    ASSERT(__test_atomic_card_props() == 0);
+    ASSERT(__test_atomic_card_props());
 
     free_all_printings_cards(&test_cards);
     json_decref(json);
