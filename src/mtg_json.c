@@ -66,8 +66,10 @@ static void __get_all_printings_cards_curl_thread(void *data, struct thread_pool
     fclose(w);
 }
 
-int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret, json_t *set_node)
+int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret, const char *set_code, json_t *set_node)
 {
+    mtg_set_t set;
+    ASSERT(parse_set_json(set_node, &set, set_code));
     return 1;
 }
 
@@ -94,7 +96,7 @@ int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards)
     json_t *value;
     json_object_foreach(data, key, value) {
         lprintf(LOG_INFO, "Found set %s\n", key);
-        __handle_all_printings_cards_set(ret, value);
+        __handle_all_printings_cards_set(ret, key, value);
     }
 
     return 1;

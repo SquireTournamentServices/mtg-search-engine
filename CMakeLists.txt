@@ -49,8 +49,7 @@ add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 add_definitions("-D__FILENAME__=(__FILE__ + SOURCE_PATH_SIZE)")
 add_definitions("-DMTG_BINARY_VERSION=1")
 
-set(COMPILER_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -g")
-set(CMAKE_C_FLAGS_DEBUG "${COMPILER_FLAGS} -DDEBUG")
+set(CMAKE_C_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -g")
 
 set(LANG_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.h
                       ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.c)
@@ -79,7 +78,6 @@ set(SRC
     ./src/io_utils.c
     ${LANG_SOURCE_FILES})
 set(TESTS
-    ${SRC}
     ./tests/main.c
     ./tests/test_thread_pool.h
     ./tests/test_thread_pool.c
@@ -88,7 +86,9 @@ set(TESTS
     ./tests/test_uuid.h
     ./tests/test_uuid.c
     ./tests/test_io_utils.h
-    ./tests/test_io_utils.c)
+    ./tests/test_io_utils.c
+    ./tests/test_set.h
+    ./tests/test_set.c)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
@@ -100,7 +100,7 @@ append_coverage_compiler_flags()
 setup_target_for_coverage_gcovr_xml(
   NAME coverage EXECUTABLE mtg-search-engine-tests EXCLUDE ${GCOVR_EXCLUDE})
 
-set(LIBS jansson curl pthread m)
+set(LIBS jansson curl pthread m c)
 
 set(LIBS jansson CURL::libcurl pthread m)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
@@ -117,7 +117,7 @@ target_include_directories(
                                ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(mtg-search-engine-tests ${TESTS})
-target_link_libraries(mtg-search-engine-tests PUBLIC ${LIBS})
+target_link_libraries(mtg-search-engine-tests PUBLIC ${LIBS} mtg-search-engine)
 target_include_directories(mtg-search-engine-tests
                            PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_include_directories(

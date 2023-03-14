@@ -2,6 +2,7 @@
 #include "./io_utils.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 int write_double(FILE *f, double d)
 {

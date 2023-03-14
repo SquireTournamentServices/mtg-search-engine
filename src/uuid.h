@@ -9,7 +9,12 @@ uuid_t from_string(char *str, int *status);
 int write_uuid(FILE *f, uuid_t uuid); // Returns 0 on error
 int read_uuid(FILE *f, uuid_t *uuid); // Returns 0 on error
 
-typedef unsigned char mtg_set_code_t[3];
+#define __MSE_FUTURE_PROOF 1
+// Future prrof it a bit by subtracting one from the number
+#define MIN_SET_CODE_LEN (3 - __MSE_FUTURE_PROOF)
+// Future proof it a bit by adding one to the number
+#define MAX_SET_CODE_LEN (4 + __MSE_FUTURE_PROOF)
+typedef unsigned char mtg_set_code_t[MAX_SET_CODE_LEN];
 
 int write_set_code(FILE *f, mtg_set_code_t code); // Returns 0 on error
 int read_set_code(FILE *f, mtg_set_code_t *code); // returns 0 on error

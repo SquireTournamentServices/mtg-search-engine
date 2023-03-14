@@ -24,7 +24,7 @@ typedef struct mtg_all_printings_cards_t {
 
 /// Exposed internal method for use within internal testing
 /// This function will handle a set node and add the set and, cards
-int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret, json_t *set_node);
+int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret, const char *set_code, json_t *set_node);
 
 /// Exposed internal method for use within internal testing
 /// This method will parse the json cards and create an index for set names

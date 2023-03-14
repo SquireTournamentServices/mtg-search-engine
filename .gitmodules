@@ -1,3 +1,12 @@
 [submodule "testing_h"]
 	path = testing_h
 	url = https://github.com/djpiper28/testing.h
+[submodule "jansson"]
+	path = jansson
+	url = https://github.com/akheron/jansson
+[submodule "curl"]
+	path = curl
+	url = https://github.com/curl/curl
+[submodule "strptime"]
+	path = strptime
+	url = https://github.com/res2001/strptime
