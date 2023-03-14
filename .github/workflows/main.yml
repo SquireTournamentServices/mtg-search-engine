@@ -92,9 +92,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y --no-install-recommends build-essential \
-          cmake gcovr valgrind python3 astyle \
-          libgl1-mesa-dev libjemalloc-dev libcurl4-openssl-dev \
-          libdwarf-dev libelf-dev libjansson-dev
+          cmake gcovr valgrind python3 \
+          libcurl4-openssl-devlibjansson-dev
 
     - uses: actions/setup-python@v4
       with:
