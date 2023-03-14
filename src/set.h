@@ -15,3 +15,5 @@ int write_set(FILE *f, mtg_set_t set);
 int read_set(FILE *f, mtg_set_t *set);
 void free_set(mtg_set_t *set);
 
+int cmp_set(mtg_set_t *a, mtg_set_t *b);
+int avl_cmp_set(void *a, void *b);

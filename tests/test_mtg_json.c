@@ -22,6 +22,7 @@ static int test_init_free()
 
     mtg_all_printings_cards_t ret;
     ASSERT(get_all_printings_cards(&ret, &pool));
+    ASSERT(ret.set_tree->height > 0);
     free_all_printings_cards(&ret);
 
     sleep(1); // This lets the cURL thread clean itself up before being killed
@@ -73,6 +74,7 @@ json_t *json;
 
 static int test_all_printings_cards_sets_found()
 {
+    ASSERT(test_cards.set_tree->height > 0);
     return 1;
 }
 

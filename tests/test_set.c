@@ -93,6 +93,38 @@ static int test_write_read_set()
     return 1;
 }
 
+#define SET_CODE_CMP_1 "AAA"
+#define SET_CODE_CMP_2 "BBB"
+
+static int test_set_cmp()
+{
+    json_t *json = json_pack("{s:s, s:s}", "name", SET_NAME, "releaseDate", SET_RELEASE_DATE);
+    ASSERT(json != NULL);
+
+    mtg_set_t set;
+    ASSERT(parse_set_json(json, &set, SET_CODE_CMP_1));
+
+    mtg_set_t set_2;
+    ASSERT(parse_set_json(json, &set_2, SET_CODE_CMP_2));
+
+    ASSERT(cmp_set(&set, &set_2) < 0);
+    ASSERT(avl_cmp_set(&set, &set_2) < 0);
+
+    memcpy(set_2.code, set.code, sizeof(set.code));
+    ASSERT(cmp_set(&set, &set_2) == 0);
+    ASSERT(avl_cmp_set(&set, &set_2) == 0);
+
+    set.code[0] = 'b';
+    set_2.code[0] = 'a';
+    ASSERT(cmp_set(&set, &set_2) > 0);
+    ASSERT(avl_cmp_set(&set, &set_2) > 0);
+
+    json_decref(json);
+    free_set(&set);
+    return 1;
+}
+
 SUB_TEST(test_set, {&test_parse_set_json, "Test parse set from JSON"},
 {&test_parse_set_json_long_code, "Test parse set from JSON with 6 letter code"},
-{&test_write_read_set, "Test write and read set"})
+{&test_write_read_set, "Test write and read set"},
+{&test_set_cmp, "Test set cmp function"})

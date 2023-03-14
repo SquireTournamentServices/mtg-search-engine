@@ -66,16 +66,41 @@ static void __get_all_printings_cards_curl_thread(void *data, struct thread_pool
     fclose(w);
 }
 
-int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret, const char *set_code, json_t *set_node)
+static void __free_all_printings_cards_set(void *set)
 {
-    mtg_set_t set;
-    ASSERT(parse_set_json(set_node, &set, set_code));
-    free_set(&set);
+    free_set((mtg_set_t *) set);
+    free(set);
+}
+
+static void __insert_node(tree_node **root, tree_node *node)
+{
+    if (*root == NULL) {
+        *root = node;
+    } else {
+        insert_node(*root, node);
+    }
+}
+
+int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
+                                     const char *set_code,
+                                     json_t *set_node)
+{
+    mtg_set_t *set = malloc(sizeof(*set));
+    ASSERT(set != NULL);
+
+    ASSERT(parse_set_json(set_node, set, set_code));
+
+    tree_node *node = init_tree_node(&__free_all_printings_cards_set, &avl_cmp_set, set);
+    __insert_node(&ret->set_tree, node);
+
     return 1;
 }
 
 int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards)
 {
+    ASSERT(ret != NULL);
+    memset(ret, 0, sizeof(*ret));
+
     // Print debug information
     json_t *meta = json_object_get(cards, "meta");
     json_t *meta_date = json_object_get(meta, "date");
@@ -101,14 +126,16 @@ int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards)
         count++;
     }
 
-    lprintf(LOG_INFO, "Found %ud sets\n", count);
+    ret->set_count = count;
+    lprintf(LOG_INFO, "Found %lu sets\n", count);
 
     return 1;
 }
 
 int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
 {
-    memset(&ret, 0, sizeof(ret));
+    ASSERT(ret != NULL);
+    memset(ret, 0, sizeof(*ret));
 
     // Create the pipe that will be used for IPC
     int fid[2];
@@ -160,5 +187,8 @@ cleanup:
 
 void free_all_printings_cards(mtg_all_printings_cards_t *cards)
 {
-
+    if (cards->set_tree != NULL) {
+        free_tree(cards->set_tree);
+        cards->set_tree = NULL;
+    }
 }

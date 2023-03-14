@@ -57,3 +57,13 @@ void free_set(mtg_set_t *set)
         set->name = NULL;
     }
 }
+
+int cmp_set(mtg_set_t *a, mtg_set_t *b)
+{
+    return memcmp(a->code, b->code, sizeof(a->code));
+}
+
+int avl_cmp_set(void *a, void *b)
+{
+    return cmp_set((mtg_set_t *) a, (mtg_set_t *) b);
+}

@@ -2,6 +2,7 @@
 #include "./thread_pool.h"
 #include "./card.h"
 #include "./set.h"
+#include "./avl_tree.h"
 #include <jansson.h>
 
 #define ATOMIC_CARDS_URL "https://mtgjson.com/api/v5/AllPrintings.json"
@@ -16,15 +17,16 @@ size_t __mtg_json_write_callback(char *ptr,
 /// only once. cards and, sets are both stored as binary trees sorted by UUIDs.
 /// other indices need to be generated afterwards.
 typedef struct mtg_all_printings_cards_t {
-    size_t cards_len;
-    mtg_card_t *cards;
-    size_t sets_len;
-    mtg_set_t *sets;
+    size_t set_count;
+    /// AVL BST tree for the sets, sorted by set code
+    tree_node *set_tree;
 } mtg_all_printings_cards_t;
 
 /// Exposed internal method for use within internal testing
 /// This function will handle a set node and add the set and, cards
-int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret, const char *set_code, json_t *set_node);
+int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
+                                     const char *set_code,
+                                     json_t *set_node);
 
 /// Exposed internal method for use within internal testing
 /// This method will parse the json cards and create an index for set names
