@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static size_t __tree_height(tree_node *node)
+static size_t __tree_height(avl_tree_node *node)
 {
     if (node == NULL) {
         return 0;
@@ -13,7 +13,7 @@ static size_t __tree_height(tree_node *node)
     return node->height;
 }
 
-void free_tree(tree_node *tree)
+void free_tree(avl_tree_node *tree)
 {
     if (tree->l) {
         free_tree(tree->l);
@@ -28,33 +28,34 @@ void free_tree(tree_node *tree)
     free(tree);
 }
 
-int tree_balance(tree_node *root)
+int tree_balance(avl_tree_node *root)
 {
     if (!root) return 0;
 
     int lh, rh;
     lh = rh = 0;
 
-    if (root->l) {
+    if (root->l != NULL) {
         lh = __tree_height(root->l);
     }
-    if (root->r) {
+
+    if (root->r != NULL) {
         rh = __tree_height(root->r);
     }
 
     return lh - rh;
 }
 
-tree_node *init_tree_node(void (*free_payload)(void *payload),
-                          int (*cmp_payload)(void *a, void *b),
-                          void *payload)
+avl_tree_node *init_avl_tree_node(void (*free_payload)(void *payload),
+                                  int (*cmp_payload)(void *a, void *b),
+                                  void *payload)
 {
     if (cmp_payload == NULL) {
         lprintf(LOG_ERROR, "Cannot have a NULL comparison function\n");
         return NULL;
     }
 
-    tree_node *tree = malloc(sizeof * tree);
+    avl_tree_node *tree = malloc(sizeof * tree);
     if (tree == NULL) {
         lprintf(LOG_ERROR, "Cannot init tree node\n");
         return tree;
@@ -68,7 +69,7 @@ tree_node *init_tree_node(void (*free_payload)(void *payload),
     return tree;
 }
 
-static void __print_tree(tree_node *tree, int h)
+static void __print_tree(avl_tree_node *tree, int h)
 {
     for (int i = 0; i < h; i++) {
         printf("  |");
@@ -83,23 +84,25 @@ static void __print_tree(tree_node *tree, int h)
     }
 }
 
-void print_tree(tree_node *root)
+void print_tree(avl_tree_node *root)
 {
     __print_tree(root, 0);
 }
 
-static void __rotate_l(tree_node *root)
+static void __rotate_l(avl_tree_node *root)
 {
     /* Rotation (left):
       x            y
     y   c  ->    x   b
     a   b        a   c
      */
+
+    // Swap x and, y
     void *tmp = root->l->payload;
     root->l->payload = root->payload;
     root->payload = tmp;
 
-    tree_node *tmp2 = root->l->r;
+    avl_tree_node *tmp2 = root->l->r;
     root->l->r = root->r;
     root->r = tmp2;
 
@@ -110,18 +113,20 @@ static void __rotate_l(tree_node *root)
                        __tree_height(root->r)) + 1;
 }
 
-static void __rotate_r(tree_node *root)
+static void __rotate_r(avl_tree_node *root)
 {
     /* Rotation (right):
        x            y
      a   y  ->    b   x
        b   c        a   c
      */
+
+    // Swap x and, y
     void *tmp = root->r->payload;
     root->r->payload = root->payload;
     root->payload = tmp;
 
-    tree_node *tmp2 = root->r->l;
+    avl_tree_node *tmp2 = root->r->l;
     root->r->l = root->l;
     root->l = tmp2;
 
@@ -132,14 +137,23 @@ static void __rotate_r(tree_node *root)
                        __tree_height(root->r)) + 1;
 }
 
-static void __do_insert_node(tree_node *root, tree_node *node)
+static int __cmp_payload(avl_tree_node *a, avl_tree_node *b)
+{
+    if (a == NULL || b == NULL) {
+        return 0;
+    } else {
+        return a->cmp_payload(a->payload, b->payload);
+    }
+}
+
+static void __do_insert_node(avl_tree_node *root, avl_tree_node *node)
 {
     root->height++;
 
     // BST insert
-    if (root->cmp_payload(node->payload, root->payload) <= 0) {
+    if (__cmp_payload(root, node) <= 0) {
         // Add left
-        if (root->l) {
+        if (root->l != NULL) {
             insert_node(root->l, node);
         } else {
             root->l = node;
@@ -147,7 +161,7 @@ static void __do_insert_node(tree_node *root, tree_node *node)
         }
     } else {
         // Add right
-        if (root->r) {
+        if (root->r != NULL) {
             insert_node(root->r, node);
         } else {
             root->r = node;
@@ -161,24 +175,21 @@ static void __do_insert_node(tree_node *root, tree_node *node)
 
     // Balance trees
     int balance = tree_balance(root);
-    if (balance > 1) {
-        if (tree_balance(root->l) > 0) {
-            __rotate_l(root);
-        } else {
-            __rotate_l(root);
-            __rotate_r(root);
-        }
-    } else if (balance < -1) {
-        if (tree_balance(root->r) > 0) {
-            __rotate_r(root);
-            __rotate_l(root);
-        } else {
-            __rotate_r(root);
-        }
+
+    if (balance > 1 && __cmp_payload(root, node->l) < 0) {
+        __rotate_r(node);
+    } else if (balance < -1 && __cmp_payload(root, node->r) > 0) {
+        __rotate_l(node);
+    } else if (balance > 1 && __cmp_payload(root, node->l) > 0) {
+        __rotate_l(node->l);
+        __rotate_r(node);
+    } else if (balance < -1 && __cmp_payload(root, node->r) < 0) {
+        __rotate_r(node->r);
+        __rotate_l(node);
     }
 }
 
-int insert_node(tree_node *root, tree_node *node)
+int insert_node(avl_tree_node *root, avl_tree_node *node)
 {
     ASSERT(root != NULL);
     ASSERT(node != NULL);
@@ -189,7 +200,7 @@ int insert_node(tree_node *root, tree_node *node)
     return 1;
 }
 
-int find_payload(tree_node *node, void *payload)
+int find_payload(avl_tree_node *node, void *payload)
 {
     if (node == NULL) {
         return 0;

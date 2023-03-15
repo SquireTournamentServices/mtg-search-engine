@@ -78,7 +78,7 @@ static void __free_all_printings_cards_set(void *set)
     free(set);
 }
 
-static int __insert_node(tree_node **root, tree_node *node)
+static int __insert_node(avl_tree_node **root, avl_tree_node *node)
 {
     if (*root == NULL) {
         *root = node;
@@ -98,7 +98,7 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
     ASSERT(set != NULL);
     ASSERT(parse_set_json(set_node, set, set_code));
 
-    tree_node *node = init_tree_node(&__free_all_printings_cards_set, &avl_cmp_set, set);
+    avl_tree_node *node = init_avl_tree_node(&__free_all_printings_cards_set, &avl_cmp_set, set);
     ASSERT(__insert_node(&ret->set_tree, node));
 
     json_t *cards = json_object_get(set_node, "cards");
@@ -110,7 +110,7 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
     json_array_foreach(cards, index, value) {
         ASSERT(json_is_object(value));
         mtg_card_t *card = malloc(sizeof(*card));
-        node = init_tree_node(&__free_all_printings_cards_card, &avl_uuid_cmp, card);
+        node = init_avl_tree_node(&__free_all_printings_cards_card, &avl_uuid_cmp, card);
 
         ASSERT(parse_card_json(value, card));
         if (__insert_node(&ret->card_tree, node)) {

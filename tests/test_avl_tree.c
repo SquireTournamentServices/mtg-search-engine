@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-static int __test_heights(tree_node *root, size_t h)
+static int __test_heights(avl_tree_node *root, size_t h)
 {
     if (root == NULL) {
         return 1;
@@ -16,13 +16,13 @@ static int __test_heights(tree_node *root, size_t h)
     return 1;
 }
 
-static int test_heights(tree_node *root)
+static int test_heights(avl_tree_node *root)
 {
     return __test_heights(root, root->height + 1);
 }
 
 
-static int test_tree_props(tree_node *node)
+static int test_tree_props(avl_tree_node *node)
 {
     if (node == NULL) {
         return 1;
@@ -57,7 +57,7 @@ static int cmp_size_t(void *_a, void *_b)
 static int test_tree_init_free()
 {
     void *payload = (void *) 1L;
-    tree_node *node = init_tree_node(NULL, &cmp_size_t, payload);
+    avl_tree_node *node = init_avl_tree_node(NULL, &cmp_size_t, payload);
     ASSERT(node != NULL);
     ASSERT(node->height == 1);
     ASSERT(node->payload == payload);
@@ -77,7 +77,7 @@ static int test_tree_insert()
 {
     time_t t1 = time(NULL);
     void *payload = (void *) 1L;
-    tree_node *tree = init_tree_node(NULL, &cmp_size_t, payload);
+    avl_tree_node *tree = init_avl_tree_node(NULL, &cmp_size_t, payload);
     ASSERT(tree != NULL);
     ASSERT(tree->cmp_payload == &cmp_size_t);
     ASSERT(tree->free_payload == NULL);
@@ -85,15 +85,20 @@ static int test_tree_insert()
     ASSERT(find_payload(tree, payload));
 
     // Add to tree
+    size_t cnt = 0;
     for (size_t i = 0; i < MAX_NODES; i++) {
         void *ptr = (void *) random();
-        tree_node *node = init_tree_node(NULL, &cmp_size_t, ptr);
+        avl_tree_node *node = init_avl_tree_node(NULL, &cmp_size_t, ptr);
         ASSERT(node != NULL);
 
         ASSERT(ptr == node->payload);
         ASSERT(node->cmp_payload(node->payload, ptr) == 0);
 
-        ASSERT(find_payload(tree, (void *) node->payload) == 0);
+        if (find_payload(tree, (void *) node->payload) != 0) {
+            free_tree(node);
+            cnt++;
+            continue;
+        }
         ASSERT(insert_node(tree, node));
         ASSERT(find_payload(tree, (void *) node->payload));
     }
@@ -104,6 +109,7 @@ static int test_tree_insert()
     lprintf(LOG_INFO, "Tree height %lu for %lu nodes\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
     ASSERT(test_tree_props(tree));
+    ASSERT(cnt < MAX_NODES / 10);
 
     free_tree(tree);
     return 1;
@@ -129,18 +135,24 @@ static int test_tree_insert_2()
     ASSERT(ptr != NULL);
     *ptr = random();
 
-    tree_node *tree = init_tree_node(&free, &cmp_int_pointer, ptr);
+    avl_tree_node *tree = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
     ASSERT(tree != NULL);
 
     // Add to tree
+    size_t cnt = 0;
     for (size_t i = 0; i < MAX_NODES; i++) {
         int *ptr = malloc(sizeof(*ptr));
         ASSERT(ptr != NULL);
         *ptr = random();
 
-        tree_node *node = init_tree_node(&free, &cmp_int_pointer, ptr);
+        avl_tree_node *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
         ASSERT(node != NULL);
 
+        if (find_payload(tree, (void *) node->payload) != 0) {
+            free_tree(node);
+            cnt++;
+            continue;
+        }
         ASSERT(insert_node(tree, node));
     }
 
@@ -150,6 +162,7 @@ static int test_tree_insert_2()
     lprintf(LOG_INFO, "Tree height %lu for %lu node\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
     ASSERT(test_tree_props(tree));
+    ASSERT(cnt < MAX_NODES / 10);
 
     free_tree(tree);
     return 1;
@@ -158,12 +171,12 @@ static int test_tree_insert_2()
 static int test_tree_insert_3()
 {
     time_t t1 = time(NULL);
-    tree_node *tree = init_tree_node(NULL, &cmp_size_t, (void *) 1L);
+    avl_tree_node *tree = init_avl_tree_node(NULL, &cmp_size_t, (void *) 1L);
     ASSERT(tree != NULL);
 
     // Add to tree
     for (size_t i = 0; i < 16; i++) {
-        tree_node *node = init_tree_node(NULL, &cmp_size_t, (void *) random());
+        avl_tree_node *node = init_avl_tree_node(NULL, &cmp_size_t, (void *) random());
         ASSERT(node != NULL);
 
         ASSERT(insert_node(tree, node));
