@@ -101,7 +101,25 @@ static int test_uuid_cmp()
     return 1;
 }
 
+#define SET_SHORT "M20"
+#define SET_LONG "UPLIST"
+
+static int test_get_set_code()
+{
+    mtg_set_code_t code;
+    ASSERT(get_set_code("", &code) == 0);
+    ASSERT(get_set_code("Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.", &code) == 0);
+
+    ASSERT(get_set_code(SET_SHORT, &code));
+    ASSERT(strncmp((char *) code, SET_SHORT, sizeof(code)) == 0);
+
+    ASSERT(get_set_code(SET_LONG, &code));
+    ASSERT(strncmp((char *) code, SET_LONG, sizeof(code)) == 0);
+    return 1;
+}
+
 SUB_TEST(test_uuid, {&test_uuid_read_write, "UUID read and, write"},
 {&test_uuid_from_string, "UUID from string"},
 {&test_set_code_read_write, "Set code read and, write"},
-{&test_uuid_cmp, "Test UUID compare"})
+{&test_uuid_cmp, "Test UUID compare"},
+{&test_get_set_code, "Test set code read function"})

@@ -15,16 +15,12 @@ int parse_set_json(json_t *set_node, mtg_set_t *ret, const char *code)
     ASSERT(ret != NULL);
 
     // Copy set code
-    size_t len = strlen(code);
-    ASSERT(len >= MIN_SET_CODE_LEN);
-    ASSERT(len <= MAX_SET_CODE_LEN);
-    memset(ret->code, 0, sizeof(ret->code));
-    memcpy(ret->code, code, len);
+    ASSERT(get_set_code(code, &ret->code));
 
     // Copy set name
     json_t *name_node = json_object_get(set_node, "name");
     ASSERT(json_is_string(name_node));
-    ret->name = strdup(json_string_value(name_node));
+    ASSERT(ret->name = strdup(json_string_value(name_node)));
 
     // Copy set release date
     json_t *release_node = json_object_get(set_node, "releaseDate");
@@ -54,8 +50,8 @@ void free_set(mtg_set_t *set)
 {
     if (set->name != NULL) {
         free(set->name);
-        set->name = NULL;
     }
+    memset(set, 0, sizeof(*set));
 }
 
 int cmp_set(mtg_set_t *a, mtg_set_t *b)

@@ -53,6 +53,8 @@ set(CMAKE_C_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -g")
 
 set(LANG_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.h
                       ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.c)
+
+# Generated sources
 add_custom_command(
   OUTPUT ${LANG_SOURCE_FILES}
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_languages_files.py
@@ -91,6 +93,8 @@ set(TESTS
     ./tests/test_io_utils.c
     ./tests/test_set.h
     ./tests/test_set.c
+    ./tests/test_card.h
+    ./tests/test_card.c
     ./tests/test_avl_tree.h
     ./tests/test_avl_tree.c)
 
@@ -128,10 +132,26 @@ target_include_directories(
   mtg-search-engine-tests PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
                                  ${CMAKE_CURRENT_SOURCE_DIR})
 
-file(COPY mem_tests.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(COPY mem_tests.py DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+# Copy test data
+set(TEST_CARD_JSON ${CMAKE_CURRENT_BINARY_DIR}/test_card.json)
 
+set(MEM_TESTS_SH ${CMAKE_CURRENT_BINARY_DIR}/mem_tests.sh)
+set(MEM_TESTS_PY ${CMAKE_CURRENT_BINARY_DIR}/mem_tests.py)
+set(TESTING_SCRIPTS ${MEM_TESTS_PY} ${MEM_TESTS_SH})
+
+set(TEST_DATA_FILES ${TEST_CARD_JSON} ${TESTING_SCRIPTS})
+add_custom_command(
+  OUTPUT ${TEST_DATA_FILES}
+  COMMAND ${CMAKE_COMMAND} -E copy
+          ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_card.json ${TEST_CARD_JSON}
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/mem_tests.sh
+          ${MEM_TESTS_SH}
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/mem_tests.py
+          ${MEM_TESTS_PY})
+add_custom_target(TEST_DATA DEPENDS ${TEST_DATA_FILES})
+add_dependencies(mtg-search-engine-tests TEST_DATA)
+
+# Testing
 enable_testing()
 add_test(NAME main-tests COMMAND mtg-search-engine-tests)
 add_test(NAME memory-tests COMMAND bash mem_tests.sh)
-message(STATUS "TEST build setup")

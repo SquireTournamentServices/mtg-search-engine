@@ -66,18 +66,25 @@ static void __get_all_printings_cards_curl_thread(void *data, struct thread_pool
     fclose(w);
 }
 
+static void __free_all_printings_cards_card(void *card)
+{
+    free_card((mtg_card_t *) card);
+    free(card);
+}
+
 static void __free_all_printings_cards_set(void *set)
 {
     free_set((mtg_set_t *) set);
     free(set);
 }
 
-static void __insert_node(tree_node **root, tree_node *node)
+static int __insert_node(tree_node **root, tree_node *node)
 {
     if (*root == NULL) {
         *root = node;
+        return 1;
     } else {
-        insert_node(*root, node);
+        return insert_node(*root, node);
     }
 }
 
@@ -85,13 +92,31 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
                                      const char *set_code,
                                      json_t *set_node)
 {
+    ASSERT(json_is_object(set_node));
+
     mtg_set_t *set = malloc(sizeof(*set));
     ASSERT(set != NULL);
-
     ASSERT(parse_set_json(set_node, set, set_code));
 
     tree_node *node = init_tree_node(&__free_all_printings_cards_set, &avl_cmp_set, set);
-    __insert_node(&ret->set_tree, node);
+    ASSERT(__insert_node(&ret->set_tree, node));
+
+    json_t *cards = json_object_get(set_node, "cards");
+    ASSERT(cards != NULL);
+    ASSERT(json_is_array(cards));
+
+    size_t index;
+    json_t *value;
+    json_array_foreach(cards, index, value) {
+        ASSERT(json_is_object(value));
+        mtg_card_t *card = malloc(sizeof(*card));
+        node = init_tree_node(&__free_all_printings_cards_card, &avl_uuid_cmp, card);
+
+        ASSERT(parse_card_json(value, card));
+        if (__insert_node(&ret->card_tree, node)) {
+            ret->card_count++;
+        }
+    }
 
     return 1;
 }
@@ -127,7 +152,7 @@ int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards)
     }
 
     ret->set_count = count;
-    lprintf(LOG_INFO, "Found %lu sets\n", count);
+    lprintf(LOG_INFO, "Found %lu sets and, %lu cards\n", ret->set_count, ret->card_count);
 
     return 1;
 }
@@ -189,6 +214,11 @@ void free_all_printings_cards(mtg_all_printings_cards_t *cards)
 {
     if (cards->set_tree != NULL) {
         free_tree(cards->set_tree);
-        cards->set_tree = NULL;
     }
+
+    if (cards->card_tree != NULL) {
+        free_tree(cards->card_tree);
+    }
+
+    memset(cards, 0, sizeof(*cards));
 }
