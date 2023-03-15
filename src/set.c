@@ -8,6 +8,18 @@
 // Parse dates in the form 2007-07-13, see man strptime.h
 #define SET_DATE_FORMAT "%Y-%m-%d"
 
+int get_set_code(const char *code, mtg_set_code_t *ret)
+{
+    memset(ret, 0, sizeof(*ret));
+    ASSERT(code != NULL);
+
+    size_t len = strlen(code);
+    memcpy(ret, code, len);
+    ASSERT(len >= MIN_SET_CODE_LEN);
+    ASSERT(len <= MAX_SET_CODE_LEN);
+    return 1;
+}
+
 int parse_set_json(json_t *set_node, mtg_set_t *ret, const char *code)
 {
     memset(ret, 0, sizeof(*ret));
@@ -15,11 +27,7 @@ int parse_set_json(json_t *set_node, mtg_set_t *ret, const char *code)
     ASSERT(ret != NULL);
 
     // Copy set code
-    size_t len = strlen(code);
-    ASSERT(len >= MIN_SET_CODE_LEN);
-    ASSERT(len <= MAX_SET_CODE_LEN);
-    memset(ret->code, 0, sizeof(ret->code));
-    memcpy(ret->code, code, len);
+    ASSERT(get_set_code(code, &ret->code));
 
     // Copy set name
     json_t *name_node = json_object_get(set_node, "name");
@@ -54,8 +62,8 @@ void free_set(mtg_set_t *set)
 {
     if (set->name != NULL) {
         free(set->name);
-        set->name = NULL;
     }
+    memset(set, 0, sizeof(*set));
 }
 
 int cmp_set(mtg_set_t *a, mtg_set_t *b)
