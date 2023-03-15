@@ -85,13 +85,27 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
                                      const char *set_code,
                                      json_t *set_node)
 {
+    ASSERT(json_is_object(set_node));
+
     mtg_set_t *set = malloc(sizeof(*set));
     ASSERT(set != NULL);
-
     ASSERT(parse_set_json(set_node, set, set_code));
 
     tree_node *node = init_tree_node(&__free_all_printings_cards_set, &avl_cmp_set, set);
     __insert_node(&ret->set_tree, node);
+
+    json_t *cards = json_object_get(set_node, "cards");
+    ASSERT(cards != NULL);
+    ASSERT(json_is_array(cards));
+
+    size_t index;
+    json_t *value;
+    json_array_foreach(cards, index, value) {
+        ASSERT(json_is_object(value));
+        mtg_card_t card;
+        ASSERT(parse_card_json(value, &card));
+        free_card(&card);
+    }
 
     return 1;
 }

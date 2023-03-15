@@ -17,6 +17,7 @@ size_t __mtg_json_write_callback(char *ptr,
 /// only once. cards and, sets are both stored as binary trees sorted by UUIDs.
 /// other indices need to be generated afterwards.
 typedef struct mtg_all_printings_cards_t {
+    /// Amount of sets
     size_t set_count;
     /// AVL BST tree for the sets, sorted by set code
     tree_node *set_tree;
