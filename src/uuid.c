@@ -1,5 +1,5 @@
 #include "./uuid.h"
-#include "../testing_h/logger.h"
+#include "../testing_h/testing.h"
 #include <string.h>
 
 uuid_t from_string(const char *str, int *status)
@@ -62,29 +62,49 @@ uuid_t from_string(const char *str, int *status)
 
 int write_uuid(FILE *f, uuid_t uuid)
 {
-    size_t w = fwrite(uuid.bytes, sizeof(uuid.bytes), 1, f);
-    return w == 1;
+    ASSERT(fwrite(uuid.bytes, sizeof(uuid.bytes), 1, f));
+    return 1;
 }
 
 int read_uuid(FILE *f, uuid_t *uuid)
 {
-    size_t r = fread(uuid->bytes, sizeof(uuid->bytes), 1, f);
-    return r == 1;
+    ASSERT(fread(uuid->bytes, sizeof(uuid->bytes), 1, f));
+    return 1;
+}
+
+int get_set_code(const char *code, mtg_set_code_t *ret)
+{
+    ASSERT(ret != NULL);
+    memset(ret, 0, sizeof(*ret));
+
+    ASSERT(code != NULL);
+
+    size_t len = strlen(code);
+    ASSERT(len >= MIN_SET_CODE_LEN);
+    ASSERT(len <= MAX_SET_CODE_LEN);
+
+    memcpy(ret, code, len);
+    return 1;
 }
 
 int write_set_code(FILE *f, mtg_set_code_t code)
 {
-    size_t w = fwrite(code, sizeof(mtg_set_code_t), 1, f);
-    return w == 1;
+    ASSERT(fwrite(code, sizeof(mtg_set_code_t), 1, f));
+    return 1;
 }
 
 int read_set_code(FILE *f, mtg_set_code_t *code)
 {
-    size_t r = fread(code, sizeof(mtg_set_code_t), 1, f);
-    return r == 1;
+    ASSERT(fread(code, sizeof(mtg_set_code_t), 1, f));
+    return 1;
 }
 
 int uuid_cmp(uuid_t *a, uuid_t *b)
 {
     return memcmp(a->bytes, b->bytes, sizeof(a->bytes));
+}
+
+int avl_uuid_cmp(void *a, void *b)
+{
+    return uuid_cmp((uuid_t *) a, (uuid_t *) b);
 }

@@ -8,18 +8,6 @@
 // Parse dates in the form 2007-07-13, see man strptime.h
 #define SET_DATE_FORMAT "%Y-%m-%d"
 
-int get_set_code(const char *code, mtg_set_code_t *ret)
-{
-    memset(ret, 0, sizeof(*ret));
-    ASSERT(code != NULL);
-
-    size_t len = strlen(code);
-    memcpy(ret, code, len);
-    ASSERT(len >= MIN_SET_CODE_LEN);
-    ASSERT(len <= MAX_SET_CODE_LEN);
-    return 1;
-}
-
 int parse_set_json(json_t *set_node, mtg_set_t *ret, const char *code)
 {
     memset(ret, 0, sizeof(*ret));
