@@ -96,6 +96,8 @@ static void __rotate_l(avl_tree_node *root)
     y   c  ->    x   b
   a   b        a   c
      */
+
+    // Swap x and, y
     void *tmp = root->l->payload;
     root->l->payload = root->payload;
     root->payload = tmp;
@@ -118,6 +120,8 @@ static void __rotate_r(avl_tree_node *root)
      a   y  ->    b   x
        b   c        a   c
      */
+
+    // Swap x and, y
     void *tmp = root->r->payload;
     root->r->payload = root->payload;
     root->payload = tmp;
