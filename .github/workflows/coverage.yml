@@ -83,16 +83,6 @@ jobs:
       with:
         submodules: recursive
         
-    - name: Install Rust
-      uses: hecrj/setup-rust-action@v1
-      with:
-        rust-version: nightly
-
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: ${{matrix.language}}
-        
     - name: Install deps
       shell: bash
       run: |
@@ -121,7 +111,3 @@ jobs:
       with:
         files: ./build/coverage.xml
         name: codecov-umbrella # optional
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
-
