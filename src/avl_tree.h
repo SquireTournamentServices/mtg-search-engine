@@ -20,4 +20,7 @@ int tree_balance(tree_node *node);
 void free_tree(tree_node *tree);
 void print_tree(tree_node *root);
 
-void insert_node(tree_node *root, tree_node *node);
+int insert_node(tree_node *root, tree_node *node);
+
+/// Returns 1 if the payload is in the tree, otherwise 0
+int find_payload(tree_node *node, void *payload);

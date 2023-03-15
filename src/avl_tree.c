@@ -132,7 +132,7 @@ static void __rotate_r(tree_node *root)
                        __tree_height(root->r)) + 1;
 }
 
-void insert_node(tree_node *root, tree_node *node)
+static void __do_insert_node(tree_node *root, tree_node *node)
 {
     root->height++;
 
@@ -175,5 +175,32 @@ void insert_node(tree_node *root, tree_node *node)
         } else {
             __rotate_r(root);
         }
+    }
+}
+
+int insert_node(tree_node *root, tree_node *node)
+{
+    ASSERT(root != NULL);
+    ASSERT(node != NULL);
+    if (find_payload(root, node->payload)) {
+        return 0;
+    }
+    __do_insert_node(root, node);
+    return 1;
+}
+
+int find_payload(tree_node *node, void *payload)
+{
+    if (node == NULL) {
+        return 0;
+    }
+
+    int cmp = node->cmp_payload(node->payload, payload);
+    if (cmp == 0) {
+        return 1;
+    } else if (cmp < 0) {
+        return find_payload(node->l, payload);
+    } else {
+        return find_payload(node->r, payload);
     }
 }
