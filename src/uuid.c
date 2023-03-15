@@ -2,10 +2,16 @@
 #include "../testing_h/logger.h"
 #include <string.h>
 
-uuid_t from_string(char *str, int *status)
+uuid_t from_string(const char *str, int *status)
 {
-    size_t len = strlen(str);
     uuid_t ret;
+    if (str == NULL) {
+        *status = 0;
+        lprintf(LOG_ERROR, "Cannot parse NULL string\n");
+        return ret;
+    }
+
+    size_t len = strlen(str);
     int dash_cnt = 0;
     *status = 1;
 
