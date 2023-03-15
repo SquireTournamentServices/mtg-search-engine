@@ -24,7 +24,7 @@ int parse_set_json(json_t *set_node, mtg_set_t *ret, const char *code)
     // Copy set name
     json_t *name_node = json_object_get(set_node, "name");
     ASSERT(json_is_string(name_node));
-    ret->name = strdup(json_string_value(name_node));
+    ASSERT(ret->name = strdup(json_string_value(name_node)));
 
     // Copy set release date
     json_t *release_node = json_object_get(set_node, "releaseDate");
