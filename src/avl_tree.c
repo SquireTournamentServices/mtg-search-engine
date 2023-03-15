@@ -35,10 +35,11 @@ int tree_balance(avl_tree_node *root)
     int lh, rh;
     lh = rh = 0;
 
-    if (root->l) {
+    if (root->l != NULL) {
         lh = __tree_height(root->l);
     }
-    if (root->r) {
+
+    if (root->r != NULL) {
         rh = __tree_height(root->r);
     }
 
@@ -137,9 +138,9 @@ static void __do_insert_node(avl_tree_node *root, avl_tree_node *node)
     root->height++;
 
     // BST insert
-    if (root->cmp_payload(node->payload, root->payload) <= 0) {
+    if (root->cmp_payload(root->payload, node->payload) <= 0) {
         // Add left
-        if (root->l) {
+        if (root->l != NULL) {
             insert_node(root->l, node);
         } else {
             root->l = node;
@@ -147,7 +148,7 @@ static void __do_insert_node(avl_tree_node *root, avl_tree_node *node)
         }
     } else {
         // Add right
-        if (root->r) {
+        if (root->r != NULL) {
             insert_node(root->r, node);
         } else {
             root->r = node;
