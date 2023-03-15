@@ -106,7 +106,13 @@ set(GCOVR_EXCLUDE "build/*" "tests/*" "src/main.c")
 
 append_coverage_compiler_flags()
 setup_target_for_coverage_gcovr_xml(
-  NAME coverage EXECUTABLE mtg-search-engine-tests EXCLUDE ${GCOVR_EXCLUDE})
+  NAME
+  coverage
+  EXECUTABLE
+  mtg-search-engine-tests
+  test
+  EXCLUDE
+  ${GCOVR_EXCLUDE})
 
 set(LIBS jansson curl pthread m c)
 
