@@ -47,8 +47,8 @@ int tree_balance(avl_tree_node *root)
 }
 
 avl_tree_node *init_avl_tree_node(void (*free_payload)(void *payload),
-                          int (*cmp_payload)(void *a, void *b),
-                          void *payload)
+                                  int (*cmp_payload)(void *a, void *b),
+                                  void *payload)
 {
     if (cmp_payload == NULL) {
         lprintf(LOG_ERROR, "Cannot have a NULL comparison function\n");
@@ -94,7 +94,7 @@ static void __rotate_l(avl_tree_node *root)
     /* Rotation (left):
       x            y
     y   c  ->    x   b
-  a   b        a   c
+    a   b        a   c
      */
 
     // Swap x and, y
@@ -137,12 +137,21 @@ static void __rotate_r(avl_tree_node *root)
                        __tree_height(root->r)) + 1;
 }
 
+static int __cmp_payload(avl_tree_node *a, avl_tree_node *b)
+{
+    if (a == NULL || b == NULL) {
+        return 0;
+    } else {
+        return a->cmp_payload(a->payload, b->payload);
+    }
+}
+
 static void __do_insert_node(avl_tree_node *root, avl_tree_node *node)
 {
     root->height++;
 
     // BST insert
-    if (root->cmp_payload(root->payload, node->payload) <= 0) {
+    if (__cmp_payload(root, node) <= 0) {
         // Add left
         if (root->l != NULL) {
             insert_node(root->l, node);
@@ -166,20 +175,17 @@ static void __do_insert_node(avl_tree_node *root, avl_tree_node *node)
 
     // Balance trees
     int balance = tree_balance(root);
-    if (balance > 1) {
-        if (tree_balance(root->l) > 0) {
-            __rotate_l(root);
-        } else {
-            __rotate_l(root);
-            __rotate_r(root);
-        }
-    } else if (balance < -1) {
-        if (tree_balance(root->r) > 0) {
-            __rotate_r(root);
-            __rotate_l(root);
-        } else {
-            __rotate_r(root);
-        }
+
+    if (balance > 1 && __cmp_payload(root, node->l) < 0) {
+        __rotate_r(node);
+    } else if (balance < -1 && __cmp_payload(root, node->r) > 0) {
+        __rotate_l(node);
+    } else if (balance > 1 && __cmp_payload(root, node->l) > 0) {
+        __rotate_l(node->l);
+        __rotate_r(node);
+    } else if (balance < -1 && __cmp_payload(root, node->r) < 0) {
+        __rotate_r(node->r);
+        __rotate_l(node);
     }
 }
 

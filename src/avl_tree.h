@@ -14,8 +14,8 @@ typedef struct avl_tree_node {
 } avl_tree_node;
 
 avl_tree_node *init_avl_tree_node(void (*free_payload)(void *payload),
-                          int (*cmp_payload)(void *a, void *b),
-                          void *payload);
+                                  int (*cmp_payload)(void *a, void *b),
+                                  void *payload);
 int tree_balance(avl_tree_node *node);
 void free_tree(avl_tree_node *tree);
 void print_tree(avl_tree_node *root);
