@@ -60,15 +60,17 @@ int parse_card_json(json_t *json, mtg_card_t *card)
 
     // Read oracle
     json_t *oracle_o = json_object_get(json, "originalText");
-    ASSERT(oracle_o != NULL);
-    ASSERT(json_is_string(oracle_o));
-    ASSERT(card->oracle_text = strdup(json_string_value(oracle_o)));
+    if (oracle_o != NULL) {
+        ASSERT(json_is_string(oracle_o));
+        ASSERT(card->oracle_text = strdup(json_string_value(oracle_o)));
+    }
 
     // Read mana cost
     json_t *mana_cost_o = json_object_get(json, "manaCost");
-    ASSERT(mana_cost_o != NULL);
-    ASSERT(json_is_string(mana_cost_o));
-    ASSERT(card->mana_cost = strdup(json_string_value(mana_cost_o)));
+    if (mana_cost_o != NULL) {
+        ASSERT(json_is_string(mana_cost_o));
+        ASSERT(card->mana_cost = strdup(json_string_value(mana_cost_o)));
+    }
 
     // Read sub types
     json_t *sub_types_o = json_object_get(json, "subtypes");
@@ -118,15 +120,17 @@ int parse_card_json(json_t *json, mtg_card_t *card)
 
     // Read power
     json_t *p_o = json_object_get(json, "power");
-    ASSERT(p_o != NULL);
-    ASSERT(json_is_string(p_o));
-    card->power = atof(json_string_value(p_o));
+    if (p_o != NULL) {
+        ASSERT(json_is_string(p_o));
+        card->power = atof(json_string_value(p_o));
+    }
 
     // Read toughness
     json_t *t_o = json_object_get(json, "toughness");
-    ASSERT(t_o != NULL);
-    ASSERT(json_is_string(t_o));
-    card->toughness = atof(json_string_value(t_o));
+    if (t_o != NULL) {
+        ASSERT(json_is_string(t_o));
+        card->toughness = atof(json_string_value(t_o));
+    }
 
     // Read colours
     json_t *colours_o = json_object_get(json, "colors");
