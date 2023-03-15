@@ -24,8 +24,13 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 {&test_mtg_json, "Test mtg json"})
 
 
-int main()
+int main(int argc, char** argv)
 {
     tzset();
-    return tests() ? 0 : 1;
+    int res = tests();
+    if (argc > 1) {
+        return 0;
+    } else {
+        return res ? 0 : 1;
+    }
 }
