@@ -21,7 +21,7 @@ int parse_card_json(json_t *json, mtg_card_t *card)
     json_t *oracle_o = json_object_get(json, "originalText");
     ASSERT(oracle_o != NULL);
     ASSERT(json_is_string(oracle_o));
-    card->oracle_text = json_string_value(oracle_o);
+    card->oracle_text = strdup(json_string_value(oracle_o));
 
     return 1;
 }
@@ -96,19 +96,13 @@ void free_card(mtg_card_t *card)
         free(card->oracle_text);
     }
 
-    if (card->flavour_text != NULL) {
-        free(card->flavour_text);
-    }
-
     for (size_t i = 0; i < card->types_count; i++) {
         if (card->types[i] != NULL) {
             free(card->types[i]);
         }
     }
 
-    for (size_t i = 0; i < card->set_codes_len; i++) {
-        if(card->set_codes[i] != NULL) {
-            free(card->set_codes[i]);
-        }
+    if (card->set_codes != NULL) {
+        free(card->set_codes);
     }
 }

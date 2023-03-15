@@ -91,6 +91,8 @@ set(TESTS
     ./tests/test_io_utils.c
     ./tests/test_set.h
     ./tests/test_set.c
+    ./tests/test_card.h
+    ./tests/test_card.c
     ./tests/test_avl_tree.h
     ./tests/test_avl_tree.c)
 
