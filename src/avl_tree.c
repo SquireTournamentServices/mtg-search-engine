@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static size_t __tree_height(tree_node *node)
+static size_t __tree_height(avl_tree_node *node)
 {
     if (node == NULL) {
         return 0;
@@ -13,7 +13,7 @@ static size_t __tree_height(tree_node *node)
     return node->height;
 }
 
-void free_tree(tree_node *tree)
+void free_tree(avl_tree_node *tree)
 {
     if (tree->l) {
         free_tree(tree->l);
@@ -28,7 +28,7 @@ void free_tree(tree_node *tree)
     free(tree);
 }
 
-int tree_balance(tree_node *root)
+int tree_balance(avl_tree_node *root)
 {
     if (!root) return 0;
 
@@ -45,7 +45,7 @@ int tree_balance(tree_node *root)
     return lh - rh;
 }
 
-tree_node *init_tree_node(void (*free_payload)(void *payload),
+avl_tree_node *init_avl_tree_node(void (*free_payload)(void *payload),
                           int (*cmp_payload)(void *a, void *b),
                           void *payload)
 {
@@ -54,7 +54,7 @@ tree_node *init_tree_node(void (*free_payload)(void *payload),
         return NULL;
     }
 
-    tree_node *tree = malloc(sizeof * tree);
+    avl_tree_node *tree = malloc(sizeof * tree);
     if (tree == NULL) {
         lprintf(LOG_ERROR, "Cannot init tree node\n");
         return tree;
@@ -68,7 +68,7 @@ tree_node *init_tree_node(void (*free_payload)(void *payload),
     return tree;
 }
 
-static void __print_tree(tree_node *tree, int h)
+static void __print_tree(avl_tree_node *tree, int h)
 {
     for (int i = 0; i < h; i++) {
         printf("  |");
@@ -83,12 +83,12 @@ static void __print_tree(tree_node *tree, int h)
     }
 }
 
-void print_tree(tree_node *root)
+void print_tree(avl_tree_node *root)
 {
     __print_tree(root, 0);
 }
 
-static void __rotate_l(tree_node *root)
+static void __rotate_l(avl_tree_node *root)
 {
     /* Rotation (left):
       x            y
@@ -99,7 +99,7 @@ static void __rotate_l(tree_node *root)
     root->l->payload = root->payload;
     root->payload = tmp;
 
-    tree_node *tmp2 = root->l->r;
+    avl_tree_node *tmp2 = root->l->r;
     root->l->r = root->r;
     root->r = tmp2;
 
@@ -110,7 +110,7 @@ static void __rotate_l(tree_node *root)
                        __tree_height(root->r)) + 1;
 }
 
-static void __rotate_r(tree_node *root)
+static void __rotate_r(avl_tree_node *root)
 {
     /* Rotation (right):
        x            y
@@ -121,7 +121,7 @@ static void __rotate_r(tree_node *root)
     root->r->payload = root->payload;
     root->payload = tmp;
 
-    tree_node *tmp2 = root->r->l;
+    avl_tree_node *tmp2 = root->r->l;
     root->r->l = root->l;
     root->l = tmp2;
 
@@ -132,7 +132,7 @@ static void __rotate_r(tree_node *root)
                        __tree_height(root->r)) + 1;
 }
 
-static void __do_insert_node(tree_node *root, tree_node *node)
+static void __do_insert_node(avl_tree_node *root, avl_tree_node *node)
 {
     root->height++;
 
@@ -178,7 +178,7 @@ static void __do_insert_node(tree_node *root, tree_node *node)
     }
 }
 
-int insert_node(tree_node *root, tree_node *node)
+int insert_node(avl_tree_node *root, avl_tree_node *node)
 {
     ASSERT(root != NULL);
     ASSERT(node != NULL);
@@ -189,7 +189,7 @@ int insert_node(tree_node *root, tree_node *node)
     return 1;
 }
 
-int find_payload(tree_node *node, void *payload)
+int find_payload(avl_tree_node *node, void *payload)
 {
     if (node == NULL) {
         return 0;
