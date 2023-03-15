@@ -94,7 +94,7 @@ static void __rotate_l(avl_tree_node *root)
     /* Rotation (left):
       x            y
     y   c  ->    x   b
-    a   b        a   c
+  a   b        a   c
      */
     void *tmp = root->l->payload;
     root->l->payload = root->payload;
