@@ -21,6 +21,11 @@ typedef struct mtg_all_printings_cards_t {
     size_t set_count;
     /// AVL BST tree for the sets, sorted by set code
     tree_node *set_tree;
+
+    /// Amount of cards
+    size_t card_count;
+    /// AVL BST tree for the cards, sorted by UUID
+    tree_node *card_tree;
 } mtg_all_printings_cards_t;
 
 /// Exposed internal method for use within internal testing
