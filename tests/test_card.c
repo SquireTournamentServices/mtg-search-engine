@@ -55,6 +55,25 @@ static int test_card_parse_json()
     ASSERT(cleric);
 
     // Sets
+    int _10E = 0;
+    int _JUD = 0;
+    int _UMA = 0;
+
+    ASSERT(card.set_codes_count == 3);
+    ASSERT(card.set_codes != NULL);
+    for (size_t i = 0; i < card.set_codes_count; i++) {
+        if (strcmp((char *) card.set_codes[i], "10E") == 0) {
+            _10E = 1;
+        } else if (strcmp((char *) card.set_codes[i], "JUD") == 0) {
+            _JUD = 1;
+        } else if (strcmp((char *) card.set_codes[i], "UMA") == 0) {
+            _UMA = 1;
+        }
+    }
+
+    ASSERT(_10E);
+    ASSERT(_JUD);
+    ASSERT(_UMA);
 
     free_card(&card);
 
