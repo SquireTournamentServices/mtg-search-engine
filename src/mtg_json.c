@@ -115,6 +115,8 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
         ASSERT(parse_card_json(value, card));
         if (__insert_node(&ret->card_tree, node)) {
             ret->card_count++;
+        } else {
+            free_tree(node);
         }
     }
 
