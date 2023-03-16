@@ -15,10 +15,10 @@ static size_t __tree_height(avl_tree_node *node)
 
 void free_tree(avl_tree_node *tree)
 {
-    if (tree->l) {
+    if (tree->l != NULL) {
         free_tree(tree->l);
     }
-    if (tree->r) {
+    if (tree->r != NULL) {
         free_tree(tree->r);
     }
 
@@ -87,8 +87,6 @@ void print_tree(avl_tree_node *root)
 {
     __print_tree(root, 0);
 }
-
-#define SWAP(a, b, c, name) typeof(a) tmp_##name = a; a = b; c = b; b = tmp_##name;
 
 static void __rotate_update_heights(avl_tree_node *root)
 {
