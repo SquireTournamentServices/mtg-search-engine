@@ -149,7 +149,7 @@ int parse_card_json(json_t *json, mtg_card_t *card)
 
     json_array_foreach(colour_identity_o, index, value) {
         ASSERT(json_is_string(value));
-        card->colours |= parse_colours(json_string_value(value));
+        card->colour_identity |= parse_colours(json_string_value(value));
     }
 
     // Read sets (printings)
