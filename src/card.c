@@ -112,6 +112,25 @@ int parse_card_json(json_t *json, mtg_card_t *card)
         card->types_count++;
     }
 
+    // Read "types"
+    json_t *types_o = json_object_get(json, "types");
+    ASSERT(types_o != NULL);
+    ASSERT(json_is_array(types_o));
+
+    json_array_foreach(types_o, index, value) {
+        ASSERT(json_is_string(value));
+        if (card->types == NULL) {
+            ASSERT(card->types = malloc(sizeof(*card->types)));
+        }
+
+        ASSERT(card->types = realloc(card->types, sizeof(*card->types) * (1 + card->types_count)));
+
+        char *tmp;
+        ASSERT(tmp = strdup(json_string_value(value)));
+        card->types[card->types_count] = tmp;
+        card->types_count++;
+    }
+
     // Read cmc
     json_t *cmc_o = json_object_get(json, "manaValue");
     ASSERT(cmc_o != NULL);
@@ -149,7 +168,7 @@ int parse_card_json(json_t *json, mtg_card_t *card)
 
     json_array_foreach(colour_identity_o, index, value) {
         ASSERT(json_is_string(value));
-        card->colours |= parse_colours(json_string_value(value));
+        card->colour_identity |= parse_colours(json_string_value(value));
     }
 
     // Read sets (printings)
@@ -173,26 +192,26 @@ int parse_card_json(json_t *json, mtg_card_t *card)
     return 1;
 }
 
-int write_card(FILE *f, mtg_card_t *card)
+int write_card(FILE *f, mtg_card_t card)
 {
-    ASSERT(write_uuid(f, card->id));
-    ASSERT(write_str(f, card->name));
-    ASSERT(write_str(f, card->mana_cost));
-    ASSERT(write_str(f, card->oracle_text));
-    ASSERT(write_size_t(f, card->types_count));
-    for (size_t i = 0; i < card->types_count; i++) {
-        ASSERT(write_str(f, card->types[i]));
+    ASSERT(write_uuid(f, card.id));
+    ASSERT(write_str(f, card.name));
+    ASSERT(write_str(f, card.mana_cost));
+    ASSERT(write_str(f, card.oracle_text));
+    ASSERT(write_size_t(f, card.types_count));
+    for (size_t i = 0; i < card.types_count; i++) {
+        ASSERT(write_str(f, card.types[i]));
     }
 
-    ASSERT(write_double(f, card->power));
-    ASSERT(write_double(f, card->toughness));
-    ASSERT(write_double(f, card->cmc));
-    ASSERT(write_int(f, card->colours));
-    ASSERT(write_int(f, card->colour_identity));
+    ASSERT(write_double(f, card.power));
+    ASSERT(write_double(f, card.toughness));
+    ASSERT(write_double(f, card.cmc));
+    ASSERT(write_int(f, card.colours));
+    ASSERT(write_int(f, card.colour_identity));
 
-    ASSERT(write_size_t(f, card->set_codes_count));
-    for (size_t i = 0; i < card->set_codes_count; i++) {
-        ASSERT(write_set_code(f, card->set_codes[i]));
+    ASSERT(write_size_t(f, card.set_codes_count));
+    for (size_t i = 0; i < card.set_codes_count; i++) {
+        ASSERT(write_set_code(f, card.set_codes[i]));
     }
     return 1;
 }
@@ -205,6 +224,8 @@ int read_card(FILE *f, mtg_card_t *card)
     ASSERT(read_str(f, &card->mana_cost));
     ASSERT(read_str(f, &card->oracle_text));
     ASSERT(read_size_t(f, &card->types_count));
+
+    ASSERT(card->types = malloc(sizeof(*card->types) * card->types_count));
     for (size_t i = 0; i < card->types_count; i++) {
         ASSERT(read_str(f, &card->types[i]));
     }
@@ -216,9 +237,7 @@ int read_card(FILE *f, mtg_card_t *card)
     ASSERT(read_int(f, &card->colour_identity));
 
     ASSERT(read_size_t(f, &card->set_codes_count));
-    card->set_codes = malloc(sizeof(*card->set_codes) * card->set_codes_count);
-    ASSERT(card->set_codes != NULL);
-
+    ASSERT(card->set_codes = malloc(sizeof(*card->set_codes) * card->set_codes_count));
     for (size_t i = 0; i < card->set_codes_count; i++) {
         ASSERT(read_set_code(f, &card->set_codes[i]));
     }

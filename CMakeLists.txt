@@ -114,10 +114,7 @@ setup_target_for_coverage_gcovr_xml(
   EXCLUDE
   ${GCOVR_EXCLUDE})
 
-set(LIBS jansson curl pthread m c)
-
-set(LIBS jansson CURL::libcurl pthread m)
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
+set(LIBS jansson CURL::libcurl pthread m c)
 
 add_library(mtg-search-engine ${SRC})
 target_link_libraries(mtg-search-engine PRIVATE ${LIBS})
