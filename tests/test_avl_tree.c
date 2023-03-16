@@ -69,8 +69,7 @@ static int test_tree_init_free()
     return 1;
 }
 
-// There will be about 30,000 MTG cards at some point, it should be perform somewhat well with them
-#define MAX_NODES 30000
+#define MAX_NODES 100000
 #define MAX_TIME 3
 
 static int test_tree_insert()
