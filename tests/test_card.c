@@ -9,17 +9,8 @@
 
 #define ORACLE "First strike (This creature deals combat damage before creatures without first strike.)\nWhen Ancestor's Chosen comes into play, you gain 1 life for each card in your graveyard."
 
-static int test_card_parse_json()
+static int __test_card_props(mtg_card_t card)
 {
-    FILE *f = fopen("./test_card.json", "r");
-    ASSERT(f != NULL);
-    json_error_t error;
-    json_t *json = json_loadf(f, 0, &error);
-    ASSERT(json != NULL);
-
-    mtg_card_t card;
-    ASSERT(parse_card_json(json, &card));
-
     ASSERT(card.name != NULL);
     ASSERT(strcmp(card.name, "Ancestor's Chosen") == 0);
 
@@ -74,6 +65,20 @@ static int test_card_parse_json()
     ASSERT(_10E);
     ASSERT(_JUD);
     ASSERT(_UMA);
+    return 1;
+}
+
+static int test_card_parse_json()
+{
+    FILE *f = fopen("./test_card.json", "r");
+    ASSERT(f != NULL);
+    json_error_t error;
+    json_t *json = json_loadf(f, 0, &error);
+    ASSERT(json != NULL);
+
+    mtg_card_t card;
+    ASSERT(parse_card_json(json, &card));
+    ASSERT(__test_card_props(card));
 
     free_card(&card);
 
@@ -81,4 +86,41 @@ static int test_card_parse_json()
     return 1;
 }
 
-SUB_TEST(test_card, {&test_card_parse_json, "Test parse card from JSON"})
+static int test_card_write_read()
+{
+    FILE *f = fopen("./test_card.json", "r");
+    ASSERT(f != NULL);
+    json_error_t error;
+    json_t *json = json_loadf(f, 0, &error);
+    ASSERT(json != NULL);
+
+    mtg_card_t card;
+    ASSERT(parse_card_json(json, &card));
+
+    int fid[2];
+    ASSERT(pipe(fid) == 0);
+
+    FILE *r = fdopen(fid[0], "rb");
+    ASSERT(r != NULL);
+
+    FILE *w = fdopen(fid[1], "wb");
+    ASSERT(w != NULL);
+
+    write_card(w, card);
+    fclose(w);
+    free_card(&card);
+
+    mtg_card_t card_2;
+    read_card(r, &card_2);
+    fclose(r);
+
+    ASSERT(__test_card_props(card_2));
+
+    free_card(&card_2);
+
+    json_decref(json);
+    return 1;
+}
+
+SUB_TEST(test_card, {&test_card_parse_json, "Test parse card from JSON"},
+{&test_card_write_read, "Test card read and, write"})
