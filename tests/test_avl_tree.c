@@ -29,12 +29,12 @@ static int test_tree_props(avl_tree_node *node)
     }
 
     if (node->l != NULL) {
-        ASSERT(node->cmp_payload(node->payload, node->l->payload) <= 0);
+        ASSERT(node->cmp_payload(node->l->payload, node->payload) <= 0);
         ASSERT(test_tree_props(node->l));
     }
 
     if (node->r != NULL) {
-        ASSERT(node->cmp_payload(node->payload, node->r->payload) > 0);
+        ASSERT(node->cmp_payload(node->r->payload, node->payload) > 0);
         ASSERT(test_tree_props(node->r));
     }
 
@@ -64,6 +64,8 @@ static int test_tree_init_free()
     ASSERT(node->free_payload == NULL);
     ASSERT(node->cmp_payload == &cmp_size_t);
     ASSERT(find_payload(node, node->payload));
+    ASSERT(find_payload(node, payload));
+    print_tree(node);
     free_tree(node);
 
     return 1;
@@ -98,8 +100,10 @@ static int test_tree_insert()
             cnt++;
             continue;
         }
-        ASSERT(insert_node(tree, node));
-        ASSERT(find_payload(tree, (void *) node->payload));
+        ASSERT(insert_node(&tree, node));
+        ASSERT(tree != NULL);
+        ASSERT(find_payload(tree, ptr));
+        ASSERT(find_payload(tree, node->payload));
     }
 
     time_t t2 = time(NULL);
@@ -152,7 +156,7 @@ static int test_tree_insert_2()
             cnt++;
             continue;
         }
-        ASSERT(insert_node(tree, node));
+        ASSERT(insert_node(&tree, node));
     }
 
     time_t t2 = time(NULL);
@@ -174,20 +178,27 @@ static int test_tree_insert_3()
     ASSERT(tree != NULL);
 
     // Add to tree
+    size_t cnt = 0;
     for (size_t i = 0; i < 16; i++) {
         avl_tree_node *node = init_avl_tree_node(NULL, &cmp_size_t, (void *) random());
         ASSERT(node != NULL);
 
-        ASSERT(insert_node(tree, node));
+        if (find_payload(tree, (void *) node->payload) != 0) {
+            free_tree(node);
+            cnt++;
+            continue;
+        }
+        ASSERT(insert_node(&tree, node));
     }
 
     time_t t2 = time(NULL);
     ASSERT(t2 - t1 <= MAX_TIME);
 
-    print_tree(tree);
+    ASSERT(cnt < MAX_NODES / 10);
     lprintf(LOG_INFO, "Tree height %lu for %lu nodes\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
     ASSERT(test_tree_props(tree));
+    print_tree(tree);
 
     free_tree(tree);
     return 1;

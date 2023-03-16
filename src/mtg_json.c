@@ -84,7 +84,7 @@ static int __insert_node(avl_tree_node **root, avl_tree_node *node)
         *root = node;
         return 1;
     } else {
-        return insert_node(*root, node);
+        return insert_node(root, node);
     }
 }
 
