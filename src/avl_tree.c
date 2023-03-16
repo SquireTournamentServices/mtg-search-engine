@@ -30,18 +30,12 @@ void free_tree(avl_tree_node *tree)
 
 int tree_balance(avl_tree_node *root)
 {
-    if (!root) return 0;
-
-    int lh, rh;
-    lh = rh = 0;
-
-    if (root->l != NULL) {
-        lh = __tree_height(root->l);
+    if (root == NULL) {
+        return 0;
     }
 
-    if (root->r != NULL) {
-        rh = __tree_height(root->r);
-    }
+    int lh = __tree_height(root->l);
+    int rh = __tree_height(root->r);
 
     return lh - rh;
 }
@@ -78,9 +72,14 @@ static void __print_tree(avl_tree_node *tree, int h)
 
     if (tree->l)  {
         __print_tree(tree->l, h + 1);
+    } else {
+        puts("--");
     }
+
     if (tree->r) {
         __print_tree(tree->r, h + 1);
+    } else {
+        puts("--");
     }
 }
 
@@ -89,52 +88,57 @@ void print_tree(avl_tree_node *root)
     __print_tree(root, 0);
 }
 
-static void __rotate_l(avl_tree_node *root)
+#define SWAP(a, b, c, name) typeof(a) tmp_##name = a; a = b; c = b; b = tmp_##name;
+
+static void __rotate_update_heights(avl_tree_node *root)
 {
-    /* Rotation (left):
-      x            y
-    y   c  ->    x   b
-    a   b        a   c
-     */
+    if (root->r != NULL) {
+        root->r->height = MAX(__tree_height(root->r->l),
+                              __tree_height(root->r->r)) + 1;
+    }
 
-    // Swap x and, y
-    void *tmp = root->l->payload;
-    root->l->payload = root->payload;
-    root->payload = tmp;
-
-    avl_tree_node *tmp2 = root->l->r;
-    root->l->r = root->r;
-    root->r = tmp2;
-
-    // Update heights
-    root->l->height = MAX(__tree_height(root->l->l),
-                          __tree_height(root->l->r)) + 1;
+    if (root->l != NULL) {
+        root->l->height = MAX(__tree_height(root->l->l),
+                              __tree_height(root->l->r)) + 1;
+    }
     root->height = MAX(__tree_height(root->l),
                        __tree_height(root->r)) + 1;
 }
 
-static void __rotate_r(avl_tree_node *root)
+static avl_tree_node *__rotate_r(avl_tree_node *y)
 {
     /* Rotation (right):
-       x            y
-     a   y  ->    b   x
-       b   c        a   c
-     */
+    *      x          y
+    *    y   c  ->  a   x
+    *  a   b          b   c
+    **/
+    avl_tree_node *x = y->l;
+    avl_tree_node *t2 = x->r;
 
-    // Swap x and, y
-    void *tmp = root->r->payload;
-    root->r->payload = root->payload;
-    root->payload = tmp;
+    // Perform rotation
+    x->r = y;
+    y->l = t2;
 
-    avl_tree_node *tmp2 = root->r->l;
-    root->r->l = root->l;
-    root->l = tmp2;
+    __rotate_update_heights(x);
+    return x;
+}
 
-    // Update heights
-    root->r->height = MAX(__tree_height(root->r->l),
-                          __tree_height(root->r->r)) + 1;
-    root->height = MAX(__tree_height(root->l),
-                       __tree_height(root->r)) + 1;
+static avl_tree_node *__rotate_l(avl_tree_node *x)
+{
+    /* Rotation (left):
+    *    x              y
+    *  a   y    ->    a   x
+    *    b   c      b   c
+    **/
+    avl_tree_node *y = x->r;
+    avl_tree_node *t2 = y->l;
+
+    // Perform rotation
+    y->l = x;
+    x->r = t2;
+
+    __rotate_update_heights(y);
+    return y;
 }
 
 static int __cmp_payload(avl_tree_node *a, avl_tree_node *b)
@@ -146,27 +150,23 @@ static int __cmp_payload(avl_tree_node *a, avl_tree_node *b)
     }
 }
 
-static void __do_insert_node(avl_tree_node *root, avl_tree_node *node)
+static avl_tree_node *__do_insert_node(avl_tree_node *root, avl_tree_node *node)
 {
-    root->height++;
+    // Base case
+    if (root == NULL) {
+        return node;
+    }
 
     // BST insert
-    if (__cmp_payload(root, node) <= 0) {
+    int cmp = __cmp_payload(node, root);
+
+    // cmp != 0 as insert_node checks this
+    if (cmp <= 0) {
         // Add left
-        if (root->l != NULL) {
-            insert_node(root->l, node);
-        } else {
-            root->l = node;
-            return;
-        }
+        root->l = __do_insert_node(root->l, node);
     } else {
         // Add right
-        if (root->r != NULL) {
-            insert_node(root->r, node);
-        } else {
-            root->r = node;
-            return;
-        }
+        root->r = __do_insert_node(root->r, node);
     }
 
     // Set height
@@ -176,27 +176,29 @@ static void __do_insert_node(avl_tree_node *root, avl_tree_node *node)
     // Balance trees
     int balance = tree_balance(root);
 
-    if (balance > 1 && __cmp_payload(root, node->l) < 0) {
-        __rotate_r(node);
-    } else if (balance < -1 && __cmp_payload(root, node->r) > 0) {
-        __rotate_l(node);
-    } else if (balance > 1 && __cmp_payload(root, node->l) > 0) {
-        __rotate_l(node->l);
-        __rotate_r(node);
-    } else if (balance < -1 && __cmp_payload(root, node->r) < 0) {
-        __rotate_r(node->r);
-        __rotate_l(node);
+    if (balance > 1 && __cmp_payload(node, root->l) < 0) {
+        return __rotate_r(root);
+    } else if (balance < -1 && __cmp_payload(node, root->r) > 0) {
+        return __rotate_l(root);
+    } else if (balance > 1 && __cmp_payload(node, root->l) > 0) {
+        root->l = __rotate_l(root->l);
+        return __rotate_r(root);
+    } else if (balance < -1 && __cmp_payload(node, root->r) < 0) {
+        root->r = __rotate_r(root->r);
+        return __rotate_l(root);
     }
+
+    return root;
 }
 
-int insert_node(avl_tree_node *root, avl_tree_node *node)
+int insert_node(avl_tree_node **root, avl_tree_node *node)
 {
     ASSERT(root != NULL);
     ASSERT(node != NULL);
-    if (find_payload(root, node->payload)) {
+    if (find_payload(*root, node->payload)) {
         return 0;
     }
-    __do_insert_node(root, node);
+    *root = __do_insert_node(*root, node);
     return 1;
 }
 
@@ -206,7 +208,7 @@ int find_payload(avl_tree_node *node, void *payload)
         return 0;
     }
 
-    int cmp = node->cmp_payload(node->payload, payload);
+    int cmp = node->cmp_payload(payload, node->payload);
     if (cmp == 0) {
         return 1;
     } else if (cmp < 0) {

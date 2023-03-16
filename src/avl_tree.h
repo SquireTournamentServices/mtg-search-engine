@@ -20,7 +20,7 @@ int tree_balance(avl_tree_node *node);
 void free_tree(avl_tree_node *tree);
 void print_tree(avl_tree_node *root);
 
-int insert_node(avl_tree_node *root, avl_tree_node *node);
+int insert_node(avl_tree_node **root, avl_tree_node *node);
 
 /// Returns 1 if the payload is in the tree, otherwise 0
 int find_payload(avl_tree_node *node, void *payload);
