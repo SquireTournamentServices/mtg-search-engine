@@ -74,6 +74,7 @@ static int test_card_parse_json()
     ASSERT(f != NULL);
     json_error_t error;
     json_t *json = json_loadf(f, 0, &error);
+    fclose(f);
     ASSERT(json != NULL);
 
     mtg_card_t card;
@@ -92,11 +93,13 @@ static int test_card_write_read()
     ASSERT(f != NULL);
     json_error_t error;
     json_t *json = json_loadf(f, 0, &error);
+    fclose(f);
     ASSERT(json != NULL);
 
     mtg_card_t card;
     ASSERT(parse_card_json(json, &card));
 
+    // Create pipe
     int fid[2];
     ASSERT(pipe(fid) == 0);
 
@@ -106,12 +109,13 @@ static int test_card_write_read()
     FILE *w = fdopen(fid[1], "wb");
     ASSERT(w != NULL);
 
-    write_card(w, card);
+    // Test write
+    ASSERT(write_card(w, card));
     fclose(w);
     free_card(&card);
 
     mtg_card_t card_2;
-    read_card(r, &card_2);
+    ASSERT(read_card(r, &card_2));
     fclose(r);
 
     ASSERT(__test_card_props(card_2));

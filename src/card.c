@@ -262,10 +262,13 @@ void free_card(mtg_card_t *card)
         free(card->oracle_text);
     }
 
-    for (size_t i = 0; i < card->types_count; i++) {
-        if (card->types[i] != NULL) {
-            free(card->types[i]);
+    if (card->types != NULL) {
+        for (size_t i = 0; i < card->types_count; i++) {
+            if (card->types[i] != NULL) {
+                free(card->types[i]);
+            }
         }
+        free(card->types);
     }
 
     if (card->set_codes != NULL) {
