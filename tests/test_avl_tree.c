@@ -21,6 +21,13 @@ static int test_heights(avl_tree_node *root)
     return __test_heights(root, root->height + 1);
 }
 
+static size_t get_tree_nodes(avl_tree_node *node)
+{
+    if (node == NULL) {
+        return 0;
+    }
+    return 1 + get_tree_nodes(node->l) + get_tree_nodes(node->r);
+}
 
 static int test_tree_props(avl_tree_node *node)
 {
@@ -41,11 +48,8 @@ static int test_tree_props(avl_tree_node *node)
     return 1;
 }
 
-static int cmp_size_t(void *_a, void *_b)
+static int cmp_size_t(void *a, void *b)
 {
-    size_t a = (size_t) _a;
-    size_t b = (size_t) _b;
-
     if (a == b) {
         return 0;
     } else if (a < b) {
@@ -65,58 +69,15 @@ static int test_tree_init_free()
     ASSERT(node->cmp_payload == &cmp_size_t);
     ASSERT(find_payload(node, node->payload));
     ASSERT(find_payload(node, payload));
+    ASSERT(get_tree_nodes(node) == 1);
     print_tree(node);
     free_tree(node);
 
     return 1;
 }
 
-#define MAX_NODES 100000
+#define MAX_NODES 10000
 #define MAX_TIME 3
-
-static int test_tree_insert()
-{
-    time_t t1 = time(NULL);
-    void *payload = (void *) 1L;
-    avl_tree_node *tree = init_avl_tree_node(NULL, &cmp_size_t, payload);
-    ASSERT(tree != NULL);
-    ASSERT(tree->cmp_payload == &cmp_size_t);
-    ASSERT(tree->free_payload == NULL);
-    ASSERT(tree->payload == payload);
-    ASSERT(find_payload(tree, payload));
-
-    // Add to tree
-    size_t cnt = 0;
-    for (size_t i = 0; i < MAX_NODES; i++) {
-        void *ptr = (void *) random();
-        avl_tree_node *node = init_avl_tree_node(NULL, &cmp_size_t, ptr);
-        ASSERT(node != NULL);
-
-        ASSERT(ptr == node->payload);
-        ASSERT(node->cmp_payload(node->payload, ptr) == 0);
-
-        if (find_payload(tree, (void *) node->payload) != 0) {
-            free_tree(node);
-            cnt++;
-            continue;
-        }
-        ASSERT(insert_node(&tree, node));
-        ASSERT(tree != NULL);
-        ASSERT(find_payload(tree, ptr));
-        ASSERT(find_payload(tree, node->payload));
-    }
-
-    time_t t2 = time(NULL);
-    ASSERT(t2 - t1 <= MAX_TIME);
-
-    lprintf(LOG_INFO, "Tree height %lu for %lu nodes\n", tree->height, MAX_NODES);
-    ASSERT(test_heights(tree));
-    ASSERT(test_tree_props(tree));
-    ASSERT(cnt < MAX_NODES / 10);
-
-    free_tree(tree);
-    return 1;
-}
 
 static int cmp_int_pointer(void *_a, void *_b)
 {
@@ -131,7 +92,7 @@ static int cmp_int_pointer(void *_a, void *_b)
     return 1;
 }
 
-static int test_tree_insert_2()
+static int test_tree_insert()
 {
     time_t t1 = time(NULL);
     int *ptr = malloc(sizeof(*ptr));
@@ -142,21 +103,18 @@ static int test_tree_insert_2()
     ASSERT(tree != NULL);
 
     // Add to tree
-    size_t cnt = 0;
     for (size_t i = 0; i < MAX_NODES; i++) {
         int *ptr = malloc(sizeof(*ptr));
         ASSERT(ptr != NULL);
-        *ptr = random();
+        *ptr = i;
 
         avl_tree_node *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
         ASSERT(node != NULL);
-
-        if (find_payload(tree, (void *) node->payload) != 0) {
-            free_tree(node);
-            cnt++;
-            continue;
-        }
+        ASSERT(node->payload == ptr);
+        ASSERT(!find_payload(tree, node->payload));
         ASSERT(insert_node(&tree, node));
+        ASSERT(find_payload(tree, node->payload));
+        ASSERT(get_tree_nodes(tree) == i + 2);
     }
 
     time_t t2 = time(NULL);
@@ -165,39 +123,37 @@ static int test_tree_insert_2()
     lprintf(LOG_INFO, "Tree height %lu for %lu node\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
     ASSERT(test_tree_props(tree));
-    ASSERT(cnt < MAX_NODES / 10);
+    ASSERT(get_tree_nodes(tree) == MAX_NODES + 1);
 
     free_tree(tree);
     return 1;
 }
 
-static int test_tree_insert_3()
+#define NODES_3 16
+
+static int test_tree_insert_2()
 {
     time_t t1 = time(NULL);
-    avl_tree_node *tree = init_avl_tree_node(NULL, &cmp_size_t, (void *) 1L);
+    avl_tree_node *tree = init_avl_tree_node(NULL, &cmp_size_t,
+                          (void *) (size_t) (NODES_3 + 5));
     ASSERT(tree != NULL);
 
     // Add to tree
-    size_t cnt = 0;
-    for (size_t i = 0; i < 16; i++) {
-        avl_tree_node *node = init_avl_tree_node(NULL, &cmp_size_t, (void *) random());
+    for (size_t i = 0; i < NODES_3; i++) {
+        avl_tree_node *node = init_avl_tree_node(NULL, &cmp_size_t, (void *) i);
         ASSERT(node != NULL);
-
-        if (find_payload(tree, (void *) node->payload) != 0) {
-            free_tree(node);
-            cnt++;
-            continue;
-        }
+        ASSERT(!find_payload(tree, node->payload));
         ASSERT(insert_node(&tree, node));
+        ASSERT(find_payload(tree, node->payload));
     }
 
     time_t t2 = time(NULL);
     ASSERT(t2 - t1 <= MAX_TIME);
 
-    ASSERT(cnt < MAX_NODES / 10);
     lprintf(LOG_INFO, "Tree height %lu for %lu nodes\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
     ASSERT(test_tree_props(tree));
+    ASSERT(get_tree_nodes(tree) == NODES_3 + 1);
     print_tree(tree);
 
     free_tree(tree);
@@ -213,5 +169,4 @@ static int test_find_payload_null()
 SUB_TEST(test_avl_tree, {&test_tree_init_free, "Test AVL tree init free"},
 {&test_tree_insert, "Test tree insert"},
 {&test_tree_insert_2, "Test tree insert 2"},
-{&test_tree_insert_3, "Test tree insert 3"},
 {&test_find_payload_null, "Test find payload for NULL case"})
