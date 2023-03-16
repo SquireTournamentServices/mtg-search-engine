@@ -112,6 +112,25 @@ int parse_card_json(json_t *json, mtg_card_t *card)
         card->types_count++;
     }
 
+    // Read "types"
+    json_t *types_o = json_object_get(json, "types");
+    ASSERT(types_o != NULL);
+    ASSERT(json_is_array(types_o));
+
+    json_array_foreach(types_o, index, value) {
+        ASSERT(json_is_string(value));
+        if (card->types == NULL) {
+            ASSERT(card->types = malloc(sizeof(*card->types)));
+        }
+
+        ASSERT(card->types = realloc(card->types, sizeof(*card->types) * (1 + card->types_count)));
+
+        char *tmp;
+        ASSERT(tmp = strdup(json_string_value(value)));
+        card->types[card->types_count] = tmp;
+        card->types_count++;
+    }
+
     // Read cmc
     json_t *cmc_o = json_object_get(json, "manaValue");
     ASSERT(cmc_o != NULL);

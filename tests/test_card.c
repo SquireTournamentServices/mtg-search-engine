@@ -34,6 +34,28 @@ static int test_card_parse_json()
 
     ASSERT(fabs(card.cmc - 7.0) < 0.01);
 
+    // Types
+    int human = 0;
+    int creature = 0;
+    int cleric = 0;
+
+    ASSERT(card.types_count == 3);
+    ASSERT(card.types != NULL);
+    for (size_t i = 0; i < card.types_count; i++) {
+        if (strcmp(card.types[i], "Human") == 0) {
+            human = 1;
+        } else if (strcmp(card.types[i], "Cleric") == 0) {
+            cleric = 1;
+        } else if (strcmp(card.types[i], "Creature") == 0) {
+            creature = 1;
+        }
+    }
+    ASSERT(human);
+    ASSERT(creature);
+    ASSERT(cleric);
+
+    // Sets
+
     free_card(&card);
 
     json_decref(json);
