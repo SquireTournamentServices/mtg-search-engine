@@ -99,12 +99,7 @@ int read_set_code(FILE *f, mtg_set_code_t *code)
     return 1;
 }
 
-int uuid_cmp(uuid_t *a, uuid_t *b)
+int uuid_cmp(uuid_t a, uuid_t b)
 {
-    return memcmp(a->bytes, b->bytes, sizeof(a->bytes));
-}
-
-int avl_uuid_cmp(void *a, void *b)
-{
-    return uuid_cmp((uuid_t *) a, (uuid_t *) b);
+    return memcmp(a.bytes, b.bytes, sizeof(a.bytes));
 }

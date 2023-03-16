@@ -244,6 +244,13 @@ int read_card(FILE *f, mtg_card_t *card)
     return 1;
 }
 
+int avl_cmp_card(void *a, void *b)
+{
+    mtg_card_t *ca = (mtg_card_t *) a;
+    mtg_card_t *cb = (mtg_card_t *) b;
+    return uuid_cmp(ca->id, cb->id);
+}
+
 void free_card(mtg_card_t *card)
 {
     if (card == NULL) {

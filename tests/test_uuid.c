@@ -89,14 +89,14 @@ static int test_uuid_cmp()
     memset(a.bytes, 0, sizeof(a.bytes));
     memset(b.bytes, 0, sizeof(b.bytes));
 
-    ASSERT(uuid_cmp(&a, &b) == 0);
+    ASSERT(uuid_cmp(a, b) == 0);
 
     a.bytes[0] = 0xFF;
-    ASSERT(uuid_cmp(&a, &b) > 1);
+    ASSERT(uuid_cmp(a, b) > 1);
 
     a.bytes[0] = 0;
     b.bytes[0] = 0xFF;
-    ASSERT(uuid_cmp(&a, &b) < 1);
+    ASSERT(uuid_cmp(a, b) < 1);
 
     return 1;
 }

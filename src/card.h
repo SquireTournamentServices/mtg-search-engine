@@ -48,6 +48,7 @@ typedef struct mtg_card_t {
 int parse_card_json(json_t *json, mtg_card_t *card);
 int write_card(FILE *f, mtg_card_t card);
 int read_card(FILE *f, mtg_card_t *card);
+int avl_cmp_card(void *a, void *b);
 
 void free_card(mtg_card_t *card);
 
