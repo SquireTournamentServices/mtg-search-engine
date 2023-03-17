@@ -15,12 +15,11 @@ static size_t __tree_height(avl_tree_node *node)
 
 void free_tree(avl_tree_node *tree)
 {
-    if (tree->l != NULL) {
-        free_tree(tree->l);
+    if (tree == NULL) {
+        return;
     }
-    if (tree->r != NULL) {
-        free_tree(tree->r);
-    }
+    free_tree(tree->l);
+    free_tree(tree->r);
 
     if (tree->free_payload != NULL) {
         tree->free_payload(tree->payload);
