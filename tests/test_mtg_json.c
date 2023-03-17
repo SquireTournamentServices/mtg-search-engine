@@ -7,6 +7,41 @@
 #include <unistd.h>
 #include <jansson.h>
 
+// Some vile testing globals
+mtg_all_printings_cards_t test_cards;
+json_t *json;
+
+
+static size_t get_tree_nodes(avl_tree_node *node)
+{
+    if (node == NULL) {
+        return 0;
+    }
+    return 1 + get_tree_nodes(node->l) + get_tree_nodes(node->r);
+}
+
+
+// A test for the tree props
+static int test_all_printings_cards_sets_found()
+{
+    ASSERT(test_cards.set_tree != NULL);
+    ASSERT(test_cards.set_tree->height > 0);
+    ASSERT(get_tree_nodes(test_cards.set_tree) == test_cards.set_count);
+    return 1;
+}
+
+static int test_all_printings_cards_found()
+{
+    ASSERT(test_cards.card_tree != NULL);
+    ASSERT(test_cards.card_tree->height > 0);
+    ASSERT(get_tree_nodes(test_cards.card_tree) == test_cards.card_count);
+    return 1;
+}
+
+SUB_TEST(__test_atomic_card_props, {&test_all_printings_cards_sets_found, "Test atomic cards found sets"},
+{&test_all_printings_cards_found, "Test atomic cards found cards"})
+
+// Start tests
 static int test_free_all_printings_cards()
 {
     mtg_all_printings_cards_t ret;
@@ -20,12 +55,22 @@ static int test_init_free()
     thread_pool_t pool;
     ASSERT(init_pool(&pool));
 
-    mtg_all_printings_cards_t ret;
-    ASSERT(get_all_printings_cards(&ret, &pool));
-    ASSERT(ret.set_tree->height > 0);
-    free_all_printings_cards(&ret);
+    memset(&test_cards, 0, sizeof(test_cards));
+    ASSERT(get_all_printings_cards(&test_cards, &pool));
 
-    sleep(1); // This lets the cURL thread clean itself up before being killed
+    ASSERT(test_cards.indexes.card_p_tree != NULL);
+    size_t p_nodes = get_tree_nodes(test_cards.indexes.card_p_tree);
+    ASSERT(p_nodes > 0);
+
+    ASSERT(test_cards.indexes.card_t_tree != NULL);
+    size_t t_nodes = get_tree_nodes(test_cards.indexes.card_t_tree);
+    ASSERT(t_nodes > 0);
+    ASSERT(p_nodes == t_nodes);
+    ASSERT(p_nodes == test_cards.card_count);
+
+    ASSERT(__test_atomic_card_props());
+    free_all_printings_cards(&test_cards);
+
     ASSERT(free_pool(&pool));
     return 1;
 }
@@ -67,18 +112,6 @@ static json_t *get_all_printings_cards_from_file()
     fclose(f);
     return ret;
 }
-
-// Some vile testing globals
-mtg_all_printings_cards_t test_cards;
-json_t *json;
-
-static int test_all_printings_cards_sets_found()
-{
-    ASSERT(test_cards.set_tree->height > 0);
-    return 1;
-}
-
-SUB_TEST(__test_atomic_card_props, {&test_all_printings_cards_sets_found, "Test atomic cards found sets"})
 
 static int test_parse_all_printings_cards_sets()
 {

@@ -248,13 +248,6 @@ int read_card(FILE *f, mtg_card_t *card)
     return 1;
 }
 
-int avl_cmp_card(void *a, void *b)
-{
-    mtg_card_t *ca = (mtg_card_t *) a;
-    mtg_card_t *cb = (mtg_card_t *) b;
-    return uuid_cmp(ca->id, cb->id);
-}
-
 void free_card(mtg_card_t *card)
 {
     if (card == NULL) {
@@ -287,4 +280,35 @@ void free_card(mtg_card_t *card)
     }
 
     memset(card, 0, sizeof(*card));
+}
+
+int avl_cmp_card(void *a, void *b)
+{
+    mtg_card_t *ca = (mtg_card_t *) a;
+    mtg_card_t *cb = (mtg_card_t *) b;
+    return uuid_cmp(ca->id, cb->id);
+}
+
+int avl_cmp_card_p(void *a, void *b)
+{
+    mtg_card_t *ca = (mtg_card_t *) a;
+    mtg_card_t *cb = (mtg_card_t *) b;
+    int cmp = ca->power - cb->power;
+
+    if (cmp == 0) {
+        return avl_cmp_card(a, b);
+    }
+    return cmp;
+}
+
+int avl_cmp_card_t(void *a, void *b)
+{
+    mtg_card_t *ca = (mtg_card_t *) a;
+    mtg_card_t *cb = (mtg_card_t *) b;
+    int cmp = ca->toughness - cb->toughness;
+
+    if (cmp == 0) {
+        return avl_cmp_card(a, b);
+    }
+    return cmp;
 }

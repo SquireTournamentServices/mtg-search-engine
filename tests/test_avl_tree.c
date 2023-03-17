@@ -67,8 +67,8 @@ static int test_tree_init_free()
     ASSERT(node->payload == payload);
     ASSERT(node->free_payload == NULL);
     ASSERT(node->cmp_payload == &cmp_size_t);
-    ASSERT(find_payload(node, node->payload));
-    ASSERT(find_payload(node, payload));
+    ASSERT(find_payload(node, node->payload) == node);
+    ASSERT(find_payload(node, payload) == node);
     ASSERT(get_tree_nodes(node) == 1);
     print_tree(node);
     free_tree(node);
@@ -111,9 +111,10 @@ static int test_tree_insert()
         avl_tree_node *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
         ASSERT(node != NULL);
         ASSERT(node->payload == ptr);
-        ASSERT(!find_payload(tree, node->payload));
+
+        ASSERT(find_payload(tree, node->payload) == NULL);
         ASSERT(insert_node(&tree, node));
-        ASSERT(find_payload(tree, node->payload));
+        ASSERT(find_payload(tree, node->payload) == node);
         ASSERT(get_tree_nodes(tree) == i + 2);
     }
 
@@ -142,9 +143,9 @@ static int test_tree_insert_2()
     for (size_t i = 0; i < NODES_3; i++) {
         avl_tree_node *node = init_avl_tree_node(NULL, &cmp_size_t, (void *) i);
         ASSERT(node != NULL);
-        ASSERT(!find_payload(tree, node->payload));
+        ASSERT(find_payload(tree, node->payload) == NULL);
         ASSERT(insert_node(&tree, node));
-        ASSERT(find_payload(tree, node->payload));
+        ASSERT(find_payload(tree, node->payload) == node);
     }
 
     time_t t2 = time(NULL);
@@ -162,7 +163,7 @@ static int test_tree_insert_2()
 
 static int test_find_payload_null()
 {
-    ASSERT(find_payload(NULL, (void *) 1L) == 0);
+    ASSERT(find_payload(NULL, (void *) 1L) == NULL);
     return 1;
 }
 

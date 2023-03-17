@@ -200,15 +200,15 @@ int insert_node(avl_tree_node **root, avl_tree_node *node)
     return 1;
 }
 
-int find_payload(avl_tree_node *node, void *payload)
+avl_tree_node *find_payload(avl_tree_node *node, void *payload)
 {
     if (node == NULL) {
-        return 0;
+        return NULL;
     }
 
     int cmp = node->cmp_payload(payload, node->payload);
     if (cmp == 0) {
-        return 1;
+        return node;
     } else if (cmp < 0) {
         return find_payload(node->l, payload);
     } else {
