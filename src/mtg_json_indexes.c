@@ -41,8 +41,8 @@ static void __generate_set_cards_index_task(void *__state, thread_pool_t *pool)
 {
     mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
     if (!__add_cards_to_set(state->cards->card_tree, state->cards->set_tree)) {
-    state->ret = 0;
-  }
+        state->ret = 0;
+    }
     sem_post(&(state->semaphore));
 }
 
