@@ -212,22 +212,9 @@ int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
     return 1;
 }
 
-static void __free_card_set_index(avl_tree_node *node)
-{
-    if (node == NULL) {
-        return;
-    }
-    mtg_set_t *set = (mtg_set_t *) node->payload;
-    free_tree(set->set_cards_tree);
-
-    __free_card_set_index(node->l);
-    __free_card_set_index(node->r);
-}
-
 void free_all_printings_cards(mtg_all_printings_cards_t *cards)
 {
     if (cards->set_tree != NULL) {
-        __free_card_set_index(cards->set_tree);
         free_tree(cards->set_tree);
     }
 
