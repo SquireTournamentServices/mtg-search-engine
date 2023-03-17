@@ -125,7 +125,34 @@ static int test_set_cmp()
     return 1;
 }
 
+static int test_add_card_to_set()
+{
+    json_t *json = json_pack("{s:s, s:s}", "name", SET_NAME, "releaseDate", SET_RELEASE_DATE);
+    ASSERT(json != NULL);
+
+    mtg_set_t set;
+    ASSERT(parse_set_json(json, &set, SET_CODE_2));
+    json_decref(json);
+
+    ASSERT(memcmp(set.code, SET_CODE_2, strlen(SET_CODE_2)) == 0);
+    ASSERT(strcmp(set.name, SET_NAME) == 0);
+    ASSERT(set.release.tm_year == 2002 - 1900);
+    ASSERT(set.release.tm_mon == 7 - 1);
+    ASSERT(set.release.tm_mday == 10);
+
+    mtg_card_t card;
+    ASSERT(add_card_to_set(&set, &card));
+    ASSERT(set.set_cards_tree != NULL);
+    ASSERT(set.set_cards_tree->payload == &card);
+
+    ASSERT(!add_card_to_set(&set, &card));
+
+    free_set(&set);
+    return 1;
+}
+
 SUB_TEST(test_set, {&test_parse_set_json, "Test parse set from JSON"},
 {&test_parse_set_json_long_code, "Test parse set from JSON with 6 letter code"},
 {&test_write_read_set, "Test write and read set"},
-{&test_set_cmp, "Test set cmp function"})
+{&test_set_cmp, "Test set cmp function"},
+{&test_add_card_to_set, "Test add card to set"})
