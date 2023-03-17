@@ -217,6 +217,9 @@ static void __free_card_set_index(avl_tree_node *node)
     if (node == NULL) {
         return;
     }
+    if (node->payload == NULL) {
+        return;
+    }
     mtg_set_t *set = (mtg_set_t *) node->payload;
     free_tree(set->set_cards_tree);
 
