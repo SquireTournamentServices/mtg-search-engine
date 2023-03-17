@@ -48,6 +48,9 @@ int read_set(FILE *f, mtg_set_t *set)
 
 int add_card_to_set(mtg_set_t *set, mtg_card_t *card)
 {
+    ASSERT(set != NULL);
+    ASSERT(card != NULL);
+
     // The card's memory is owned by the index struct that the set struct is part of
     avl_tree_node *node = init_avl_tree_node(NULL, &avl_cmp_card, (void *) card);
     ASSERT(node != NULL);
