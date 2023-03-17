@@ -13,6 +13,16 @@ size_t __mtg_json_write_callback(char *ptr,
                                  size_t nmemb,
                                  void *data);
 
+/// Contains all of the card indexes, each index will have a payload that is a pointer to a card,
+/// however it will have a NULL free pointer as the memory is owneed by mtg_all_printings_cards_t
+/// in card_tree
+typedef struct mtg_cards_indexes {
+    /// Index for power
+    avl_tree_node *card_p_tree;
+    /// Index for toughness
+    avl_tree_node *card_t_tree;
+} mtg_cards_indexes;
+
 /// This will store the atomic cards and, sets. Each card is stored once and,
 /// only once. cards and, sets are both stored as binary trees sorted by UUIDs.
 /// other indices need to be generated afterwards.
@@ -26,6 +36,9 @@ typedef struct mtg_all_printings_cards_t {
     size_t card_count;
     /// AVL BST tree for the cards, sorted by UUID
     avl_tree_node *card_tree;
+
+    /// Indexes
+    mtg_cards_indexes indexes;
 } mtg_all_printings_cards_t;
 
 /// Exposed internal method for use within internal testing

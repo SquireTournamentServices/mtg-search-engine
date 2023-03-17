@@ -51,3 +51,6 @@ int avl_cmp_card(void *a, void *b);
 
 void free_card(mtg_card_t *card);
 
+// Indexes comparison functions
+int avl_cmp_card_p(void *a, void *b);
+int avl_cmp_card_t(void *a, void *b);
