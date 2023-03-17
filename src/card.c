@@ -44,7 +44,11 @@ int parse_card_json(json_t *json, mtg_card_t *card)
     memset(card, 0, sizeof(*card));
 
     // Read ID
-    json_t *id_o = json_object_get(json, "uuid");
+    json_t *identifiers_o = json_object_get(json, "identifiers");
+    ASSERT(identifiers_o != NULL);
+    ASSERT(json_is_object(identifiers_o));
+
+    json_t *id_o = json_object_get(identifiers_o, "scryfallOracleId");
     ASSERT(id_o != NULL);
     ASSERT(json_is_string(id_o));
 
