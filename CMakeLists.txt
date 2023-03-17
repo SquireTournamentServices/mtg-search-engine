@@ -74,6 +74,8 @@ set(SRC
     ./src/uuid.c
     ./src/mtg_json.h
     ./src/mtg_json.c
+    ./src/mtg_json_indexes.h
+    ./src/mtg_json_indexes.c
     ./src/thread_pool.h
     ./src/thread_pool.c
     ./src/io_utils.h

@@ -42,6 +42,9 @@ int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards);
 /// Do not call free_all_printings_cards on fail
 int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool);
 
+/// This function will generate all of the indexes for a card, defined in mtg_json_indexes.c
+int __generate_indexes(mtg_all_printings_cards_t *ret, thread_pool_t *pool);
+
 /// Frees atomic cards
 void free_all_printings_cards(mtg_all_printings_cards_t *cards);
 
