@@ -40,6 +40,7 @@ int write_set(FILE *f, mtg_set_t set)
 
 int read_set(FILE *f, mtg_set_t *set)
 {
+    memset(set, 0, sizeof(*set));
     ASSERT(read_str(f, &set->name));
     ASSERT(read_set_code(f, &set->code));
     ASSERT(read_tm(f, &set->release));

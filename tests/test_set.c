@@ -81,6 +81,7 @@ static int test_write_read_set()
     fclose(w);
 
     mtg_set_t set_2;
+    memset(&set_2, 0xFF, sizeof(set_2));
     ASSERT(read_set(r, &set_2));
     fclose(r);
 
@@ -141,6 +142,7 @@ static int test_add_card_to_set()
     ASSERT(set.release.tm_mday == 10);
 
     mtg_card_t card;
+    memset(&card, 0, sizeof(card));
     ASSERT(add_card_to_set(&set, &card));
     ASSERT(set.set_cards_tree != NULL);
     ASSERT(set.set_cards_tree->payload == &card);
