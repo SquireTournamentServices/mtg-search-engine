@@ -206,7 +206,7 @@ int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
     fclose(r);
 
     lprintf(LOG_INFO, "Generating card indexes\n");
-    ASSERT(!__generate_indexes(ret, pool));
+    ASSERT(__generate_indexes(ret, pool));
 
     lprintf(LOG_INFO, "Cards and, indexes are now complete\n");
     return 1;
