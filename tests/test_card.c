@@ -126,5 +126,29 @@ static int test_card_write_read()
     return 1;
 }
 
+static int test_avl_cmp_card()
+{
+    mtg_card_t a, b;
+    memset(&a, 0, sizeof(a));
+    memset(&b, 0, sizeof(b));
+
+    ASSERT(uuid_cmp(a.id, b.id) == 0);
+    ASSERT(avl_cmp_card((void *) &a, (void *) &b) == 0);
+
+    a.id.bytes[0] = 0xFF;
+    int tmp = uuid_cmp(a.id, b.id);
+    ASSERT(tmp > 1);
+    ASSERT(avl_cmp_card((void *) &a, (void *) &b) == tmp);
+
+    a.id.bytes[0] = 0;
+    b.id.bytes[0] = 0xFF;
+    tmp = uuid_cmp(a.id, b.id);
+    ASSERT(tmp < 1);
+    ASSERT(avl_cmp_card((void *) &a, (void *) &b) == tmp);
+
+    return 1;
+}
+
 SUB_TEST(test_card, {&test_card_parse_json, "Test parse card from JSON"},
-{&test_card_write_read, "Test card read and, write"})
+{&test_card_write_read, "Test card read and, write"},
+{&test_avl_cmp_card, "Test card avl cmp function"})
