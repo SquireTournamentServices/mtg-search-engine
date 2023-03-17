@@ -4,7 +4,6 @@
 #include <limits.h>
 #include <jansson.h>
 #include "./uuid.h"
-#include "./set.h"
 
 // Evil macros
 #ifdef british

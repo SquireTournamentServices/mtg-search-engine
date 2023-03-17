@@ -46,14 +46,27 @@ int read_set(FILE *f, mtg_set_t *set)
     return 1;
 }
 
+int add_card_to_set(mtg_set_t *set, mtg_card_t *card)
+{
+    // The card's memory is owned by the index struct that the set struct is part of
+    avl_tree_node *node = init_avl_tree_node(NULL, &avl_cmp_card, (void *) card);
+    ASSERT(node != NULL);
+
+    if (!insert_node(&set->set_cards_tree, node)) {
+        free_tree(node);
+        return 0;
+    }
+    return 1;
+}
+
 void free_set(mtg_set_t *set)
 {
     if (set->name != NULL) {
         free(set->name);
     }
 
-    if (set->set_cards != NULL) {
-        free_tree(set->set_cards);
+    if (set->set_cards_tree != NULL) {
+        free_tree(set->set_cards_tree);
     }
     memset(set, 0, sizeof(*set));
 }
