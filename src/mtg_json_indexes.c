@@ -2,8 +2,6 @@
 #include "../testing_h/testing.h"
 #include <string.h>
 
-#define TASK_COUNT(T) (sizeof(T) / sizeof(*T))
-
 static void __add_card_to_set(mtg_card_t *card, avl_tree_node *sets)
 {
     for (size_t i = 0; i < card->set_codes_count; i++) {
@@ -29,6 +27,8 @@ static void __generate_set_cards_index_task(void *__state, thread_pool_t *pool)
     __add_cards_to_set(state->cards->card_tree, state->cards->set_tree);
     sem_post(&(state->semaphore));
 }
+
+#define TASK_COUNT(T) (sizeof(T) / sizeof(*T))
 
 int __generate_indexes(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
 {
