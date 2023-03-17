@@ -179,18 +179,19 @@ int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
     task_t task = {(void *) w, &__get_all_printings_cards_curl_thread};
     ASSERT(task_queue_enqueue(&pool->queue, task));
 
+    lprintf(LOG_INFO, "Downloading cards...\n");
+
     // Start reading the json in this thread
     json_error_t error;
     size_t flags = 0;
     json_t *json = json_loadf(r, flags, &error);
-    int ret_code = 1;
 
     // If the json cannot be read due to an error, then the curl request failed, its thread should have cleared
     // that bit up
     if (json == NULL) {
         lprintf(LOG_ERROR, "Cannot parse atomic json, %100s\n", error.text);
-        ret_code = 0;
-        goto cleanup;
+        fclose(r);
+        return 0;
     }
 
     // This only runs if there was no error
@@ -199,17 +200,16 @@ int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
 
     if (!status) {
         lprintf(LOG_ERROR, "Cannot parse atomic json into cards and, sets\n");
-        ret_code = 0;
-        goto cleanup;
+        fclose(r);
+        return 0;
     }
-
-cleanup:
     fclose(r);
-    if (!ret_code) {
-        lprintf(LOG_INFO, "Could not get atomic cards\n");
-        free_all_printings_cards(ret);
-    }
-    return ret_code;
+
+    lprintf(LOG_INFO, "Generating card indexes\n");
+    ASSERT(!__generate_indexes(ret, pool));
+
+    lprintf(LOG_INFO, "Cards and, indexes are now complete\n");
+    return 1;
 }
 
 void free_all_printings_cards(mtg_all_printings_cards_t *cards)
