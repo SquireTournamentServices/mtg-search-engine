@@ -111,6 +111,7 @@ static int test_tree_insert()
         avl_tree_node *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
         ASSERT(node != NULL);
         ASSERT(node->payload == ptr);
+
         ASSERT(!find_payload(tree, node->payload));
         ASSERT(insert_node(&tree, node));
         ASSERT(find_payload(tree, node->payload));

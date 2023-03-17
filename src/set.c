@@ -51,6 +51,10 @@ void free_set(mtg_set_t *set)
     if (set->name != NULL) {
         free(set->name);
     }
+
+    if (set->set_cards != NULL) {
+        free_tree(set->set_cards);
+    }
     memset(set, 0, sizeof(*set));
 }
 
