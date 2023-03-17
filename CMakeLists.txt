@@ -109,7 +109,7 @@ set(GCOVR_EXCLUDE "build/*" "tests/*" "src/main.c")
 append_coverage_compiler_flags()
 setup_target_for_coverage_gcovr_xml(
   NAME
-  coverage
+  mse_coverage
   EXECUTABLE
   mtg-search-engine-tests
   test

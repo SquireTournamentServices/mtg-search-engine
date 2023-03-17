@@ -105,7 +105,7 @@ jobs:
         rm -rf *
         cmake .. -DCMAKE_BUILD_TYPE=TEST "-DCMAKE_C_COMPILER=/bin/gcc" "-DCMAKE_CXX_COMPILER=/bin/g++"
         cmake --build . -j
-        make coverage || true
+        make mse_coverage || true
     
     - uses: codecov/codecov-action@v3
       with:
