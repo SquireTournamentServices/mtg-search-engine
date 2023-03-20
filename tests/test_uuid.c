@@ -118,8 +118,18 @@ static int test_get_set_code()
     return 1;
 }
 
+static int test_max_uuid()
+{
+    uuid_t m_uuid = max_uuid();
+    for (size_t i = 0; i < sizeof(m_uuid.bytes) / sizeof(*m_uuid.bytes); i++) {
+        ASSERT(m_uuid.bytes[i] == 0xFF);
+    }
+    return 1;
+}
+
 SUB_TEST(test_uuid, {&test_uuid_read_write, "UUID read and, write"},
 {&test_uuid_from_string, "UUID from string"},
 {&test_set_code_read_write, "Set code read and, write"},
 {&test_uuid_cmp, "Test UUID compare"},
-{&test_get_set_code, "Test set code read function"})
+{&test_get_set_code, "Test set code read function"},
+{&test_max_uuid, "Test max UUID"})

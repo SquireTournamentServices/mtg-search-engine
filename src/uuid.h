@@ -24,3 +24,8 @@ int read_set_code(FILE *f, mtg_set_code_t *code); // returns 0 on error
 
 /// Return code is similar to that of memcmp, maybe because it uses memcmp...
 int uuid_cmp(uuid_t a, uuid_t b);
+
+/// Returns the maximum possible UUID, this can be used when doing an lookup in an AVL tree for an element where
+/// the UUID makes up part of a composite key. In card.h the power and, toughness trees use a composite key of
+/// the numerical value and the UUID, by using the max UUID for the thing to compare to, i.e: compare (x, max_x)
+uuid_t max_uuid();

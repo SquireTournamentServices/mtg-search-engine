@@ -103,3 +103,10 @@ int uuid_cmp(uuid_t a, uuid_t b)
 {
     return memcmp(a.bytes, b.bytes, sizeof(a.bytes));
 }
+
+uuid_t max_uuid()
+{
+    uuid_t ret;
+    memset(ret.bytes, 0xFF, sizeof(ret.bytes));
+    return ret;
+}
