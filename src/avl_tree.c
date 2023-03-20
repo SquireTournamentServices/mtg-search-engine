@@ -214,3 +214,67 @@ avl_tree_node *find_payload(avl_tree_node *node, void *payload)
         return find_payload(node->r, payload);
     }
 }
+
+static void __init_tree_lookup(avl_tree_lookup_t *res)
+{
+    memset(res, 0, sizeof(*res));
+}
+
+static int __add_node_to_lookup(avl_tree_lookup_t *res, void *payload)
+{
+    if (res->results_length == 0) {
+        res->results = malloc(sizeof(*res->results));
+    } else {
+        res->results = realloc(res->results, sizeof(*res->results) * (res->results_length + 1));
+    }
+    ASSERT(res->results != NULL);
+
+    res->results[res->results_length] = payload;
+    res->results_length++;
+    return 1;
+}
+
+int __tree_lookup(avl_tree_node *node, avl_tree_lookup_t *res, int less_than, void *cmp_payload)
+{
+    if (node == NULL) {
+        return 1;
+    }
+
+    int cmp = node->cmp_payload(cmp_payload, node->payload);
+    if (less_than) {
+        if (cmp < 0) {
+            ASSERT(__add_node_to_lookup(res, node->payload));
+            ASSERT(__tree_lookup(node->l, res, less_than, cmp_payload));
+            ASSERT(__tree_lookup(node->r, res, less_than, cmp_payload));
+        } else {
+            ASSERT(__tree_lookup(node->r, res, less_than, cmp_payload));
+        }
+    } else {
+        if (cmp > 0) {
+            ASSERT(__add_node_to_lookup(res, node->payload));
+            ASSERT(__tree_lookup(node->l, res, less_than, cmp_payload));
+            ASSERT(__tree_lookup(node->r, res, less_than, cmp_payload));
+        } else {
+            ASSERT(__tree_lookup(node->l, res, less_than, cmp_payload));
+        }
+    }
+    return 1;
+}
+
+int tree_lookup(avl_tree_node *root, avl_tree_lookup_t *res, int less_than, void *cmp_payload)
+{
+    __init_tree_lookup(res);
+    return __tree_lookup(root, res, less_than, cmp_payload);
+}
+
+void free_tree_lookup(avl_tree_lookup_t *res)
+{
+    if (res == NULL) {
+        return;
+    }
+
+    if (res->results != NULL) {
+        free(res->results);
+    }
+    memset(res, 0, sizeof(*res));
+}
