@@ -46,7 +46,7 @@ find_package(CURL)
 # __FILENAME__
 string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
 add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
-add_definitions("-D__FILENAME__=(__FILE__ + SOURCE_PATH_SIZE)")
+add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 add_definitions("-DMTG_BINARY_VERSION=1")
 
 set(CMAKE_C_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -g")
@@ -98,7 +98,9 @@ set(TESTS
     ./tests/test_card.h
     ./tests/test_card.c
     ./tests/test_avl_tree.h
-    ./tests/test_avl_tree.c)
+    ./tests/test_avl_tree.c
+    ./tests/test_mse_langs.h
+    ./tests/test_mse_langs.c)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
