@@ -191,12 +191,22 @@ static int test_tree_lookup()
     ASSERT(tree_lookup(tree, &res, 1, ptr));
     ASSERT(res.results != NULL);
     ASSERT(res.results_length == (MAX_NODES / 2) - 1);
+
+    for (size_t i = 0; i < res.results_length; i++) {
+        ASSERT(res.results[i] != NULL);
+        ASSERT(tree->cmp_payload(res.results[i], tree->payload) < 0);
+    }
     free_tree_lookup(&res);
 
     // Test greater than
     ASSERT(tree_lookup(tree, &res, 0, ptr));
     ASSERT(res.results != NULL);
     ASSERT(res.results_length == MAX_NODES - ((MAX_NODES / 2) - 1));
+
+    for (size_t i = 0; i < res.results_length; i++) {
+        ASSERT(res.results[i] != NULL);
+        ASSERT(tree->cmp_payload(res.results[i], tree->payload) > 0);
+    }
     free_tree_lookup(&res);
 
     free(ptr);
