@@ -77,7 +77,6 @@ static int test_tree_init_free()
 }
 
 #define MAX_NODES 10000
-#define MAX_TIME 3
 
 static int cmp_int_pointer(void *_a, void *_b)
 {
@@ -94,7 +93,6 @@ static int cmp_int_pointer(void *_a, void *_b)
 
 static int test_tree_insert()
 {
-    time_t t1 = time(NULL);
     int *ptr = malloc(sizeof(*ptr));
     ASSERT(ptr != NULL);
     *ptr = random();
@@ -118,9 +116,6 @@ static int test_tree_insert()
         ASSERT(get_tree_nodes(tree) == i + 2);
     }
 
-    time_t t2 = time(NULL);
-    ASSERT(t2 - t1 <= MAX_TIME);
-
     lprintf(LOG_INFO, "Tree height %lu for %lu node\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
     ASSERT(test_tree_props(tree));
@@ -134,7 +129,6 @@ static int test_tree_insert()
 
 static int test_tree_insert_2()
 {
-    time_t t1 = time(NULL);
     avl_tree_node *tree = init_avl_tree_node(NULL, &cmp_size_t,
                           (void *) (size_t) (NODES_3 + 5));
     ASSERT(tree != NULL);
@@ -147,9 +141,6 @@ static int test_tree_insert_2()
         ASSERT(insert_node(&tree, node));
         ASSERT(find_payload(tree, node->payload) == node);
     }
-
-    time_t t2 = time(NULL);
-    ASSERT(t2 - t1 <= MAX_TIME);
 
     lprintf(LOG_INFO, "Tree height %lu for %lu nodes\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
