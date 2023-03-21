@@ -194,7 +194,7 @@ static int test_tree_lookup()
 
     for (size_t i = 0; i < res.results_length; i++) {
         ASSERT(res.results[i] != NULL);
-        ASSERT(tree->cmp_payload(res.results[i], tree->payload) < 0);
+        ASSERT(tree->cmp_payload(ptr, res.results[i]) < 0);
     }
     free_tree_lookup(&res);
 
@@ -205,7 +205,7 @@ static int test_tree_lookup()
 
     for (size_t i = 0; i < res.results_length; i++) {
         ASSERT(res.results[i] != NULL);
-        ASSERT(tree->cmp_payload(res.results[i], tree->payload) > 0);
+        ASSERT(tree->cmp_payload(ptr, res.results[i]) > 0);
     }
     free_tree_lookup(&res);
 
@@ -221,8 +221,64 @@ static int test_tree_lookup()
     return 1;
 }
 
+static int test_tree_lookup_2()
+{
+    int *ptr = malloc(sizeof(*ptr));
+    ASSERT(ptr != NULL);
+    *ptr = -1;
+
+    avl_tree_node *tree = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+    ASSERT(tree != NULL);
+
+    // Add to tree
+    for (size_t i = 0; i < MAX_NODES; i++) {
+        int *ptr = malloc(sizeof(*ptr));
+        ASSERT(ptr != NULL);
+        *ptr = i;
+
+        avl_tree_node *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+        ASSERT(node != NULL);
+        ASSERT(node->payload == ptr);
+
+        ASSERT(insert_node(&tree, node));
+    }
+
+    // Test lookup
+    ptr = malloc(sizeof(*ptr));
+    ASSERT(ptr != NULL);
+    *ptr = MAX_NODES / 3;
+
+    int *ptr_2 = malloc(sizeof(*ptr_2));
+    ASSERT(ptr_2 != NULL);
+    *ptr_2 = MAX_NODES / 2;
+
+    avl_tree_lookup_t res;
+    ASSERT(tree_lookup_2(tree, &res, ptr, ptr_2));
+    ASSERT(res.results != NULL);
+
+    for (size_t i = 0; i < res.results_length; i++) {
+        ASSERT(res.results[i] != NULL);
+        ASSERT(tree->cmp_payload(res.results[i], ptr) > 0);
+        ASSERT(tree->cmp_payload(res.results[i], ptr_2) < 0);
+    }
+    free_tree_lookup(&res);
+
+    free(ptr);
+    free(ptr_2);
+
+    // Test the tree is still valid
+    lprintf(LOG_INFO, "Tree height %lu for %lu node\n", tree->height, MAX_NODES);
+    ASSERT(test_heights(tree));
+    ASSERT(test_tree_props(tree));
+    ASSERT(get_tree_nodes(tree) == MAX_NODES + 1);
+
+    free_tree(tree);
+    return 1;
+}
+
 SUB_TEST(test_avl_tree, {&test_tree_init_free, "Test AVL tree init free"},
 {&test_tree_insert, "Test tree insert"},
 {&test_tree_insert_2, "Test tree insert 2"},
 {&test_find_payload_null, "Test find payload for NULL case"},
-{&test_tree_lookup, "Test tree lookup"})
+{&test_tree_lookup, "Test tree lookup"},
+{&test_tree_lookup_2, "Test tree lookup 2"})

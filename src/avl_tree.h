@@ -32,5 +32,6 @@ typedef struct avl_tree_lookup_t {
 
 /// Lookup for nodes that are less than (or greater than) cmp_payload
 int tree_lookup(avl_tree_node *root, avl_tree_lookup_t *res, int less_than, void *cmp_payload);
+int tree_lookup_2(avl_tree_node *root, avl_tree_lookup_t *res, void *lower, void *upper);
 
 void free_tree_lookup(avl_tree_lookup_t *res);
