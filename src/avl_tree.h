@@ -25,6 +25,12 @@ int insert_node(avl_tree_node **root, avl_tree_node *node);
 /// Returns 1 if the payload is in the tree, otherwise 0
 avl_tree_node *find_payload(avl_tree_node *node, void *payload);
 
+/// Returns how many elements are in a tree
+size_t tree_size(avl_tree_node *node);
+
+/// Copies the contents of the node
+avl_tree_node *shallow_copy_tree_node(avl_tree_node *node);
+
 typedef struct avl_tree_lookup_t {
     size_t results_length;
     void **results;

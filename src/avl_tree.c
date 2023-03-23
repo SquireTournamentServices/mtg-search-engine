@@ -190,6 +190,10 @@ static avl_tree_node *__do_insert_node(avl_tree_node *root, avl_tree_node *node)
 
 int insert_node(avl_tree_node **root, avl_tree_node *node)
 {
+    if (*root == NULL) {
+        *root = node;
+        return 1;
+    }
     ASSERT(root != NULL);
     ASSERT(node != NULL);
     if (find_payload(*root, node->payload)) {
@@ -213,6 +217,24 @@ avl_tree_node *find_payload(avl_tree_node *node, void *payload)
     } else {
         return find_payload(node->r, payload);
     }
+}
+
+size_t tree_size(avl_tree_node *node)
+{
+    if (node == NULL) {
+        return 0;
+    }
+
+    return 1 + tree_size(node->l) + tree_size(node->r);
+}
+
+avl_tree_node *shallow_copy_tree_node(avl_tree_node *node)
+{
+    if (node == NULL) {
+        return NULL;
+    }
+
+    return init_avl_tree_node(node->free_payload, node->cmp_payload, node->payload);
 }
 
 static void __init_tree_lookup(avl_tree_lookup_t *res)
