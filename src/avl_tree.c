@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static size_t __tree_height(avl_tree_node *node)
+static size_t __tree_height(avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 0;
@@ -13,7 +13,7 @@ static size_t __tree_height(avl_tree_node *node)
     return node->height;
 }
 
-void free_tree(avl_tree_node *tree)
+void free_tree(avl_tree_node_t *tree)
 {
     if (tree == NULL) {
         return;
@@ -27,7 +27,7 @@ void free_tree(avl_tree_node *tree)
     free(tree);
 }
 
-int tree_balance(avl_tree_node *root)
+int tree_balance(avl_tree_node_t *root)
 {
     if (root == NULL) {
         return 0;
@@ -39,16 +39,16 @@ int tree_balance(avl_tree_node *root)
     return lh - rh;
 }
 
-avl_tree_node *init_avl_tree_node(void (*free_payload)(void *payload),
-                                  int (*cmp_payload)(void *a, void *b),
-                                  void *payload)
+avl_tree_node_t *init_avl_tree_node(void (*free_payload)(void *payload),
+                                    int (*cmp_payload)(void *a, void *b),
+                                    void *payload)
 {
     if (cmp_payload == NULL) {
         lprintf(LOG_ERROR, "Cannot have a NULL comparison function\n");
         return NULL;
     }
 
-    avl_tree_node *tree = malloc(sizeof * tree);
+    avl_tree_node_t *tree = malloc(sizeof * tree);
     if (tree == NULL) {
         lprintf(LOG_ERROR, "Cannot init tree node\n");
         return tree;
@@ -62,7 +62,7 @@ avl_tree_node *init_avl_tree_node(void (*free_payload)(void *payload),
     return tree;
 }
 
-static void __print_tree(avl_tree_node *tree, int h)
+static void __print_tree(avl_tree_node_t *tree, int h)
 {
     for (int i = 0; i < h; i++) {
         printf("  |");
@@ -82,12 +82,12 @@ static void __print_tree(avl_tree_node *tree, int h)
     }
 }
 
-void print_tree(avl_tree_node *root)
+void print_tree(avl_tree_node_t *root)
 {
     __print_tree(root, 0);
 }
 
-static void __rotate_update_heights(avl_tree_node *root)
+static void __rotate_update_heights(avl_tree_node_t *root)
 {
     if (root->r != NULL) {
         root->r->height = MAX(__tree_height(root->r->l),
@@ -102,15 +102,15 @@ static void __rotate_update_heights(avl_tree_node *root)
                        __tree_height(root->r)) + 1;
 }
 
-static avl_tree_node *__rotate_r(avl_tree_node *y)
+static avl_tree_node_t *__rotate_r(avl_tree_node_t *y)
 {
     /* Rotation (right):
     *      x          y
     *    y   c  ->  a   x
     *  a   b          b   c
     **/
-    avl_tree_node *x = y->l;
-    avl_tree_node *t2 = x->r;
+    avl_tree_node_t *x = y->l;
+    avl_tree_node_t *t2 = x->r;
 
     // Perform rotation
     x->r = y;
@@ -120,15 +120,15 @@ static avl_tree_node *__rotate_r(avl_tree_node *y)
     return x;
 }
 
-static avl_tree_node *__rotate_l(avl_tree_node *x)
+static avl_tree_node_t *__rotate_l(avl_tree_node_t *x)
 {
     /* Rotation (left):
     *    x              y
     *  a   y    ->    a   x
     *    b   c      b   c
     **/
-    avl_tree_node *y = x->r;
-    avl_tree_node *t2 = y->l;
+    avl_tree_node_t *y = x->r;
+    avl_tree_node_t *t2 = y->l;
 
     // Perform rotation
     y->l = x;
@@ -138,7 +138,7 @@ static avl_tree_node *__rotate_l(avl_tree_node *x)
     return y;
 }
 
-static int __cmp_payload(avl_tree_node *a, avl_tree_node *b)
+static int __cmp_payload(avl_tree_node_t *a, avl_tree_node_t *b)
 {
     if (a == NULL || b == NULL) {
         return 0;
@@ -147,7 +147,7 @@ static int __cmp_payload(avl_tree_node *a, avl_tree_node *b)
     }
 }
 
-static avl_tree_node *__do_insert_node(avl_tree_node *root, avl_tree_node *node)
+static avl_tree_node_t *__do_insert_node(avl_tree_node_t *root, avl_tree_node_t *node)
 {
     // Base case
     if (root == NULL) {
@@ -188,7 +188,7 @@ static avl_tree_node *__do_insert_node(avl_tree_node *root, avl_tree_node *node)
     return root;
 }
 
-int insert_node(avl_tree_node **root, avl_tree_node *node)
+int insert_node(avl_tree_node_t **root, avl_tree_node_t *node)
 {
     if (*root == NULL) {
         *root = node;
@@ -203,7 +203,7 @@ int insert_node(avl_tree_node **root, avl_tree_node *node)
     return 1;
 }
 
-avl_tree_node *find_payload(avl_tree_node *node, void *payload)
+avl_tree_node_t *find_payload(avl_tree_node_t *node, void *payload)
 {
     if (node == NULL) {
         return NULL;
@@ -219,7 +219,7 @@ avl_tree_node *find_payload(avl_tree_node *node, void *payload)
     }
 }
 
-size_t tree_size(avl_tree_node *node)
+size_t tree_size(avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 0;
@@ -228,7 +228,7 @@ size_t tree_size(avl_tree_node *node)
     return 1 + tree_size(node->l) + tree_size(node->r);
 }
 
-avl_tree_node *shallow_copy_tree_node(avl_tree_node *node)
+avl_tree_node_t *shallow_copy_tree_node(avl_tree_node_t *node)
 {
     if (node == NULL) {
         return NULL;
@@ -256,7 +256,7 @@ static int __add_node_to_lookup(avl_tree_lookup_t *res, void *payload)
     return 1;
 }
 
-static int __tree_lookup(avl_tree_node *node, avl_tree_lookup_t *res, int less_than, void *cmp_payload)
+static int __tree_lookup(avl_tree_node_t *node, avl_tree_lookup_t *res, int less_than, void *cmp_payload)
 {
     if (node == NULL) {
         return 1;
@@ -283,13 +283,13 @@ static int __tree_lookup(avl_tree_node *node, avl_tree_lookup_t *res, int less_t
     return 1;
 }
 
-int tree_lookup(avl_tree_node *root, avl_tree_lookup_t *res, int less_than, void *cmp_payload)
+int tree_lookup(avl_tree_node_t *root, avl_tree_lookup_t *res, int less_than, void *cmp_payload)
 {
     __init_tree_lookup(res);
     return __tree_lookup(root, res, less_than, cmp_payload);
 }
 
-static int __tree_lookup_2(avl_tree_node *node, avl_tree_lookup_t *res, void *lower, void *upper)
+static int __tree_lookup_2(avl_tree_node_t *node, avl_tree_lookup_t *res, void *lower, void *upper)
 {
     if (node == NULL) {
         return 1;
@@ -313,7 +313,7 @@ static int __tree_lookup_2(avl_tree_node *node, avl_tree_lookup_t *res, void *lo
     return 1;
 }
 
-int tree_lookup_2(avl_tree_node *root, avl_tree_lookup_t *res, void *lower, void *upper)
+int tree_lookup_2(avl_tree_node_t *root, avl_tree_lookup_t *res, void *lower, void *upper)
 {
     __init_tree_lookup(res);
     if (root != NULL) {

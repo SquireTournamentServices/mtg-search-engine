@@ -11,14 +11,14 @@ typedef enum mse_search_intermediate_type_t {
 typedef struct mse_search_intermediate_t {
     mse_search_intermediate_type_t type;
     union {
-        avl_tree_node *node;
+        avl_tree_node_t *node;
         avl_tree_lookup_t *list;
     };
 } mse_search_intermediate_t;
 
 /// This wraps a tree in a mse_search_intermediate_t for use within operations. There is no allocation here
 /// often you want to free_tree(node) at some point down the line.
-mse_search_intermediate_t init_mse_search_intermediate_tree(avl_tree_node *node);
+mse_search_intermediate_t init_mse_search_intermediate_tree(avl_tree_node_t *node);
 
 /// This wraps a tree in a mse_search_intermediate_t for use within operations. There is no allocation here
 /// often you want to free_tree on the tree whose payloads comes from. Freeing this will just free the list
@@ -48,7 +48,7 @@ typedef enum mse_search_sort_type_t {
 } mse_search_sort_type_t;
 
 typedef struct mse_search_result_t {
-    avl_tree_node *cards;
+    avl_tree_node_t *cards;
     size_t cards_count;
     mse_search_sort_type_t current_sort;
 } mse_search_result_t;

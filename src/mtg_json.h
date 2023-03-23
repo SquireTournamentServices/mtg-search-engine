@@ -18,9 +18,9 @@ size_t __mtg_json_write_callback(char *ptr,
 /// in card_tree
 typedef struct mtg_cards_indexes {
     /// Index for power
-    avl_tree_node *card_p_tree;
+    avl_tree_node_t *card_p_tree;
     /// Index for toughness
-    avl_tree_node *card_t_tree;
+    avl_tree_node_t *card_t_tree;
 } mtg_cards_indexes;
 
 /// This will store the atomic cards and, sets. Each card is stored once and,
@@ -30,12 +30,12 @@ typedef struct mtg_all_printings_cards_t {
     /// Amount of sets
     size_t set_count;
     /// AVL BST tree for the sets, sorted by set code
-    avl_tree_node *set_tree;
+    avl_tree_node_t *set_tree;
 
     /// Amount of cards
     size_t card_count;
     /// AVL BST tree for the cards, sorted by UUID
-    avl_tree_node *card_tree;
+    avl_tree_node_t *card_tree;
 
     /// Indexes
     mtg_cards_indexes indexes;

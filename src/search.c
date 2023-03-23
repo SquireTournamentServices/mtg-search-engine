@@ -12,7 +12,7 @@ static void __init_mse_search_intermediate(mse_search_intermediate_t *inter)
     memset(inter, 0, sizeof(*inter));
 }
 
-mse_search_intermediate_t init_mse_search_intermediate_tree(avl_tree_node *node)
+mse_search_intermediate_t init_mse_search_intermediate_tree(avl_tree_node_t *node)
 {
     mse_search_intermediate_t ret;
     __init_mse_search_intermediate(&ret);
@@ -30,14 +30,14 @@ mse_search_intermediate_t init_mse_search_intermediate_list(avl_tree_lookup_t *l
     return ret;
 }
 
-static int __insert_tree_set_union(avl_tree_node **tree, avl_tree_node *node_old)
+static int __insert_tree_set_union(avl_tree_node_t **tree, avl_tree_node_t *node_old)
 {
     if (node_old == NULL) {
         return 1;
     }
 
     // Shallow copy of the node
-    avl_tree_node *node = shallow_copy_tree_node(node_old);
+    avl_tree_node_t *node = shallow_copy_tree_node(node_old);
     ASSERT(node != NULL);
     node->cmp_payload = COMPARE_FUNCTION;
     node->free_payload = FREE_FUNCTION;
@@ -58,11 +58,11 @@ static int __insert_tree_set_union(avl_tree_node **tree, avl_tree_node *node_old
     return 1;
 }
 
-static int __insert_list_set_union(avl_tree_node **tree, avl_tree_lookup_t *list)
+static int __insert_list_set_union(avl_tree_node_t **tree, avl_tree_lookup_t *list)
 {
     for (size_t i = 0; i < list->results_length; i++) {
         void *tmp = list->results[i];
-        avl_tree_node *node = init_avl_tree_node(FREE_FUNCTION, COMPARE_FUNCTION, tmp);
+        avl_tree_node_t *node = init_avl_tree_node(FREE_FUNCTION, COMPARE_FUNCTION, tmp);
         ASSERT(node != NULL);
 
         if (!insert_node(tree, node)) {

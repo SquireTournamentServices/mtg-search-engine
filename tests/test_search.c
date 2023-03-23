@@ -7,16 +7,16 @@
 #include <string.h>
 #include <stdlib.h>
 
-static avl_tree_node *get_tree(int min, int max)
+static avl_tree_node_t *get_tree(int min, int max)
 {
-    avl_tree_node *tree = NULL;
+    avl_tree_node_t *tree = NULL;
     for (int i = min; i <= max; i++) {
         mtg_card_t *ptr = malloc(sizeof(*ptr));
         ASSERT(ptr != NULL);
         memset(ptr, 0, sizeof(*ptr));
         memset(ptr->id.bytes, i, sizeof(*ptr->id.bytes));
 
-        avl_tree_node *node = init_avl_tree_node(&free, &avl_cmp_card, (void *) ptr);
+        avl_tree_node_t *node = init_avl_tree_node(&free, &avl_cmp_card, (void *) ptr);
         ASSERT(node != NULL);
         ASSERT(insert_node(&tree, node));
     }
@@ -26,12 +26,12 @@ static avl_tree_node *get_tree(int min, int max)
 static int test_union_tree()
 {
     // Init trees
-    avl_tree_node *tree_1 = get_tree(1, 10);
+    avl_tree_node_t *tree_1 = get_tree(1, 10);
     ASSERT(tree_size(tree_1) == 10);
     ASSERT(tree_1 != NULL);
     mse_search_intermediate_t a = init_mse_search_intermediate_tree(tree_1);
 
-    avl_tree_node *tree_2 = get_tree(11, 20);
+    avl_tree_node_t *tree_2 = get_tree(11, 20);
     ASSERT(tree_size(tree_2) == 10);
     ASSERT(tree_2 != NULL);
     mse_search_intermediate_t b = init_mse_search_intermediate_tree(tree_2);
@@ -59,7 +59,7 @@ static int test_union_list()
     memset(&m_card, 0, sizeof(m_card));
     m_card.id = max_uuid();
 
-    avl_tree_node *tree_1 = get_tree(1, 10);
+    avl_tree_node_t *tree_1 = get_tree(1, 10);
     ASSERT(tree_size(tree_1) == 10);
     ASSERT(tree_1 != NULL);
 
@@ -68,7 +68,7 @@ static int test_union_list()
     mse_search_intermediate_t a = init_mse_search_intermediate_list(&list_1);
     ASSERT(a.list->results_length > 0);
 
-    avl_tree_node *tree_2 = get_tree(11, 20);
+    avl_tree_node_t *tree_2 = get_tree(11, 20);
     ASSERT(tree_size(tree_2) == 10);
     ASSERT(tree_2 != NULL);
 

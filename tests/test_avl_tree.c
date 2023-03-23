@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-static int __test_heights(avl_tree_node *root, size_t h)
+static int __test_heights(avl_tree_node_t *root, size_t h)
 {
     if (root == NULL) {
         return 1;
@@ -16,12 +16,12 @@ static int __test_heights(avl_tree_node *root, size_t h)
     return 1;
 }
 
-static int test_heights(avl_tree_node *root)
+static int test_heights(avl_tree_node_t *root)
 {
     return __test_heights(root, root->height + 1);
 }
 
-static int test_tree_props(avl_tree_node *node)
+static int test_tree_props(avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 1;
@@ -53,7 +53,7 @@ static int cmp_size_t(void *a, void *b)
 static int test_tree_init_free()
 {
     void *payload = (void *) 1L;
-    avl_tree_node *node = init_avl_tree_node(NULL, &cmp_size_t, payload);
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &cmp_size_t, payload);
     ASSERT(node != NULL);
     ASSERT(node->height == 1);
     ASSERT(node->payload == payload);
@@ -89,7 +89,7 @@ static int test_tree_insert()
     ASSERT(ptr != NULL);
     *ptr = -1;
 
-    avl_tree_node *tree = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+    avl_tree_node_t *tree = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
     ASSERT(tree != NULL);
 
     // Add to tree
@@ -98,7 +98,7 @@ static int test_tree_insert()
         ASSERT(ptr != NULL);
         *ptr = i;
 
-        avl_tree_node *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+        avl_tree_node_t *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
         ASSERT(node != NULL);
         ASSERT(node->payload == ptr);
 
@@ -121,13 +121,13 @@ static int test_tree_insert()
 
 static int test_tree_insert_2()
 {
-    avl_tree_node *tree = init_avl_tree_node(NULL, &cmp_size_t,
-                          (void *) (size_t) (NODES_3 + 5));
+    avl_tree_node_t *tree = init_avl_tree_node(NULL, &cmp_size_t,
+                            (void *) (size_t) (NODES_3 + 5));
     ASSERT(tree != NULL);
 
     // Add to tree
     for (size_t i = 0; i < NODES_3; i++) {
-        avl_tree_node *node = init_avl_tree_node(NULL, &cmp_size_t, (void *) i);
+        avl_tree_node_t *node = init_avl_tree_node(NULL, &cmp_size_t, (void *) i);
         ASSERT(node != NULL);
         ASSERT(find_payload(tree, node->payload) == NULL);
         ASSERT(insert_node(&tree, node));
@@ -156,7 +156,7 @@ static int test_tree_lookup()
     ASSERT(ptr != NULL);
     *ptr = -1;
 
-    avl_tree_node *tree = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+    avl_tree_node_t *tree = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
     ASSERT(tree != NULL);
 
     // Add to tree
@@ -165,7 +165,7 @@ static int test_tree_lookup()
         ASSERT(ptr != NULL);
         *ptr = i;
 
-        avl_tree_node *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+        avl_tree_node_t *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
         ASSERT(node != NULL);
         ASSERT(node->payload == ptr);
 
@@ -219,7 +219,7 @@ static int test_tree_lookup_2()
     ASSERT(ptr != NULL);
     *ptr = -1;
 
-    avl_tree_node *tree = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+    avl_tree_node_t *tree = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
     ASSERT(tree != NULL);
 
     // Add to tree
@@ -228,7 +228,7 @@ static int test_tree_lookup_2()
         ASSERT(ptr != NULL);
         *ptr = i;
 
-        avl_tree_node *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+        avl_tree_node_t *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
         ASSERT(node != NULL);
         ASSERT(node->payload == ptr);
 
@@ -272,20 +272,20 @@ static int test_shallow_copy_tree_node()
 {
     ASSERT(shallow_copy_tree_node(NULL) == NULL);
 
-    avl_tree_node *tree = init_avl_tree_node(NULL, &cmp_size_t,
-                          (void *) (size_t) (NODES_3 + 5));
+    avl_tree_node_t *tree = init_avl_tree_node(NULL, &cmp_size_t,
+                            (void *) (size_t) (NODES_3 + 5));
     ASSERT(tree != NULL);
 
     // Add to tree
     for (size_t i = 0; i < NODES_3; i++) {
-        avl_tree_node *node = init_avl_tree_node(NULL, &cmp_size_t, (void *) i);
+        avl_tree_node_t *node = init_avl_tree_node(NULL, &cmp_size_t, (void *) i);
         ASSERT(node != NULL);
         ASSERT(find_payload(tree, node->payload) == NULL);
         ASSERT(insert_node(&tree, node));
         ASSERT(find_payload(tree, node->payload) == node);
     }
 
-    avl_tree_node *copy = shallow_copy_tree_node(tree);
+    avl_tree_node_t *copy = shallow_copy_tree_node(tree);
     ASSERT(copy->l == NULL);
     ASSERT(copy->r == NULL);
     ASSERT(copy->height = 1);

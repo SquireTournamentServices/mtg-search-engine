@@ -3,14 +3,14 @@
 #include <string.h>
 
 // Set cards index
-static int __add_card_to_set(mtg_card_t *card, avl_tree_node *sets)
+static int __add_card_to_set(mtg_card_t *card, avl_tree_node_t *sets)
 {
     for (size_t i = 0; i < card->set_codes_count; i++) {
         // Create a proxy element for the tree search as the tree will be comparing mtg_set_t objects
         mtg_set_t card_set_proxy;
         memcpy(card_set_proxy.code, card->set_codes[i], sizeof(card_set_proxy.code));
 
-        avl_tree_node *set_node = find_payload(sets, &card_set_proxy);
+        avl_tree_node_t *set_node = find_payload(sets, &card_set_proxy);
 
         if (set_node != NULL) {
             add_card_to_set((mtg_set_t *) set_node->payload, card);
@@ -26,7 +26,7 @@ static int __add_card_to_set(mtg_card_t *card, avl_tree_node *sets)
     return 1;
 }
 
-static int __add_cards_to_set(avl_tree_node *cards, avl_tree_node *sets)
+static int __add_cards_to_set(avl_tree_node_t *cards, avl_tree_node_t *sets)
 {
     if (cards == NULL) {
         return 1;
@@ -47,7 +47,7 @@ static void __generate_set_cards_index_task(void *__state, thread_pool_t *pool)
     sem_post(&(state->semaphore));
 }
 
-static int __insert_node(avl_tree_node **root, avl_tree_node *node)
+static int __insert_node(avl_tree_node_t **root, avl_tree_node_t *node)
 {
     if (*root == NULL) {
         *root = node;
@@ -58,13 +58,13 @@ static int __insert_node(avl_tree_node **root, avl_tree_node *node)
 }
 
 // Power index
-static int __add_cards_to_p_tree(avl_tree_node *cards, avl_tree_node **card_p_tree)
+static int __add_cards_to_p_tree(avl_tree_node_t *cards, avl_tree_node_t **card_p_tree)
 {
     if (cards == NULL) {
         return 1;
     }
 
-    avl_tree_node *node = init_avl_tree_node(NULL, &avl_cmp_card_p, cards->payload);
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card_p, cards->payload);
     int r = __insert_node(card_p_tree, node);
     if (!r) {
         lprintf(LOG_ERROR, "Cannot insert a card into the power tree\n");
@@ -86,13 +86,13 @@ static void __generate_card_p_index_task(void *__state, thread_pool_t *pool)
 }
 
 // Toughness index
-static int __add_cards_to_t_tree(avl_tree_node *cards, avl_tree_node **card_t_tree)
+static int __add_cards_to_t_tree(avl_tree_node_t *cards, avl_tree_node_t **card_t_tree)
 {
     if (cards == NULL) {
         return 1;
     }
 
-    avl_tree_node *node = init_avl_tree_node(NULL, &avl_cmp_card_t, cards->payload);
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card_t, cards->payload);
     int r = __insert_node(card_t_tree, node);
     if (!r) {
         lprintf(LOG_ERROR, "Cannot insert a card into the power tree\n");
