@@ -9,6 +9,7 @@
 #include "./test_avl_tree.h"
 #include "./test_card.h"
 #include "./test_mse_langs.h"
+#include "./test_search.h"
 
 static int sanity_test()
 {
@@ -22,8 +23,9 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 {&test_avl_tree, "Test AVL tree"},
 {&test_card, "Test card"},
 {&test_thread_pool, "Test thread pool"},
-{&test_mtg_json, "Test mtg json"},
-{&test_mse_langs, "Test mse langs"})
+{&test_mse_langs, "Test mse langs"},
+{&test_search, "Test search"},
+{&test_mtg_json, "Test mtg json"})
 
 
 int main(int argc, char** argv)

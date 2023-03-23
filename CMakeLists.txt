@@ -82,6 +82,8 @@ set(SRC
     ./src/io_utils.c
     ./src/avl_tree.h
     ./src/avl_tree.c
+    ./src/search.h
+    ./src/search.c
     ${LANG_SOURCE_FILES})
 set(TESTS
     ./tests/main.c
@@ -99,6 +101,8 @@ set(TESTS
     ./tests/test_card.c
     ./tests/test_avl_tree.h
     ./tests/test_avl_tree.c
+    ./tests/test_search.h
+    ./tests/test_search.c
     ./tests/test_mse_langs.h
     ./tests/test_mse_langs.c)
 
