@@ -78,16 +78,6 @@ static void __free_all_printings_cards_set(void *set)
     free(set);
 }
 
-static int __insert_node(avl_tree_node **root, avl_tree_node *node)
-{
-    if (*root == NULL) {
-        *root = node;
-        return 1;
-    } else {
-        return insert_node(root, node);
-    }
-}
-
 int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
                                      const char *set_code,
                                      json_t *set_node)
@@ -99,7 +89,7 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
     ASSERT(parse_set_json(set_node, set, set_code));
 
     avl_tree_node *node = init_avl_tree_node(&__free_all_printings_cards_set, &avl_cmp_set, set);
-    ASSERT(__insert_node(&ret->set_tree, node));
+    ASSERT(insert_node(&ret->set_tree, node));
 
     json_t *cards = json_object_get(set_node, "cards");
     ASSERT(cards != NULL);
@@ -113,7 +103,7 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
         node = init_avl_tree_node(&__free_all_printings_cards_card, &avl_cmp_card, card);
 
         ASSERT(parse_card_json(value, card));
-        if (__insert_node(&ret->card_tree, node)) {
+        if (insert_node(&ret->card_tree, node)) {
             ret->card_count++;
         } else {
             free_tree(node);
