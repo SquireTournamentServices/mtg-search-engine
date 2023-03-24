@@ -1,9 +1,9 @@
 #include "./set.h"
 #include "./io_utils.h"
 #include "../testing_h/testing.h"
+#include "../strptime/strptime.h"
 #include <string.h>
 #include <time.h>
-#include "../strptime/strptime.h"
 
 // Parse dates in the form 2007-07-13, see man strptime.h
 #define SET_DATE_FORMAT "%Y-%m-%d"
@@ -53,7 +53,7 @@ int add_card_to_set(mtg_set_t *set, mtg_card_t *card)
     ASSERT(card != NULL);
 
     // The card's memory is owned by the index struct that the set struct is part of
-    avl_tree_node *node = init_avl_tree_node(NULL, &avl_cmp_card, (void *) card);
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card, (void *) card);
     ASSERT(node != NULL);
 
     if (!insert_node(&set->set_cards_tree, node)) {

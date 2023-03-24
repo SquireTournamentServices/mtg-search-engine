@@ -88,7 +88,7 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
     ASSERT(set != NULL);
     ASSERT(parse_set_json(set_node, set, set_code));
 
-    avl_tree_node *node = init_avl_tree_node(&__free_all_printings_cards_set, &avl_cmp_set, set);
+    avl_tree_node_t *node = init_avl_tree_node(&__free_all_printings_cards_set, &avl_cmp_set, set);
     ASSERT(insert_node(&ret->set_tree, node));
 
     json_t *cards = json_object_get(set_node, "cards");

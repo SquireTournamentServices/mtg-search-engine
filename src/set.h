@@ -11,7 +11,7 @@ typedef struct mtg_set_t {
     mtg_set_code_t code;
     struct tm release;
     /// The payload is a pointer to a card, the card is allocated by the cards, therefore there is no free function set.
-    avl_tree_node *set_cards_tree;
+    avl_tree_node_t *set_cards_tree;
 } mtg_set_t;
 
 int parse_set_json(json_t *set_node, mtg_set_t *ret, const char *code);

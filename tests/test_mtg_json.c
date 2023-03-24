@@ -12,7 +12,7 @@ mtg_all_printings_cards_t test_cards;
 json_t *json;
 
 
-static size_t get_tree_nodes(avl_tree_node *node)
+static size_t get_tree_nodes(avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 0;
