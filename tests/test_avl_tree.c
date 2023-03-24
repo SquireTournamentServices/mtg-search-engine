@@ -258,7 +258,7 @@ static int test_tree_lookup()
     lprintf(LOG_INFO, "Tree height %lu for %lu node\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
     ASSERT(test_tree_props(tree));
-    ASSERT(tree_size(tree) == MAX_NODES + 1);
+    ASSERT(tree_size(tree) == MAX_NODES);
 
     free_tree(tree);
     return 1;
