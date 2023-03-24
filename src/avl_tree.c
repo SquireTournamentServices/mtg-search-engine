@@ -252,23 +252,19 @@ static int __tree_lookup(avl_tree_node_t *node, avl_tree_node_t **res, int less_
         return 1;
     }
 
-    int cmp = node->cmp_payload(cmp_payload, node->payload);
+    int cmp = node->cmp_payload(node->payload, cmp_payload);
     if (less_than) {
         if (cmp < 0) {
             ASSERT(__add_node_to_lookup(res, node));
-            ASSERT(__tree_lookup(node->l, res, less_than, cmp_payload));
-            ASSERT(__tree_lookup(node->r, res, less_than, cmp_payload));
-        } else {
             ASSERT(__tree_lookup(node->r, res, less_than, cmp_payload));
         }
+        ASSERT(__tree_lookup(node->l, res, less_than, cmp_payload));
     } else {
         if (cmp > 0) {
             ASSERT(__add_node_to_lookup(res, node));
             ASSERT(__tree_lookup(node->l, res, less_than, cmp_payload));
-            ASSERT(__tree_lookup(node->r, res, less_than, cmp_payload));
-        } else {
-            ASSERT(__tree_lookup(node->l, res, less_than, cmp_payload));
         }
+        ASSERT(__tree_lookup(node->r, res, less_than, cmp_payload));
     }
     return 1;
 }

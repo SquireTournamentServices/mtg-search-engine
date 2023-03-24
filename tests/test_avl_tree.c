@@ -169,8 +169,8 @@ static int __assert_compare_node_gt(avl_tree_node_t *node, void *payload)
     }
 
     ASSERT(node->cmp_payload(node->payload, payload) > 0);
-    ASSERT(__assert_compare_node_lt(node->l, payload));
-    ASSERT(__assert_compare_node_lt(node->r, payload));
+    ASSERT(__assert_compare_node_gt(node->l, payload));
+    ASSERT(__assert_compare_node_gt(node->r, payload));
     return 1;
 }
 
@@ -197,7 +197,7 @@ static int test_tree_lookup()
     ASSERT(tree != NULL);
 
     // Add to tree
-    for (size_t i = 0; i < MAX_NODES; i++) {
+    for (size_t i = 1; i < MAX_NODES; i++) {
         int *ptr = malloc(sizeof(*ptr));
         ASSERT(ptr != NULL);
         *ptr = i;
@@ -209,6 +209,17 @@ static int test_tree_lookup()
         ASSERT(insert_node(&tree, node));
     }
 
+    // Sanity check
+    int tmp = 3;
+    int tmp2 = 3;
+    ASSERT(tree->cmp_payload(&tmp, &tmp2) == 0);
+
+    tmp = tmp2 - 1;
+    ASSERT(tree->cmp_payload(&tmp, &tmp2) == -1);
+
+    tmp = tmp2 + 2;
+    ASSERT(tree->cmp_payload(&tmp, &tmp2) == 1);
+
     // Test lookup
     ptr = malloc(sizeof(*ptr));
     ASSERT(ptr != NULL);
@@ -219,8 +230,12 @@ static int test_tree_lookup()
     // Test less than
     ASSERT(tree_lookup(tree, &res, 1, ptr));
     ASSERT(res != NULL);
-    lprintf(LOG_INFO, "%lu %d\n", tree_size(res), *ptr - 1);
-    ASSERT(tree_size(res) == (size_t) *ptr - 1);
+
+    lprintf(LOG_INFO, "%lu %d\n", tree_size(res), *ptr);
+    ASSERT(tree_size(res) == (size_t) *ptr);
+
+    ASSERT(res->free_payload == NULL);
+    ASSERT(res->cmp_payload == tree->cmp_payload);
     ASSERT(__assert_compare_node_lt(res, ptr));
     free_tree(res);
 
@@ -228,8 +243,12 @@ static int test_tree_lookup()
     res = NULL;
     ASSERT(tree_lookup(tree, &res, 0, ptr));
     ASSERT(res != NULL);
-    lprintf(LOG_INFO, "%lu %lu\n", tree_size(res), MAX_NODES - ((MAX_NODES / 2) - 1));
-    ASSERT(tree_size(res) == MAX_NODES - ((MAX_NODES / 2) - 1));
+
+    lprintf(LOG_INFO, "%lu %d\n", tree_size(res), MAX_NODES - *ptr - 1);
+    ASSERT(tree_size(res) == (size_t) MAX_NODES - *ptr - 1);
+
+    ASSERT(res->free_payload == NULL);
+    ASSERT(res->cmp_payload == tree->cmp_payload);
     ASSERT(__assert_compare_node_gt(res, ptr));
     free_tree(res);
 
