@@ -150,6 +150,43 @@ static int test_find_payload_null()
     return 1;
 }
 
+static int __assert_compare_node_lt(avl_tree_node_t *node, void *payload)
+{
+    if (node == NULL) {
+        return 1;
+    }
+
+    ASSERT(node->cmp_payload(node->payload, payload) < 0);
+    ASSERT(__assert_compare_node_lt(node->l, payload));
+    ASSERT(__assert_compare_node_lt(node->r, payload));
+    return 1;
+}
+
+static int __assert_compare_node_gt(avl_tree_node_t *node, void *payload)
+{
+    if (node == NULL) {
+        return 1;
+    }
+
+    ASSERT(node->cmp_payload(node->payload, payload) > 0);
+    ASSERT(__assert_compare_node_lt(node->l, payload));
+    ASSERT(__assert_compare_node_lt(node->r, payload));
+    return 1;
+}
+
+static int __assert_compare_node_lt_gt(avl_tree_node_t *node, void *ptr_1, void *ptr_2)
+{
+    if (node == NULL) {
+        return 1;
+    }
+
+    ASSERT(node->cmp_payload(ptr_1, node->payload) < 0);
+    ASSERT(node->cmp_payload(ptr_2, node->payload) > 0);
+    ASSERT(__assert_compare_node_lt_gt(node->l, ptr_1, ptr_2));
+    ASSERT(__assert_compare_node_lt_gt(node->r, ptr_1, ptr_2));
+    return 1;
+}
+
 static int test_tree_lookup()
 {
     int *ptr = malloc(sizeof(*ptr));
@@ -175,31 +212,26 @@ static int test_tree_lookup()
     // Test lookup
     ptr = malloc(sizeof(*ptr));
     ASSERT(ptr != NULL);
-    *ptr = MAX_NODES / 2;
+    *ptr = MAX_NODES / 3;
 
-    avl_tree_lookup_t res;
+    avl_tree_node_t *res = NULL;
 
     // Test less than
     ASSERT(tree_lookup(tree, &res, 1, ptr));
-    ASSERT(res.results != NULL);
-    ASSERT(res.results_length == (MAX_NODES / 2) - 1);
-
-    for (size_t i = 0; i < res.results_length; i++) {
-        ASSERT(res.results[i] != NULL);
-        ASSERT(tree->cmp_payload(ptr, res.results[i]) < 0);
-    }
-    free_tree_lookup(&res);
+    ASSERT(res != NULL);
+    lprintf(LOG_INFO, "%lu %d\n", tree_size(res), *ptr - 1);
+    ASSERT(tree_size(res) == (size_t) *ptr - 1);
+    ASSERT(__assert_compare_node_lt(res, ptr));
+    free_tree(res);
 
     // Test greater than
+    res = NULL;
     ASSERT(tree_lookup(tree, &res, 0, ptr));
-    ASSERT(res.results != NULL);
-    ASSERT(res.results_length == MAX_NODES - ((MAX_NODES / 2) - 1));
-
-    for (size_t i = 0; i < res.results_length; i++) {
-        ASSERT(res.results[i] != NULL);
-        ASSERT(tree->cmp_payload(ptr, res.results[i]) > 0);
-    }
-    free_tree_lookup(&res);
+    ASSERT(res != NULL);
+    lprintf(LOG_INFO, "%lu %lu\n", tree_size(res), MAX_NODES - ((MAX_NODES / 2) - 1));
+    ASSERT(tree_size(res) == MAX_NODES - ((MAX_NODES / 2) - 1));
+    ASSERT(__assert_compare_node_gt(res, ptr));
+    free_tree(res);
 
     free(ptr);
 
@@ -244,16 +276,13 @@ static int test_tree_lookup_2()
     ASSERT(ptr_2 != NULL);
     *ptr_2 = MAX_NODES / 2;
 
-    avl_tree_lookup_t res;
+    avl_tree_node_t *res = NULL;
     ASSERT(tree_lookup_2(tree, &res, ptr, ptr_2));
-    ASSERT(res.results != NULL);
-
-    for (size_t i = 0; i < res.results_length; i++) {
-        ASSERT(res.results[i] != NULL);
-        ASSERT(tree->cmp_payload(res.results[i], ptr) > 0);
-        ASSERT(tree->cmp_payload(res.results[i], ptr_2) < 0);
-    }
-    free_tree_lookup(&res);
+    ASSERT(res != NULL);
+    lprintf(LOG_INFO, "%lu %d\n", tree_size(res), *ptr_2 - *ptr - 1);
+    ASSERT(tree_size(res) == (size_t) *ptr_2 - *ptr - 1);
+    ASSERT(__assert_compare_node_lt_gt(res, ptr, ptr_2));
+    free_tree(res);
 
     free(ptr);
     free(ptr_2);
@@ -286,6 +315,7 @@ static int test_shallow_copy_tree_node()
     }
 
     avl_tree_node_t *copy = shallow_copy_tree_node(tree);
+    ASSERT(copy != tree);
     ASSERT(copy->l == NULL);
     ASSERT(copy->r == NULL);
     ASSERT(copy->height = 1);

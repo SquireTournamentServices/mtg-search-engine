@@ -237,26 +237,16 @@ avl_tree_node_t *shallow_copy_tree_node(avl_tree_node_t *node)
     return init_avl_tree_node(node->free_payload, node->cmp_payload, node->payload);
 }
 
-static void __init_tree_lookup(avl_tree_lookup_t *res)
+static int __add_node_to_lookup(avl_tree_node_t **res, avl_tree_node_t *__node)
 {
-    memset(res, 0, sizeof(*res));
-}
-
-static int __add_node_to_lookup(avl_tree_lookup_t *res, void *payload)
-{
-    if (res->results_length == 0) {
-        res->results = malloc(sizeof(*res->results));
-    } else {
-        res->results = realloc(res->results, sizeof(*res->results) * (res->results_length + 1));
-    }
-    ASSERT(res->results != NULL);
-
-    res->results[res->results_length] = payload;
-    res->results_length++;
+    avl_tree_node_t *node = shallow_copy_tree_node(__node);
+    ASSERT(node != NULL);
+    node->free_payload = NULL; // The memory is owned by the tree that generated the lookup
+    ASSERT(insert_node(res, node));
     return 1;
 }
 
-static int __tree_lookup(avl_tree_node_t *node, avl_tree_lookup_t *res, int less_than, void *cmp_payload)
+static int __tree_lookup(avl_tree_node_t *node, avl_tree_node_t **res, int less_than, void *cmp_payload)
 {
     if (node == NULL) {
         return 1;
@@ -265,7 +255,7 @@ static int __tree_lookup(avl_tree_node_t *node, avl_tree_lookup_t *res, int less
     int cmp = node->cmp_payload(cmp_payload, node->payload);
     if (less_than) {
         if (cmp < 0) {
-            ASSERT(__add_node_to_lookup(res, node->payload));
+            ASSERT(__add_node_to_lookup(res, node));
             ASSERT(__tree_lookup(node->l, res, less_than, cmp_payload));
             ASSERT(__tree_lookup(node->r, res, less_than, cmp_payload));
         } else {
@@ -273,7 +263,7 @@ static int __tree_lookup(avl_tree_node_t *node, avl_tree_lookup_t *res, int less
         }
     } else {
         if (cmp > 0) {
-            ASSERT(__add_node_to_lookup(res, node->payload));
+            ASSERT(__add_node_to_lookup(res, node));
             ASSERT(__tree_lookup(node->l, res, less_than, cmp_payload));
             ASSERT(__tree_lookup(node->r, res, less_than, cmp_payload));
         } else {
@@ -283,13 +273,13 @@ static int __tree_lookup(avl_tree_node_t *node, avl_tree_lookup_t *res, int less
     return 1;
 }
 
-int tree_lookup(avl_tree_node_t *root, avl_tree_lookup_t *res, int less_than, void *cmp_payload)
+int tree_lookup(avl_tree_node_t *root, avl_tree_node_t **res, int less_than, void *cmp_payload)
 {
-    __init_tree_lookup(res);
+    *res = NULL;
     return __tree_lookup(root, res, less_than, cmp_payload);
 }
 
-static int __tree_lookup_2(avl_tree_node_t *node, avl_tree_lookup_t *res, void *lower, void *upper)
+static int __tree_lookup_2(avl_tree_node_t *node, avl_tree_node_t **res, void *lower, void *upper)
 {
     if (node == NULL) {
         return 1;
@@ -299,7 +289,7 @@ static int __tree_lookup_2(avl_tree_node_t *node, avl_tree_lookup_t *res, void *
     int cmp_u = node->cmp_payload(node->payload, upper);
 
     if (cmp_l > 0 && cmp_u < 0) {
-        ASSERT(__add_node_to_lookup(res, node->payload));
+        ASSERT(__add_node_to_lookup(res, node));
     }
 
     if (cmp_l >= 0) {
@@ -313,23 +303,11 @@ static int __tree_lookup_2(avl_tree_node_t *node, avl_tree_lookup_t *res, void *
     return 1;
 }
 
-int tree_lookup_2(avl_tree_node_t *root, avl_tree_lookup_t *res, void *lower, void *upper)
+int tree_lookup_2(avl_tree_node_t *root, avl_tree_node_t **res, void *lower, void *upper)
 {
-    __init_tree_lookup(res);
+    *res = NULL;
     if (root != NULL) {
         ASSERT(root->cmp_payload(lower, upper) < 0);
     }
     return __tree_lookup_2(root, res, lower, upper);
-}
-
-void free_tree_lookup(avl_tree_lookup_t *res)
-{
-    if (res == NULL) {
-        return;
-    }
-
-    if (res->results != NULL) {
-        free(res->results);
-    }
-    memset(res, 0, sizeof(*res));
 }
