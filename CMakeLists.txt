@@ -68,6 +68,8 @@ set(SRC
     ./testing_h/logger.c
     ./src/card.h
     ./src/card.c
+    ./src/card_str_match.h
+    ./src/card_str_match.c
     ./src/set.h
     ./src/set.c
     ./src/uuid.h

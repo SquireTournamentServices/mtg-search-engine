@@ -44,6 +44,10 @@ typedef struct mtg_card_t {
     mtg_set_code_t *set_codes;
 } mtg_card_t;
 
+// As this is a library to search cards all the trees that this uses are trees whose payloads are cards.
+#define MSE_CARD_DEFAULT_COMPARE_FUNCTION &avl_cmp_card
+#define MSE_CARD_DEFAULT_FREE_FUNCTION NULL
+
 int parse_card_json(json_t *json, mtg_card_t *card);
 int write_card(FILE *f, mtg_card_t card);
 int read_card(FILE *f, mtg_card_t *card);
