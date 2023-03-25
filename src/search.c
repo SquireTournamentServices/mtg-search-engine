@@ -3,10 +3,6 @@
 #include "./card.h"
 #include <string.h>
 
-// As this is a library to search cards all the trees that this uses are trees whose payloads are cards.
-#define COMPARE_FUNCTION &avl_cmp_card
-#define FREE_FUNCTION NULL
-
 static void __init_mse_search_intermediate(mse_search_intermediate_t *inter)
 {
     memset(inter, 0, sizeof(*inter));
@@ -24,8 +20,8 @@ static int __copy_node(avl_tree_node_t **node, avl_tree_node_t *node_old)
 {
     *node = shallow_copy_tree_node(node_old);
     ASSERT(*node != NULL);
-    (*node)->cmp_payload = COMPARE_FUNCTION;
-    (*node)->free_payload = FREE_FUNCTION;
+    (*node)->cmp_payload = MSE_CARD_DEFAULT_COMPARE_FUNCTION;
+    (*node)->free_payload = MSE_CARD_DEFAULT_FREE_FUNCTION;
     return 1;
 }
 

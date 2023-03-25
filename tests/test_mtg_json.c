@@ -8,8 +8,8 @@
 #include <jansson.h>
 
 // Some vile testing globals
-mtg_all_printings_cards_t test_cards;
-json_t *json;
+static mtg_all_printings_cards_t test_cards;
+static json_t *json;
 
 
 static size_t get_tree_nodes(avl_tree_node_t *node)
