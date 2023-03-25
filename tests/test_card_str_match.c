@@ -89,8 +89,35 @@ static int test_oracle_match_2()
     return 1;
 }
 
+#define NAME_TEST_REGEX_1_MATCHES 29
+#define NAME_TEST_REGEX_1 ".*, god of .*"
+#define NAME_TEST_REGEX_2_MATHCES 17
+#define NAME_TEST_REGEX_2 ".* class$"
+
+static int test_name_match()
+{
+    avl_tree_node_t *ret = NULL;
+    ASSERT(mse_matching_card_name(&ret, test_cards.card_tree, NAME_TEST_REGEX_1, &pool));
+    ASSERT(ret != NULL);
+    ASSERT(tree_size(ret) >= NAME_TEST_REGEX_1_MATCHES);
+    free_tree(ret);
+    return 1;
+}
+
+static int test_name_match_2()
+{
+    avl_tree_node_t *ret = NULL;
+    ASSERT(mse_matching_card_name(&ret, test_cards.card_tree, NAME_TEST_REGEX_2, &pool));
+    ASSERT(ret != NULL);
+    ASSERT(tree_size(ret) >= NAME_TEST_REGEX_2_MATHCES);
+    free_tree(ret);
+    return 1;
+}
+
 SUB_TEST(test_card_str_match, {&init_test_cards, "Init regex test cards"},
 {&test_card_matches, "Test card matches"},
 {&test_oracle_match, "Test oracle regex match"},
 {&test_oracle_match_2, "Test oracle regex match 2"},
+{&test_name_match, "Test name regex match"},
+{&test_name_match_2, "Test name regex match 2"},
 {&free_test_card, "Free regex test cards"})
