@@ -13,19 +13,22 @@ int mse_compile_regex(char *regex, regex_t *re)
 
 static int __mse_re_match(char *str, regex_t *re)
 {
-    regmatch_t pmatch[1];
-    int matches = 0;
-    for (; !regexec(re, str, sizeof(pmatch)/sizeof(*pmatch), pmatch, 0); matches++);
-    return matches != 0;
+    return regexec(re, str, 0, NULL, 0) == 0;
 }
 
 int mse_card_oracle_matches(mtg_card_t *card, regex_t *re)
 {
+    if (card->oracle_text == NULL) {
+        return 0;
+    }
     return __mse_re_match(card->oracle_text, re);
 }
 
 int mse_card_name_matches(mtg_card_t *card, regex_t *re)
 {
+    if (card->name == NULL) {
+        return 0;
+    }
     return __mse_re_match(card->name, re);
 }
 
@@ -59,11 +62,14 @@ static void __mse_match_card_do_match(avl_tree_node_t *node, mse_card_match_t *m
     case MSE_MATCH_NAME:
         matches = mse_card_name_matches((mtg_card_t *) node->payload, re);
         break;
+    default:
+        lprintf(LOG_ERROR, "Cannot find regex match type\n");
+        break;
     }
 
     if (matches) {
         avl_tree_node_t *node_copy = shallow_copy_tree_node(node);
-        if (node_copy != NULL) {
+        if (node_copy == NULL) {
             lprintf(LOG_ERROR, "Cannot allocate tree node\n");
             match_data->err = 1;
             return;
@@ -94,8 +100,9 @@ static void __mse_match_card_worker(void *data, thread_pool_t *pool)
     mse_card_match_worker_data_t *match_data = (mse_card_match_worker_data_t *) data;
 
     regex_t re;
-    if (mse_compile_regex(match_data->match_data->regex, &re) != 0) {
+    if (!mse_compile_regex(match_data->match_data->regex, &re)) {
         match_data->match_data->err = 1;
+        lprintf(LOG_ERROR, "Cannot compile regex\n");
         goto cleanup;
     }
 
@@ -106,27 +113,30 @@ cleanup:
     free(match_data);
 }
 
-static void __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
+static int __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
         thread_pool_t *pool,
         avl_tree_node_t *node,
         int h,
         regex_t *re)
 {
+    int sum = 0;
+
     // base case
     if (node == NULL) {
-        return;
+        return 0;
     }
 
-    if (h == 0) {
-        return;
+    if (h < 0) {
+        return 0;
     }
 
     // Enqueue Stuff
-    if (h == 1) {
+    if (h == 0) {
         mse_card_match_worker_data_t *data = malloc(sizeof(*data));
         if (data == NULL) {
             match_data->err = 1;
-            return;
+            lprintf(LOG_ERROR, "Cannot allocate thread data\n");
+            return 0;
         }
         memset(data, 0, sizeof(*data));
 
@@ -134,21 +144,22 @@ static void __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
         data->root = node;
 
         task_t task = {data, &__mse_match_card_worker};
-        if (!task_queue_enqueue(&pool->queue, task)) {
+        if (task_queue_enqueue(&pool->queue, task)) {
+            sum++;
+        } else {
             lprintf(LOG_ERROR, "Cannot enqueue regex match\n");
             match_data->err = 1;
             free(data);
-            sem_post(&match_data->sem);
-            return;
+            return 0;
         }
     } else {
         __mse_match_card_do_match(node, match_data, re);
     }
 
     // Recurse
-    __mse_match_card_worker_enqueue(match_data, pool, node->l, h - 1, re);
-    __mse_match_card_worker_enqueue(match_data, pool, node->r, h - 1, re);
-    return;
+    sum += __mse_match_card_worker_enqueue(match_data, pool, node->l, h - 1, re);
+    sum += __mse_match_card_worker_enqueue(match_data, pool, node->r, h - 1, re);
+    return sum;
 }
 
 static int __mse_match_cards(avl_tree_node_t **ret,
@@ -170,18 +181,20 @@ static int __mse_match_cards(avl_tree_node_t **ret,
     data.lock = lock_tmp;
 
     int layers = (int) floor(log2(pool->threads_count));
-    int thread_cnt = 1 << layers; // Integer pow(2, layers)
     sem_init(&data.sem, 0, 0); // Each thread calls up()
 
-    __mse_match_card_worker_enqueue(&data, pool, cards_tree, layers, &re);
-    regfree(&re);
+    int thread_cnt = __mse_match_card_worker_enqueue(&data, pool, cards_tree, layers, &re);
 
     // Wait for the threads then cleanup
+    lprintf(LOG_INFO, "Waiting for %d regex worker threads to terminate\n", thread_cnt);
     for (int i = 0; i < thread_cnt; i++) {
         sem_wait(&data.sem);
     }
+    regfree(&re);
     pthread_mutex_destroy(&data.lock);
-    return 0;
+
+    ASSERT(data.err == 0);
+    return 1;
 }
 
 int mse_matching_card_oracle(avl_tree_node_t **ret,

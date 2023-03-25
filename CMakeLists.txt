@@ -101,6 +101,8 @@ set(TESTS
     ./tests/test_set.c
     ./tests/test_card.h
     ./tests/test_card.c
+    ./tests/test_card_str_match.h
+    ./tests/test_card_str_match.c
     ./tests/test_avl_tree.h
     ./tests/test_avl_tree.c
     ./tests/test_search.h

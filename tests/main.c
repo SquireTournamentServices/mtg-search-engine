@@ -10,6 +10,7 @@
 #include "./test_card.h"
 #include "./test_mse_langs.h"
 #include "./test_search.h"
+#include "./test_card_str_match.h"
 
 static int sanity_test()
 {
@@ -22,6 +23,7 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 {&test_set, "Test set"},
 {&test_avl_tree, "Test AVL tree"},
 {&test_card, "Test card"},
+{&test_card_str_match, "Test card string match"},
 {&test_thread_pool, "Test thread pool"},
 {&test_mse_langs, "Test mse langs"},
 {&test_search, "Test search"},
