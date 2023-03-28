@@ -187,9 +187,12 @@ static int __mse_match_cards(avl_tree_node_t **ret,
     int thread_cnt = __mse_match_card_worker_enqueue(&data, pool, cards_tree, layers, &re);
 
     // Wait for the threads then cleanup
-    lprintf(LOG_INFO, "Waiting for %d regex worker threads to terminate\n", thread_cnt);
     for (int i = 0; i < thread_cnt; i++) {
-        sem_wait(&data.sem);
+        int waiting = 1;
+        while (waiting) {
+            pool_try_consume(pool);
+            waiting = sem_trywait(&data.sem) != 0;
+        }
     }
     regfree(&re);
     pthread_mutex_destroy(&data.lock);

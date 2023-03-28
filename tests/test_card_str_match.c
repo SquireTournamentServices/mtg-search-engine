@@ -130,6 +130,15 @@ static int test_regex_compile_err()
     return 1;
 }
 
+static int test_oracle_match_a_lot_of_times()
+{
+    // On my machine it took 50 seconds for 10,000 this is probably fine
+    for (size_t i = 0; i < 100; i++) {
+        ASSERT(test_name_match());
+    }
+    return 1;
+}
+
 SUB_TEST(test_card_str_match, {&init_test_cards, "Init regex test cards"},
 {&test_card_matches, "Test card matches"},
 {&test_oracle_match, "Test oracle regex match"},
@@ -137,4 +146,5 @@ SUB_TEST(test_card_str_match, {&init_test_cards, "Init regex test cards"},
 {&test_name_match, "Test name regex match"},
 {&test_name_match_2, "Test name regex match 2"},
 {&test_regex_compile_err, "Test regex compile error case"},
+{&test_oracle_match_a_lot_of_times, "Test oracle match a lot of times"},
 {&free_test_card, "Free regex test cards"})

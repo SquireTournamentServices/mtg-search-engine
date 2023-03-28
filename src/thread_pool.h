@@ -42,6 +42,11 @@ int init_queue(task_queue_t *queue);
 /// then it will lock the mutex and, grab the first task as described.
 int task_queue_front(task_queue_t *queue, task_t *ret);
 
+/// This will try to get the front of the queue, this method is the same as task_queue_front, except
+/// 1. it is non-blocking
+/// 2. it returns an error if the queue is empty
+int task_queue_try_front(task_queue_t *queue, task_t *ret);
+
 /// Inserts task into the queue
 /// 0 on failure
 ///
@@ -66,5 +71,7 @@ int init_pool(thread_pool_t *p);
 /// Frees the pool and, kills all consumer threads
 int free_pool(thread_pool_t *p);
 
-/// The definition of the consumer thread
-void *thread_pool_consumer_func(void *pool);
+/// This is a method that a thread should call whilst it is waiting for other things in the thread pool,
+/// it should be polled such that the logic is similar to this:
+/// while (waiting_for_task()) pool_consume();
+void pool_try_consume(thread_pool_t *p);

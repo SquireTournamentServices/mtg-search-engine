@@ -13,14 +13,8 @@
 #include <unistd.h>
 #endif
 
-int task_queue_front(task_queue_t *queue, task_t *ret)
+static int __task_queue_front(task_queue_t *queue, task_t *ret)
 {
-    ASSERT(ret != NULL);
-    ASSERT(queue != NULL);
-
-    // Get the semaphore and, wait for some data
-    sem_wait(&queue->semaphore);
-
     // Lock the queue
     int r = 0;
     pthread_mutex_lock(&queue->lock);
@@ -56,6 +50,28 @@ cleanup:
     return r;
 }
 
+int task_queue_front(task_queue_t *queue, task_t *ret)
+{
+    ASSERT(ret != NULL);
+    ASSERT(queue != NULL);
+
+    // Get the semaphore and, wait for some data
+    sem_wait(&queue->semaphore);
+    return __task_queue_front(queue, ret);
+}
+
+int task_queue_try_front(task_queue_t *queue, task_t *ret)
+{
+    ASSERT(ret != NULL);
+    ASSERT(queue != NULL);
+
+    // Get the semaphore and, wait for some data
+    if (sem_trywait(&queue->semaphore) != 0) {
+        return 0;
+    }
+    return __task_queue_front(queue, ret);
+}
+
 int task_queue_enqueue(task_queue_t *queue, task_t task)
 {
     ASSERT(queue != NULL);
@@ -82,18 +98,31 @@ int task_queue_enqueue(task_queue_t *queue, task_t task)
     return 1;
 }
 
-void *thread_pool_consumer_func(void *pool_raw)
+void pool_try_consume(thread_pool_t *pool)
+{
+    task_t task;
+    if (task_queue_try_front(&pool->queue, &task)) {
+        task.exec_func(task.data, pool);
+    }
+}
+
+static void pool_consume(thread_pool_t *pool)
+{
+    task_t task;
+    if (task_queue_front(&pool->queue, &task)) {
+        task.exec_func(task.data, pool);
+    } else {
+        if (pool->running) {
+            lprintf(LOG_ERROR, "Cannot consume from the thread pool\n");
+        }
+    }
+}
+
+static void *thread_pool_consumer_func(void *pool_raw)
 {
     thread_pool_t *pool = (thread_pool_t *) pool_raw;
     while (pool->running) {
-        task_t task;
-        if (task_queue_front(&pool->queue, &task)) {
-            task.exec_func(task.data, pool);
-        } else {
-            if (pool->running) {
-                lprintf(LOG_ERROR, "Error consuming from the thread pool\n");
-            }
-        }
+        pool_consume(pool);
     }
     pthread_exit(NULL);
     return NULL;
