@@ -52,9 +52,6 @@ cleanup:
 
 int task_queue_front(task_queue_t *queue, task_t *ret)
 {
-    ASSERT(ret != NULL);
-    ASSERT(queue != NULL);
-
     // Get the semaphore and, wait for some data
     sem_wait(&queue->semaphore);
     return __task_queue_front(queue, ret);
@@ -62,9 +59,6 @@ int task_queue_front(task_queue_t *queue, task_t *ret)
 
 int task_queue_try_front(task_queue_t *queue, task_t *ret)
 {
-    ASSERT(ret != NULL);
-    ASSERT(queue != NULL);
-
     // Get the semaphore and, wait for some data
     if (sem_trywait(&queue->semaphore) != 0) {
         return 0;
@@ -74,8 +68,6 @@ int task_queue_try_front(task_queue_t *queue, task_t *ret)
 
 int task_queue_enqueue(task_queue_t *queue, task_t task)
 {
-    ASSERT(queue != NULL);
-
     // Create new task node
     task_node_t *node = malloc(sizeof * node);
     ASSERT(node != NULL);
@@ -130,8 +122,6 @@ static void *thread_pool_consumer_func(void *pool_raw)
 
 int init_queue(task_queue_t *queue)
 {
-    ASSERT(queue != NULL);
-
     pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
     queue->lock = lock;
     queue->head = queue->tail = NULL;
@@ -163,8 +153,6 @@ void reset_pool(task_queue_t *queue)
 
 int init_pool(thread_pool_t *p)
 {
-    ASSERT(p != NULL);
-
 #ifdef __WIN32
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
