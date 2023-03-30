@@ -9,6 +9,7 @@ int mse_init_set_generator(mse_set_generator_t *ret,
                            char *argument,
                            size_t len)
 {
+    ASSERT(__mse_validate_generator_op_combo(gen_type, op_type));
     memset(ret, 0, sizeof(*ret));
     ret->generator_type = gen_type;
     ret->generator_op = op_type;
@@ -29,4 +30,34 @@ void mse_free_set_generator(mse_set_generator_t *gen)
         free(gen->argument);
     }
     memset(gen, 0, sizeof(*gen));
+}
+
+static int __mse_is_op_set_includes(mse_set_generator_operator_t op_type)
+{
+    if (op_type == MSE_SET_GENERATOR_OP_EQUALS) {
+        return 1;
+    }
+
+    if (op_type == MSE_SET_GENERATOR_OP_INCLUDES) {
+        return 1;
+    }
+    return 0;
+}
+
+int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
+                                      mse_set_generator_operator_t op_type)
+{
+    switch(gen_type) {
+    case MSE_SET_GENERATOR_COLOUR:
+        return 1;
+    case MSE_SET_GENERATOR_COLOUR_IDENTITY:
+        return 1;
+    case MSE_SET_GENERATOR_NAME:
+        return __mse_is_op_set_includes(op_type);
+    case MSE_SET_GENERATOR_ORACLE_TEXT:
+        return __mse_is_op_set_includes(op_type);
+    case MSE_SET_GENERATOR_SET:
+        return __mse_is_op_set_includes(op_type);
+    }
+    return 0;
 }

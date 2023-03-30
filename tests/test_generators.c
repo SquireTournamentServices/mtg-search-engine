@@ -23,4 +23,10 @@ static int test_generator_init_free()
     return 1;
 }
 
-SUB_TEST(test_generators, {&test_generator_init_free, "Test generator init free"})
+static int __test_generator_validation()
+{
+    return test_generator_validation();
+}
+
+SUB_TEST(test_generators, {&test_generator_init_free, "Test generator init free"},
+{&__test_generator_validation, "Test generator validation"})

@@ -40,3 +40,6 @@ int mse_init_set_generator(mse_set_generator_t *ret,
                            size_t len);
 
 void mse_free_set_generator(mse_set_generator_t *gen);
+
+int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
+                                      mse_set_generator_operator_t op_type);
