@@ -61,3 +61,24 @@ int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
     }
     return 0;
 }
+
+
+int mse_generate_set(mse_set_generator_t *gen,
+                     avl_tree_node_t **res,
+                     mtg_all_printings_cards_t *cards,
+                     thread_pool *pool)
+{
+    switch(gen->generator_type) {
+    case MSE_SET_GENERATOR_COLOUR:
+        return mse_generate_set_colour(gen, res, cards, pool);
+    case MSE_SET_GENERATOR_COLOUR_IDENTITY:
+        return 0;
+    case MSE_SET_GENERATOR_NAME:
+        return 0;
+    case MSE_SET_GENERATOR_ORACLE_TEXT:
+        return 0;
+    case MSE_SET_GENERATOR_SET:
+        return 0;
+    }
+    return 1;
+}

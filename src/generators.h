@@ -1,5 +1,8 @@
 #pragma once
 #include <stddef.h>
+#include "./avl_tree.h"
+#include "./thread_pool.h"
+#include "./mtg_json.h"
 
 typedef enum mse_set_generator_type_t {
     MSE_SET_GENERATOR_COLOUR,
@@ -43,3 +46,8 @@ void mse_free_set_generator(mse_set_generator_t *gen);
 
 int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
                                       mse_set_generator_operator_t op_type);
+
+int mse_generate_set(mse_set_generator_t *gen,
+                     avl_tree_node_t **res,
+                     mtg_all_printings_cards_t *cards,
+                     thread_pool *pool);
