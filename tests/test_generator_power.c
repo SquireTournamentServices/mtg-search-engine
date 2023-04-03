@@ -18,6 +18,7 @@ static int __test_generator_power(mse_set_generator_operator_t op_type)
     ASSERT(mse_generate_set(&ret, &root, &gen_cards, &gen_thread_pool));
     ASSERT(tree_size(root) > 0);
     free_tree(root);
+    mse_free_set_generator(&ret);
     return 1;
 }
 
