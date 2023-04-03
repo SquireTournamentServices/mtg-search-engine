@@ -202,6 +202,21 @@ int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
     return 1;
 }
 
+static void __free_all_printings_cards_indexes(mtg_all_printings_cards_t *cards)
+{
+    if (cards->indexes.card_p_tree != NULL) {
+        free_tree(cards->indexes.card_p_tree);
+    }
+
+    if (cards->indexes.card_t_tree != NULL) {
+        free_tree(cards->indexes.card_t_tree);
+    }
+
+    if (cards->indexes.card_cmc_tree != NULL) {
+        free_tree(cards->indexes.card_cmc_tree);
+    }
+}
+
 void free_all_printings_cards(mtg_all_printings_cards_t *cards)
 {
     if (cards->set_tree != NULL) {
@@ -212,14 +227,6 @@ void free_all_printings_cards(mtg_all_printings_cards_t *cards)
         free_tree(cards->card_tree);
     }
 
-    // Free indexes
-    if (cards->indexes.card_p_tree != NULL) {
-        free_tree(cards->indexes.card_p_tree);
-    }
-
-    if (cards->indexes.card_t_tree != NULL) {
-        free_tree(cards->indexes.card_t_tree);
-    }
-
+    __free_all_printings_cards_indexes(cards);
     memset(cards, 0, sizeof(*cards));
 }
