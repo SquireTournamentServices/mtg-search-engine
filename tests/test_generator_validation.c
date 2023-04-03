@@ -54,6 +54,18 @@ static int test_colour_indentity_validation()
     return 1;
 }
 
+static int test_power_validation()
+{
+    ASSERT(__test_all_ops(MSE_SET_GENERATOR_POWER));
+    return 1;
+}
+
+static int test_toughness_validation()
+{
+    ASSERT(__test_all_ops(MSE_SET_GENERATOR_TOUGHNESS));
+    return 1;
+}
+
 static int __test_includes_ops(mse_set_generator_type_t gen_type)
 {
     mse_set_generator_operator_t op_type = MSE_SET_GENERATOR_OP_LT_INC;
@@ -113,4 +125,6 @@ SUB_TEST(test_generator_validation, {&test_colours_validation, "Test colour vali
 {&test_colour_indentity_validation, "Test colour identity validation"},
 {&test_name_validation, "Test name validation"},
 {&test_oracle_validation, "Test oracle validation"},
-{&test_set_validation, "Test set validation"})
+{&test_set_validation, "Test set validation"},
+{&test_power_validation, "Test power validation"},
+{&test_toughness_validation, "Test toughness validation"})

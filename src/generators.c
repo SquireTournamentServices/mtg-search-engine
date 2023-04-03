@@ -1,4 +1,5 @@
 #include "./generators.h"
+#include "./generator_power.h"
 #include "../testing_h/testing.h"
 #include <string.h>
 #include <stdlib.h>
@@ -52,6 +53,10 @@ int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
         return 1;
     case MSE_SET_GENERATOR_COLOUR_IDENTITY:
         return 1;
+    case MSE_SET_GENERATOR_POWER:
+        return 1;
+    case MSE_SET_GENERATOR_TOUGHNESS:
+        return 1;
     case MSE_SET_GENERATOR_NAME:
         return __mse_is_op_set_includes(op_type);
     case MSE_SET_GENERATOR_ORACLE_TEXT:
@@ -66,11 +71,11 @@ int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
 int mse_generate_set(mse_set_generator_t *gen,
                      avl_tree_node_t **res,
                      mtg_all_printings_cards_t *cards,
-                     thread_pool *pool)
+                     thread_pool_t *pool)
 {
     switch(gen->generator_type) {
     case MSE_SET_GENERATOR_COLOUR:
-        return mse_generate_set_colour(gen, res, cards, pool);
+        return 0;
     case MSE_SET_GENERATOR_COLOUR_IDENTITY:
         return 0;
     case MSE_SET_GENERATOR_NAME:
@@ -78,6 +83,10 @@ int mse_generate_set(mse_set_generator_t *gen,
     case MSE_SET_GENERATOR_ORACLE_TEXT:
         return 0;
     case MSE_SET_GENERATOR_SET:
+        return 0;
+    case MSE_SET_GENERATOR_POWER:
+        return mse_generate_set_power(gen, res, cards, pool);
+    case MSE_SET_GENERATOR_TOUGHNESS:
         return 0;
     }
     return 1;
