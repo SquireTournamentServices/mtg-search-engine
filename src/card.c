@@ -3,6 +3,7 @@
 #include "../testing_h/testing.h"
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 mtg_colour_enum_t parse_colours(const char *colours)
 {
@@ -293,22 +294,22 @@ int avl_cmp_card_p(void *a, void *b)
 {
     mtg_card_t *ca = (mtg_card_t *) a;
     mtg_card_t *cb = (mtg_card_t *) b;
-    int cmp = ca->power - cb->power;
+    double cmp = ca->power - cb->power;
 
-    if (cmp == 0) {
+    if ((int) cmp == 0) {
         return avl_cmp_card(a, b);
     }
-    return cmp;
+    return (int) cmp;
 }
 
 int avl_cmp_card_t(void *a, void *b)
 {
     mtg_card_t *ca = (mtg_card_t *) a;
     mtg_card_t *cb = (mtg_card_t *) b;
-    int cmp = ca->toughness - cb->toughness;
+    double cmp = ca->toughness - cb->toughness;
 
-    if (cmp == 0) {
+    if ((int) cmp == 0) {
         return avl_cmp_card(a, b);
     }
-    return cmp;
+    return (int) cmp;
 }

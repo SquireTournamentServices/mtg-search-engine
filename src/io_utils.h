@@ -20,3 +20,6 @@ int read_str(FILE *f, char **str);
 
 int write_tm(FILE *f, struct tm t);
 int read_tm(FILE *f, struct tm *t);
+
+/// strtod wrapper
+int mse_to_double(char *input, double *ret);

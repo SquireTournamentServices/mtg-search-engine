@@ -29,3 +29,6 @@ int uuid_cmp(uuid_t a, uuid_t b);
 /// the UUID makes up part of a composite key. In card.h the power and, toughness trees use a composite key of
 /// the numerical value and the UUID, by using the max UUID for the thing to compare to, i.e: compare (x, max_x)
 uuid_t max_uuid();
+
+/// Gets the minimum UUID, similar to max_uuid
+uuid_t min_uuid();

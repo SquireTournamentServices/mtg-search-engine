@@ -26,7 +26,6 @@ static json_t *get_all_printings_cards_from_file()
 
 static int init_test_cards()
 {
-    memset(&test_cards, 0, sizeof(test_cards));
     json_t *json = get_all_printings_cards_from_file();
     ASSERT(json != NULL);
 

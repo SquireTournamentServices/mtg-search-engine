@@ -110,3 +110,10 @@ uuid_t max_uuid()
     memset(ret.bytes, 0xFF, sizeof(ret.bytes));
     return ret;
 }
+
+uuid_t min_uuid()
+{
+    uuid_t ret;
+    memset(ret.bytes, 0, sizeof(ret.bytes));
+    return ret;
+}
