@@ -26,15 +26,16 @@ static json_t *get_all_printings_cards_from_file()
 
 static int init_test_cards()
 {
+    ASSERT(init_pool(&pool));
+
     json_t *json = get_all_printings_cards_from_file();
     ASSERT(json != NULL);
 
     memset(&test_cards, 0, sizeof(test_cards));
-    ASSERT(__parse_all_printings_cards(&test_cards, json));
+    ASSERT(__parse_all_printings_cards(&test_cards, json, &pool));
     json_decref(json);
 
     ASSERT(test_cards.card_tree != NULL);
-    ASSERT(init_pool(&pool));
 
     return 1;
 }

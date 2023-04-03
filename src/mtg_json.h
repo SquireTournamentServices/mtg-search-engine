@@ -21,6 +21,8 @@ typedef struct mtg_cards_indexes {
     avl_tree_node_t *card_p_tree;
     /// Index for toughness
     avl_tree_node_t *card_t_tree;
+    /// Index for card cmc
+    avl_tree_node_t *card_cmc_tree;
 } mtg_cards_indexes;
 
 /// This will store the atomic cards and, sets. Each card is stored once and,
@@ -48,8 +50,8 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
                                      json_t *set_node);
 
 /// Exposed internal method for use within internal testing
-/// This method will parse the json cards and create an index for set names
-int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards);
+/// This method will parse the json cards all of the indexes
+int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool);
 
 /// Returns 1 on success, 0 on failure
 /// Do not call free_all_printings_cards on fail

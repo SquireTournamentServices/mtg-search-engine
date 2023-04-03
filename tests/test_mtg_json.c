@@ -8,6 +8,7 @@
 #include <jansson.h>
 
 // Some vile testing globals
+static thread_pool_t pool;
 static mtg_all_printings_cards_t test_cards;
 static json_t *json;
 
@@ -38,10 +39,31 @@ static int test_all_printings_cards_found()
     return 1;
 }
 
+static int test_indexes()
+{
+    ASSERT(tree_size(test_cards.indexes.card_p_tree) > 0);
+    ASSERT(tree_size(test_cards.indexes.card_t_tree) > 0);
+    ASSERT(tree_size(test_cards.indexes.card_cmc_tree) > 0);
+    return 1;
+}
+
 SUB_TEST(__test_atomic_card_props, {&test_all_printings_cards_sets_found, "Test atomic cards found sets"},
-{&test_all_printings_cards_found, "Test atomic cards found cards"})
+{&test_all_printings_cards_found, "Test atomic cards found cards"},
+{&test_indexes, "Test card indexes"})
 
 // Start tests
+static int init_tests()
+{
+    ASSERT(init_pool(&pool));
+    return 1;
+}
+
+static int free_tests()
+{
+    ASSERT(free_pool(&pool));
+    return 1;
+}
+
 static int test_free_all_printings_cards()
 {
     mtg_all_printings_cards_t ret;
@@ -52,9 +74,6 @@ static int test_free_all_printings_cards()
 
 static int test_init_free()
 {
-    thread_pool_t pool;
-    ASSERT(init_pool(&pool));
-
     memset(&test_cards, 0, sizeof(test_cards));
     ASSERT(get_all_printings_cards(&test_cards, &pool));
 
@@ -70,8 +89,6 @@ static int test_init_free()
 
     ASSERT(__test_atomic_card_props());
     free_all_printings_cards(&test_cards);
-
-    ASSERT(free_pool(&pool));
     return 1;
 }
 
@@ -119,7 +136,7 @@ static int test_parse_all_printings_cards_sets()
     ASSERT(json != NULL);
 
     memset(&test_cards, 0, sizeof(test_cards));
-    ASSERT(__parse_all_printings_cards(&test_cards, json));
+    ASSERT(__parse_all_printings_cards(&test_cards, json, &pool));
     ASSERT(__test_atomic_card_props());
 
     free_all_printings_cards(&test_cards);
@@ -127,7 +144,9 @@ static int test_parse_all_printings_cards_sets()
     return 1;
 }
 
-SUB_TEST(test_mtg_json, {&test_free_all_printings_cards, "Test free zeroed atomic cards struct"},
+SUB_TEST(test_mtg_json, {&init_tests, "Init tests"},
+{&test_free_all_printings_cards, "Test free zeroed atomic cards struct"},
 {&test_init_free, "Test init and, free"},
 {&test_curl_write_callback, "Test cURL write callback"},
-{&test_parse_all_printings_cards_sets, "Test that __parse_all_printings_cards reads the sets correctly"})
+{&test_parse_all_printings_cards_sets, "Test that __parse_all_printings_cards reads the sets correctly"},
+{&free_tests, "Free tests"})

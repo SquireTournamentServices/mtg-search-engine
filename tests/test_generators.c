@@ -24,15 +24,16 @@ static json_t *get_all_printings_cards_from_file()
 
 static int init_generator_tests()
 {
+    ASSERT(init_pool(&gen_thread_pool));
+
     json_t *json = get_all_printings_cards_from_file();
     ASSERT(json != NULL);
 
     memset(&gen_cards, 0, sizeof(gen_cards));
-    ASSERT(__parse_all_printings_cards(&gen_cards, json));
+    ASSERT(__parse_all_printings_cards(&gen_cards, json, &gen_thread_pool));
     json_decref(json);
 
     ASSERT(gen_cards.card_tree != NULL);
-    ASSERT(init_pool(&gen_thread_pool));
 
     return 1;
 }

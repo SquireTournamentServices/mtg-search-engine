@@ -57,62 +57,38 @@ static int __insert_node(avl_tree_node_t **root, avl_tree_node_t *node)
     }
 }
 
-// Power index
-static int __add_cards_to_p_tree(avl_tree_node_t *cards, avl_tree_node_t **card_p_tree)
-{
-    if (cards == NULL) {
-        return 1;
-    }
-
-    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card_p, cards->payload);
-    int r = __insert_node(card_p_tree, node);
-    if (!r) {
-        lprintf(LOG_ERROR, "Cannot insert a card into the power tree\n");
-        free_tree(node);
-        return 0;
-    }
-    ASSERT(__add_cards_to_p_tree(cards->l, card_p_tree));
-    ASSERT(__add_cards_to_p_tree(cards->r, card_p_tree));
-    return 1;
+#define MSE_INDEX_FIELD_NAME(fname) __generate_card_##fname##_index_task
+#define MSE_INDEX_FOR_FIELD(fname) \
+static int __add_cards_to_##fname##_tree(avl_tree_node_t *cards, avl_tree_node_t **card_##fname##_tree) \
+{ \
+    if (cards == NULL) { \
+        return 1; \
+    } \
+ \
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card_##fname, cards->payload); \
+    int r = __insert_node(card_##fname##_tree, node); \
+    if (!r) { \
+        lprintf(LOG_ERROR, "Cannot insert a card into the " #fname " tree\n"); \
+        free_tree(node); \
+        return 0; \
+    } \
+    ASSERT(__add_cards_to_##fname##_tree(cards->l, card_##fname##_tree)); \
+    ASSERT(__add_cards_to_##fname##_tree(cards->r, card_##fname##_tree)); \
+    return 1; \
+} \
+static void MSE_INDEX_FIELD_NAME(fname)(void *__state, thread_pool_t *pool) \
+{ \
+    mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state; \
+    if (!__add_cards_to_##fname##_tree(state->cards->card_tree,  \
+                                      &state->cards->indexes.card_##fname##_tree)) { \
+        state->ret = 0; \
+    } \
+    sem_post(&(state->semaphore)); \
 }
 
-static void __generate_card_p_index_task(void *__state, thread_pool_t *pool)
-{
-    mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
-    if (!__add_cards_to_p_tree(state->cards->card_tree, &state->cards->indexes.card_p_tree)) {
-        state->ret = 0;
-    }
-    sem_post(&(state->semaphore));
-}
-
-// Toughness index
-static int __add_cards_to_t_tree(avl_tree_node_t *cards, avl_tree_node_t **card_t_tree)
-{
-    if (cards == NULL) {
-        return 1;
-    }
-
-    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card_t, cards->payload);
-    int r = __insert_node(card_t_tree, node);
-    if (!r) {
-        lprintf(LOG_ERROR, "Cannot insert a card into the power tree\n");
-        free_tree(node);
-        return 0;
-    }
-    ASSERT(__add_cards_to_t_tree(cards->l, card_t_tree));
-    ASSERT(__add_cards_to_t_tree(cards->r, card_t_tree));
-    return 1;
-}
-
-static void __generate_card_t_index_task(void *__state, thread_pool_t *pool)
-{
-    mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
-    if (!__add_cards_to_t_tree(state->cards->card_tree, &state->cards->indexes.card_t_tree)) {
-        state->ret = 0;
-    }
-    sem_post(&(state->semaphore));
-}
-
+MSE_INDEX_FOR_FIELD(p)
+MSE_INDEX_FOR_FIELD(t)
+MSE_INDEX_FOR_FIELD(cmc)
 
 #define TASK_COUNT(T) (sizeof(T) / sizeof(*T))
 
@@ -122,8 +98,9 @@ int __generate_indexes(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
     ASSERT(ret != NULL);
 
     void (*tasks[])(void *, struct thread_pool_t *) = {&__generate_set_cards_index_task,
-                                                       &__generate_card_p_index_task,
-                                                       &__generate_card_t_index_task
+                                                       &MSE_INDEX_FIELD_NAME(p),
+                                                       &MSE_INDEX_FIELD_NAME(t),
+                                                       &MSE_INDEX_FIELD_NAME(cmc)
                                                       };
 
     mse_index_generator_state_t state;
