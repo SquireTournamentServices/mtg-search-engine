@@ -50,8 +50,8 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
                                      json_t *set_node);
 
 /// Exposed internal method for use within internal testing
-/// This method will parse the json cards and create an index for set names
-int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards);
+/// This method will parse the json cards all of the indexes
+int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool);
 
 /// Returns 1 on success, 0 on failure
 /// Do not call free_all_printings_cards on fail

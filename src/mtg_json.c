@@ -113,7 +113,7 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
     return 1;
 }
 
-int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards)
+int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool)
 {
     ASSERT(ret != NULL);
     memset(ret, 0, sizeof(*ret));
@@ -145,6 +145,11 @@ int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards)
 
     ret->set_count = count;
     lprintf(LOG_INFO, "Found %lu sets and, %lu cards\n", ret->set_count, ret->card_count);
+
+    lprintf(LOG_INFO, "Generating card indexes\n");
+    ASSERT(__generate_indexes(ret, pool));
+
+    lprintf(LOG_INFO, "Cards and, indexes are now complete\n");
 
     return 1;
 }
@@ -185,7 +190,7 @@ int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
     }
 
     // This only runs if there was no error
-    int status = __parse_all_printings_cards(ret, json);
+    int status = __parse_all_printings_cards(ret, json, pool);
     json_decref(json);
 
     if (!status) {
@@ -194,11 +199,6 @@ int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
         return 0;
     }
     fclose(r);
-
-    lprintf(LOG_INFO, "Generating card indexes\n");
-    ASSERT(__generate_indexes(ret, pool));
-
-    lprintf(LOG_INFO, "Cards and, indexes are now complete\n");
     return 1;
 }
 

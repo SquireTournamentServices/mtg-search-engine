@@ -57,6 +57,7 @@ static int __insert_node(avl_tree_node_t **root, avl_tree_node_t *node)
     }
 }
 
+#define MSE_INDEX_FIELD_NAME(fname) __generate_card_##fname##_index_task
 #define MSE_INDEX_FOR_FIELD(fname) \
 static int __add_cards_to_##fname##_tree(avl_tree_node_t *cards, avl_tree_node_t **card_##fname##_tree) \
 { \
@@ -75,7 +76,7 @@ static int __add_cards_to_##fname##_tree(avl_tree_node_t *cards, avl_tree_node_t
     ASSERT(__add_cards_to_##fname##_tree(cards->r, card_##fname##_tree)); \
     return 1; \
 } \
-static void __generate_card_##fname##_index_task(void *__state, thread_pool_t *pool) \
+static void MSE_INDEX_FIELD_NAME(fname)(void *__state, thread_pool_t *pool) \
 { \
     mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state; \
     if (!__add_cards_to_##fname##_tree(state->cards->card_tree,  \
@@ -97,9 +98,9 @@ int __generate_indexes(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
     ASSERT(ret != NULL);
 
     void (*tasks[])(void *, struct thread_pool_t *) = {&__generate_set_cards_index_task,
-                                                       &__generate_card_p_index_task,
-                                                       &__generate_card_t_index_task,
-                                                       &__generate_card_cmc_index_task
+                                                       &MSE_INDEX_FIELD_NAME(p),
+                                                       &MSE_INDEX_FIELD_NAME(t),
+                                                       &MSE_INDEX_FIELD_NAME(cmc)
                                                       };
 
     mse_index_generator_state_t state;
