@@ -74,3 +74,10 @@ int read_tm(FILE *f, struct tm *t)
     int r = fread(t, sizeof(*t), 1, f);
     return r == 1;
 }
+
+int mse_to_double(char *input, double *ret)
+{
+    char *endptr = NULL;
+    *ret = strtod(input, &endptr);
+    return endptr != NULL && endptr != input;
+}
