@@ -21,6 +21,8 @@ typedef struct mtg_cards_indexes {
     avl_tree_node_t *card_p_tree;
     /// Index for toughness
     avl_tree_node_t *card_t_tree;
+    /// Index for card cmc
+    avl_tree_node_t *card_cmc_tree;
 } mtg_cards_indexes;
 
 /// This will store the atomic cards and, sets. Each card is stored once and,

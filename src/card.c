@@ -290,26 +290,26 @@ int avl_cmp_card(void *a, void *b)
     return uuid_cmp(ca->id, cb->id);
 }
 
+#define MSE_CARD_DOUBLE_CMP(a, b, field) \
+    mtg_card_t *ca = (mtg_card_t *) a; \
+    mtg_card_t *cb = (mtg_card_t *) b; \
+    double cmp = ca->field - cb->field; \
+    if ((int) cmp == 0) { \
+        return avl_cmp_card(a, b); \
+    } \
+    return (int) cmp;
+
 int avl_cmp_card_p(void *a, void *b)
 {
-    mtg_card_t *ca = (mtg_card_t *) a;
-    mtg_card_t *cb = (mtg_card_t *) b;
-    double cmp = ca->power - cb->power;
-
-    if ((int) cmp == 0) {
-        return avl_cmp_card(a, b);
-    }
-    return (int) cmp;
+    MSE_CARD_DOUBLE_CMP(a, b, power)
 }
 
 int avl_cmp_card_t(void *a, void *b)
 {
-    mtg_card_t *ca = (mtg_card_t *) a;
-    mtg_card_t *cb = (mtg_card_t *) b;
-    double cmp = ca->toughness - cb->toughness;
+    MSE_CARD_DOUBLE_CMP(a, b, toughness)
+}
 
-    if ((int) cmp == 0) {
-        return avl_cmp_card(a, b);
-    }
-    return (int) cmp;
+int avl_cmp_card_cmc(void *a, void *b)
+{
+    MSE_CARD_DOUBLE_CMP(a, b, cmc)
 }

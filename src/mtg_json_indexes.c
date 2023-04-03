@@ -95,7 +95,7 @@ static int __add_cards_to_t_tree(avl_tree_node_t *cards, avl_tree_node_t **card_
     avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card_t, cards->payload);
     int r = __insert_node(card_t_tree, node);
     if (!r) {
-        lprintf(LOG_ERROR, "Cannot insert a card into the power tree\n");
+        lprintf(LOG_ERROR, "Cannot insert a card into the toughness tree\n");
         free_tree(node);
         return 0;
     }
@@ -113,6 +113,34 @@ static void __generate_card_t_index_task(void *__state, thread_pool_t *pool)
     sem_post(&(state->semaphore));
 }
 
+// Cmc index
+static int __add_cards_to_cmc_tree(avl_tree_node_t *cards, avl_tree_node_t **card_cmc_tree)
+{
+    if (cards == NULL) {
+        return 1;
+    }
+
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card_cmc, cards->payload);
+    int r = __insert_node(card_cmc_tree, node);
+    if (!r) {
+        lprintf(LOG_ERROR, "Cannot insert a card into the cmc tree\n");
+        free_tree(node);
+        return 0;
+    }
+    ASSERT(__add_cards_to_cmc_tree(cards->l, card_cmc_tree));
+    ASSERT(__add_cards_to_cmc_tree(cards->r, card_cmc_tree));
+    return 1;
+}
+
+static void __generate_card_cmc_index_task(void *__state, thread_pool_t *pool)
+{
+    mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
+    if (!__add_cards_to_cmc_tree(state->cards->card_tree, &state->cards->indexes.card_cmc_tree)) {
+        state->ret = 0;
+    }
+    sem_post(&(state->semaphore));
+}
+
 
 #define TASK_COUNT(T) (sizeof(T) / sizeof(*T))
 
@@ -123,7 +151,8 @@ int __generate_indexes(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
 
     void (*tasks[])(void *, struct thread_pool_t *) = {&__generate_set_cards_index_task,
                                                        &__generate_card_p_index_task,
-                                                       &__generate_card_t_index_task
+                                                       &__generate_card_t_index_task,
+                                                       &__generate_card_cmc_index_task
                                                       };
 
     mse_index_generator_state_t state;
