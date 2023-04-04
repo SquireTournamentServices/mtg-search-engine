@@ -34,5 +34,33 @@ static int test_generator_power_inc()
     return 1;
 }
 
-SUB_TEST(test_generator_power, {&test_generator_power_eq, "Test generator power eq"},
-{&test_generator_power_inc, "Test generator toughness includes"})
+static int test_generator_power_lt()
+{
+    ASSERT(__test_generator_power(MSE_SET_GENERATOR_OP_LT));
+    return 1;
+}
+
+static int test_generator_power_lt_inc()
+{
+    ASSERT(__test_generator_power(MSE_SET_GENERATOR_OP_LT_INC));
+    return 1;
+}
+
+static int test_generator_power_gt()
+{
+    ASSERT(__test_generator_power(MSE_SET_GENERATOR_OP_GT));
+    return 1;
+}
+
+static int test_generator_power_gt_inc()
+{
+    ASSERT(__test_generator_power(MSE_SET_GENERATOR_OP_GT_INC));
+    return 1;
+}
+
+SUB_TEST(test_generator_power, {&test_generator_power_eq, "Test generator power ="},
+{&test_generator_power_inc, "Test generator power :"},
+{&test_generator_power_lt, "Test genreator power <"},
+{&test_generator_power_lt_inc, "Test genreator power <="},
+{&test_generator_power_gt, "Test genreator power >"},
+{&test_generator_power_gt_inc, "Test genreator power >="})

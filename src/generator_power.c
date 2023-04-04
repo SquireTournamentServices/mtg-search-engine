@@ -8,7 +8,6 @@
 static int __mse_generate_set_power_eq(mse_set_generator_t *gen,
                                        avl_tree_node_t **res,
                                        mtg_all_printings_cards_t *cards,
-                                       thread_pool_t *pool,
                                        double arg)
 {
     // Prepare the bounds of the search
@@ -27,10 +26,77 @@ static int __mse_generate_set_power_eq(mse_set_generator_t *gen,
     return 1;
 }
 
+static int __mse_generate_set_power_lt(mse_set_generator_t *gen,
+                                       avl_tree_node_t **res,
+                                       mtg_all_printings_cards_t *cards,
+                                       double arg)
+{
+    // Prepare the bounds of the search
+    mtg_card_t lower;
+    memset(&lower, 0, sizeof(lower));
+    lower.id = min_uuid();
+
+    lower.power = arg;
+
+    // Search the tree
+    ASSERT(tree_lookup(cards->indexes.card_p_tree, res, 1, (void *) &lower));
+    return 1;
+}
+
+static int __mse_generate_set_power_lt_inc(mse_set_generator_t *gen,
+        avl_tree_node_t **res,
+        mtg_all_printings_cards_t *cards,
+        double arg)
+{
+    // Prepare the bounds of the search
+    mtg_card_t lower;
+    memset(&lower, 0xFF, sizeof(lower));
+    lower.id = min_uuid();
+
+    lower.power = arg;
+
+    // Search the tree
+    ASSERT(tree_lookup(cards->indexes.card_p_tree, res, 1, (void *) &lower));
+    return 1;
+}
+
+static int __mse_generate_set_power_gt(mse_set_generator_t *gen,
+                                       avl_tree_node_t **res,
+                                       mtg_all_printings_cards_t *cards,
+                                       double arg)
+{
+    // Prepare the bounds of the search
+    mtg_card_t lower;
+    memset(&lower, 0xFF, sizeof(lower));
+    lower.id = min_uuid();
+
+    lower.power = arg;
+
+    // Search the tree
+    ASSERT(tree_lookup(cards->indexes.card_p_tree, res, 0, (void *) &lower));
+    return 1;
+}
+
+static int __mse_generate_set_power_gt_inc(mse_set_generator_t *gen,
+        avl_tree_node_t **res,
+        mtg_all_printings_cards_t *cards,
+        double arg)
+{
+    // Prepare the bounds of the search
+    mtg_card_t lower;
+    memset(&lower, 0, sizeof(lower));
+    lower.id = min_uuid();
+
+    lower.power = arg;
+
+    // Search the tree
+    ASSERT(tree_lookup(cards->indexes.card_p_tree, res, 0, (void *) &lower));
+    return 1;
+}
+
 int mse_generate_set_power(mse_set_generator_t *gen,
                            avl_tree_node_t **res,
-                           mtg_all_printings_cards_t *cards,
-                           thread_pool_t *pool)
+                           mtg_all_printings_cards_t *cards)
 {
     double arg;
     ASSERT(mse_to_double(gen->argument, &arg));
@@ -38,15 +104,17 @@ int mse_generate_set_power(mse_set_generator_t *gen,
     switch(gen->generator_op) {
     case MSE_SET_GENERATOR_OP_INCLUDES:
     case MSE_SET_GENERATOR_OP_EQUALS:
-        return __mse_generate_set_power_eq(gen, res, cards, pool, arg);
+        return __mse_generate_set_power_eq(gen, res, cards, arg);
     case MSE_SET_GENERATOR_OP_LT:
-        return 0;
+        return __mse_generate_set_power_lt(gen, res, cards, arg);
     case MSE_SET_GENERATOR_OP_LT_INC:
-        return 0;
+        return __mse_generate_set_power_lt_inc(gen, res, cards, arg);
     case MSE_SET_GENERATOR_OP_GT:
-        return 0;
+        return __mse_generate_set_power_gt(gen, res, cards, arg);
     case MSE_SET_GENERATOR_OP_GT_INC:
-        return 0;
+        return __mse_generate_set_power_gt_inc(gen, res, cards, arg);
     }
+
+    lprintf(LOG_ERROR, "Cannot find operation %d for power\n", gen->generator_op);
     return 0;
 }
