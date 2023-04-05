@@ -86,8 +86,8 @@ static void MSE_INDEX_FIELD_NAME(fname)(void *__state, thread_pool_t *pool) \
     sem_post(&(state->semaphore)); \
 }
 
-MSE_INDEX_FOR_FIELD(p)
-MSE_INDEX_FOR_FIELD(t)
+MSE_INDEX_FOR_FIELD(power)
+MSE_INDEX_FOR_FIELD(toughness)
 MSE_INDEX_FOR_FIELD(cmc)
 
 #define TASK_COUNT(T) (sizeof(T) / sizeof(*T))
@@ -98,8 +98,8 @@ int __generate_indexes(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
     ASSERT(ret != NULL);
 
     void (*tasks[])(void *, struct thread_pool_t *) = {&__generate_set_cards_index_task,
-                                                       &MSE_INDEX_FIELD_NAME(p),
-                                                       &MSE_INDEX_FIELD_NAME(t),
+                                                       &MSE_INDEX_FIELD_NAME(power),
+                                                       &MSE_INDEX_FIELD_NAME(toughness),
                                                        &MSE_INDEX_FIELD_NAME(cmc)
                                                       };
 

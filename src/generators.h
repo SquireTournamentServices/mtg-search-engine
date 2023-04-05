@@ -11,6 +11,7 @@ typedef enum mse_set_generator_type_t {
     MSE_SET_GENERATOR_ORACLE_TEXT,
     MSE_SET_GENERATOR_SET,
     MSE_SET_GENERATOR_POWER,
+    MSE_SET_GENERATOR_CMC,
     MSE_SET_GENERATOR_TOUGHNESS
 } mse_set_generator_type_t;
 

@@ -121,10 +121,17 @@ static int test_set_validation()
     return 1;
 }
 
+static int test_cmc_validation()
+{
+    ASSERT(__test_includes_ops(MSE_SET_GENERATOR_CMC));
+    return 1;
+}
+
 SUB_TEST(test_generator_validation, {&test_colours_validation, "Test colour validation"},
 {&test_colour_indentity_validation, "Test colour identity validation"},
 {&test_name_validation, "Test name validation"},
 {&test_oracle_validation, "Test oracle validation"},
 {&test_set_validation, "Test set validation"},
 {&test_power_validation, "Test power validation"},
-{&test_toughness_validation, "Test toughness validation"})
+{&test_toughness_validation, "Test toughness validation"},
+{&test_cmc_validation, "Test cmc validation"})

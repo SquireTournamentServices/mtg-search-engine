@@ -41,8 +41,8 @@ static int test_all_printings_cards_found()
 
 static int test_indexes()
 {
-    ASSERT(tree_size(test_cards.indexes.card_p_tree) > 0);
-    ASSERT(tree_size(test_cards.indexes.card_t_tree) > 0);
+    ASSERT(tree_size(test_cards.indexes.card_power_tree) > 0);
+    ASSERT(tree_size(test_cards.indexes.card_toughness_tree) > 0);
     ASSERT(tree_size(test_cards.indexes.card_cmc_tree) > 0);
     return 1;
 }
@@ -77,12 +77,12 @@ static int test_init_free()
     memset(&test_cards, 0, sizeof(test_cards));
     ASSERT(get_all_printings_cards(&test_cards, &pool));
 
-    ASSERT(test_cards.indexes.card_p_tree != NULL);
-    size_t p_nodes = get_tree_nodes(test_cards.indexes.card_p_tree);
+    ASSERT(test_cards.indexes.card_power_tree != NULL);
+    size_t p_nodes = get_tree_nodes(test_cards.indexes.card_power_tree);
     ASSERT(p_nodes > 0);
 
-    ASSERT(test_cards.indexes.card_t_tree != NULL);
-    size_t t_nodes = get_tree_nodes(test_cards.indexes.card_t_tree);
+    ASSERT(test_cards.indexes.card_toughness_tree != NULL);
+    size_t t_nodes = get_tree_nodes(test_cards.indexes.card_toughness_tree);
     ASSERT(t_nodes > 0);
     ASSERT(p_nodes == t_nodes);
     ASSERT(p_nodes == test_cards.card_count);

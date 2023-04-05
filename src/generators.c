@@ -50,11 +50,9 @@ int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
 {
     switch(gen_type) {
     case MSE_SET_GENERATOR_COLOUR:
-        return 1;
+    case MSE_SET_GENERATOR_CMC:
     case MSE_SET_GENERATOR_COLOUR_IDENTITY:
-        return 1;
     case MSE_SET_GENERATOR_POWER:
-        return 1;
     case MSE_SET_GENERATOR_TOUGHNESS:
         return 1;
     case MSE_SET_GENERATOR_NAME:
@@ -87,7 +85,9 @@ int mse_generate_set(mse_set_generator_t *gen,
     case MSE_SET_GENERATOR_POWER:
         return mse_generate_set_power(gen, res, cards);
     case MSE_SET_GENERATOR_TOUGHNESS:
-        return 0;
+        return mse_generate_set_toughness(gen, res, cards);
+    case MSE_SET_GENERATOR_CMC:
+        return mse_generate_set_cmc(gen, res, cards);
     }
     return 1;
 }
