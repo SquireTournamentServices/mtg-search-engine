@@ -38,7 +38,6 @@ static int __test_all_ops(mse_set_generator_type_t gen_type)
     // =
     op_type = MSE_SET_GENERATOR_OP_EQUALS;
     ASSERT(mse_init_set_generator(&ret, gen_type, op_type, DEFAULT_ARGUMENT, len));
-    mse_free_set_generator(&ret);
     return 1;
 }
 
