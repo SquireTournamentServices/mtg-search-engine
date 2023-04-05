@@ -293,11 +293,15 @@ int avl_cmp_card(void *a, void *b)
 #define MSE_CARD_DOUBLE_CMP(a, b, field) \
     mtg_card_t *ca = (mtg_card_t *) a; \
     mtg_card_t *cb = (mtg_card_t *) b; \
-    double cmp = ca->field - cb->field; \
-    if ((int) cmp == 0) { \
+    if ((int) ca->field == (int) cb->field) { \
         return avl_cmp_card(a, b); \
     } \
-    return (int) cmp;
+    double cmp = ca->field - cb->field; \
+    if (cmp < 0) { \
+        return -1; \
+    } else { \
+        return 1; \
+    } \
 
 int avl_cmp_card_p(void *a, void *b)
 {
