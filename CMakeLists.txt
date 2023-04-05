@@ -88,8 +88,8 @@ set(SRC
     ./src/search.c
     ./src/generators.h
     ./src/generators.c
-    ./src/generator_power.h
-    ./src/generator_power.c
+    ./src/generator_double_fields.h
+    ./src/generator_double_fields.c
     ${LANG_SOURCE_FILES})
 set(TESTS
     ./tests/main.c
@@ -114,7 +114,7 @@ set(TESTS
     ./tests/test_generators.h
     ./tests/test_generators.c
     ./tests/test_generator_validation.c
-    ./tests/test_generator_power.c
+    ./tests/test_generator_double_fields.c
     ./tests/test_mse_langs.h
     ./tests/test_mse_langs.c)
 

@@ -1,5 +1,5 @@
 #include "./generators.h"
-#include "./generator_power.h"
+#include "./generator_double_fields.h"
 #include "../testing_h/testing.h"
 #include <string.h>
 #include <stdlib.h>

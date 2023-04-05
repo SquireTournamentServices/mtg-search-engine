@@ -1,4 +1,4 @@
-#include "./generator_power.h"
+#include "./generator_double_fields.h"
 #include "./card.h"
 #include "./avl_tree.h"
 #include "./io_utils.h"
