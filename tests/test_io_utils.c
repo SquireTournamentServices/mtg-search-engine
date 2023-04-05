@@ -64,8 +64,22 @@ static int test_str_read_write()
     return 1;
 }
 
+static int test_mse_to_double()
+{
+    double ret = 0;
+    ASSERT(mse_to_double("5", &ret));
+    ASSERT(fabs(ret - 5) < 0.001);
+
+    ASSERT(mse_to_double("5.2", &ret));
+    ASSERT(fabs(ret - 5.2) < 0.001);
+
+    ASSERT(!mse_to_double("pee pee poo poo", &ret));
+    return 1;
+}
+
 SUB_TEST(test_io_utils, {&test_double_read_write, "Test double read and, write"},
 {&test_int_read_write, "Test int read and, write"},
 {&test_size_t_read_write, "Test size_t read and, write"},
 {&test_tm_read_write, "Test struct tm read and, write"},
-{&test_str_read_write, "Test string read and, write"})
+{&test_str_read_write, "Test string read and, write"},
+{&test_mse_to_double, "Test strtod wrapper"})

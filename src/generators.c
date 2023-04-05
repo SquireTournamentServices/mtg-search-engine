@@ -85,7 +85,7 @@ int mse_generate_set(mse_set_generator_t *gen,
     case MSE_SET_GENERATOR_SET:
         return 0;
     case MSE_SET_GENERATOR_POWER:
-        return mse_generate_set_power(gen, res, cards, pool);
+        return mse_generate_set_power(gen, res, cards);
     case MSE_SET_GENERATOR_TOUGHNESS:
         return 0;
     }

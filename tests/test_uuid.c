@@ -92,11 +92,15 @@ static int test_uuid_cmp()
     ASSERT(uuid_cmp(a, b) == 0);
 
     a.bytes[0] = 0xFF;
-    ASSERT(uuid_cmp(a, b) > 1);
+    ASSERT(uuid_cmp(a, b) > 0);
 
     a.bytes[0] = 0;
     b.bytes[0] = 0xFF;
-    ASSERT(uuid_cmp(a, b) < 1);
+    ASSERT(uuid_cmp(a, b) < 0);
+
+    a = min_uuid();
+    b = max_uuid();
+    ASSERT(uuid_cmp(a, b) < 0);
 
     return 1;
 }

@@ -24,6 +24,8 @@ static int __test_card_props(mtg_card_t card)
     ASSERT(strcmp(card.mana_cost, "{5}{W}{W}") == 0);
 
     ASSERT(fabs(card.cmc - 7.0) < 0.01);
+    ASSERT(fabs(card.toughness - 4.0) < 0.01);
+    ASSERT(fabs(card.power - 4.0) < 0.01);
 
     // Types
     int human = 0;
@@ -137,18 +139,48 @@ static int test_avl_cmp_card()
 
     a.id.bytes[0] = 0xFF;
     int tmp = uuid_cmp(a.id, b.id);
-    ASSERT(tmp > 1);
+    ASSERT(tmp > 0);
     ASSERT(avl_cmp_card((void *) &a, (void *) &b) == tmp);
 
     a.id.bytes[0] = 0;
     b.id.bytes[0] = 0xFF;
     tmp = uuid_cmp(a.id, b.id);
-    ASSERT(tmp < 1);
+    ASSERT(tmp < 0);
     ASSERT(avl_cmp_card((void *) &a, (void *) &b) == tmp);
 
+    a.id = min_uuid();
+    b.id = max_uuid();
+    ASSERT(avl_cmp_card(&a, &b) < 0);
+
+    return 1;
+}
+
+static int test_card_field_cmp()
+{
+    mtg_card_t a, b;
+    memset(&a, 0, sizeof(a));
+    b = a;
+
+    ASSERT(avl_cmp_card_p(&a, &b) == 0);
+    ASSERT(avl_cmp_card_t(&a, &b) == 0);
+    ASSERT(avl_cmp_card_cmc(&a, &b) == 0);
+
+    a.id = min_uuid();
+    b.id = max_uuid();
+
+    ASSERT(avl_cmp_card_p(&a, &b) < 0);
+    ASSERT(avl_cmp_card_t(&a, &b) < 0);
+    ASSERT(avl_cmp_card_cmc(&a, &b) < 0);
+
+    a.power = b.power + 3;
+    ASSERT(avl_cmp_card_p(&a, &b) > 0);
+
+    a.power = b.power - 3;
+    ASSERT(avl_cmp_card_p(&a, &b) < 0);
     return 1;
 }
 
 SUB_TEST(test_card, {&test_card_parse_json, "Test parse card from JSON"},
 {&test_card_write_read, "Test card read and, write"},
-{&test_avl_cmp_card, "Test card avl cmp function"})
+{&test_avl_cmp_card, "Test card avl cmp function"},
+{&test_card_field_cmp, "Test card field cmp"})

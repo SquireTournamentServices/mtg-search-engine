@@ -79,5 +79,5 @@ int mse_to_double(char *input, double *ret)
 {
     char *endptr = NULL;
     *ret = strtod(input, &endptr);
-    return endptr != NULL && endptr != input;
+    return endptr == &input[strlen(input)];
 }
