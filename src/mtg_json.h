@@ -18,9 +18,9 @@ size_t __mtg_json_write_callback(char *ptr,
 /// in card_tree
 typedef struct mtg_cards_indexes {
     /// Index for power
-    avl_tree_node_t *card_p_tree;
+    avl_tree_node_t *card_power_tree;
     /// Index for toughness
-    avl_tree_node_t *card_t_tree;
+    avl_tree_node_t *card_toughness_tree;
     /// Index for card cmc
     avl_tree_node_t *card_cmc_tree;
 } mtg_cards_indexes;

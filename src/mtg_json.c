@@ -204,12 +204,12 @@ int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
 
 static void __free_all_printings_cards_indexes(mtg_all_printings_cards_t *cards)
 {
-    if (cards->indexes.card_p_tree != NULL) {
-        free_tree(cards->indexes.card_p_tree);
+    if (cards->indexes.card_power_tree != NULL) {
+        free_tree(cards->indexes.card_power_tree);
     }
 
-    if (cards->indexes.card_t_tree != NULL) {
-        free_tree(cards->indexes.card_t_tree);
+    if (cards->indexes.card_toughness_tree != NULL) {
+        free_tree(cards->indexes.card_toughness_tree);
     }
 
     if (cards->indexes.card_cmc_tree != NULL) {
