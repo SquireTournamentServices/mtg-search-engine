@@ -3,9 +3,12 @@
 #include "../src/avl_tree.h"
 #include "../src/generators.h"
 #include <string.h>
+#include <math.h>
 
 #define DEFAULT_ARGUMENT "5"
 #define DEFAULT_ARGUMENT_DOUBLE atof(DEFAULT_ARGUMENT)
+
+static int found_eq;
 
 static int __test_generator_power(mse_set_generator_operator_t op_type, int (*test_tree)(avl_tree_node_t *node))
 {
@@ -30,7 +33,6 @@ static int test_tree_power_eq(avl_tree_node_t *node)
         return 1;
     }
 
-    lprintf(LOG_INFO, "Expected: \t%lf, Actual: \t%lf\n", DEFAULT_ARGUMENT_DOUBLE, ((mtg_card_t *) node)->power);
     ASSERT((int) DEFAULT_ARGUMENT_DOUBLE == (int) ((mtg_card_t *) node)->power);
     ASSERT(test_tree_power_eq(node->l));
     ASSERT(test_tree_power_eq(node->r));
@@ -56,6 +58,7 @@ static int test_tree_power_lt(avl_tree_node_t *node)
     }
 
     ASSERT(DEFAULT_ARGUMENT_DOUBLE < ((mtg_card_t *) node)->power);
+    ASSERT(fabs(DEFAULT_ARGUMENT_DOUBLE - ((mtg_card_t *) node)->power) > 0.01);
     ASSERT(test_tree_power_lt(node->l));
     ASSERT(test_tree_power_lt(node->r));
     return 1;
@@ -74,6 +77,7 @@ static int test_tree_power_lt_inc(avl_tree_node_t *node)
     }
 
     ASSERT(DEFAULT_ARGUMENT_DOUBLE <= ((mtg_card_t *) node)->power);
+    found_eq |= (int) DEFAULT_ARGUMENT_DOUBLE == (int) ((mtg_card_t *) node)->power;
     ASSERT(test_tree_power_lt_inc(node->l));
     ASSERT(test_tree_power_lt_inc(node->r));
     return 1;
@@ -81,7 +85,9 @@ static int test_tree_power_lt_inc(avl_tree_node_t *node)
 
 static int test_generator_power_lt_inc()
 {
+    found_eq = 0;
     ASSERT(__test_generator_power(MSE_SET_GENERATOR_OP_LT_INC, &test_tree_power_lt_inc));
+    ASSERT(found_eq);
     return 1;
 }
 
@@ -92,6 +98,7 @@ static int test_tree_power_gt(avl_tree_node_t *node)
     }
 
     ASSERT(DEFAULT_ARGUMENT_DOUBLE > ((mtg_card_t *) node)->power);
+    ASSERT(fabs(DEFAULT_ARGUMENT_DOUBLE - ((mtg_card_t *) node)->power) > 0.01);
     ASSERT(test_tree_power_gt(node->l));
     ASSERT(test_tree_power_gt(node->r));
     return 1;
@@ -110,6 +117,7 @@ static int test_tree_power_gt_inc(avl_tree_node_t *node)
     }
 
     ASSERT(DEFAULT_ARGUMENT_DOUBLE >= ((mtg_card_t *) node)->power);
+    found_eq |= (int) DEFAULT_ARGUMENT_DOUBLE == (int) ((mtg_card_t *) node)->power;
     ASSERT(test_tree_power_gt_inc(node->l));
     ASSERT(test_tree_power_gt_inc(node->r));
     return 1;
@@ -117,7 +125,9 @@ static int test_tree_power_gt_inc(avl_tree_node_t *node)
 
 static int test_generator_power_gt_inc()
 {
+    found_eq = 0;
     ASSERT(__test_generator_power(MSE_SET_GENERATOR_OP_GT_INC, &test_tree_power_gt_inc));
+    ASSERT(found_eq);
     return 1;
 }
 
