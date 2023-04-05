@@ -5,6 +5,7 @@
 #include <string.h>
 #include <math.h>
 
+#define BAD_ARGUMENT "12341234123412341234sjaskldjaslkdjasld :()"
 #define DEFAULT_ARGUMENT "5"
 #define DEFAULT_ARGUMENT_DOUBLE atof(DEFAULT_ARGUMENT)
 
@@ -23,6 +24,21 @@ static int __test_generator_power(mse_set_generator_operator_t op_type, int (*te
     ASSERT(tree_size(root) > 0);
     ASSERT(test_tree(root));
     free_tree(root);
+    mse_free_set_generator(&ret);
+    return 1;
+}
+
+static int test_generator_power_invalid_arg()
+{
+    mse_set_generator_operator_t op_type = MSE_SET_GENERATOR_OP_LT;
+    mse_set_generator_type_t gen_type = MSE_SET_GENERATOR_POWER;
+    size_t len = strlen(BAD_ARGUMENT);
+
+    mse_set_generator_t ret;
+    ASSERT(mse_init_set_generator(&ret, gen_type, op_type, BAD_ARGUMENT, len));
+
+    avl_tree_node_t *root = NULL;
+    ASSERT(mse_generate_set(&ret, &root, &gen_cards, &gen_thread_pool) == 0);
     mse_free_set_generator(&ret);
     return 1;
 }
@@ -131,7 +147,8 @@ static int test_generator_power_gt_inc()
     return 1;
 }
 
-SUB_TEST(test_generator_power, {&test_generator_power_eq, "Test generator power ="},
+SUB_TEST(test_generator_power, {&test_generator_power_invalid_arg, "Test generator power invalid arg"},
+{&test_generator_power_eq, "Test generator power ="},
 {&test_generator_power_inc, "Test generator power :"},
 {&test_generator_power_lt, "Test genreator power <"},
 {&test_generator_power_lt_inc, "Test genreator power <="},
