@@ -101,7 +101,14 @@ int read_set_code(FILE *f, mtg_set_code_t *code)
 
 int uuid_cmp(uuid_t a, uuid_t b)
 {
-    return memcmp(a.bytes, b.bytes, sizeof(a.bytes));
+    for (int i = sizeof(a.bytes) - 1; i >= 0; i--) {
+        if (a.bytes[i] < b.bytes[i]) {
+            return -1;
+        } else if (a.bytes[i] > b.bytes[i]) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 uuid_t max_uuid()
