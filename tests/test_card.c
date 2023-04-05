@@ -171,6 +171,12 @@ static int test_card_field_cmp()
     ASSERT(avl_cmp_card_p(&a, &b) < 0);
     ASSERT(avl_cmp_card_t(&a, &b) < 0);
     ASSERT(avl_cmp_card_cmc(&a, &b) < 0);
+
+    a.power = b.power + 3;
+    ASSERT(avl_cmp_card_p(&a, &b) > 0);
+
+    a.power = b.power - 3;
+    ASSERT(avl_cmp_card_p(&a, &b) < 0);
     return 1;
 }
 
