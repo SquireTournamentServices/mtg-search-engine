@@ -50,7 +50,6 @@ static int test_tree_power_eq(avl_tree_node_t *node)
     }
 
     double power = ((mtg_card_t *) node->payload)->power;
-    lprintf(LOG_INFO, "Expceted: \t%lf, Actual: \t%lf\n", DEFAULT_ARGUMENT_DOUBLE, power);
     ASSERT((int) DEFAULT_ARGUMENT_DOUBLE == (int) power);
     ASSERT(test_tree_power_eq(node->l));
     ASSERT(test_tree_power_eq(node->r));
@@ -76,7 +75,7 @@ static int test_tree_power_lt(avl_tree_node_t *node)
     }
 
     double power = ((mtg_card_t *) node->payload)->power;
-    ASSERT(DEFAULT_ARGUMENT_DOUBLE < power);
+    ASSERT(power < DEFAULT_ARGUMENT_DOUBLE);
     ASSERT(fabs(DEFAULT_ARGUMENT_DOUBLE - power) > 0.01);
     ASSERT(test_tree_power_lt(node->l));
     ASSERT(test_tree_power_lt(node->r));
@@ -96,7 +95,7 @@ static int test_tree_power_lt_inc(avl_tree_node_t *node)
     }
 
     double power = ((mtg_card_t *) node->payload)->power;
-    ASSERT(DEFAULT_ARGUMENT_DOUBLE <= power);
+    ASSERT(power <= DEFAULT_ARGUMENT_DOUBLE );
     found_eq |= (int) DEFAULT_ARGUMENT_DOUBLE == (int) power;
     ASSERT(test_tree_power_lt_inc(node->l));
     ASSERT(test_tree_power_lt_inc(node->r));
@@ -118,7 +117,7 @@ static int test_tree_power_gt(avl_tree_node_t *node)
     }
 
     double power = ((mtg_card_t *) node->payload)->power;
-    ASSERT(DEFAULT_ARGUMENT_DOUBLE > power);
+    ASSERT(power > DEFAULT_ARGUMENT_DOUBLE);
     ASSERT(fabs(DEFAULT_ARGUMENT_DOUBLE - power) > 0.01);
     ASSERT(test_tree_power_gt(node->l));
     ASSERT(test_tree_power_gt(node->r));
@@ -138,7 +137,7 @@ static int test_tree_power_gt_inc(avl_tree_node_t *node)
     }
 
     double power = ((mtg_card_t *) node->payload)->power;
-    ASSERT(DEFAULT_ARGUMENT_DOUBLE >= power);
+    ASSERT(power >= DEFAULT_ARGUMENT_DOUBLE);
     found_eq |= (int) DEFAULT_ARGUMENT_DOUBLE == (int) power;
     ASSERT(test_tree_power_gt_inc(node->l));
     ASSERT(test_tree_power_gt_inc(node->r));

@@ -49,7 +49,7 @@ static int __mse_generate_set_power_lt_inc(mse_set_generator_t *gen,
     // Prepare the bounds of the search
     mtg_card_t lower;
     memset(&lower, 0xFF, sizeof(lower));
-    lower.id = min_uuid();
+    lower.id = max_uuid();
 
     lower.power = arg;
 
@@ -66,8 +66,7 @@ static int __mse_generate_set_power_gt(mse_set_generator_t *gen,
     // Prepare the bounds of the search
     mtg_card_t lower;
     memset(&lower, 0xFF, sizeof(lower));
-    lower.id = min_uuid();
-
+    lower.id = max_uuid();
     lower.power = arg;
 
     // Search the tree
@@ -84,7 +83,6 @@ static int __mse_generate_set_power_gt_inc(mse_set_generator_t *gen,
     mtg_card_t lower;
     memset(&lower, 0, sizeof(lower));
     lower.id = min_uuid();
-
     lower.power = arg;
 
     // Search the tree
