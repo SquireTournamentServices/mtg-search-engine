@@ -116,7 +116,5 @@ int mse_generate_set_##fname(mse_set_generator_t *gen, \
 }
 
 MSE_GENERATOR_FIELD_GENERATOR(power)
-
 MSE_GENERATOR_FIELD_GENERATOR(toughness)
-
 MSE_GENERATOR_FIELD_GENERATOR(cmc)
