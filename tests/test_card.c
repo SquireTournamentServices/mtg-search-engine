@@ -24,6 +24,8 @@ static int __test_card_props(mtg_card_t card)
     ASSERT(strcmp(card.mana_cost, "{5}{W}{W}") == 0);
 
     ASSERT(fabs(card.cmc - 7.0) < 0.01);
+    ASSERT(fabs(card.toughness - 4.0) < 0.01);
+    ASSERT(fabs(card.power - 4.0) < 0.01);
 
     // Types
     int human = 0;
