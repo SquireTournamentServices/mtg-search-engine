@@ -18,7 +18,7 @@ static int __mse_generate_set_##fname##_eq(mse_set_generator_t *gen, \
  \
     lower.id = min_uuid(); \
     upper.id = max_uuid(); \
-    lower.power = upper.power = arg; \
+    lower.fname = upper.fname = arg; \
     /* Search the tree */ \
     ASSERT(tree_lookup_2(cards->indexes.card_##fname##_tree, res, (void *) &lower, (void *) &upper)); \
     return 1; \
@@ -34,7 +34,7 @@ static int __mse_generate_set_##fname##_lt(mse_set_generator_t *gen, \
     memset(&lower, 0, sizeof(lower)); \
     lower.id = min_uuid(); \
  \
-    lower.power = arg; \
+    lower.fname = arg; \
  \
     /* Search the tree */ \
     ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, res, 1, (void *) &lower)); \
@@ -51,7 +51,7 @@ static int __mse_generate_set_##fname##_lt_inc(mse_set_generator_t *gen, \
     memset(&lower, 0xFF, sizeof(lower)); \
     lower.id = max_uuid(); \
  \
-    lower.power = arg; \
+    lower.fname = arg; \
  \
     /* Search the tree */ \
     ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, res, 1, (void *) &lower)); \
@@ -67,7 +67,7 @@ static int __mse_generate_set_##fname##_gt(mse_set_generator_t *gen, \
     mtg_card_t lower; \
     memset(&lower, 0xFF, sizeof(lower)); \
     lower.id = max_uuid(); \
-    lower.power = arg; \
+    lower.fname = arg; \
  \
     /* Search the tree */ \
     ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, res, 0, (void *) &lower)); \
@@ -83,7 +83,7 @@ static int __mse_generate_set_##fname##_gt_inc(mse_set_generator_t *gen, \
     mtg_card_t lower; \
     memset(&lower, 0, sizeof(lower)); \
     lower.id = min_uuid(); \
-    lower.power = arg; \
+    lower.fname = arg; \
  \
     /* Search the tree */ \
     ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, res, 0, (void *) &lower)); \

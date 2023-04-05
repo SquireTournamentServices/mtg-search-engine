@@ -123,7 +123,7 @@ static int test_set_validation()
 
 static int test_cmc_validation()
 {
-    ASSERT(__test_includes_ops(MSE_SET_GENERATOR_CMC));
+    ASSERT(__test_all_ops(MSE_SET_GENERATOR_CMC));
     return 1;
 }
 

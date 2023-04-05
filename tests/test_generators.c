@@ -67,13 +67,13 @@ static int __test_generator_validation()
     return test_generator_validation();
 }
 
-static int __test_generator_power()
+static int __test_set_generators()
 {
-    return test_generator_power();
+    return test_set_generators();
 }
 
 SUB_TEST(test_generators, {&init_generator_tests, "Init generator tests"},
 {&test_generator_init_free, "Test generator init free"},
 {&__test_generator_validation, "Test generator validation"},
-{&__test_generator_power, "Test generator power"},
+{&__test_set_generators, "Test set generators"},
 {&free_generator_tests, "Free generator tests"})
