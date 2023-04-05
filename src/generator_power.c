@@ -11,14 +11,12 @@ static int __mse_generate_set_power_eq(mse_set_generator_t *gen,
                                        double arg)
 {
     // Prepare the bounds of the search
-    mtg_card_t lower;
+    mtg_card_t lower, upper;
     memset(&lower, 0, sizeof(lower));
+    upper = lower;
+
     lower.id = min_uuid();
-
-    mtg_card_t upper;
-    memset(&upper, 0, sizeof(upper));
     upper.id = max_uuid();
-
     lower.power = upper.power = arg;
 
     // Search the tree
