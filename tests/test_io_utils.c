@@ -72,7 +72,7 @@ static int test_mse_to_double()
 
     ASSERT(mse_to_double("5.2", &ret));
     ASSERT(fabs(ret - 5.2) < 0.001);
-  
+
     ASSERT(!mse_to_double("pee pee poo poo", &ret));
     return 1;
 }
