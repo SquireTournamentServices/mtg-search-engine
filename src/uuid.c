@@ -5,6 +5,7 @@
 uuid_t from_string(const char *str, int *status)
 {
     uuid_t ret;
+    memset(&ret, 0, sizeof(ret));
     if (str == NULL) {
         *status = 0;
         lprintf(LOG_ERROR, "Cannot parse NULL string\n");

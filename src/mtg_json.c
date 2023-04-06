@@ -25,7 +25,7 @@ static void __do_get_all_printings_cards_curl(FILE *w)
 {
     CURL *curl = curl_easy_init();
     if(curl) {
-        CURLcode res;
+        CURLcode res = 0;
 
         // Set timeouts
         size_t timeout = 60 * 60 * 4; // 4 hours max download time

@@ -41,6 +41,7 @@ static int init_generator_tests()
 static int free_generator_tests()
 {
     free_all_printings_cards(&gen_cards);
+    ASSERT(free_pool(&gen_thread_pool));
     return 1;
 }
 
