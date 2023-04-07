@@ -68,13 +68,13 @@ static int __test_generator_validation()
     return test_generator_validation();
 }
 
-static int __test_set_generators()
+static int __test_set_generators_double_fields()
 {
-    return test_set_generators();
+    return test_set_generators_double_fields();
 }
 
 SUB_TEST(test_generators, {&init_generator_tests, "Init generator tests"},
 {&test_generator_init_free, "Test generator init free"},
 {&__test_generator_validation, "Test generator validation"},
-{&__test_set_generators, "Test set generators"},
+{&__test_set_generators_double_fields, "Test set generators double fields"},
 {&free_generator_tests, "Free generator tests"})
