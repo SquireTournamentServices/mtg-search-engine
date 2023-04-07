@@ -24,3 +24,9 @@ int mse_matching_card_name(avl_tree_node_t **ret,
                            avl_tree_node_t *cards_tree,
                            char *regex,
                            thread_pool_t *pool);
+
+/// The syntax for the langugage wraps regex in slashes, these will be removed by calling this
+/// Takes a regex string i.e:
+/// abc\\/bcdef -> abc\/bcdef
+/// /test123/ -> test123
+char *escape_regex(char *regex);
