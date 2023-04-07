@@ -86,6 +86,8 @@ set(SRC
     ./src/avl_tree.c
     ./src/search.h
     ./src/search.c
+    ./src/generator_set.h
+    ./src/generator_set.c
     ./src/generators.h
     ./src/generators.c
     ./src/generator_double_fields.h
