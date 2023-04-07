@@ -86,6 +86,8 @@ set(SRC
     ./src/avl_tree.c
     ./src/search.h
     ./src/search.c
+    ./src/generator_set.h
+    ./src/generator_set.c
     ./src/generators.h
     ./src/generators.c
     ./src/generator_double_fields.h
@@ -115,6 +117,7 @@ set(TESTS
     ./tests/test_generators.c
     ./tests/test_generator_validation.c
     ./tests/test_generator_double_fields.c
+    ./tests/test_generator_set.c
     ./tests/test_mse_langs.h
     ./tests/test_mse_langs.c)
 

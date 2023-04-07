@@ -56,7 +56,6 @@ int mse_set_union(mse_search_intermediate_t *ret,
 {
     __init_mse_search_intermediate(ret);
     ASSERT(__insert_tree_set_union(&ret->node, a->node));
-
     ASSERT(__insert_tree_set_union(&ret->node, b->node));
     return 1;
 }

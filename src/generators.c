@@ -1,5 +1,6 @@
 #include "./generators.h"
 #include "./generator_double_fields.h"
+#include "./generator_set.h"
 #include "../testing_h/testing.h"
 #include <string.h>
 #include <stdlib.h>
@@ -81,7 +82,7 @@ int mse_generate_set(mse_set_generator_t *gen,
     case MSE_SET_GENERATOR_ORACLE_TEXT:
         return 0;
     case MSE_SET_GENERATOR_SET:
-        return 0;
+        return mse_generate_set_set(gen, res, cards);
     case MSE_SET_GENERATOR_POWER:
         return mse_generate_set_power(gen, res, cards);
     case MSE_SET_GENERATOR_TOUGHNESS:
