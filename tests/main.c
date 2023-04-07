@@ -29,8 +29,8 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 /* Data source (very important) */
 {&test_mtg_json, "Test mtg json"},
 /* Slow testse */
-{&test_generators, "Test generators"},
 {&test_card_str_match, "Test card string match"},
+{&test_generators, "Test generators"},
 {&test_avl_tree, "Test AVL tree"})
 
 
