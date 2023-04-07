@@ -117,6 +117,7 @@ set(TESTS
     ./tests/test_generators.c
     ./tests/test_generator_validation.c
     ./tests/test_generator_double_fields.c
+    ./tests/test_generator_set.c
     ./tests/test_mse_langs.h
     ./tests/test_mse_langs.c)
 

@@ -21,11 +21,13 @@ int mse_generate_set_set(mse_set_generator_t *gen,
     mtg_set_t *set = node->payload;
 
     // Shallow copy of the set_cards_tree
-    mse_search_intermediate_t ret, a;
+    mse_search_intermediate_t ret, a, b;
     memset(&ret, 0, sizeof(ret));
+    b = ret;
+
     a.node = set->set_cards_tree;
 
-    ASSERT(mse_set_union(&ret, &a, NULL));
+    ASSERT(mse_set_union(&ret, &a, &b));
     *res = ret.node;
     return 1;
 }
