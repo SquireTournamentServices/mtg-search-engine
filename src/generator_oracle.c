@@ -3,7 +3,7 @@
 #include "../testing_h/testing.h"
 #include <string.h>
 
-static int is_regex_str(char *str)
+static int __mse_is_regex_str(char *str)
 {
     size_t len = strlen(str);
     if (len < 2) {
@@ -12,7 +12,7 @@ static int is_regex_str(char *str)
     return str[0] == '/' && str[len - 1] == '/';
 }
 
-int mse_generate_set_oracle_re(mse_set_generator_t *gen,
+static int __mse_generate_set_oracle_re(mse_set_generator_t *gen,
                                avl_tree_node_t **res,
                                mtg_all_printings_cards_t *cards,
                                thread_pool_t *pool)
@@ -27,7 +27,7 @@ int mse_generate_set_oracle_re(mse_set_generator_t *gen,
     return 1;
 }
 
-int mse_generate_set_oracle_text_inc(mse_set_generator_t *gen,
+static int __mse_generate_set_oracle_text_inc(mse_set_generator_t *gen,
                                      avl_tree_node_t **res,
                                      mtg_all_printings_cards_t *cards,
                                      thread_pool_t *pool)
@@ -40,9 +40,9 @@ int mse_generate_set_oracle(mse_set_generator_t *gen,
                             mtg_all_printings_cards_t *cards,
                             thread_pool_t *pool)
 {
-    if (is_regex_str(gen->argument)) {
-        return mse_generate_set_oracle_re(gen, res, cards, pool);
+    if (__mse_is_regex_str(gen->argument)) {
+        return __mse_generate_set_oracle_re(gen, res, cards, pool);
     } else {
-        return mse_generate_set_oracle_text_inc(gen, res, cards, pool);
+        return __mse_generate_set_oracle_text_inc(gen, res, cards, pool);
     }
 }
