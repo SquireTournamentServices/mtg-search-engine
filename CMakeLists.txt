@@ -92,6 +92,8 @@ set(SRC
     ./src/generators.c
     ./src/generator_double_fields.h
     ./src/generator_double_fields.c
+    ./src/generator_oracle.h
+    ./src/generator_oracle.c
     ${LANG_SOURCE_FILES})
 set(TESTS
     ./tests/main.c
