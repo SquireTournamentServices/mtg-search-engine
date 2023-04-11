@@ -74,6 +74,8 @@ set(SRC
     ./src/card.c
     ./src/card_str_match.h
     ./src/card_str_match.c
+    ./src/card_txt_fields_trie.h
+    ./src/card_txt_fields_trie.c
     ./src/set.h
     ./src/set.c
     ./src/uuid.h
@@ -116,6 +118,8 @@ set(TESTS
     ./tests/test_card.c
     ./tests/test_card_str_match.h
     ./tests/test_card_str_match.c
+    ./tests/test_card_txt_field_trie.h
+    ./tests/test_card_txt_field_trie.c
     ./tests/test_avl_tree.h
     ./tests/test_avl_tree.c
     ./tests/test_search.h

@@ -27,19 +27,28 @@ def __get_entry_val(i: int) -> int:
     if s in ["a", "e", "i", "o", "u"]:
         return 0
 
+    # Spanish people!
     if s in ["ñ"]:
         return ord("n")
 
+    # Germans
     if s in ["ß"]:
         return ord("s")
 
+    # Idk where these letters come from
     if s in ["ý", "ÿ"]:
         return ord("y")
 
+    # French people
     if s in ["ç"]:
         return ord("c")
 
-    if s.isalpha() and i <= ord("z"):
+    # The americans like to use Z instead of S
+    if s == "z":
+        return ord("s")
+
+    # Letters and, numbers are good
+    if (s.isalpha() and i <= ord("z")) or s in [f"{i}" for i in range(0, 10)]:
         return ord(s)
     # This letter can probably be ignored
     return 0
@@ -47,7 +56,7 @@ def __get_entry_val(i: int) -> int:
 
 def get_entry(i: int) -> str:
     val: int = __get_entry_val(i)
-    return f"    /* {i} - {chr(i)}*/ {val}"
+    return f"    /* {i} - {chr(i)} */ {val}"
 
 
 def gen_unit() -> None:
@@ -62,7 +71,7 @@ def gen_unit() -> None:
     for i in range(0, 0xFF):
         entries.append(get_entry(i))
 
-    output_unit += "{" + ",\n".join(entries) + "\n};"
+    output_unit += "{\n" + ",\n".join(entries) + "\n};"
 
     with open(OUTPUT_FILE_U, "w") as f:
         f.write(output_unit)
