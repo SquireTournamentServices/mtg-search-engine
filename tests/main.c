@@ -12,6 +12,7 @@
 #include "./test_search.h"
 #include "./test_card_str_match.h"
 #include "./test_generators.h"
+#include "./test_card_txt_field_trie.h"
 
 static int sanity_test()
 {
@@ -23,14 +24,15 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 {&test_io_utils, "Test IO utils"},
 {&test_set, "Test set"},
 {&test_card, "Test card"},
+{&test_card_txt_field_trie, "Test card field trie"},
 {&test_thread_pool, "Test thread pool"},
 {&test_mse_langs, "Test mse langs"},
 {&test_search, "Test search"},
 /* Data source (very important) */
 {&test_mtg_json, "Test mtg json"},
 /* Slow testse */
-{&test_generators, "Test generators"},
 {&test_card_str_match, "Test card string match"},
+{&test_generators, "Test generators"},
 {&test_avl_tree, "Test AVL tree"})
 
 

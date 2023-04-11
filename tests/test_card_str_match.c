@@ -139,6 +139,31 @@ static int test_oracle_match_a_lot_of_times()
     return 1;
 }
 
+#define NO_REPLACEMENT_STR "abcdefgh"
+#define STRIPPED_STR "test132123123(abc)+"
+#define STRIP_STR "/" STRIPPED_STR "/"
+
+#define ESCAPED_SLASH "/1\\/1/"
+
+static int test_regex_escape()
+{
+    char *tmp = escape_regex(NO_REPLACEMENT_STR);
+    ASSERT(tmp != NULL);
+    ASSERT(strcmp(tmp, NO_REPLACEMENT_STR) == 0);
+    free(tmp);
+
+    tmp = escape_regex(STRIP_STR);
+    ASSERT(tmp != NULL);
+    ASSERT(strcmp(tmp, STRIPPED_STR) == 0);
+    free(tmp);
+
+    tmp = escape_regex(ESCAPED_SLASH);
+    ASSERT(tmp != NULL);
+    ASSERT(strcmp("1/1", tmp) == 0);
+    free(tmp);
+    return 1;
+}
+
 SUB_TEST(test_card_str_match, {&init_test_cards, "Init regex test cards"},
 {&test_card_matches, "Test card matches"},
 {&test_oracle_match, "Test oracle regex match"},
@@ -147,4 +172,5 @@ SUB_TEST(test_card_str_match, {&init_test_cards, "Init regex test cards"},
 {&test_name_match_2, "Test name regex match 2"},
 {&test_regex_compile_err, "Test regex compile error case"},
 {&test_oracle_match_a_lot_of_times, "Test oracle match a lot of times"},
+{&test_regex_escape, "Test regex escape"},
 {&free_test_card, "Free regex test cards"})
