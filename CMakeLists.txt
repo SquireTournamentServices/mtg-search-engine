@@ -54,10 +54,14 @@ set(CMAKE_C_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -g")
 set(LANG_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.h
                       ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.c)
 
+set(FILTER_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_char_map.h
+                        ${CMAKE_CURRENT_BINARY_DIR}/mse_char_map.c)
+
 # Generated sources
 add_custom_command(
-  OUTPUT ${LANG_SOURCE_FILES}
+  OUTPUT ${LANG_SOURCE_FILES} ${FILTER_SOURCE_FILES}
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_languages_files.py
+  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 set(SRC
@@ -94,6 +98,7 @@ set(SRC
     ./src/generator_double_fields.c
     ./src/generator_oracle.h
     ./src/generator_oracle.c
+    ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES})
 set(TESTS
     ./tests/main.c
