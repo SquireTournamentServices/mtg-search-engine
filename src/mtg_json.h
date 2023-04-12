@@ -26,6 +26,8 @@ typedef struct mtg_cards_indexes {
     avl_tree_node_t *card_cmc_tree;
     /// Card names trie where the full filtered name is used
     mse_card_trie_node_t *card_name_trie;
+    /// Card names parts trie where the full filtered name is used
+    mse_card_trie_node_t *card_name_parts_trie;
 } mtg_cards_indexes;
 
 /// This will store the atomic cards and, sets. Each card is stored once and,

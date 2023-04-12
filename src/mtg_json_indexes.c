@@ -113,6 +113,42 @@ static void __generate_card_name_trie_task(void *__state, thread_pool_t *pool)
     sem_post(&(state->semaphore));
 }
 
+static int __add_cards_to_card_name_parts_trie(avl_tree_node_t *node,
+        mse_card_trie_node_t *card_name_parts_trie)
+{
+    if (node == NULL) {
+        return 1;
+    }
+
+    mtg_card_t *card = (mtg_card_t *) node->payload;
+    mse_card_name_parts_t parts;
+    ASSERT(mse_split_card_name(card->name, &parts));
+
+    int r = 1;
+    for (size_t i = 0; i < parts.len; i++) {
+        r = mse_card_trie_insert(card_name_parts_trie, card, parts.parts[i]);
+        if (!r) {
+            break;
+        }
+    }
+    free_mse_card_parts(&parts);
+    ASSERT(r);
+
+    ASSERT(__add_cards_to_card_name_parts_trie(node->l, card_name_parts_trie));
+    ASSERT(__add_cards_to_card_name_parts_trie(node->r, card_name_parts_trie));
+    return 1;
+}
+
+static void __generate_card_name_parts_trie_task(void *__state, thread_pool_t *pool)
+{
+    mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
+    if (!__add_cards_to_card_name_parts_trie(state->cards->card_tree,
+            state->cards->indexes.card_name_parts_trie)) {
+        state->ret = 0;
+    }
+    sem_post(&(state->semaphore));
+}
+
 #define TASK_COUNT(T) (sizeof(T) / sizeof(*T))
 
 int __generate_indexes(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
@@ -120,9 +156,11 @@ int __generate_indexes(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
     ASSERT(pool != NULL);
     ASSERT(ret != NULL);
     ASSERT(init_mse_card_trie_node(&ret->indexes.card_name_trie));
+    ASSERT(init_mse_card_trie_node(&ret->indexes.card_name_parts_trie));
 
     void (*tasks[])(void *, struct thread_pool_t *) = {&__generate_set_cards_index_task,
                                                        &__generate_card_name_trie_task,
+                                                       &__generate_card_name_parts_trie_task,
                                                        &MSE_INDEX_FIELD_NAME(power),
                                                        &MSE_INDEX_FIELD_NAME(toughness),
                                                        &MSE_INDEX_FIELD_NAME(cmc)
