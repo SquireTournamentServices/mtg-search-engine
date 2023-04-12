@@ -75,7 +75,32 @@ static int test_card_insert()
     return 1;
 }
 
+static int test_card_lookup()
+{
+    mse_card_trie_node_t *node = NULL;
+    ASSERT(init_mse_card_trie_node(&node));
+    ASSERT(node != NULL);
+
+    mtg_card_t card;
+    memset(&card, 0, sizeof(card));
+    ASSERT(mse_card_trie_insert(node, &card, DANDAN));
+
+    avl_tree_node_t *ret = NULL;
+    ASSERT(mse_card_trie_lookup(node, DANDAN, &ret));
+    ASSERT(ret != NULL);
+
+    ASSERT(mse_card_trie_lookup(node, DANDAN_F, &ret));
+    ASSERT(ret != NULL);
+
+    ASSERT(!mse_card_trie_lookup(node, "poopoo", &ret));
+    ASSERT(ret == NULL);
+
+    free_mse_card_trie_node(node);
+    return 1;
+}
+
 SUB_TEST(test_card_txt_field_trie, {&test_filter_str, "Test filter string"},
 {&test_trie_init_free, "Test trie init and free"},
 {&test_trie_init_free_children, "Test trie init and free with a child"},
-{&test_card_insert, "Test trie card insert"})
+{&test_card_insert, "Test trie card insert"},
+{&test_card_lookup, "Test trie card lookup"})

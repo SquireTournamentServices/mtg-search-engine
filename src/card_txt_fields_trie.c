@@ -30,14 +30,35 @@ void free_mse_card_trie_node(mse_card_trie_node_t *node)
     free(node);
 }
 
-static int __mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret, int i)
+static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, avl_tree_node_t **ret, int i)
 {
-    return 1;
+    if (str[i] == 0) {
+        *ret = root->cards;
+        return 1;
+    }
+
+    long c_index = str[i] - 'a';
+
+    // Sanity checks
+    ASSERT(c_index >= 0);
+    ASSERT(c_index < (long) (sizeof(root->children) / sizeof(*root->children)));
+
+    // Fails to find
+    if (root->children[c_index] == NULL) {
+        return 0;
+    }
+    return __mse_card_trie_lookup(root->children[c_index], str, ret, i + 1);
 }
 
 int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret)
 {
-    return __mse_card_trie_lookup(trie, str, ret, 0);
+    *ret = NULL;
+    char *str_f = mse_filter_text(str);
+    ASSERT(str_f != NULL);
+    int r = __mse_card_trie_lookup(trie, str_f, ret, 0);
+
+    free(str_f);
+    return r;
 }
 
 static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mtg_card_t *card)
