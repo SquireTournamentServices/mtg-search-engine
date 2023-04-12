@@ -125,12 +125,13 @@ static int test_card_lookup_aprox()
 
     mtg_card_t dandanierier;
     memset(&dandanierier, 0, sizeof(dandanierier));
-    dandanier.id.bytes[0] = 3;
+    dandanierier.id.bytes[0] = 3;
     ASSERT(mse_card_trie_insert(node, &dandanierier, DANDAN "ierier"));
 
     avl_tree_node_t *ret = NULL;
     ASSERT(mse_card_trie_lookup_aprox(node, DANDAN, &ret));
     ASSERT(ret != NULL);
+    ASSERT(tree_size(ret) == 3);
     free_tree(ret);
 
     free_mse_card_trie_node(node);
