@@ -143,7 +143,9 @@ static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mtg_card_t *car
                             MSE_CARD_DEFAULT_COMPARE_FUNCTION,
                             (void *) card);
     ASSERT(node != NULL);
-    ASSERT(insert_node(&root->cards, node));
+    if (!insert_node(&root->cards, node)) {
+        free_tree(node);
+    }
     return 1;
 }
 
@@ -219,7 +221,6 @@ char *mse_filter_text(char *str)
     // Check for empty output strings
     if (strlen(ret) == 0) {
         free(ret);
-        lprintf(LOG_WARNING, "Empty string after filter\n");
         return NULL;
     }
 
