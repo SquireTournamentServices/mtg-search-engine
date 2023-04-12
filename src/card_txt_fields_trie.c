@@ -1,7 +1,6 @@
 #include "./card_txt_fields_trie.h"
 #include "../testing_h/testing.h"
 #include "./search.h"
-#include "mse_char_map.h"
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -45,7 +44,7 @@ static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, avl_tre
         return 1;
     }
 
-    long c_index = str[i] - 'a';
+    long c_index = mse_char_map_get_index(str[i]);
 
     // Sanity checks
     ASSERT(c_index >= 0);
@@ -107,7 +106,7 @@ static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t *root, char *str, a
         return 1;
     }
 
-    long c_index = str[i] - 'a';
+    long c_index = mse_char_map_get_index(str[i]);
 
     // Sanity checks
     ASSERT(c_index >= 0);
@@ -147,7 +146,7 @@ static int __mse_card_trie_insert(mse_card_trie_node_t *root, mtg_card_t *card, 
         return __mse_card_trie_do_insert(root, card);
     }
 
-    long c_index = str[index] - 'a';
+    long c_index = mse_char_map_get_index(str[index]);
 
     // Sanity checks
     ASSERT(c_index >= 0);
