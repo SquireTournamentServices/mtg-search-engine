@@ -20,7 +20,9 @@ typedef struct mse_card_trie_node_t {
 } mse_card_trie_node_t;
 
 int init_mse_card_trie_node(mse_card_trie_node_t **node);
-int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret);
 void free_mse_card_trie_node(mse_card_trie_node_t *node);
+
+int mse_card_trie_insert(mse_card_trie_node_t *root, mtg_card_t *card, char *str);
+int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret);
 
 char *mse_filter_text(char *str);

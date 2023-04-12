@@ -14,16 +14,6 @@ int init_mse_card_trie_node(mse_card_trie_node_t **node)
     return 1;
 }
 
-static int __mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret, int i)
-{
-    return 1;
-}
-
-int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret)
-{
-    return __mse_card_trie_lookup(trie, str, ret, 0);
-}
-
 void free_mse_card_trie_node(mse_card_trie_node_t *node)
 {
     if (node == NULL) {
@@ -38,6 +28,57 @@ void free_mse_card_trie_node(mse_card_trie_node_t *node)
         free_tree(node->cards);
     }
     free(node);
+}
+
+static int __mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret, int i)
+{
+    return 1;
+}
+
+int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret)
+{
+    return __mse_card_trie_lookup(trie, str, ret, 0);
+}
+
+static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mtg_card_t *card)
+{
+    avl_tree_node_t *node = init_avl_tree_node(MSE_CARD_DEFAULT_FREE_FUNCTION,
+                            MSE_CARD_DEFAULT_COMPARE_FUNCTION,
+                            (void *) card);
+    ASSERT(node != NULL);
+    ASSERT(insert_node(&root->cards, node));
+    return 1;
+}
+
+static int __mse_card_trie_insert(mse_card_trie_node_t *root, mtg_card_t *card, char *str, int index)
+{
+    if (str[index] == 0) {
+        return __mse_card_trie_do_insert(root, card);
+    }
+
+    long c_index = str[index] - 'a';
+
+    // Sanity checks
+    ASSERT(c_index >= 0);
+    ASSERT(c_index < (long) (sizeof(root->children) / sizeof(*root->children)));
+
+    // Insert the trie node if needed
+    if (root->children[c_index] == NULL) {
+        ASSERT(init_mse_card_trie_node(&root->children[c_index]));
+    }
+    return __mse_card_trie_insert(root->children[c_index], card, str, index + 1);
+}
+
+int mse_card_trie_insert(mse_card_trie_node_t *root, mtg_card_t *card, char *str)
+{
+    char *str_f = mse_filter_text(str);
+    ASSERT(str_f != NULL);
+
+    int r = __mse_card_trie_insert(root, card, str_f, 0);
+    free(str_f);
+
+    ASSERT(r);
+    return 1;
 }
 
 #define MSE_FILTER_NO_CHAR 0

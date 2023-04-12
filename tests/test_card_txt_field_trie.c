@@ -7,7 +7,7 @@
 #define DANDAN "Dandân"
 #define DANDAN_F "dndn"
 
-#define DUPLICATE_TEXT "aaaaaaaabbbbbbbbbccccc"
+#define DUPLICATE_TEXT "aaaaaaaabbbbbbbbbccccc123"
 #define DUPLICATE_TEXT_F "bc"
 
 static int test_filter_str()
@@ -30,6 +30,10 @@ static int test_trie_init_free()
     mse_card_trie_node_t *node = NULL;
     ASSERT(init_mse_card_trie_node(&node));
     ASSERT(node != NULL);
+
+    for (size_t i = 0; i < sizeof(node->children) / sizeof(*node->children); i++) {
+        ASSERT(node->children[i] == NULL);
+    }
     free_mse_card_trie_node(node);
     return 1;
 }
@@ -49,6 +53,29 @@ static int test_trie_init_free_children()
     return 1;
 }
 
+#define GET_INDEX(str, i) (str[i] - 'a')
+
+static int test_card_insert()
+{
+    mse_card_trie_node_t *node = NULL;
+    ASSERT(init_mse_card_trie_node(&node));
+    ASSERT(node != NULL);
+
+    mtg_card_t card;
+    memset(&card, 0, sizeof(card));
+    ASSERT(mse_card_trie_insert(node, &card, DANDAN));
+
+    mse_card_trie_node_t *root = node;
+    for (size_t i = 0; i < strlen(DANDAN_F); i++) {
+        root = root->children[GET_INDEX(DANDAN_F, i)];
+        ASSERT(root != NULL);
+    }
+
+    free_mse_card_trie_node(node);
+    return 1;
+}
+
 SUB_TEST(test_card_txt_field_trie, {&test_filter_str, "Test filter string"},
 {&test_trie_init_free, "Test trie init and free"},
-{&test_trie_init_free_children, "Test trie init and free with a child"})
+{&test_trie_init_free_children, "Test trie init and free with a child"},
+{&test_card_insert, "Test trie card insert"})
