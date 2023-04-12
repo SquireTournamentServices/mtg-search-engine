@@ -54,6 +54,30 @@ static int __test_card_trie_index(avl_tree_node_t *node)
     return 1;
 }
 
+static int __test_card_parts_trie_index(avl_tree_node_t *node)
+{
+    if (node == NULL) {
+        return 1;
+    }
+
+    mtg_card_t *card = (mtg_card_t *) node->payload;
+    mse_card_name_parts_t parts;
+    ASSERT(mse_split_card_name(card->name, &parts));
+
+    for (size_t i = 0; i < parts.len; i++) {
+        avl_tree_node_t *ret = NULL;
+        ASSERT(mse_card_trie_lookup(test_cards.indexes.card_name_parts_trie, parts.parts[i], &ret));
+
+        ASSERT(ret != NULL);
+        free_tree(ret);
+    }
+    free_mse_card_parts(&parts);
+
+    ASSERT(__test_card_parts_trie_index(node->l));
+    ASSERT(__test_card_parts_trie_index(node->r));
+    return 1;
+}
+
 static int test_indexes()
 {
     ASSERT(tree_size(test_cards.indexes.card_power_tree) > 0);
@@ -61,6 +85,9 @@ static int test_indexes()
     ASSERT(tree_size(test_cards.indexes.card_cmc_tree) > 0);
     ASSERT(test_cards.indexes.card_name_trie != NULL);
     ASSERT(__test_card_trie_index(test_cards.card_tree));
+
+    ASSERT(test_cards.indexes.card_name_parts_trie != NULL);
+    ASSERT(__test_card_parts_trie_index(test_cards.card_tree));
     return 1;
 }
 

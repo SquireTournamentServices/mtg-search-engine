@@ -14,20 +14,27 @@ int init_mse_card_trie_node(mse_card_trie_node_t **node)
     return 1;
 }
 
-void free_mse_card_trie_node(mse_card_trie_node_t *node)
+static void __free_mse_card_trie_node(mse_card_trie_node_t *node)
 {
     if (node == NULL) {
         return;
     }
 
     for (size_t i = 0; i < MSE_ALPHABET_LENGTH; i++) {
-        free_mse_card_trie_node(node->children[i]);
+        __free_mse_card_trie_node(node->children[i]);
     }
 
     if (node->cards != NULL) {
         free_tree(node->cards);
     }
     free(node);
+}
+
+void free_mse_card_trie_node(mse_card_trie_node_t *node)
+{
+    lprintf(LOG_INFO, "Freeing trie, this make take some time\n");
+    __free_mse_card_trie_node(node);
+    lprintf(LOG_INFO, "Done, thanks for waiting\n");
 }
 
 static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, avl_tree_node_t **ret, int i)
@@ -52,7 +59,7 @@ static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, avl_tre
 
     // Fails to find
     if (root->children[c_index] == NULL) {
-        return 0;
+        return 1;
     }
     return __mse_card_trie_lookup(root->children[c_index], str, ret, i + 1);
 }
@@ -120,7 +127,7 @@ static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t *root, char *str, a
 
     // Fails to find
     if (root->children[c_index] == NULL) {
-        return 0;
+        return 1;
     }
     return __mse_card_trie_lookup_aprox(root->children[c_index], str, ret, i + 1);
 }
@@ -143,7 +150,9 @@ static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mtg_card_t *car
                             MSE_CARD_DEFAULT_COMPARE_FUNCTION,
                             (void *) card);
     ASSERT(node != NULL);
-    ASSERT(insert_node(&root->cards, node));
+    if (!insert_node(&root->cards, node)) {
+        free_tree(node);
+    }
     return 1;
 }
 
@@ -219,7 +228,6 @@ char *mse_filter_text(char *str)
     // Check for empty output strings
     if (strlen(ret) == 0) {
         free(ret);
-        lprintf(LOG_WARNING, "Empty string after filter\n");
         return NULL;
     }
 

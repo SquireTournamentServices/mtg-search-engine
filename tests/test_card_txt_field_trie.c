@@ -100,7 +100,7 @@ static int test_card_lookup()
     ASSERT(ret != NULL);
     free_tree(ret);
 
-    ASSERT(!mse_card_trie_lookup(node, "poopoo", &ret));
+    ASSERT(mse_card_trie_lookup(node, "poopoo", &ret));
     ASSERT(ret == NULL);
 
     free_mse_card_trie_node(node);
@@ -133,6 +133,9 @@ static int test_card_lookup_aprox()
     ASSERT(ret != NULL);
     ASSERT(tree_size(ret) == 3);
     free_tree(ret);
+
+    ASSERT(mse_card_trie_lookup_aprox(node, "hasuidhasijdh" DANDAN, &ret));
+    ASSERT(ret == NULL);
 
     free_mse_card_trie_node(node);
     return 1;
