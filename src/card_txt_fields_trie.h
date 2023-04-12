@@ -34,3 +34,14 @@ int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t 
 int mse_card_trie_lookup_aprox(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret);
 
 char *mse_filter_text(char *str);
+
+/// This type is the wrapper for the parts of a card name, i.e:
+/// Goblin Motivator -> {gbln, mtvtr}
+/// These parts of the name are also filtered to make them able to be passed into a trie straight away
+typedef struct mse_card_name_parts_t {
+    char **parts;
+    size_t len;
+} mse_card_name_parts_t;
+
+int mse_split_card_name(char *name, mse_card_name_parts_t *ret);
+void free_mse_card_parts(mse_card_name_parts_t *ret);

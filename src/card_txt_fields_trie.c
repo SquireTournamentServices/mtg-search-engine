@@ -210,5 +210,98 @@ char *mse_filter_text(char *str)
     }
     ret[j] = 0;
 
+    if (strlen(ret) == 0) {
+        free(ret);
+        lprintf(LOG_WARNING, "Empty string after filter\n");
+        return NULL;
+    }
+
     return ret;
+}
+
+static int __mse_insert_to_name_parts(mse_card_name_parts_t *ret, char *fname)
+{
+    char **tmp = realloc(ret->parts, sizeof(*ret->parts) * (ret->len + 1));
+    if (tmp == NULL) {
+        free_mse_card_parts(ret);
+        return 0;
+    }
+
+    ret->parts = tmp;
+    ASSERT(ret->parts != NULL);
+
+    ret->parts[ret->len] = fname;
+    ret->len++;
+    return 1;
+}
+
+static int __mse_is_vowel(char c)
+{
+    switch(tolower(c)) {
+    case 'a':
+    case 'e':
+    case 'i':
+    case 'o':
+    case 'u':
+        return 1;
+    default:
+        return 0;
+    }
+}
+
+static int __mse_split_card_name(char *name, mse_card_name_parts_t *ret)
+{
+    char *tmp = name;
+    for (size_t i = 0; name[i] != 0; i++) {
+        if (__mse_filter_char(name[i]) != MSE_FILTER_NO_CHAR || __mse_is_vowel(name[i])) {
+            continue;
+        }
+
+        // Insert the part
+        name[i] = 0;
+        char *part = mse_filter_text(tmp);
+        if (part == NULL) {
+            continue;
+        }
+
+        int r = __mse_insert_to_name_parts(ret, part);
+        if (!r) {
+            lprintf(LOG_ERROR, "Cannot insert name to parts struct\n");
+            free(part);
+            return 0;
+        }
+
+        // Move the buffer ptr
+        tmp = &name[i + 1];
+    }
+    return 1;
+}
+
+void free_mse_card_parts(mse_card_name_parts_t *ret)
+{
+    if (ret->parts != NULL) {
+        for (size_t i = 0; i < ret->len; i++) {
+            if (ret->parts[i] != NULL) {
+                free(ret->parts[i]);
+            }
+        }
+        free(ret->parts);
+    }
+    memset(ret, 0, sizeof(*ret));
+}
+
+int mse_split_card_name(char *name, mse_card_name_parts_t *ret)
+{
+    memset(ret, 0, sizeof(*ret));
+
+    char *tmp = strdup(name);
+    ASSERT(tmp != NULL);
+    int r = __mse_split_card_name(tmp, ret);
+    if (!r) {
+        free_mse_card_parts(ret);
+    }
+
+    free(tmp);
+    ASSERT(r);
+    return 1;
 }
