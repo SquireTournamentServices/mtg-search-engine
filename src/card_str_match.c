@@ -80,8 +80,14 @@ static void __mse_match_card_do_match(avl_tree_node_t *node, mse_card_match_t *m
         node_copy->free_payload = MSE_CARD_DEFAULT_FREE_FUNCTION;
 
         pthread_mutex_lock(&match_data->lock);
-        insert_node(match_data->res, node_copy);
+        int r = insert_node(match_data->res, node_copy);
         pthread_mutex_unlock(&match_data->lock);
+
+        if (!r) {
+            lprintf(LOG_ERROR, "Node insert failed\n");
+            match_data->err = 1;
+            free_tree(node_copy);
+        }
     }
 }
 

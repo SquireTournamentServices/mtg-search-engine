@@ -1,6 +1,6 @@
 #include "./card_txt_fields_trie.h"
 #include "../testing_h/testing.h"
-#include "mse_char_map.h"
+#include "./search.h"
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -12,16 +12,6 @@ int init_mse_card_trie_node(mse_card_trie_node_t **node)
 
     memset(*node, 0, sizeof(**node));
     return 1;
-}
-
-static int __mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret, int i)
-{
-    return 1;
-}
-
-int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret)
-{
-    return __mse_card_trie_lookup(trie, str, ret, 0);
 }
 
 void free_mse_card_trie_node(mse_card_trie_node_t *node)
@@ -38,6 +28,147 @@ void free_mse_card_trie_node(mse_card_trie_node_t *node)
         free_tree(node->cards);
     }
     free(node);
+}
+
+static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, avl_tree_node_t **ret, int i)
+{
+    if (str[i] == 0) {
+        // Copy the tree
+        mse_search_intermediate_t r, a, b;
+        memset(&r, 0, sizeof(r));
+        b = r;
+        a.node = root->cards;
+
+        ASSERT(mse_set_union(&r, &a, &b));
+        *ret = r.node;
+        return 1;
+    }
+
+    long c_index = mse_char_map_get_index(str[i]);
+
+    // Sanity checks
+    ASSERT(c_index >= 0);
+    ASSERT(c_index < (long) (sizeof(root->children) / sizeof(*root->children)));
+
+    // Fails to find
+    if (root->children[c_index] == NULL) {
+        return 0;
+    }
+    return __mse_card_trie_lookup(root->children[c_index], str, ret, i + 1);
+}
+
+int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret)
+{
+    *ret = NULL;
+    char *str_f = mse_filter_text(str);
+    ASSERT(str_f != NULL);
+    int r = __mse_card_trie_lookup(trie, str_f, ret, 0);
+
+    free(str_f);
+    return r;
+}
+
+static int __mse_insert_avl(avl_tree_node_t **root, avl_tree_node_t *node)
+{
+    if (node == NULL) {
+        return 1;
+    }
+
+    avl_tree_node_t *node_copy = shallow_copy_tree_node(node);
+    ASSERT(node_copy != NULL);
+
+    node_copy->cmp_payload = MSE_CARD_DEFAULT_COMPARE_FUNCTION;
+    node_copy->free_payload = MSE_CARD_DEFAULT_FREE_FUNCTION;
+
+    int r = insert_node(root, node_copy);
+    if (!r) {
+        free_tree(node_copy);
+    }
+
+    ASSERT(__mse_insert_avl(root, node->l));
+    ASSERT(__mse_insert_avl(root, node->r));
+    return 1;
+}
+
+static int __mse_insert_trie_children(mse_card_trie_node_t *node, avl_tree_node_t **ret)
+{
+    ASSERT(__mse_insert_avl(ret, node->cards));
+    for (size_t i  = 0; i < sizeof(node->children) / sizeof(*node->children); i++) {
+        __mse_insert_trie_children(node->children[i], ret);
+    }
+    return 1;
+}
+
+static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t *root, char *str, avl_tree_node_t **ret, int i)
+{
+    if (str[i] == 0) {
+        ASSERT(__mse_insert_trie_children(root, ret));
+        return 1;
+    }
+
+    long c_index = mse_char_map_get_index(str[i]);
+
+    // Sanity checks
+    ASSERT(c_index >= 0);
+    ASSERT(c_index < (long) (sizeof(root->children) / sizeof(*root->children)));
+
+    // Fails to find
+    if (root->children[c_index] == NULL) {
+        return 0;
+    }
+    return __mse_card_trie_lookup(root->children[c_index], str, ret, i + 1);
+}
+
+int mse_card_trie_lookup_aprox(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret)
+{
+    *ret = NULL;
+    char *str_f = mse_filter_text(str);
+    ASSERT(str_f != NULL);
+    int r = __mse_card_trie_lookup_aprox(trie, str_f, ret, 0);
+
+    free(str_f);
+    return r;
+}
+
+static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mtg_card_t *card)
+{
+    avl_tree_node_t *node = init_avl_tree_node(MSE_CARD_DEFAULT_FREE_FUNCTION,
+                            MSE_CARD_DEFAULT_COMPARE_FUNCTION,
+                            (void *) card);
+    ASSERT(node != NULL);
+    ASSERT(insert_node(&root->cards, node));
+    return 1;
+}
+
+static int __mse_card_trie_insert(mse_card_trie_node_t *root, mtg_card_t *card, char *str, int index)
+{
+    if (str[index] == 0) {
+        return __mse_card_trie_do_insert(root, card);
+    }
+
+    long c_index = mse_char_map_get_index(str[index]);
+
+    // Sanity checks
+    ASSERT(c_index >= 0);
+    ASSERT(c_index < (long) (sizeof(root->children) / sizeof(*root->children)));
+
+    // Insert the trie node if needed
+    if (root->children[c_index] == NULL) {
+        ASSERT(init_mse_card_trie_node(&root->children[c_index]));
+    }
+    return __mse_card_trie_insert(root->children[c_index], card, str, index + 1);
+}
+
+int mse_card_trie_insert(mse_card_trie_node_t *root, mtg_card_t *card, char *str)
+{
+    char *str_f = mse_filter_text(str);
+    ASSERT(str_f != NULL);
+
+    int r = __mse_card_trie_insert(root, card, str_f, 0);
+    free(str_f);
+
+    ASSERT(r);
+    return 1;
 }
 
 #define MSE_FILTER_NO_CHAR 0
@@ -78,5 +209,101 @@ char *mse_filter_text(char *str)
     }
     ret[j] = 0;
 
+    // Check for empty output strings
+    if (strlen(ret) == 0) {
+        free(ret);
+        lprintf(LOG_WARNING, "Empty string after filter\n");
+        return NULL;
+    }
+
     return ret;
+}
+
+static int __mse_insert_to_name_parts(mse_card_name_parts_t *ret, char *fname)
+{
+    char **tmp = realloc(ret->parts, sizeof(*ret->parts) * (ret->len + 1));
+    if (tmp == NULL) {
+        free_mse_card_parts(ret);
+        return 0;
+    }
+
+    ret->parts = tmp;
+    ASSERT(ret->parts != NULL);
+
+    ret->parts[ret->len] = fname;
+    ret->len++;
+    return 1;
+}
+
+static int __mse_is_vowel(char c)
+{
+    switch(tolower(c)) {
+    case 'a':
+    case 'e':
+    case 'i':
+    case 'o':
+    case 'u':
+        return 1;
+    default:
+        return 0;
+    }
+}
+
+static int __mse_split_card_name(char *name, mse_card_name_parts_t *ret)
+{
+    char *tmp = name;
+    for (size_t i = 0; name[i] != 0; i++) {
+        if (__mse_filter_char(name[i]) != MSE_FILTER_NO_CHAR || __mse_is_vowel(name[i])) {
+            continue;
+        }
+
+        // Insert the part
+        name[i] = 0;
+        char *part = mse_filter_text(tmp);
+        if (part == NULL) {
+            // Move the buffer ptr
+            tmp = &name[i + 1];
+            continue;
+        }
+
+        int r = __mse_insert_to_name_parts(ret, part);
+        if (!r) {
+            lprintf(LOG_ERROR, "Cannot insert name to parts struct\n");
+            free(part);
+            return 0;
+        }
+
+        // Move the buffer ptr
+        tmp = &name[i + 1];
+    }
+    return 1;
+}
+
+void free_mse_card_parts(mse_card_name_parts_t *ret)
+{
+    if (ret->parts != NULL) {
+        for (size_t i = 0; i < ret->len; i++) {
+            if (ret->parts[i] != NULL) {
+                free(ret->parts[i]);
+            }
+        }
+        free(ret->parts);
+    }
+    memset(ret, 0, sizeof(*ret));
+}
+
+int mse_split_card_name(char *name, mse_card_name_parts_t *ret)
+{
+    memset(ret, 0, sizeof(*ret));
+
+    char *tmp = strdup(name);
+    ASSERT(tmp != NULL);
+    int r = __mse_split_card_name(tmp, ret);
+    if (!r) {
+        free_mse_card_parts(ret);
+    }
+
+    free(tmp);
+    ASSERT(r);
+    return 1;
 }
