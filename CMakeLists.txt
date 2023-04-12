@@ -34,11 +34,11 @@ add_definitions("-DMSE_GIT_BRANCH=\"${GIT_BRANCH}\"")
 add_definitions(
   "-DMSE_VERSION=\"${CMAKE_PROJECT_VERSION} (${GIT_COMMIT_HASH}@${GIT_BRANCH})\""
 )
-add_definitions("-DOS=\"${CMAKE_SYSTEM_NAME}\"")
+add_definitions("-DMSE_OS=\"${CMAKE_SYSTEM_NAME}\"")
 add_definitions("-DMSE_REPO_URL=\"${REPO_URL}\"")
-add_definitions("-DBUFFER_LENGTH=4096")
 add_definitions("-DMSE_PROJECT_VERSION=\"${CMAKE_PROJECT_VERSION}\"")
 add_definitions("-DMSE_PROJECT_NAME=\"${CMAKE_PROJECT_NAME}\"")
+add_definitions("-DMSE_BINARY_VERSION=1")
 
 # Packages
 find_package(CURL)
@@ -47,20 +47,21 @@ find_package(CURL)
 string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
 add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
-add_definitions("-DMTG_BINARY_VERSION=1")
 
 set(CMAKE_C_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -g")
 
+# Generated sources
 set(LANG_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.h
                       ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.c)
+add_custom_command(
+  OUTPUT ${LANG_SOURCE_FILES}
+  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_languages_files.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 set(FILTER_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_char_map.h
                         ${CMAKE_CURRENT_BINARY_DIR}/mse_char_map.c)
-
-# Generated sources
 add_custom_command(
-  OUTPUT ${LANG_SOURCE_FILES} ${FILTER_SOURCE_FILES}
-  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_languages_files.py
+  OUTPUT ${FILTER_SOURCE_FILES}
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -193,5 +194,5 @@ if(UNIX)
   # Testing
   enable_testing()
   add_test(NAME main-tests COMMAND mtg-search-engine-tests)
-  add_test(NAME memory-tests COMMAND bash mem_tests.sh)
+  add_test(NAME memory-tests COMMAND bash ${MEM_TESTS_SH})
 endif()
