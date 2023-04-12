@@ -12,7 +12,6 @@ static thread_pool_t pool;
 static mtg_all_printings_cards_t test_cards;
 static json_t *json;
 
-
 static size_t get_tree_nodes(avl_tree_node_t *node)
 {
     if (node == NULL) {
@@ -20,7 +19,6 @@ static size_t get_tree_nodes(avl_tree_node_t *node)
     }
     return 1 + get_tree_nodes(node->l) + get_tree_nodes(node->r);
 }
-
 
 // A test for the tree props
 static int test_all_printings_cards_sets_found()
@@ -39,11 +37,30 @@ static int test_all_printings_cards_found()
     return 1;
 }
 
+static int __test_card_trie_index(avl_tree_node_t *node)
+{
+    if (node == NULL) {
+        return 1;
+    }
+
+    avl_tree_node_t *ret = NULL;
+    mtg_card_t *card = (mtg_card_t *) node->payload;
+    ASSERT(mse_card_trie_lookup(test_cards.indexes.card_name_trie, card->name, &ret));
+    ASSERT(ret != NULL);
+    free_tree(ret);
+
+    ASSERT(__test_card_trie_index(node->l));
+    ASSERT(__test_card_trie_index(node->r));
+    return 1;
+}
+
 static int test_indexes()
 {
     ASSERT(tree_size(test_cards.indexes.card_power_tree) > 0);
     ASSERT(tree_size(test_cards.indexes.card_toughness_tree) > 0);
     ASSERT(tree_size(test_cards.indexes.card_cmc_tree) > 0);
+    ASSERT(test_cards.indexes.card_name_trie != NULL);
+    ASSERT(__test_card_trie_index(test_cards.card_tree));
     return 1;
 }
 

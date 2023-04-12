@@ -3,6 +3,7 @@
 #include "./card.h"
 #include "./set.h"
 #include "./avl_tree.h"
+#include "./card_txt_fields_trie.h"
 #include <jansson.h>
 
 #define ATOMIC_CARDS_URL "https://mtgjson.com/api/v5/AllPrintings.json"
@@ -23,6 +24,8 @@ typedef struct mtg_cards_indexes {
     avl_tree_node_t *card_toughness_tree;
     /// Index for card cmc
     avl_tree_node_t *card_cmc_tree;
+    /// Card names trie where the full filtered name is used
+    mse_card_trie_node_t *card_name_trie;
 } mtg_cards_indexes;
 
 /// This will store the atomic cards and, sets. Each card is stored once and,

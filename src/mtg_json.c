@@ -215,6 +215,10 @@ static void __free_all_printings_cards_indexes(mtg_all_printings_cards_t *cards)
     if (cards->indexes.card_cmc_tree != NULL) {
         free_tree(cards->indexes.card_cmc_tree);
     }
+
+    if (cards->indexes.card_name_trie != NULL) {
+        free_mse_card_trie_node(cards->indexes.card_name_trie);
+    }
 }
 
 void free_all_printings_cards(mtg_all_printings_cards_t *cards)
