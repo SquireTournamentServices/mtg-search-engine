@@ -22,7 +22,15 @@ typedef struct mse_card_trie_node_t {
 int init_mse_card_trie_node(mse_card_trie_node_t **node);
 void free_mse_card_trie_node(mse_card_trie_node_t *node);
 
+/// Inserts a card into the trie, adding nodes where needed
 int mse_card_trie_insert(mse_card_trie_node_t *root, mtg_card_t *card, char *str);
+
+/// Exact lookup for a card name, i,e: goblin motivator -> gblnmtvtr then gets the tree at gblnmtvtr
+/// This is useful for card loookups in deck lists whithout correction
 int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret);
+
+/// An aproximate lookup, goes to the card name then returns the tree of that node and all children recursively,
+/// this is great for auto correction or searching
+int mse_card_trie_lookup_aprox(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret);
 
 char *mse_filter_text(char *str);

@@ -1,6 +1,7 @@
 #include "./test_card_txt_field_trie.h"
 #include "../testing_h/testing.h"
 #include "../src/card_txt_fields_trie.h"
+#include "../src/uuid.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -88,12 +89,44 @@ static int test_card_lookup()
     avl_tree_node_t *ret = NULL;
     ASSERT(mse_card_trie_lookup(node, DANDAN, &ret));
     ASSERT(ret != NULL);
+    free_tree(ret);
 
     ASSERT(mse_card_trie_lookup(node, DANDAN_F, &ret));
     ASSERT(ret != NULL);
+    free_tree(ret);
 
     ASSERT(!mse_card_trie_lookup(node, "poopoo", &ret));
     ASSERT(ret == NULL);
+
+    free_mse_card_trie_node(node);
+    return 1;
+}
+
+static int test_card_lookup_aprox()
+{
+    mse_card_trie_node_t *node = NULL;
+    ASSERT(init_mse_card_trie_node(&node));
+    ASSERT(node != NULL);
+
+    // This test case is cursed I am so sorry
+    mtg_card_t dandan;
+    memset(&dandan, 0, sizeof(dandan));
+    ASSERT(mse_card_trie_insert(node, &dandan, DANDAN));
+
+    mtg_card_t dandanier;
+    memset(&dandanier, 0, sizeof(dandanier));
+    dandanier.id = max_uuid();
+    ASSERT(mse_card_trie_insert(node, &dandanier, DANDAN "ier"));
+
+    mtg_card_t dandanierier;
+    memset(&dandanierier, 0, sizeof(dandanierier));
+    dandanier.id.bytes[0] = 3;
+    ASSERT(mse_card_trie_insert(node, &dandanierier, DANDAN "ierier"));
+
+    avl_tree_node_t *ret = NULL;
+    ASSERT(mse_card_trie_lookup_aprox(node, DANDAN, &ret));
+    ASSERT(ret != NULL);
+    free_tree(ret);
 
     free_mse_card_trie_node(node);
     return 1;
@@ -103,4 +136,5 @@ SUB_TEST(test_card_txt_field_trie, {&test_filter_str, "Test filter string"},
 {&test_trie_init_free, "Test trie init and free"},
 {&test_trie_init_free_children, "Test trie init and free with a child"},
 {&test_card_insert, "Test trie card insert"},
-{&test_card_lookup, "Test trie card lookup"})
+{&test_card_lookup, "Test trie card lookup"},
+{&test_card_lookup_aprox, "Test trie card lookup aprox"})
