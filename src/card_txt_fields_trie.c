@@ -65,7 +65,8 @@ int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t 
     int r = __mse_card_trie_lookup(trie, str_f, ret, 0);
 
     free(str_f);
-    return r;
+    ASSERT(r);
+    return 1;
 }
 
 static int __mse_insert_avl(avl_tree_node_t **root, avl_tree_node_t *node)
@@ -82,6 +83,7 @@ static int __mse_insert_avl(avl_tree_node_t **root, avl_tree_node_t *node)
 
     int r = insert_node(root, node_copy);
     if (!r) {
+        lprintf(LOG_WARNING, "Card already in output trie\n");
         free_tree(node_copy);
     }
 
@@ -92,9 +94,13 @@ static int __mse_insert_avl(avl_tree_node_t **root, avl_tree_node_t *node)
 
 static int __mse_insert_trie_children(mse_card_trie_node_t *node, avl_tree_node_t **ret)
 {
+    if (node == NULL) {
+        return 1;
+    }
+
     ASSERT(__mse_insert_avl(ret, node->cards));
-    for (size_t i  = 0; i < sizeof(node->children) / sizeof(*node->children); i++) {
-        __mse_insert_trie_children(node->children[i], ret);
+    for (size_t i = 0; i < sizeof(node->children) / sizeof(*node->children); i++) {
+        ASSERT(__mse_insert_trie_children(node->children[i], ret));
     }
     return 1;
 }
@@ -116,7 +122,7 @@ static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t *root, char *str, a
     if (root->children[c_index] == NULL) {
         return 0;
     }
-    return __mse_card_trie_lookup(root->children[c_index], str, ret, i + 1);
+    return __mse_card_trie_lookup_aprox(root->children[c_index], str, ret, i + 1);
 }
 
 int mse_card_trie_lookup_aprox(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret)
@@ -127,7 +133,8 @@ int mse_card_trie_lookup_aprox(mse_card_trie_node_t *trie, char *str, avl_tree_n
     int r = __mse_card_trie_lookup_aprox(trie, str_f, ret, 0);
 
     free(str_f);
-    return r;
+    ASSERT(r);
+    return 1;
 }
 
 static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mtg_card_t *card)
