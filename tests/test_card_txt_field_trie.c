@@ -25,4 +25,30 @@ static int test_filter_str()
     return 1;
 }
 
-SUB_TEST(test_card_txt_field_trie, {&test_filter_str, "Test filter string"})
+static int test_trie_init_free()
+{
+    mse_card_trie_node_t *node = NULL;
+    ASSERT(init_mse_card_trie_node(&node));
+    ASSERT(node != NULL);
+    free_mse_card_trie_node(node);
+    return 1;
+}
+
+static int test_trie_init_free_children()
+{
+    mse_card_trie_node_t *node = NULL;
+    ASSERT(init_mse_card_trie_node(&node));
+    ASSERT(node != NULL);
+
+    mse_card_trie_node_t *node_2 = NULL;
+    ASSERT(init_mse_card_trie_node(&node_2));
+    ASSERT(node_2 != NULL);
+    node->children[3] = node_2;
+
+    free_mse_card_trie_node(node);
+    return 1;
+}
+
+SUB_TEST(test_card_txt_field_trie, {&test_filter_str, "Test filter string"},
+{&test_trie_init_free, "Test trie init and free"},
+{&test_trie_init_free_children, "Test trie init and free with a child"})
