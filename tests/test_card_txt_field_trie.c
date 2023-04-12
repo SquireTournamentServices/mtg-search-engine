@@ -137,7 +137,7 @@ static int test_card_lookup_aprox()
     return 1;
 }
 
-#define SPLIT_STR "Goblin Motivator "
+#define SPLIT_STR "Goblin   , Motivator      "
 #define PARTS 2
 
 static int test_card_name_split()

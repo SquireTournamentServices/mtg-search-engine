@@ -210,6 +210,7 @@ char *mse_filter_text(char *str)
     }
     ret[j] = 0;
 
+    // Check for empty output strings
     if (strlen(ret) == 0) {
         free(ret);
         lprintf(LOG_WARNING, "Empty string after filter\n");
@@ -261,6 +262,8 @@ static int __mse_split_card_name(char *name, mse_card_name_parts_t *ret)
         name[i] = 0;
         char *part = mse_filter_text(tmp);
         if (part == NULL) {
+            // Move the buffer ptr
+            tmp = &name[i + 1];
             continue;
         }
 
