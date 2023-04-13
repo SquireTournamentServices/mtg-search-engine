@@ -6,6 +6,15 @@
 #include <string.h>
 #include <math.h>
 
+int mse_is_regex_str(char *str)
+{
+    size_t len = strlen(str);
+    if (len < 2) {
+        return 0;
+    }
+    return str[0] == '/' && str[len - 1] == '/';
+}
+
 int mse_compile_regex(char *regex, regex_t *re)
 {
     return regcomp(re, regex, MSE_RE_FLAGS) == 0;

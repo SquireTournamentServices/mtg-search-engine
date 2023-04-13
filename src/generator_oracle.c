@@ -3,15 +3,6 @@
 #include "../testing_h/testing.h"
 #include <string.h>
 
-static int __mse_is_regex_str(char *str)
-{
-    size_t len = strlen(str);
-    if (len < 2) {
-        return 0;
-    }
-    return str[0] == '/' && str[len - 1] == '/';
-}
-
 static int __mse_generate_set_oracle_re(mse_set_generator_t *gen,
                                         avl_tree_node_t **res,
                                         mtg_all_printings_cards_t *cards,
@@ -40,7 +31,7 @@ int mse_generate_set_oracle(mse_set_generator_t *gen,
                             mtg_all_printings_cards_t *cards,
                             thread_pool_t *pool)
 {
-    if (__mse_is_regex_str(gen->argument)) {
+    if (mse_is_regex_str(gen->argument)) {
         return __mse_generate_set_oracle_re(gen, res, cards, pool);
     } else {
         return __mse_generate_set_oracle_text_inc(gen, res, cards, pool);
