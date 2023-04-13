@@ -101,6 +101,8 @@ set(SRC
     ./src/generator_double_fields.c
     ./src/generator_oracle.h
     ./src/generator_oracle.c
+    ./src/generator_name.h
+    ./src/generator_name.c
     ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES})
 set(TESTS
