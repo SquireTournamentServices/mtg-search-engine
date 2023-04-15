@@ -232,20 +232,6 @@ int mse_matching_card_name(avl_tree_node_t **ret,
     return __mse_match_cards(ret, cards_tree, regex, pool, MSE_MATCH_NAME);
 }
 
-static char __re_escape(char c)
-{
-    switch(c) {
-    case 'n':
-        return '\n';
-    case 't':
-        return '\t';
-    case 'r':
-        return '\r';
-    default:
-        return c;
-    }
-}
-
 char *escape_regex(char *regex)
 {
     size_t len = strlen(regex);
@@ -262,12 +248,7 @@ char *escape_regex(char *regex)
         if (regex[i] == '\\' && !escaping) {
             escaping = 1;
         } else {
-            if (escaping) {
-                ret[j] = __re_escape(regex[i]);
-                escaping = 0;
-            } else {
-                ret[j] = regex[i];
-            }
+            ret[j] = regex[i];
             j++;
         }
     }
