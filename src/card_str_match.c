@@ -239,18 +239,11 @@ char *escape_regex(char *regex)
     ASSERT(ret != NULL);
 
     size_t j = 0;
-    int escaping = 0;
     for (size_t i = 0; i < len; i++) {
         // Strip the regex quote marks
         if (i == 0 && regex[i] == '/') continue;
         if (i == len - 1 && regex[i] == '/') continue;
-
-        if (regex[i] == '\\' && !escaping) {
-            escaping = 1;
-        } else {
-            ret[j] = regex[i];
-            j++;
-        }
+        ret[j++] = regex[i];
     }
     ret[j] = 0;
 
