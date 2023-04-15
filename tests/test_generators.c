@@ -68,4 +68,5 @@ SUB_TEST(test_generators, {&init_generator_tests, "Init generator tests"},
 {&test_generator_validation, "Test generator validation"},
 {&test_set_generators_double_fields, "Test set generators double fields"},
 {&test_generator_set, "Test set generators"},
+{&test_generator_txt, "Test txt generators (name & oracle)"},
 {&free_generator_tests, "Free generator tests"})
