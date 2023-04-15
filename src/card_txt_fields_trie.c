@@ -285,6 +285,7 @@ static int __mse_split_card_name(char *name, mse_card_name_parts_t *ret)
         if (!r) {
             lprintf(LOG_ERROR, "Cannot insert name to parts struct\n");
             free(part);
+            free_mse_card_parts(ret);
             return 0;
         }
 
