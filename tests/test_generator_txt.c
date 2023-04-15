@@ -14,16 +14,15 @@ static int test_tree_oracle_re(avl_tree_node_t *node)
     }
 
     regex_t re;
-    ASSERT(mse_compile_regex(REGEX_ARG, &re));
+    char *re_str = escape_regex(REGEX_ARG);
+    ASSERT(re_str != NULL);
+    ASSERT(mse_compile_regex(re_str, &re));
+    free(re_str);
 
     mtg_card_t *card = (mtg_card_t *) node->payload;
-    int found = 0;
-    for (size_t i = 0; i < card->set_codes_count; i++) {
-        ASSERT(mse_card_oracle_matches(card, &re));
-    }
-    regfree(&re);
-    ASSERT(found);
+    ASSERT(mse_card_oracle_matches(card, &re));
 
+    regfree(&re);
     ASSERT(test_tree_oracle_re(node->l));
     ASSERT(test_tree_oracle_re(node->r));
     return 1;
@@ -62,16 +61,15 @@ static int test_tree_name_re(avl_tree_node_t *node)
     }
 
     regex_t re;
-    ASSERT(mse_compile_regex(REGEX_ARG, &re));
+    char *re_str = escape_regex(REGEX_ARG);
+    ASSERT(re_str != NULL);
+    ASSERT(mse_compile_regex(re_str, &re));
+    free(re_str);
 
     mtg_card_t *card = (mtg_card_t *) node->payload;
-    int found = 0;
-    for (size_t i = 0; i < card->set_codes_count; i++) {
-        ASSERT(mse_card_name_matches(card, &re));
-    }
-    regfree(&re);
-    ASSERT(found);
+    ASSERT(mse_card_name_matches(card, &re));
 
+    regfree(&re);
     ASSERT(test_tree_name_re(node->l));
     ASSERT(test_tree_name_re(node->r));
     return 1;
