@@ -6,6 +6,10 @@
 
 #define MSE_RE_FLAGS (REG_EXTENDED | REG_ICASE)
 
+/// Returns whether or no a string is a regex string
+/// /abc/ is a regex string, otherwise it would be a normal string
+int mse_is_regex_str(char *str);
+
 /// Helper to use the correct flags for the regex, use regfree on your regex afterwards
 int mse_compile_regex(char *regex, regex_t *re);
 
