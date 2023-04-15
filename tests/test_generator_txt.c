@@ -101,5 +101,33 @@ static int test_generator_name_regex()
     return 1;
 }
 
-SUB_TEST(test_generator_txt, {&test_generator_oracle_regex, "Test generator oracle"},
-{&test_generator_name_regex, "Test generator name"})
+#define NAME_ARG "thassa, god"
+#define NAME_TRIE_MIN 2
+
+static int test_generator_name_trie()
+{
+    mse_set_generator_type_t gen_type = MSE_SET_GENERATOR_NAME;
+    size_t len = strlen(NAME_ARG);
+
+    mse_set_generator_t ret;
+    ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_EQUALS, NAME_ARG, len));
+
+    avl_tree_node_t *root = NULL;
+    ASSERT(mse_generate_set(&ret, &root, &gen_cards, &gen_thread_pool));
+    ASSERT(tree_size(root) > NAME_TRIE_MIN);
+    free_tree(root);
+    mse_free_set_generator(&ret);
+
+    ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_INCLUDES, NAME_ARG, len));
+    root = NULL;
+    ASSERT(mse_generate_set(&ret, &root, &gen_cards, &gen_thread_pool));
+    ASSERT(tree_size(root) > NAME_TRIE_MIN);
+    free_tree(root);
+    mse_free_set_generator(&ret);
+
+    return 1;
+}
+
+SUB_TEST(test_generator_txt, {&test_generator_oracle_regex, "Test generator oraclere"},
+{&test_generator_name_regex, "Test generator name re"},
+{&test_generator_name_trie, "Test generator name trie"})
