@@ -180,7 +180,60 @@ static int test_card_field_cmp()
     return 1;
 }
 
+#define WUBRG MSE_WHITE | MSE_BLUE | MSE_BLACK | MSE_RED | MSE_GREEN
+
+static int test_colour_cmp_lt()
+{
+    ASSERT(mse_colour_lt(MSE_WHITE, MSE_WHITE | MSE_RED));
+    ASSERT(!mse_colour_lt(MSE_WHITE, MSE_WHITE));
+    ASSERT(!mse_colour_lt(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
+    ASSERT(mse_colour_lt(MSE_WHITE | MSE_BLUE, WUBRG));
+    return 1;
+}
+
+static int test_colour_cmp_lt_inc()
+{
+    ASSERT(mse_colour_lt_inc(MSE_WHITE, MSE_WHITE | MSE_RED));
+    ASSERT(mse_colour_lt_inc(MSE_WHITE, MSE_WHITE));
+    ASSERT(!mse_colour_lt_inc(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
+    ASSERT(mse_colour_lt_inc(MSE_WHITE | MSE_BLUE, WUBRG));
+    ASSERT(mse_colour_lt_inc(WUBRG, WUBRG));
+    return 1;
+}
+
+static int test_colour_cmp_gt()
+{
+    ASSERT(mse_colour_gt(MSE_WHITE | MSE_RED, MSE_WHITE));
+    ASSERT(!mse_colour_gt(MSE_WHITE, MSE_WHITE));
+    ASSERT(!mse_colour_gt(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
+    ASSERT(mse_colour_gt(WUBRG, MSE_WHITE | MSE_BLUE));
+    return 1;
+}
+
+static int test_colour_cmp_gt_inc()
+{
+    ASSERT(mse_colour_gt_inc(MSE_WHITE | MSE_RED, MSE_WHITE));
+    ASSERT(mse_colour_gt_inc(MSE_WHITE, MSE_WHITE));
+    ASSERT(!mse_colour_gt_inc(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
+    ASSERT(mse_colour_gt_inc(WUBRG, MSE_WHITE | MSE_BLUE));
+    ASSERT(mse_colour_gt_inc(WUBRG, WUBRG));
+    return 1;
+}
+
+static int test_colour_cmp_eq()
+{
+    ASSERT(mse_colour_eq(MSE_WHITE, MSE_WHITE));
+    ASSERT(!mse_colour_eq(MSE_RED, MSE_WHITE));
+    ASSERT(mse_colour_eq(WUBRG, WUBRG));
+    return 1;
+}
+
 SUB_TEST(test_card, {&test_card_parse_json, "Test parse card from JSON"},
 {&test_card_write_read, "Test card read and, write"},
 {&test_avl_cmp_card, "Test card avl cmp function"},
-{&test_card_field_cmp, "Test card field cmp"})
+{&test_card_field_cmp, "Test card field cmp"},
+{&test_colour_cmp_lt, "Test colour <"},
+{&test_colour_cmp_lt_inc, "Test colour <="},
+{&test_colour_cmp_gt, "Test colour >"},
+{&test_colour_cmp_gt_inc, "Test colour >="},
+{&test_colour_cmp_eq, "Test colour =="})

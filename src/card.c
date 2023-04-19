@@ -317,3 +317,46 @@ int avl_cmp_card_cmc(void *a, void *b)
 {
     MSE_CARD_DOUBLE_CMP(a, b, cmc)
 }
+
+// Pop count on Microshit Windoze
+#ifdef _MSC_VER
+#  include <intrin.h>
+#  define __builtin_popcount __popcnt
+#endif
+
+/// Checks that the colours in b is at most a
+static inline int __mse_has_max_colours(mse_colour_flags_t a, mse_colour_flags_t b)
+{
+    return __builtin_popcount(a & b) == __builtin_popcount(a);
+}
+
+int mse_colour_lt(mse_colour_flags_t a, mse_colour_flags_t b)
+{
+    return __builtin_popcount(a) < __builtin_popcount(b) && __mse_has_max_colours(a, b);
+}
+
+int mse_colour_lt_inc(mse_colour_flags_t a, mse_colour_flags_t b)
+{
+    return __builtin_popcount(a) <= __builtin_popcount(b) && __mse_has_max_colours(a, b);
+}
+
+/// Checks that a has the same colours of b at a minimum
+static inline int __mse_has_colours(mse_colour_flags_t a, mse_colour_flags_t b)
+{
+    return __builtin_popcount(a & b) == __builtin_popcount(b);
+}
+
+int mse_colour_gt(mse_colour_flags_t a, mse_colour_flags_t b)
+{
+    return __builtin_popcount(a) > __builtin_popcount(b) && __mse_has_colours(a, b);
+}
+
+int mse_colour_gt_inc(mse_colour_flags_t a, mse_colour_flags_t b)
+{
+    return __builtin_popcount(a) >= __builtin_popcount(b) && __mse_has_colours(a, b);
+}
+
+int mse_colour_eq(mse_colour_flags_t a, mse_colour_flags_t b)
+{
+    return a == b;
+}

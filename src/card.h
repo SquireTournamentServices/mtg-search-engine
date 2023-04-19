@@ -59,3 +59,10 @@ void free_card(mse_card_t *card);
 int avl_cmp_card_power(void *a, void *b);
 int avl_cmp_card_toughness(void *a, void *b);
 int avl_cmp_card_cmc(void *a, void *b);
+
+// Card colour helper funcs
+int mse_colour_lt(mse_colour_flags_t a, mse_colour_flags_t b);
+int mse_colour_lt_inc(mse_colour_flags_t a, mse_colour_flags_t b);
+int mse_colour_gt(mse_colour_flags_t a, mse_colour_flags_t b);
+int mse_colour_gt_inc(mse_colour_flags_t a, mse_colour_flags_t b);
+int mse_colour_eq(mse_colour_flags_t a, mse_colour_flags_t b);
