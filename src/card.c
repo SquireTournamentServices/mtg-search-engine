@@ -5,9 +5,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-mtg_colour_enum_t parse_colours(const char *colours)
+mse_colour_enum_t parse_colours(const char *colours)
 {
-    mtg_colour_enum_t ret = 0;
+    mse_colour_enum_t ret = 0;
     ASSERT(colours != NULL);
     for (size_t i = 0; colours[i]; i++) {
         switch (colours[i]) {
@@ -37,7 +37,7 @@ mtg_colour_enum_t parse_colours(const char *colours)
     return ret;
 }
 
-int parse_card_json(json_t *json, mtg_card_t *card)
+int parse_card_json(json_t *json, mse_card_t *card)
 {
     ASSERT(json != NULL);
     ASSERT(card != NULL);
@@ -197,7 +197,7 @@ int parse_card_json(json_t *json, mtg_card_t *card)
     return 1;
 }
 
-int write_card(FILE *f, mtg_card_t card)
+int write_card(FILE *f, mse_card_t card)
 {
     ASSERT(write_uuid(f, card.id));
     ASSERT(write_str(f, card.name));
@@ -221,7 +221,7 @@ int write_card(FILE *f, mtg_card_t card)
     return 1;
 }
 
-int read_card(FILE *f, mtg_card_t *card)
+int read_card(FILE *f, mse_card_t *card)
 {
     memset(card, 0, sizeof(*card));
     ASSERT(read_uuid(f, &card->id));
@@ -249,7 +249,7 @@ int read_card(FILE *f, mtg_card_t *card)
     return 1;
 }
 
-void free_card(mtg_card_t *card)
+void free_card(mse_card_t *card)
 {
     if (card == NULL) {
         return;
@@ -285,14 +285,14 @@ void free_card(mtg_card_t *card)
 
 int avl_cmp_card(void *a, void *b)
 {
-    mtg_card_t *ca = (mtg_card_t *) a;
-    mtg_card_t *cb = (mtg_card_t *) b;
+    mse_card_t *ca = (mse_card_t *) a;
+    mse_card_t *cb = (mse_card_t *) b;
     return uuid_cmp(ca->id, cb->id);
 }
 
 #define MSE_CARD_DOUBLE_CMP(a, b, field) \
-    mtg_card_t *ca = (mtg_card_t *) a; \
-    mtg_card_t *cb = (mtg_card_t *) b; \
+    mse_card_t *ca = (mse_card_t *) a; \
+    mse_card_t *cb = (mse_card_t *) b; \
     if ((int) ca->field == (int) cb->field) { \
         return avl_cmp_card(a, b); \
     } \

@@ -19,7 +19,7 @@ static int test_tree_oracle_re(avl_tree_node_t *node)
     ASSERT(mse_compile_regex(re_str, &re));
     free(re_str);
 
-    mtg_card_t *card = (mtg_card_t *) node->payload;
+    mse_card_t *card = (mse_card_t *) node->payload;
     ASSERT(mse_card_oracle_matches(card, &re));
 
     regfree(&re);
@@ -66,7 +66,7 @@ static int test_tree_name_re(avl_tree_node_t *node)
     ASSERT(mse_compile_regex(re_str, &re));
     free(re_str);
 
-    mtg_card_t *card = (mtg_card_t *) node->payload;
+    mse_card_t *card = (mse_card_t *) node->payload;
     ASSERT(mse_card_name_matches(card, &re));
 
     regfree(&re);

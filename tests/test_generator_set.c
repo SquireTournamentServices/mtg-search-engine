@@ -13,7 +13,7 @@ static int test_tree(avl_tree_node_t *node)
         return 1;
     }
 
-    mtg_card_t *card = (mtg_card_t *) node->payload;
+    mse_card_t *card = (mse_card_t *) node->payload;
     int found = 0;
     for (size_t i = 0; i < card->set_codes_count; i++) {
         found |= memcmp(card->set_codes[i], DEFAULT_ARGUMENT, 3) == 0;

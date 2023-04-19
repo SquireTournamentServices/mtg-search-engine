@@ -9,15 +9,15 @@
 #define ATOMIC_CARDS_URL "https://mtgjson.com/api/v5/AllPrintings.json"
 
 /// Exposed internal method for use within internal testing
-size_t __mtg_json_write_callback(char *ptr,
+size_t __mse_json_write_callback(char *ptr,
                                  size_t size,
                                  size_t nmemb,
                                  void *data);
 
 /// Contains all of the card indexes, each index will have a payload that is a pointer to a card,
-/// however it will have a NULL free pointer as the memory is owneed by mtg_all_printings_cards_t
+/// however it will have a NULL free pointer as the memory is owneed by mse_all_printings_cards_t
 /// in card_tree
-typedef struct mtg_cards_indexes {
+typedef struct mse_cards_indexes {
     /// Index for power
     avl_tree_node_t *card_power_tree;
     /// Index for toughness
@@ -28,12 +28,12 @@ typedef struct mtg_cards_indexes {
     mse_card_trie_node_t *card_name_trie;
     /// Card names parts trie where the full filtered name is used
     mse_card_trie_node_t *card_name_parts_trie;
-} mtg_cards_indexes;
+} mse_cards_indexes;
 
 /// This will store the atomic cards and, sets. Each card is stored once and,
 /// only once. cards and, sets are both stored as binary trees sorted by UUIDs.
 /// other indices need to be generated afterwards.
-typedef struct mtg_all_printings_cards_t {
+typedef struct mse_all_printings_cards_t {
     /// Amount of sets
     size_t set_count;
     /// AVL BST tree for the sets, sorted by set code
@@ -45,32 +45,32 @@ typedef struct mtg_all_printings_cards_t {
     avl_tree_node_t *card_tree;
 
     /// Indexes
-    mtg_cards_indexes indexes;
-} mtg_all_printings_cards_t;
+    mse_cards_indexes indexes;
+} mse_all_printings_cards_t;
 
 /// Exposed internal method for use within internal testing
 /// This function will handle a set node and add the set and, cards
-int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
+int __handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
                                      const char *set_code,
                                      json_t *set_node);
 
 /// Exposed internal method for use within internal testing
 /// This method will parse the json cards all of the indexes
-int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool);
+int __parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool);
 
 /// Returns 1 on success, 0 on failure
 /// Do not call free_all_printings_cards on fail
-int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool);
+int get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool);
 
-/// This function will generate all of the indexes for a card, defined in mtg_json_indexes.c
-int __generate_indexes(mtg_all_printings_cards_t *ret, thread_pool_t *pool);
+/// This function will generate all of the indexes for a card, defined in mse_json_indexes.c
+int __generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool);
 
 /// Frees atomic cards
-void free_all_printings_cards(mtg_all_printings_cards_t *cards);
+void free_all_printings_cards(mse_all_printings_cards_t *cards);
 
 /// This will store all cards  and, their indexes
-typedef struct mtg_indexed_cards_t {
-    mtg_all_printings_cards_t all_printings_cards;
+typedef struct mse_indexed_cards_t {
+    mse_all_printings_cards_t all_printings_cards;
 
-} mtg_indexed_cards_t;
+} mse_indexed_cards_t;
 

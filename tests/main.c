@@ -29,7 +29,7 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 {&test_mse_langs, "Test mse langs"},
 {&test_search, "Test search"},
 /* Data source (very important) */
-{&test_mtg_json, "Test mtg json"},
+{&test_mse_json, "Test mtg json"},
 /* Slow testse */
 {&test_card_str_match, "Test card string match"},
 {&test_generators, "Test generators"},

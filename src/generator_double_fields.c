@@ -8,11 +8,11 @@
 #define MSE_GENERATOR_FIELD_GENERATOR(fname) \
 static int __mse_generate_set_##fname##_eq(mse_set_generator_t *gen, \
                                        avl_tree_node_t **res, \
-                                       mtg_all_printings_cards_t *cards, \
+                                       mse_all_printings_cards_t *cards, \
                                        double arg) \
 { \
     /* Prepare the bounds of the search */ \
-    mtg_card_t lower, upper; \
+    mse_card_t lower, upper; \
     memset(&lower, 0, sizeof(lower)); \
     upper = lower; \
  \
@@ -26,11 +26,11 @@ static int __mse_generate_set_##fname##_eq(mse_set_generator_t *gen, \
  \
 static int __mse_generate_set_##fname##_lt(mse_set_generator_t *gen, \
                                        avl_tree_node_t **res, \
-                                       mtg_all_printings_cards_t *cards, \
+                                       mse_all_printings_cards_t *cards, \
                                        double arg) \
 { \
     /* Prepare the bounds of the search */ \
-    mtg_card_t lower; \
+    mse_card_t lower; \
     memset(&lower, 0, sizeof(lower)); \
     lower.id = min_uuid(); \
  \
@@ -43,11 +43,11 @@ static int __mse_generate_set_##fname##_lt(mse_set_generator_t *gen, \
  \
 static int __mse_generate_set_##fname##_lt_inc(mse_set_generator_t *gen, \
         avl_tree_node_t **res, \
-        mtg_all_printings_cards_t *cards, \
+        mse_all_printings_cards_t *cards, \
         double arg) \
 { \
     /* Prepare the bounds of the search */ \
-    mtg_card_t lower; \
+    mse_card_t lower; \
     memset(&lower, 0xFF, sizeof(lower)); \
     lower.id = max_uuid(); \
  \
@@ -60,11 +60,11 @@ static int __mse_generate_set_##fname##_lt_inc(mse_set_generator_t *gen, \
  \
 static int __mse_generate_set_##fname##_gt(mse_set_generator_t *gen, \
                                        avl_tree_node_t **res, \
-                                       mtg_all_printings_cards_t *cards, \
+                                       mse_all_printings_cards_t *cards, \
                                        double arg) \
 { \
     /* Prepare the bounds of the search */ \
-    mtg_card_t lower; \
+    mse_card_t lower; \
     memset(&lower, 0xFF, sizeof(lower)); \
     lower.id = max_uuid(); \
     lower.fname = arg; \
@@ -76,11 +76,11 @@ static int __mse_generate_set_##fname##_gt(mse_set_generator_t *gen, \
  \
 static int __mse_generate_set_##fname##_gt_inc(mse_set_generator_t *gen, \
         avl_tree_node_t **res, \
-        mtg_all_printings_cards_t *cards, \
+        mse_all_printings_cards_t *cards, \
         double arg) \
 { \
     /* Prepare the bounds of the search */ \
-    mtg_card_t lower; \
+    mse_card_t lower; \
     memset(&lower, 0, sizeof(lower)); \
     lower.id = min_uuid(); \
     lower.fname = arg; \
@@ -92,7 +92,7 @@ static int __mse_generate_set_##fname##_gt_inc(mse_set_generator_t *gen, \
  \
 int mse_generate_set_##fname(mse_set_generator_t *gen, \
                            avl_tree_node_t **res, \
-                           mtg_all_printings_cards_t *cards) \
+                           mse_all_printings_cards_t *cards) \
 { \
     double arg; \
     ASSERT(mse_to_double(gen->argument, &arg)); \

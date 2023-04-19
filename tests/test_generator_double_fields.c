@@ -50,7 +50,7 @@ static int test_tree_##fname##_eq(avl_tree_node_t *node) \
         return 1; \
     } \
  \
-    double fname = ((mtg_card_t *) node->payload)->fname; \
+    double fname = ((mse_card_t *) node->payload)->fname; \
     ASSERT((int) DEFAULT_ARGUMENT_DOUBLE == (int) fname); \
     ASSERT(test_tree_##fname##_eq(node->l)); \
     ASSERT(test_tree_##fname##_eq(node->r)); \
@@ -75,7 +75,7 @@ static int test_tree_##fname##_lt(avl_tree_node_t *node) \
         return 1; \
     } \
  \
-    double fname = ((mtg_card_t *) node->payload)->fname; \
+    double fname = ((mse_card_t *) node->payload)->fname; \
     ASSERT(fname < DEFAULT_ARGUMENT_DOUBLE); \
     ASSERT(fabs(DEFAULT_ARGUMENT_DOUBLE - fname) > 0.01); \
     ASSERT(test_tree_##fname##_lt(node->l)); \
@@ -95,7 +95,7 @@ static int test_tree_##fname##_lt_inc(avl_tree_node_t *node) \
         return 1; \
     } \
  \
-    double fname = ((mtg_card_t *) node->payload)->fname; \
+    double fname = ((mse_card_t *) node->payload)->fname; \
     ASSERT(fname <= DEFAULT_ARGUMENT_DOUBLE ); \
     found_eq |= (int) DEFAULT_ARGUMENT_DOUBLE == (int) fname; \
     ASSERT(test_tree_##fname##_lt_inc(node->l)); \
@@ -117,7 +117,7 @@ static int test_tree_##fname##_gt(avl_tree_node_t *node) \
         return 1; \
     } \
  \
-    double fname = ((mtg_card_t *) node->payload)->fname; \
+    double fname = ((mse_card_t *) node->payload)->fname; \
     ASSERT(fname > DEFAULT_ARGUMENT_DOUBLE); \
     ASSERT(fabs(DEFAULT_ARGUMENT_DOUBLE - fname) > 0.01); \
     ASSERT(test_tree_##fname##_gt(node->l)); \
@@ -137,7 +137,7 @@ static int test_tree_##fname##_gt_inc(avl_tree_node_t *node) \
         return 1; \
     } \
  \
-    double fname = ((mtg_card_t *) node->payload)->fname; \
+    double fname = ((mse_card_t *) node->payload)->fname; \
     ASSERT(fname >= DEFAULT_ARGUMENT_DOUBLE); \
     found_eq |= (int) DEFAULT_ARGUMENT_DOUBLE == (int) fname; \
     ASSERT(test_tree_##fname##_gt_inc(node->l)); \

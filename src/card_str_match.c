@@ -25,7 +25,7 @@ static int __mse_re_match(char *str, regex_t *re)
     return regexec(re, str, 0, NULL, 0) == 0;
 }
 
-int mse_card_oracle_matches(mtg_card_t *card, regex_t *re)
+int mse_card_oracle_matches(mse_card_t *card, regex_t *re)
 {
     if (card->oracle_text == NULL) {
         return 0;
@@ -33,7 +33,7 @@ int mse_card_oracle_matches(mtg_card_t *card, regex_t *re)
     return __mse_re_match(card->oracle_text, re);
 }
 
-int mse_card_name_matches(mtg_card_t *card, regex_t *re)
+int mse_card_name_matches(mse_card_t *card, regex_t *re)
 {
     if (card->name == NULL) {
         return 0;
@@ -66,10 +66,10 @@ static void __mse_match_card_do_match(avl_tree_node_t *node, mse_card_match_t *m
     int matches = 0;
     switch(match_data->type) {
     case MSE_MATCH_ORACLE:
-        matches = mse_card_oracle_matches((mtg_card_t *) node->payload, re);
+        matches = mse_card_oracle_matches((mse_card_t *) node->payload, re);
         break;
     case MSE_MATCH_NAME:
-        matches = mse_card_name_matches((mtg_card_t *) node->payload, re);
+        matches = mse_card_name_matches((mse_card_t *) node->payload, re);
         break;
     default:
         lprintf(LOG_ERROR, "Cannot find regex match type\n");

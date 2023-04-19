@@ -10,4 +10,4 @@ int test_generator_set();
 int test_generator_txt();
 
 extern thread_pool_t gen_thread_pool;
-extern mtg_all_printings_cards_t gen_cards;
+extern mse_all_printings_cards_t gen_cards;

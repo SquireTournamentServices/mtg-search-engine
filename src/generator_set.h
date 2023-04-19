@@ -5,4 +5,4 @@
 
 int mse_generate_set_set(mse_set_generator_t *gen,
                          avl_tree_node_t **res,
-                         mtg_all_printings_cards_t *cards);
+                         mse_all_printings_cards_t *cards);

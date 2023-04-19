@@ -3,17 +3,17 @@
 #include <string.h>
 
 // Set cards index
-static int __add_card_to_set(mtg_card_t *card, avl_tree_node_t *sets)
+static int __add_card_to_set(mse_card_t *card, avl_tree_node_t *sets)
 {
     for (size_t i = 0; i < card->set_codes_count; i++) {
-        // Create a proxy element for the tree search as the tree will be comparing mtg_set_t objects
-        mtg_set_t card_set_proxy;
+        // Create a proxy element for the tree search as the tree will be comparing mse_set_t objects
+        mse_set_t card_set_proxy;
         memcpy(card_set_proxy.code, card->set_codes[i], sizeof(card_set_proxy.code));
 
         avl_tree_node_t *set_node = find_payload(sets, &card_set_proxy);
 
         if (set_node != NULL) {
-            add_card_to_set((mtg_set_t *) set_node->payload, card);
+            add_card_to_set((mse_set_t *) set_node->payload, card);
         } else {
             char set_code[MAX_SET_CODE_LEN + 1];
             set_code[MAX_SET_CODE_LEN] = 0;
@@ -32,7 +32,7 @@ static int __add_cards_to_set(avl_tree_node_t *cards, avl_tree_node_t *sets)
         return 1;
     }
 
-    ASSERT(__add_card_to_set((mtg_card_t *) cards->payload, sets));
+    ASSERT(__add_card_to_set((mse_card_t *) cards->payload, sets));
     ASSERT(__add_cards_to_set(cards->l, sets));
     ASSERT(__add_cards_to_set(cards->r, sets));
     return 1;
@@ -96,7 +96,7 @@ static int __add_cards_to_card_name_trie(avl_tree_node_t *node, mse_card_trie_no
         return 1;
     }
 
-    mtg_card_t *card = (mtg_card_t *) node->payload;
+    mse_card_t *card = (mse_card_t *) node->payload;
     ASSERT(mse_card_trie_insert(card_name_trie, card, card->name));
 
     ASSERT(__add_cards_to_card_name_trie(node->l, card_name_trie));
@@ -120,7 +120,7 @@ static int __add_cards_to_card_name_parts_trie(avl_tree_node_t *node,
         return 1;
     }
 
-    mtg_card_t *card = (mtg_card_t *) node->payload;
+    mse_card_t *card = (mse_card_t *) node->payload;
     mse_card_name_parts_t parts;
     ASSERT(mse_split_card_name(card->name, &parts));
 
@@ -151,7 +151,7 @@ static void __generate_card_name_parts_trie_task(void *__state, thread_pool_t *p
 
 #define TASK_COUNT(T) (sizeof(T) / sizeof(*T))
 
-int __generate_indexes(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
+int __generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool)
 {
     ASSERT(pool != NULL);
     ASSERT(ret != NULL);

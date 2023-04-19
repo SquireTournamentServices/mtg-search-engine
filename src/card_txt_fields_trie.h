@@ -12,7 +12,7 @@ int init_mse_card_trie_node(mse_card_trie_node_t **node);
 void free_mse_card_trie_node(mse_card_trie_node_t *node);
 
 /// Inserts a card into the trie, adding nodes where needed
-int mse_card_trie_insert(mse_card_trie_node_t *root, mtg_card_t *card, char *str);
+int mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t *card, char *str);
 
 /// Exact lookup for a card name, i,e: goblin motivator -> gblnmtvtr then gets the tree at gblnmtvtr
 /// This is useful for card loookups in deck lists whithout correction
