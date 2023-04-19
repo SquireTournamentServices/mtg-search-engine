@@ -17,7 +17,7 @@ size_t __mse_json_write_callback(char *ptr,
 /// Contains all of the card indexes, each index will have a payload that is a pointer to a card,
 /// however it will have a NULL free pointer as the memory is owneed by mse_all_printings_cards_t
 /// in card_tree
-typedef struct mse_cards_indexes {
+typedef struct mse_cards_indexes_t {
     /// Index for power
     avl_tree_node_t *card_power_tree;
     /// Index for toughness
@@ -28,7 +28,7 @@ typedef struct mse_cards_indexes {
     mse_card_trie_node_t *card_name_trie;
     /// Card names parts trie where the full filtered name is used
     mse_card_trie_node_t *card_name_parts_trie;
-} mse_cards_indexes;
+} mse_cards_indexes_t;
 
 /// This will store the atomic cards and, sets. Each card is stored once and,
 /// only once. cards and, sets are both stored as binary trees sorted by UUIDs.
@@ -45,7 +45,7 @@ typedef struct mse_all_printings_cards_t {
     avl_tree_node_t *card_tree;
 
     /// Indexes
-    mse_cards_indexes indexes;
+    mse_cards_indexes_t indexes;
 } mse_all_printings_cards_t;
 
 /// Exposed internal method for use within internal testing
