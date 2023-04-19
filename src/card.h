@@ -19,6 +19,8 @@ typedef enum mse_colour_enum_t {
     MSE_GREEN  = 1 << 4
 } mse_colour_enum_t;
 
+#define MSE_WUBRG 0b11111
+
 typedef int mse_colour_flags_t;
 
 /// This will parse a card's mana cost or, a colour,

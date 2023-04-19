@@ -180,14 +180,12 @@ static int test_card_field_cmp()
     return 1;
 }
 
-#define WUBRG MSE_WHITE | MSE_BLUE | MSE_BLACK | MSE_RED | MSE_GREEN
-
 static int test_colour_cmp_lt()
 {
     ASSERT(mse_colour_lt(MSE_WHITE, MSE_WHITE | MSE_RED));
     ASSERT(!mse_colour_lt(MSE_WHITE, MSE_WHITE));
     ASSERT(!mse_colour_lt(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
-    ASSERT(mse_colour_lt(MSE_WHITE | MSE_BLUE, WUBRG));
+    ASSERT(mse_colour_lt(MSE_WHITE | MSE_BLUE, MSE_WUBRG));
     return 1;
 }
 
@@ -196,8 +194,8 @@ static int test_colour_cmp_lt_inc()
     ASSERT(mse_colour_lt_inc(MSE_WHITE, MSE_WHITE | MSE_RED));
     ASSERT(mse_colour_lt_inc(MSE_WHITE, MSE_WHITE));
     ASSERT(!mse_colour_lt_inc(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
-    ASSERT(mse_colour_lt_inc(MSE_WHITE | MSE_BLUE, WUBRG));
-    ASSERT(mse_colour_lt_inc(WUBRG, WUBRG));
+    ASSERT(mse_colour_lt_inc(MSE_WHITE | MSE_BLUE, MSE_WUBRG));
+    ASSERT(mse_colour_lt_inc(MSE_WUBRG, MSE_WUBRG));
     return 1;
 }
 
@@ -206,7 +204,7 @@ static int test_colour_cmp_gt()
     ASSERT(mse_colour_gt(MSE_WHITE | MSE_RED, MSE_WHITE));
     ASSERT(!mse_colour_gt(MSE_WHITE, MSE_WHITE));
     ASSERT(!mse_colour_gt(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
-    ASSERT(mse_colour_gt(WUBRG, MSE_WHITE | MSE_BLUE));
+    ASSERT(mse_colour_gt(MSE_WUBRG, MSE_WHITE | MSE_BLUE));
     return 1;
 }
 
@@ -215,8 +213,8 @@ static int test_colour_cmp_gt_inc()
     ASSERT(mse_colour_gt_inc(MSE_WHITE | MSE_RED, MSE_WHITE));
     ASSERT(mse_colour_gt_inc(MSE_WHITE, MSE_WHITE));
     ASSERT(!mse_colour_gt_inc(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
-    ASSERT(mse_colour_gt_inc(WUBRG, MSE_WHITE | MSE_BLUE));
-    ASSERT(mse_colour_gt_inc(WUBRG, WUBRG));
+    ASSERT(mse_colour_gt_inc(MSE_WUBRG, MSE_WHITE | MSE_BLUE));
+    ASSERT(mse_colour_gt_inc(MSE_WUBRG, MSE_WUBRG));
     return 1;
 }
 
@@ -224,7 +222,7 @@ static int test_colour_cmp_eq()
 {
     ASSERT(mse_colour_eq(MSE_WHITE, MSE_WHITE));
     ASSERT(!mse_colour_eq(MSE_RED, MSE_WHITE));
-    ASSERT(mse_colour_eq(WUBRG, WUBRG));
+    ASSERT(mse_colour_eq(MSE_WUBRG, MSE_WUBRG));
     return 1;
 }
 
