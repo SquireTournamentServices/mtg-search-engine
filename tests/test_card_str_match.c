@@ -143,7 +143,7 @@ static int test_oracle_match_a_lot_of_times()
 #define STRIPPED_STR "test132123123(abc)+"
 #define STRIP_STR "/" STRIPPED_STR "/"
 
-#define ESCAPED_SLASH "/1\\/1/"
+#define ESCAPED_SLASH "/1/1/"
 
 static int test_regex_escape()
 {
