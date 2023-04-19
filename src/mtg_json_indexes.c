@@ -60,7 +60,7 @@ static int MSE_INDEX_COLOUR_NAME_IMPL_THREAD(colour_field, cmp_type) \
    task_t task = {gstate, &MSE_INDEX_COLOUR_NAME_IMPL(colour_field, cmp_type)}; \
    if (!task_queue_enqueue(&state->pool->queue, task)) { \
        free(gstate); \
-       lprintf(LOG_ERROR, "Cannot enqueue colour index generator\n"); \
+       lprintf(LOG_ERROR, "Cannot enqueue colour index generator (" #colour_field "_" #cmp_type ") \n"); \
        return 0; \
    } \
    return 1; \
