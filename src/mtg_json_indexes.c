@@ -34,7 +34,7 @@ static int MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type) \
  \
     avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card, cards->payload); \
     mse_card_t *card = (mse_card_t *) cards->payload; \
-    if (mse_colour_lt(card->colour_field, colours)) { \
+    if (mse_colour_##cmp_type(card->colour_field, colours)) { \
         ASSERT(insert_node(tree, node)); \
     } \
  \
