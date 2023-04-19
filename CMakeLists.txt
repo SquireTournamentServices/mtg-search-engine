@@ -152,7 +152,7 @@ setup_target_for_coverage_gcovr_xml(
   EXCLUDE
   ${GCOVR_EXCLUDE})
 
-set(LIBS jansson CURL::libcurl pthread m c jemalloc)
+set(LIBS jansson CURL::libcurl pthread m c)
 
 add_library(mtg-search-engine ${SRC})
 target_link_libraries(mtg-search-engine PRIVATE ${LIBS})
