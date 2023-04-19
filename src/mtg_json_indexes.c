@@ -2,6 +2,120 @@
 #include "../testing_h/testing.h"
 #include <string.h>
 
+#define MSE_INDEX_COLOUR_NAME(colour_field, cmp_type) \
+__add_card_to_##colour_field##_##cmp_type##_index
+
+#define MSE_INDEX_COLOUR_NAME_IMPL(colour_field, cmp_type) \
+__impl_add_card_to_##colour_field##_##cmp_type##_index
+
+#define MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type) \
+__impl_recursive_add_card_to_##colour_field##_##cmp_type##_index
+
+#define MSE_INDEX_COLOUR_NAME_IMPL_THREAD(colour_field, cmp_type) \
+__impl_thread_add_card_to_##colour_field##_##cmp_type##_index
+
+typedef struct mse_colour_index_generator_state_t {
+    avl_tree_node_t *cards;
+    avl_tree_node_t **tree;
+    mse_colour_flags_t colours;
+    int *err;
+    sem_t *semaphore;
+} mse_colour_index_generator_state_t;
+
+#define MSE_INDEX_FOR_COLOUR(colour_field, cmp_type) \
+static int MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type) \
+    (avl_tree_node_t *cards, \
+    avl_tree_node_t **tree, \
+    mse_colour_flags_t colours) \
+{ \
+    if (cards == NULL) { \
+        return 1; \
+    } \
+ \
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card, cards->payload); \
+    mse_card_t *card = (mse_card_t *) cards->payload; \
+    if (mse_colour_##cmp_type(card->colour_field, colours)) { \
+        ASSERT(insert_node(tree, node)); \
+    } \
+ \
+    ASSERT(MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type)(cards->l, tree, colours)); \
+    ASSERT(MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type)(cards->r, tree, colours)); \
+    return 1; \
+} \
+static void MSE_INDEX_COLOUR_NAME_IMPL(colour_field, cmp_type)(void *__state, thread_pool_t *pool) \
+{ \
+    mse_colour_index_generator_state_t *gstate = (mse_colour_index_generator_state_t *) __state; \
+    if (!MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type)(gstate->cards, gstate->tree, gstate->colours)) { \
+         *gstate->err = 0; \
+    } \
+    sem_post(gstate->semaphore); \
+    free(gstate); \
+} \
+static int MSE_INDEX_COLOUR_NAME_IMPL_THREAD(colour_field, cmp_type) \
+    (mse_colour_index_generator_state_t gen_state, mse_index_generator_state_t *state) \
+{ \
+   mse_colour_index_generator_state_t *gstate = malloc(sizeof(*gstate)); \
+   ASSERT(gstate != NULL); \
+   *gstate = gen_state; \
+   task_t task = {gstate, &MSE_INDEX_COLOUR_NAME_IMPL(colour_field, cmp_type)}; \
+   if (!task_queue_enqueue(&state->pool->queue, task)) { \
+       free(gstate); \
+       lprintf(LOG_ERROR, "Cannot enqueue colour index generator (" #colour_field "_" #cmp_type ") \n"); \
+       return 0; \
+   } \
+   return 1; \
+} \
+static void MSE_INDEX_COLOUR_NAME(colour_field, cmp_type)(void *__state, thread_pool_t *pool) \
+{ \
+    mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state; \
+    sem_t semaphore; \
+    if (sem_init(&semaphore, 0, 0) != 0) { \
+        lprintf(LOG_ERROR, "Cannot init semaphore\n"); \
+        state->ret = 0; \
+    } \
+    int w = 0; \
+    for (mse_colour_flags_t colours = 1; colours <= MSE_WUBRG; colours++) { \
+        mse_colour_index_generator_state_t gen_state; \
+        gen_state.cards = state->cards->card_tree; \
+        gen_state.tree = &state->cards->indexes.colour_index.colour_field##_##cmp_type.colour_indexes[(size_t) colours]; \
+        gen_state.colours = colours; \
+        gen_state.semaphore = &semaphore; \
+        gen_state.err = &state->ret; \
+ \
+        if (!MSE_INDEX_COLOUR_NAME_IMPL_THREAD(colour_field, cmp_type)(gen_state, state)) { \
+            state->ret = 0; \
+        } else { \
+            w++; \
+        } \
+    } \
+    for (int i = 0; i < w; i++) { \
+        int waiting = 1; \
+        while (waiting) { \
+            pool_try_consume(state->pool); \
+            waiting = sem_trywait(&semaphore) != 0; \
+        } \
+    } \
+    sem_destroy(&semaphore); \
+    sem_post(&(state->semaphore)); \
+}
+
+#define MSE_INDEX_FOR_COLOUR_FIELD(field) \
+MSE_INDEX_FOR_COLOUR(field, lt) \
+MSE_INDEX_FOR_COLOUR(field, lt_inc) \
+MSE_INDEX_FOR_COLOUR(field, gt) \
+MSE_INDEX_FOR_COLOUR(field, gt_inc) \
+MSE_INDEX_FOR_COLOUR(field, eq)
+
+MSE_INDEX_FOR_COLOUR_FIELD(colours)
+MSE_INDEX_FOR_COLOUR_FIELD(colour_identity)
+
+#define MSE_INDEX_COLOUR_FIELD_NAME(colour_field) \
+&MSE_INDEX_COLOUR_NAME(colour_field, lt), \
+&MSE_INDEX_COLOUR_NAME(colour_field, lt_inc), \
+&MSE_INDEX_COLOUR_NAME(colour_field, gt), \
+&MSE_INDEX_COLOUR_NAME(colour_field, gt_inc), \
+&MSE_INDEX_COLOUR_NAME(colour_field, eq)
+
 // Set cards index
 static int __add_card_to_set(mse_card_t *card, avl_tree_node_t *sets)
 {
@@ -163,7 +277,9 @@ int __generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool)
                                                        &__generate_card_name_parts_trie_task,
                                                        &MSE_INDEX_FIELD_NAME(power),
                                                        &MSE_INDEX_FIELD_NAME(toughness),
-                                                       &MSE_INDEX_FIELD_NAME(cmc)
+                                                       &MSE_INDEX_FIELD_NAME(cmc),
+                                                       MSE_INDEX_COLOUR_FIELD_NAME(colours),
+                                                       MSE_INDEX_COLOUR_FIELD_NAME(colour_identity)
                                                       };
 
     mse_index_generator_state_t state;

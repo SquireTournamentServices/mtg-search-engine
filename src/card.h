@@ -19,6 +19,8 @@ typedef enum mse_colour_enum_t {
     MSE_GREEN  = 1 << 4
 } mse_colour_enum_t;
 
+#define MSE_WUBRG 0b11111
+
 typedef int mse_colour_flags_t;
 
 /// This will parse a card's mana cost or, a colour,
@@ -60,9 +62,31 @@ int avl_cmp_card_power(void *a, void *b);
 int avl_cmp_card_toughness(void *a, void *b);
 int avl_cmp_card_cmc(void *a, void *b);
 
-// Card colour helper funcs
-int mse_colour_lt(mse_colour_flags_t a, mse_colour_flags_t b);
-int mse_colour_lt_inc(mse_colour_flags_t a, mse_colour_flags_t b);
-int mse_colour_gt(mse_colour_flags_t a, mse_colour_flags_t b);
-int mse_colour_gt_inc(mse_colour_flags_t a, mse_colour_flags_t b);
-int mse_colour_eq(mse_colour_flags_t a, mse_colour_flags_t b);
+// Pop count on Microshit Windoze
+#ifdef _MSC_VER
+#  include <intrin.h>
+#  define __builtin_popcount __popcnt
+#endif
+
+/// Checks that the colours in b is at most a
+#define __mse_has_max_colours(a, b) \
+(__builtin_popcount((a) & (b)) == __builtin_popcount((a)))
+
+#define mse_colour_lt(a, b) \
+(__builtin_popcount((a)) < __builtin_popcount((b)) && __mse_has_max_colours((a), (b)))
+
+#define mse_colour_lt_inc(a, b) \
+(__builtin_popcount((a)) <= __builtin_popcount((b)) && __mse_has_max_colours((a), (b)))
+
+/// Checks that a has the same colours of b at a minimum
+#define __mse_has_colours(a, b) \
+(__builtin_popcount((a) & (b)) == __builtin_popcount((b)))
+
+#define mse_colour_gt(a, b) \
+(__builtin_popcount((a)) > __builtin_popcount((b)) && __mse_has_colours((a), (b)))
+
+#define mse_colour_gt_inc(a, b) \
+(__builtin_popcount((a)) >= __builtin_popcount((b)) && __mse_has_colours((a), (b)))
+
+#define mse_colour_eq(a, b) \
+((a) == (b))

@@ -202,6 +202,29 @@ int get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool)
     return 1;
 }
 
+void free_mse_colour_index(mse_colour_index_t *index)
+{
+    for (size_t i = 0; i < sizeof(index->colour_indexes)/sizeof(*index->colour_indexes); i++) {
+        if (index->colour_indexes[i] != NULL) {
+            free_tree(index->colour_indexes[i]);
+        }
+    }
+    memset(index, 0, sizeof(*index));
+}
+
+#define MSE_FREE_COLOUR_FIELD(colour_field) \
+free_mse_colour_index(&cards->indexes.colour_index.colour_field##_lt); \
+free_mse_colour_index(&cards->indexes.colour_index.colour_field##_lt_inc); \
+free_mse_colour_index(&cards->indexes.colour_index.colour_field##_gt); \
+free_mse_colour_index(&cards->indexes.colour_index.colour_field##_gt_inc); \
+free_mse_colour_index(&cards->indexes.colour_index.colour_field##_eq);
+
+static void __free_all_printings_cards_colour_indexes(mse_all_printings_cards_t *cards)
+{
+    MSE_FREE_COLOUR_FIELD(colours);
+    MSE_FREE_COLOUR_FIELD(colour_identity);
+}
+
 static void __free_all_printings_cards_indexes(mse_all_printings_cards_t *cards)
 {
     if (cards->indexes.card_power_tree != NULL) {
@@ -223,6 +246,8 @@ static void __free_all_printings_cards_indexes(mse_all_printings_cards_t *cards)
     if (cards->indexes.card_name_parts_trie != NULL) {
         free_mse_card_trie_node(cards->indexes.card_name_parts_trie);
     }
+
+    __free_all_printings_cards_colour_indexes(cards);
 }
 
 void free_all_printings_cards(mse_all_printings_cards_t *cards)

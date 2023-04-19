@@ -172,15 +172,17 @@ static avl_tree_node_t *__do_insert_node(avl_tree_node_t *root, avl_tree_node_t 
 
     // Balance trees
     int balance = tree_balance(root);
+    int cmp_left = __cmp_payload(node, root->l);
+    int cmp_right = __cmp_payload(node, root->r);
 
-    if (balance > 1 && __cmp_payload(node, root->l) < 0) {
+    if (balance > 1 && cmp_left < 0) {
         return __rotate_r(root);
-    } else if (balance < -1 && __cmp_payload(node, root->r) > 0) {
+    } else if (balance < -1 && cmp_right > 0) {
         return __rotate_l(root);
-    } else if (balance > 1 && __cmp_payload(node, root->l) > 0) {
+    } else if (balance > 1 && cmp_left > 0) {
         root->l = __rotate_l(root->l);
         return __rotate_r(root);
-    } else if (balance < -1 && __cmp_payload(node, root->r) < 0) {
+    } else if (balance < -1 && cmp_right < 0) {
         root->r = __rotate_r(root->r);
         return __rotate_l(root);
     }
