@@ -9,7 +9,7 @@
 
 #define ORACLE "First strike (This creature deals combat damage before creatures without first strike.)\nWhen Ancestor's Chosen comes into play, you gain 1 life for each card in your graveyard."
 
-static int __test_card_props(mtg_card_t card)
+static int __test_card_props(mse_card_t card)
 {
     ASSERT(card.name != NULL);
     ASSERT(strcmp(card.name, "Ancestor's Chosen") == 0);
@@ -79,7 +79,7 @@ static int test_card_parse_json()
     fclose(f);
     ASSERT(json != NULL);
 
-    mtg_card_t card;
+    mse_card_t card;
     ASSERT(parse_card_json(json, &card));
     ASSERT(__test_card_props(card));
 
@@ -98,7 +98,7 @@ static int test_card_write_read()
     fclose(f);
     ASSERT(json != NULL);
 
-    mtg_card_t card;
+    mse_card_t card;
     ASSERT(parse_card_json(json, &card));
 
     // Create pipe
@@ -116,7 +116,7 @@ static int test_card_write_read()
     fclose(w);
     free_card(&card);
 
-    mtg_card_t card_2;
+    mse_card_t card_2;
     ASSERT(read_card(r, &card_2));
     fclose(r);
 
@@ -130,7 +130,7 @@ static int test_card_write_read()
 
 static int test_avl_cmp_card()
 {
-    mtg_card_t a, b;
+    mse_card_t a, b;
     memset(&a, 0, sizeof(a));
     memset(&b, 0, sizeof(b));
 
@@ -157,7 +157,7 @@ static int test_avl_cmp_card()
 
 static int test_card_field_cmp()
 {
-    mtg_card_t a, b;
+    mse_card_t a, b;
     memset(&a, 0, sizeof(a));
     b = a;
 
@@ -180,7 +180,60 @@ static int test_card_field_cmp()
     return 1;
 }
 
+#define WUBRG MSE_WHITE | MSE_BLUE | MSE_BLACK | MSE_RED | MSE_GREEN
+
+static int test_colour_cmp_lt()
+{
+    ASSERT(mse_colour_lt(MSE_WHITE, MSE_WHITE | MSE_RED));
+    ASSERT(!mse_colour_lt(MSE_WHITE, MSE_WHITE));
+    ASSERT(!mse_colour_lt(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
+    ASSERT(mse_colour_lt(MSE_WHITE | MSE_BLUE, WUBRG));
+    return 1;
+}
+
+static int test_colour_cmp_lt_inc()
+{
+    ASSERT(mse_colour_lt_inc(MSE_WHITE, MSE_WHITE | MSE_RED));
+    ASSERT(mse_colour_lt_inc(MSE_WHITE, MSE_WHITE));
+    ASSERT(!mse_colour_lt_inc(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
+    ASSERT(mse_colour_lt_inc(MSE_WHITE | MSE_BLUE, WUBRG));
+    ASSERT(mse_colour_lt_inc(WUBRG, WUBRG));
+    return 1;
+}
+
+static int test_colour_cmp_gt()
+{
+    ASSERT(mse_colour_gt(MSE_WHITE | MSE_RED, MSE_WHITE));
+    ASSERT(!mse_colour_gt(MSE_WHITE, MSE_WHITE));
+    ASSERT(!mse_colour_gt(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
+    ASSERT(mse_colour_gt(WUBRG, MSE_WHITE | MSE_BLUE));
+    return 1;
+}
+
+static int test_colour_cmp_gt_inc()
+{
+    ASSERT(mse_colour_gt_inc(MSE_WHITE | MSE_RED, MSE_WHITE));
+    ASSERT(mse_colour_gt_inc(MSE_WHITE, MSE_WHITE));
+    ASSERT(!mse_colour_gt_inc(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
+    ASSERT(mse_colour_gt_inc(WUBRG, MSE_WHITE | MSE_BLUE));
+    ASSERT(mse_colour_gt_inc(WUBRG, WUBRG));
+    return 1;
+}
+
+static int test_colour_cmp_eq()
+{
+    ASSERT(mse_colour_eq(MSE_WHITE, MSE_WHITE));
+    ASSERT(!mse_colour_eq(MSE_RED, MSE_WHITE));
+    ASSERT(mse_colour_eq(WUBRG, WUBRG));
+    return 1;
+}
+
 SUB_TEST(test_card, {&test_card_parse_json, "Test parse card from JSON"},
 {&test_card_write_read, "Test card read and, write"},
 {&test_avl_cmp_card, "Test card avl cmp function"},
-{&test_card_field_cmp, "Test card field cmp"})
+{&test_card_field_cmp, "Test card field cmp"},
+{&test_colour_cmp_lt, "Test colour <"},
+{&test_colour_cmp_lt_inc, "Test colour <="},
+{&test_colour_cmp_gt, "Test colour >"},
+{&test_colour_cmp_gt_inc, "Test colour >="},
+{&test_colour_cmp_eq, "Test colour =="})

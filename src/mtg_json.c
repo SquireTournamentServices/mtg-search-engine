@@ -8,7 +8,7 @@
 #include <curl/curl.h>
 #include <jansson.h>
 
-size_t __mtg_json_write_callback(char *ptr,
+size_t __mse_json_write_callback(char *ptr,
                                  size_t size,
                                  size_t nmemb,
                                  void *data)
@@ -41,7 +41,7 @@ static void __do_get_all_printings_cards_curl(FILE *w)
         CURL_ASSERT(curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, ""));
 
         // Set response write
-        CURL_ASSERT(curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &__mtg_json_write_callback));
+        CURL_ASSERT(curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &__mse_json_write_callback));
         CURL_ASSERT(curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) w));
 
         res = curl_easy_perform(curl);
@@ -68,23 +68,23 @@ static void __get_all_printings_cards_curl_thread(void *data, struct thread_pool
 
 static void __free_all_printings_cards_card(void *card)
 {
-    free_card((mtg_card_t *) card);
+    free_card((mse_card_t *) card);
     free(card);
 }
 
 static void __free_all_printings_cards_set(void *set)
 {
-    free_set((mtg_set_t *) set);
+    free_set((mse_set_t *) set);
     free(set);
 }
 
-int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
+int __handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
                                      const char *set_code,
                                      json_t *set_node)
 {
     ASSERT(json_is_object(set_node));
 
-    mtg_set_t *set = malloc(sizeof(*set));
+    mse_set_t *set = malloc(sizeof(*set));
     ASSERT(set != NULL);
     ASSERT(parse_set_json(set_node, set, set_code));
 
@@ -99,7 +99,7 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
     json_t *value;
     json_array_foreach(cards, index, value) {
         ASSERT(json_is_object(value));
-        mtg_card_t *card = malloc(sizeof(*card));
+        mse_card_t *card = malloc(sizeof(*card));
         node = init_avl_tree_node(&__free_all_printings_cards_card, &avl_cmp_card, card);
 
         ASSERT(parse_card_json(value, card));
@@ -113,7 +113,7 @@ int __handle_all_printings_cards_set(mtg_all_printings_cards_t *ret,
     return 1;
 }
 
-int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool)
+int __parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool)
 {
     ASSERT(ret != NULL);
     memset(ret, 0, sizeof(*ret));
@@ -154,7 +154,7 @@ int __parse_all_printings_cards(mtg_all_printings_cards_t *ret, json_t *cards, t
     return 1;
 }
 
-int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
+int get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool)
 {
     ASSERT(ret != NULL);
     memset(ret, 0, sizeof(*ret));
@@ -202,7 +202,7 @@ int get_all_printings_cards(mtg_all_printings_cards_t *ret, thread_pool_t *pool)
     return 1;
 }
 
-static void __free_all_printings_cards_indexes(mtg_all_printings_cards_t *cards)
+static void __free_all_printings_cards_indexes(mse_all_printings_cards_t *cards)
 {
     if (cards->indexes.card_power_tree != NULL) {
         free_tree(cards->indexes.card_power_tree);
@@ -225,7 +225,7 @@ static void __free_all_printings_cards_indexes(mtg_all_printings_cards_t *cards)
     }
 }
 
-void free_all_printings_cards(mtg_all_printings_cards_t *cards)
+void free_all_printings_cards(mse_all_printings_cards_t *cards)
 {
     if (cards->set_tree != NULL) {
         free_tree(cards->set_tree);

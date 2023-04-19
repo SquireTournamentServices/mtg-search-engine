@@ -71,7 +71,7 @@ int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
 
 int mse_generate_set(mse_set_generator_t *gen,
                      avl_tree_node_t **res,
-                     mtg_all_printings_cards_t *cards,
+                     mse_all_printings_cards_t *cards,
                      thread_pool_t *pool)
 {
     switch(gen->generator_type) {

@@ -11,7 +11,7 @@ static avl_tree_node_t *get_tree(int min, int max)
 {
     avl_tree_node_t *tree = NULL;
     for (int i = min; i <= max; i++) {
-        mtg_card_t *ptr = malloc(sizeof(*ptr));
+        mse_card_t *ptr = malloc(sizeof(*ptr));
         ASSERT(ptr != NULL);
         memset(ptr, 0, sizeof(*ptr));
         memset(ptr->id.bytes, i, sizeof(*ptr->id.bytes));

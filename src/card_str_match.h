@@ -14,10 +14,10 @@ int mse_is_regex_str(char *str);
 int mse_compile_regex(char *regex, regex_t *re);
 
 /// Returns 1 if there are one or matches in the oracle for the regex
-int mse_card_oracle_matches(mtg_card_t *card, regex_t *re);
+int mse_card_oracle_matches(mse_card_t *card, regex_t *re);
 
 /// Returns 1 if there are one or matches in the name for the regex
-int mse_card_name_matches(mtg_card_t *card, regex_t *re);
+int mse_card_name_matches(mse_card_t *card, regex_t *re);
 
 /// Returns a set of matching cards for an oracle regex
 int mse_matching_card_oracle(avl_tree_node_t **ret,

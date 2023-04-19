@@ -8,7 +8,7 @@
 #include <regex.h>
 
 // Some vile testing globals
-static mtg_all_printings_cards_t test_cards;
+static mse_all_printings_cards_t test_cards;
 static thread_pool_t pool;
 
 static json_t *get_all_printings_cards_from_file()
@@ -57,7 +57,7 @@ static int test_card_matches()
     regex_t re;
     ASSERT(mse_compile_regex(ORACLE_TEST_REGEX_1, &re));
 
-    mtg_card_t card;
+    mse_card_t card;
     card.name = "Testing name 123";
     card.oracle_text = "Whenever a creature enters the battlefield, pass go and collect $200.";
 
@@ -143,7 +143,7 @@ static int test_oracle_match_a_lot_of_times()
 #define STRIPPED_STR "test132123123(abc)+"
 #define STRIP_STR "/" STRIPPED_STR "/"
 
-#define ESCAPED_SLASH "/1\\/1/"
+#define ESCAPED_SLASH "/1/1/"
 
 static int test_regex_escape()
 {

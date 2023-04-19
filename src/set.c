@@ -8,7 +8,7 @@
 // Parse dates in the form 2007-07-13, see man strptime.h
 #define SET_DATE_FORMAT "%Y-%m-%d"
 
-int parse_set_json(json_t *set_node, mtg_set_t *ret, const char *code)
+int parse_set_json(json_t *set_node, mse_set_t *ret, const char *code)
 {
     memset(ret, 0, sizeof(*ret));
     ASSERT(set_node != NULL);
@@ -30,7 +30,7 @@ int parse_set_json(json_t *set_node, mtg_set_t *ret, const char *code)
     return 1;
 }
 
-int write_set(FILE *f, mtg_set_t set)
+int write_set(FILE *f, mse_set_t set)
 {
     ASSERT(write_str(f, set.name));
     ASSERT(write_set_code(f, set.code));
@@ -38,7 +38,7 @@ int write_set(FILE *f, mtg_set_t set)
     return 1;
 }
 
-int read_set(FILE *f, mtg_set_t *set)
+int read_set(FILE *f, mse_set_t *set)
 {
     memset(set, 0, sizeof(*set));
     ASSERT(read_str(f, &set->name));
@@ -47,7 +47,7 @@ int read_set(FILE *f, mtg_set_t *set)
     return 1;
 }
 
-int add_card_to_set(mtg_set_t *set, mtg_card_t *card)
+int add_card_to_set(mse_set_t *set, mse_card_t *card)
 {
     ASSERT(set != NULL);
     ASSERT(card != NULL);
@@ -63,7 +63,7 @@ int add_card_to_set(mtg_set_t *set, mtg_card_t *card)
     return 1;
 }
 
-void free_set(mtg_set_t *set)
+void free_set(mse_set_t *set)
 {
     if (set->name != NULL) {
         free(set->name);
@@ -75,12 +75,12 @@ void free_set(mtg_set_t *set)
     memset(set, 0, sizeof(*set));
 }
 
-int cmp_set(mtg_set_t *a, mtg_set_t *b)
+int cmp_set(mse_set_t *a, mse_set_t *b)
 {
     return memcmp(a->code, b->code, sizeof(a->code));
 }
 
 int avl_cmp_set(void *a, void *b)
 {
-    return cmp_set((mtg_set_t *) a, (mtg_set_t *) b);
+    return cmp_set((mse_set_t *) a, (mse_set_t *) b);
 }

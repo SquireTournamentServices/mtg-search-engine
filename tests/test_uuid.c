@@ -60,7 +60,7 @@ static int test_uuid_from_string()
 
 static int test_set_code_read_write()
 {
-    mtg_set_code_t set = {'M', '2', '0'};
+    mse_set_code_t set = {'M', '2', '0'};
 
     int fid[2];
     ASSERT(pipe(fid) == 0);
@@ -74,11 +74,11 @@ static int test_set_code_read_write()
     ASSERT(write_set_code(w, set));
     fclose(w);
 
-    mtg_set_code_t set_2;
+    mse_set_code_t set_2;
     ASSERT(read_set_code(r, &set_2));
     fclose(r);
 
-    ASSERT(memcmp(set, set_2, sizeof(mtg_set_code_t)) == 0);
+    ASSERT(memcmp(set, set_2, sizeof(mse_set_code_t)) == 0);
 
     return 1;
 }
@@ -110,7 +110,7 @@ static int test_uuid_cmp()
 
 static int test_get_set_code()
 {
-    mtg_set_code_t code;
+    mse_set_code_t code;
     ASSERT(get_set_code("", &code) == 0);
     ASSERT(get_set_code("Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.", &code) == 0);
 

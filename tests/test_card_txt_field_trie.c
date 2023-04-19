@@ -67,7 +67,7 @@ static int test_card_insert()
     ASSERT(init_mse_card_trie_node(&node));
     ASSERT(node != NULL);
 
-    mtg_card_t card;
+    mse_card_t card;
     memset(&card, 0, sizeof(card));
     ASSERT(mse_card_trie_insert(node, &card, DANDAN));
 
@@ -87,7 +87,7 @@ static int test_card_lookup()
     ASSERT(init_mse_card_trie_node(&node));
     ASSERT(node != NULL);
 
-    mtg_card_t card;
+    mse_card_t card;
     memset(&card, 0, sizeof(card));
     ASSERT(mse_card_trie_insert(node, &card, DANDAN));
 
@@ -114,16 +114,16 @@ static int test_card_lookup_aprox()
     ASSERT(node != NULL);
 
     // This test case is cursed I am so sorry
-    mtg_card_t dandan;
+    mse_card_t dandan;
     memset(&dandan, 0, sizeof(dandan));
     ASSERT(mse_card_trie_insert(node, &dandan, DANDAN));
 
-    mtg_card_t dandanier;
+    mse_card_t dandanier;
     memset(&dandanier, 0, sizeof(dandanier));
     dandanier.id = max_uuid();
     ASSERT(mse_card_trie_insert(node, &dandanier, DANDAN "ier"));
 
-    mtg_card_t dandanierier;
+    mse_card_t dandanierier;
     memset(&dandanierier, 0, sizeof(dandanierier));
     dandanierier.id.bytes[0] = 3;
     ASSERT(mse_card_trie_insert(node, &dandanierier, DANDAN "ierier"));

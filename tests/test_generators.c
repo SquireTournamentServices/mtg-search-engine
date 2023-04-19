@@ -7,7 +7,7 @@
 #define DEFAULT_ARGUMENT "thopt"
 
 thread_pool_t gen_thread_pool;
-mtg_all_printings_cards_t gen_cards;
+mse_all_printings_cards_t gen_cards;
 
 static json_t *get_all_printings_cards_from_file()
 {

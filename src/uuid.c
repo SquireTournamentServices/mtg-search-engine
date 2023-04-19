@@ -73,7 +73,7 @@ int read_uuid(FILE *f, uuid_t *uuid)
     return 1;
 }
 
-int get_set_code(const char *code, mtg_set_code_t *ret)
+int get_set_code(const char *code, mse_set_code_t *ret)
 {
     ASSERT(ret != NULL);
     memset(ret, 0, sizeof(*ret));
@@ -88,15 +88,15 @@ int get_set_code(const char *code, mtg_set_code_t *ret)
     return 1;
 }
 
-int write_set_code(FILE *f, mtg_set_code_t code)
+int write_set_code(FILE *f, mse_set_code_t code)
 {
-    ASSERT(fwrite(code, sizeof(mtg_set_code_t), 1, f));
+    ASSERT(fwrite(code, sizeof(mse_set_code_t), 1, f));
     return 1;
 }
 
-int read_set_code(FILE *f, mtg_set_code_t *code)
+int read_set_code(FILE *f, mse_set_code_t *code)
 {
-    ASSERT(fread(code, sizeof(mtg_set_code_t), 1, f));
+    ASSERT(fread(code, sizeof(mse_set_code_t), 1, f));
     return 1;
 }
 

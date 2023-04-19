@@ -9,7 +9,7 @@
 
 // Some vile testing globals
 static thread_pool_t pool;
-static mtg_all_printings_cards_t test_cards;
+static mse_all_printings_cards_t test_cards;
 static json_t *json;
 
 static size_t get_tree_nodes(avl_tree_node_t *node)
@@ -44,7 +44,7 @@ static int __test_card_trie_index(avl_tree_node_t *node)
     }
 
     avl_tree_node_t *ret = NULL;
-    mtg_card_t *card = (mtg_card_t *) node->payload;
+    mse_card_t *card = (mse_card_t *) node->payload;
     ASSERT(mse_card_trie_lookup(test_cards.indexes.card_name_trie, card->name, &ret));
     ASSERT(ret != NULL);
     free_tree(ret);
@@ -60,7 +60,7 @@ static int __test_card_parts_trie_index(avl_tree_node_t *node)
         return 1;
     }
 
-    mtg_card_t *card = (mtg_card_t *) node->payload;
+    mse_card_t *card = (mse_card_t *) node->payload;
     mse_card_name_parts_t parts;
     ASSERT(mse_split_card_name(card->name, &parts));
 
@@ -110,7 +110,7 @@ static int free_tests()
 
 static int test_free_all_printings_cards()
 {
-    mtg_all_printings_cards_t ret;
+    mse_all_printings_cards_t ret;
     memset(&ret, 0, sizeof(ret));
     free_all_printings_cards(&ret);
     return 1;
@@ -150,7 +150,7 @@ static int test_curl_write_callback()
     ASSERT(w != NULL);
 
     size_t len = sizeof(TEST_TEXT);
-    ASSERT(__mtg_json_write_callback(TEST_TEXT, len, 1, (void *) w) == len);
+    ASSERT(__mse_json_write_callback(TEST_TEXT, len, 1, (void *) w) == len);
     fclose(w);
 
     char buffer[1024];
@@ -188,7 +188,7 @@ static int test_parse_all_printings_cards_sets()
     return 1;
 }
 
-SUB_TEST(test_mtg_json, {&init_tests, "Init tests"},
+SUB_TEST(test_mse_json, {&init_tests, "Init tests"},
 {&test_free_all_printings_cards, "Test free zeroed atomic cards struct"},
 {&test_init_free, "Test init and, free"},
 {&test_curl_write_callback, "Test cURL write callback"},

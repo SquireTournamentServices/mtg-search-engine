@@ -17,7 +17,7 @@ static int test_parse_set_json()
     json_t *json = json_pack("{s:s, s:s}", "name", SET_NAME, "releaseDate", SET_RELEASE_DATE);
     ASSERT(json != NULL);
 
-    mtg_set_t set;
+    mse_set_t set;
     ASSERT(parse_set_json(json, &set, SET_CODE));
     json_decref(json);
 
@@ -39,7 +39,7 @@ static int test_parse_set_json_long_code()
     json_t *json = json_pack("{s:s, s:s}", "name", SET_NAME, "releaseDate", SET_RELEASE_DATE);
     ASSERT(json != NULL);
 
-    mtg_set_t set;
+    mse_set_t set;
     ASSERT(parse_set_json(json, &set, SET_CODE_2));
     json_decref(json);
 
@@ -58,7 +58,7 @@ static int test_write_read_set()
     json_t *json = json_pack("{s:s, s:s}", "name", SET_NAME, "releaseDate", SET_RELEASE_DATE);
     ASSERT(json != NULL);
 
-    mtg_set_t set;
+    mse_set_t set;
     ASSERT(parse_set_json(json, &set, SET_CODE_2));
     json_decref(json);
 
@@ -80,7 +80,7 @@ static int test_write_read_set()
     ASSERT(write_set(w, set));
     fclose(w);
 
-    mtg_set_t set_2;
+    mse_set_t set_2;
     memset(&set_2, 0xFF, sizeof(set_2));
     ASSERT(read_set(r, &set_2));
     fclose(r);
@@ -102,10 +102,10 @@ static int test_set_cmp()
     json_t *json = json_pack("{s:s, s:s}", "name", SET_NAME, "releaseDate", SET_RELEASE_DATE);
     ASSERT(json != NULL);
 
-    mtg_set_t set;
+    mse_set_t set;
     ASSERT(parse_set_json(json, &set, SET_CODE_CMP_1));
 
-    mtg_set_t set_2;
+    mse_set_t set_2;
     ASSERT(parse_set_json(json, &set_2, SET_CODE_CMP_2));
 
     ASSERT(cmp_set(&set, &set_2) < 0);
@@ -131,7 +131,7 @@ static int test_add_card_to_set()
     json_t *json = json_pack("{s:s, s:s}", "name", SET_NAME, "releaseDate", SET_RELEASE_DATE);
     ASSERT(json != NULL);
 
-    mtg_set_t set;
+    mse_set_t set;
     ASSERT(parse_set_json(json, &set, SET_CODE_2));
     json_decref(json);
 
@@ -141,7 +141,7 @@ static int test_add_card_to_set()
     ASSERT(set.release.tm_mon == 7 - 1);
     ASSERT(set.release.tm_mday == 10);
 
-    mtg_card_t card;
+    mse_card_t card;
     memset(&card, 0, sizeof(card));
     ASSERT(add_card_to_set(&set, &card));
     ASSERT(set.set_cards_tree != NULL);

@@ -5,7 +5,7 @@
 
 static int __mse_generate_set_oracle_re(mse_set_generator_t *gen,
                                         avl_tree_node_t **res,
-                                        mtg_all_printings_cards_t *cards,
+                                        mse_all_printings_cards_t *cards,
                                         thread_pool_t *pool)
 {
     char *re = escape_regex(gen->argument);
@@ -20,7 +20,7 @@ static int __mse_generate_set_oracle_re(mse_set_generator_t *gen,
 
 static int __mse_generate_set_oracle_text_inc(mse_set_generator_t *gen,
         avl_tree_node_t **res,
-        mtg_all_printings_cards_t *cards,
+        mse_all_printings_cards_t *cards,
         thread_pool_t *pool)
 {
     return 0;
@@ -28,7 +28,7 @@ static int __mse_generate_set_oracle_text_inc(mse_set_generator_t *gen,
 
 int mse_generate_set_oracle(mse_set_generator_t *gen,
                             avl_tree_node_t **res,
-                            mtg_all_printings_cards_t *cards,
+                            mse_all_printings_cards_t *cards,
                             thread_pool_t *pool)
 {
     if (mse_is_regex_str(gen->argument)) {

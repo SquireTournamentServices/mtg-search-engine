@@ -1,3 +1,3 @@
 #pragma once
 
-int test_mtg_json();
+int test_mse_json();
