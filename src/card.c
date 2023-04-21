@@ -5,33 +5,36 @@
 #include <stdlib.h>
 #include <math.h>
 
+mse_colour_enum_t mse_parse_colour(char colour)
+{
+    switch (colour) {
+    case 'W':
+    case 'w':
+        return MSE_WHITE;
+    case 'U':
+    case 'u':
+        return MSE_BLUE;
+    case 'B':
+    case 'b':
+        return MSE_BLACK;
+    case 'R':
+    case 'r':
+        return MSE_RED;
+    case 'G':
+    case 'g':
+        return MSE_GREEN;
+    default:
+        return 0;
+    }
+
+}
+
 mse_colour_enum_t parse_colours(const char *colours)
 {
     mse_colour_enum_t ret = 0;
     ASSERT(colours != NULL);
     for (size_t i = 0; colours[i]; i++) {
-        switch (colours[i]) {
-        case 'W':
-        case 'w':
-            ret |= MSE_WHITE;
-            break;
-        case 'U':
-        case 'u':
-            ret |= MSE_BLUE;
-            break;
-        case 'B':
-        case 'b':
-            ret |= MSE_BLACK;
-            break;
-        case 'R':
-        case 'r':
-            ret |= MSE_RED;
-            break;
-        case 'G':
-        case 'g':
-            ret |= MSE_GREEN;
-            break;
-        }
+        ret |= mse_parse_colour(colours[i]);
     }
 
     return ret;
@@ -211,8 +214,10 @@ int write_card(FILE *f, mse_card_t card)
     ASSERT(write_double(f, card.power));
     ASSERT(write_double(f, card.toughness));
     ASSERT(write_double(f, card.cmc));
-    ASSERT(write_int(f, card.colours));
-    ASSERT(write_int(f, card.colour_identity));
+    int tmp = card.colours;
+    ASSERT(write_int(f, tmp));
+    tmp = card.colour_identity;
+    ASSERT(write_int(f, tmp));
 
     ASSERT(write_size_t(f, card.set_codes_count));
     for (size_t i = 0; i < card.set_codes_count; i++) {
@@ -238,8 +243,11 @@ int read_card(FILE *f, mse_card_t *card)
     ASSERT(read_double(f, &card->power));
     ASSERT(read_double(f, &card->toughness));
     ASSERT(read_double(f, &card->cmc));
-    ASSERT(read_int(f, &card->colours));
-    ASSERT(read_int(f, &card->colour_identity));
+    int tmp;
+    ASSERT(read_int(f, &tmp));
+    card->colours = tmp;
+    ASSERT(read_int(f, &tmp));
+    card->colour_identity = tmp;
 
     ASSERT(read_size_t(f, &card->set_codes_count));
     ASSERT(card->set_codes = malloc(sizeof(*card->set_codes) * card->set_codes_count));
