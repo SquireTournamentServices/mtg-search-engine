@@ -101,6 +101,8 @@ set(SRC
     ./src/generator_double_fields.c
     ./src/generator_oracle.h
     ./src/generator_oracle.c
+    ./src/generator_colour.h
+    ./src/generator_colour.c
     ./src/generator_name.h
     ./src/generator_name.c
     ${FILTER_SOURCE_FILES}
@@ -133,6 +135,7 @@ set(TESTS
     ./tests/test_generator_double_fields.c
     ./tests/test_generator_set.c
     ./tests/test_generator_txt.c
+    ./tests/test_generator_colours.c
     ./tests/test_mse_langs.h
     ./tests/test_mse_langs.c)
 
