@@ -3,6 +3,7 @@
 #include "./generator_set.h"
 #include "./generator_oracle.h"
 #include "./generator_name.h"
+#include "./generator_colour.h"
 #include "../testing_h/testing.h"
 #include <string.h>
 #include <stdlib.h>
@@ -76,7 +77,7 @@ int mse_generate_set(mse_set_generator_t *gen,
 {
     switch(gen->generator_type) {
     case MSE_SET_GENERATOR_COLOUR:
-        return 0;
+        return mse_generate_set_colours(gen, res, cards);
     case MSE_SET_GENERATOR_COLOUR_IDENTITY:
         return 0;
     case MSE_SET_GENERATOR_NAME:

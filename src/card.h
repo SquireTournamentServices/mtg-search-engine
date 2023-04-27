@@ -21,7 +21,7 @@ typedef enum mse_colour_enum_t {
 
 #define MSE_WUBRG 0b11111
 
-typedef int mse_colour_flags_t;
+mse_colour_enum_t mse_parse_colour(char colour);
 
 /// This will parse a card's mana cost or, a colour,
 /// 4{W}{U} will return MSE_BLUE | MSE_WHITE
@@ -40,8 +40,8 @@ typedef struct mse_card_t {
     double power;
     double toughness;
     double cmc;
-    mse_colour_flags_t colours;
-    mse_colour_flags_t colour_identity;
+    mse_colour_enum_t colours;
+    mse_colour_enum_t colour_identity;
     size_t set_codes_count;
     mse_set_code_t *set_codes;
 } mse_card_t;

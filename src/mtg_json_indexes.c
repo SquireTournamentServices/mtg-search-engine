@@ -17,7 +17,7 @@ __impl_thread_add_card_to_##colour_field##_##cmp_type##_index
 typedef struct mse_colour_index_generator_state_t {
     avl_tree_node_t *cards;
     avl_tree_node_t **tree;
-    mse_colour_flags_t colours;
+    mse_colour_enum_t colours;
     int *err;
     sem_t *semaphore;
 } mse_colour_index_generator_state_t;
@@ -26,7 +26,7 @@ typedef struct mse_colour_index_generator_state_t {
 static int MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type) \
     (avl_tree_node_t *cards, \
     avl_tree_node_t **tree, \
-    mse_colour_flags_t colours) \
+    mse_colour_enum_t colours) \
 { \
     if (cards == NULL) { \
         return 1; \
@@ -74,7 +74,7 @@ static void MSE_INDEX_COLOUR_NAME(colour_field, cmp_type)(void *__state, thread_
         state->ret = 0; \
     } \
     int w = 0; \
-    for (mse_colour_flags_t colours = 1; colours <= MSE_WUBRG; colours++) { \
+    for (mse_colour_enum_t colours = 0; colours <= MSE_WUBRG; colours++) { \
         mse_colour_index_generator_state_t gen_state; \
         gen_state.cards = state->cards->card_tree; \
         gen_state.tree = &state->cards->indexes.colour_index.colour_field##_##cmp_type.colour_indexes[(size_t) colours]; \
