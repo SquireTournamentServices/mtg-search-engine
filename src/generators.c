@@ -79,7 +79,7 @@ int mse_generate_set(mse_set_generator_t *gen,
     case MSE_SET_GENERATOR_COLOUR:
         return mse_generate_set_colours(gen, res, cards);
     case MSE_SET_GENERATOR_COLOUR_IDENTITY:
-        return 0;
+        return mse_generate_set_colour_identity(gen, res, cards);
     case MSE_SET_GENERATOR_NAME:
         return mse_generate_set_name(gen, res, cards, pool);
     case MSE_SET_GENERATOR_ORACLE_TEXT:
