@@ -43,22 +43,16 @@ avl_tree_node_t *init_avl_tree_node(void (*free_payload)(void *payload),
                                     int (*cmp_payload)(void *a, void *b),
                                     void *payload)
 {
-    if (cmp_payload == NULL) {
-        lprintf(LOG_ERROR, "Cannot have a NULL comparison function\n");
-        return NULL;
-    }
+    ASSERT(cmp_payload != NULL);
 
     avl_tree_node_t *tree = malloc(sizeof * tree);
-    if (tree == NULL) {
-        lprintf(LOG_ERROR, "Cannot init tree node\n");
-        return tree;
-    }
-    memset(tree, 0, sizeof * tree);
+    ASSERT(tree != NULL);
+
     tree->payload = payload;
     tree->cmp_payload = cmp_payload;
     tree->free_payload = free_payload;
     tree->height = 1;
-
+    tree->l = tree->r = NULL;
     return tree;
 }
 
