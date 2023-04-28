@@ -204,7 +204,7 @@ int get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool)
 
 void free_mse_colour_index(mse_colour_index_t *index)
 {
-    for (size_t i = 0; i < sizeof(index->colour_indexes)/sizeof(*index->colour_indexes); i++) {
+    for (size_t i = 0; i < sizeof(index->colour_indexes) / sizeof(*index->colour_indexes); i++) {
         if (index->colour_indexes[i] != NULL) {
             free_tree(index->colour_indexes[i]);
         }
