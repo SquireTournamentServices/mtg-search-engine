@@ -288,17 +288,25 @@ int mse_matching_card_name(avl_tree_node_t **ret,
 char *escape_regex(char *regex)
 {
     size_t len = strlen(regex);
+    ASSERT(len > 1);
+
     char *ret = malloc(len + 1);
     ASSERT(ret != NULL);
 
-    size_t j = 0;
-    for (size_t i = 0; i < len; i++) {
-        // Strip the regex quote marks
-        if (i == 0 && regex[i] == '/') continue;
-        if (i == len - 1 && regex[i] == '/') continue;
-        ret[j++] = regex[i];
+    size_t offset = 0;
+    int escaping = regex[0] == '/' && regex[len - 1] == '/';
+    if (escaping) {
+        offset++;
     }
-    ret[j] = 0;
+
+    strcpy(ret, &regex[offset]);
+
+    if (escaping) {
+        size_t r_end = len - 1 - offset;
+        if (ret[r_end] == '/') {
+            ret[r_end] = 0;
+        }
+    }
 
     return ret;
 }
