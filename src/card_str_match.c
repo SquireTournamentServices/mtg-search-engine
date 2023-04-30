@@ -273,6 +273,8 @@ static int __mse_match_cards(avl_tree_node_t **ret,
 
     if (is_regex) {
        regfree(&re);
+    } else {
+       free(cmp_data.substr);
     }
     pthread_mutex_destroy(&data.lock);
 
