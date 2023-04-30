@@ -25,13 +25,15 @@ int mse_card_name_matches(mse_card_t *card, regex_t *re);
 /// Returns a set of matching cards for an oracle regex
 int mse_matching_card_oracle(avl_tree_node_t **ret,
                              avl_tree_node_t *cards_tree,
-                             char *regex,
+                             char *str,
+                             int is_regex,
                              thread_pool_t *pool);
 
 /// Returns a set of matching cards for a name regex
 int mse_matching_card_name(avl_tree_node_t **ret,
                            avl_tree_node_t *cards_tree,
-                           char *regex,
+                           char *str,
+                           int is_regex,
                            thread_pool_t *pool);
 
 /// The syntax for the langugage wraps regex in slashes, these will be removed by calling this
