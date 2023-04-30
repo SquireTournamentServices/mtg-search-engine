@@ -6,6 +6,9 @@
 
 #define MSE_RE_FLAGS (REG_EXTENDED | REG_ICASE)
 
+/// A fast method to find if a string matches another
+int mse_str_match(char *str, char *substr);
+
 /// Returns whether or no a string is a regex string
 /// /abc/ is a regex string, otherwise it would be a normal string
 int mse_is_regex_str(char *str);

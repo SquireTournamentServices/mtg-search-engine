@@ -164,6 +164,22 @@ static int test_regex_escape()
     return 1;
 }
 
+#define TARGET_STR "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat."
+
+static int test_str_match()
+{
+    ASSERT(mse_str_match(TARGET_STR, TARGET_STR));
+    ASSERT(mse_str_match("abc" TARGET_STR, TARGET_STR));
+    ASSERT(mse_str_match(TARGET_STR "abc", TARGET_STR));
+    ASSERT(mse_str_match("abc" TARGET_STR "abc", TARGET_STR));
+
+    ASSERT(mse_str_match("{T}: Target creature gains haste.", "haste"));
+
+    ASSERT(!mse_str_match("abc", TARGET_STR));
+    ASSERT(!mse_str_match("abc", "def"));
+    return 1;
+}
+
 SUB_TEST(test_card_str_match, {&init_test_cards, "Init regex test cards"},
 {&test_card_matches, "Test card matches"},
 {&test_oracle_match, "Test oracle regex match"},
@@ -173,4 +189,5 @@ SUB_TEST(test_card_str_match, {&init_test_cards, "Init regex test cards"},
 {&test_regex_compile_err, "Test regex compile error case"},
 {&test_oracle_match_a_lot_of_times, "Test oracle match a lot of times"},
 {&test_regex_escape, "Test regex escape"},
+{&test_str_match, "Test str match"},
 {&free_test_card, "Free regex test cards"})
