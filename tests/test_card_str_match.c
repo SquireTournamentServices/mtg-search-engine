@@ -177,6 +177,7 @@ static int test_str_match()
 
     ASSERT(!mse_str_match("abc", TARGET_STR));
     ASSERT(!mse_str_match("abc", "def"));
+    ASSERT(!mse_str_match(NULL, "def"));
     return 1;
 }
 

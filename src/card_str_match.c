@@ -30,6 +30,9 @@ static int __mse_re_match(char *str, regex_t *re)
 
 int mse_str_match(char *str, char *substr)
 {
+    if (str == NULL) {
+        return 0;
+    }
     size_t substr_len = strlen(substr);
     long w_hash = __MSE_HASH_DEFAULT; // Window hash
 
