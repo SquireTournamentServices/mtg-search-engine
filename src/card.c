@@ -197,7 +197,7 @@ int parse_card_json(json_t *json, mse_card_t *card)
     ASSERT(card->name_lower = mse_to_lower(card->name));
 
     if (card->oracle_text != NULL) {
-       ASSERT(card->oracle_text_lower = mse_to_lower(card->oracle_text));
+        ASSERT(card->oracle_text_lower = mse_to_lower(card->oracle_text));
     }
     return 1;
 }

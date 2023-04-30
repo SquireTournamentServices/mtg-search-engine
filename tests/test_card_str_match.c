@@ -187,7 +187,7 @@ static int test_oracle_match_substr()
     ASSERT(ret != NULL);
     ASSERT(tree_size(ret) >= 1013);
     free_tree(ret);
-    return 1;    
+    return 1;
 }
 
 SUB_TEST(test_card_str_match, {&init_test_cards, "Init regex test cards"},
