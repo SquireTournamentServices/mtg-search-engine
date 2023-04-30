@@ -1,4 +1,5 @@
 #include "./card_str_match.h"
+#include "./io_utils.h"
 #include "../testing_h/testing.h"
 #include <pthread.h>
 #include <semaphore.h>
@@ -239,8 +240,12 @@ static int __mse_match_cards(avl_tree_node_t **ret,
                              mse_card_match_type_t type)
 {
     regex_t re;
+    mse_card_match_cmp_data_t cmp_data;
     if (is_regex) {
         ASSERT(mse_compile_regex(str, &re));
+        cmp_data.re = &re;
+    } else {
+        ASSERT(cmp_data.substr = mse_to_lower(str));
     }
 
     mse_card_match_t data;
@@ -255,13 +260,6 @@ static int __mse_match_cards(avl_tree_node_t **ret,
 
     int layers = (int) floor(log2(pool->threads_count));
     sem_init(&data.sem, 0, 0); // Each thread calls up()
-
-    mse_card_match_cmp_data_t cmp_data;
-    if (is_regex) {
-        cmp_data.re = &re;
-    } else {
-        cmp_data.substr = str;
-    }
     int thread_cnt = __mse_match_card_worker_enqueue(&data, pool, cards_tree, layers, cmp_data);
 
     // Wait for the threads then cleanup
