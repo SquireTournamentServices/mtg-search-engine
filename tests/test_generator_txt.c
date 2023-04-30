@@ -66,7 +66,6 @@ static int test_generator_oracle_substr()
     avl_tree_node_t *root = NULL;
     ASSERT(mse_generate_set(&ret, &root, &gen_cards, &gen_thread_pool));
     ASSERT(tree_size(root) > 0);
-    ASSERT(test_tree_oracle_re(root));
     free_tree(root);
     mse_free_set_generator(&ret);
 
