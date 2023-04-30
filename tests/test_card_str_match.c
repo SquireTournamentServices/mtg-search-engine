@@ -183,7 +183,7 @@ static int test_str_match()
 static int test_oracle_match_substr()
 {
     avl_tree_node_t *ret = NULL;
-    ASSERT(mse_matching_card_name(&ret, test_cards.card_tree, "hAsTe", 0, &pool));
+    ASSERT(mse_matching_card_oracle(&ret, test_cards.card_tree, "haSTe", 0, &pool));
     ASSERT(ret != NULL);
     ASSERT(tree_size(ret) >= 1013);
     free_tree(ret);
