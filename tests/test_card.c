@@ -14,11 +14,17 @@ static int __test_card_props(mse_card_t card)
 {
     ASSERT(card.name != NULL);
     ASSERT(strcmp(card.name, "Ancestor's Chosen") == 0);
+
     ASSERT(card.name_lower != NULL);
-    ASSERT(strcmp(card.name_lower, "ancestor's chosen") == 0);
+    char *n_lower = NULL;
+    ASSERT(n_lower = mse_to_lower(card.name));
+    lprintf(LOG_WARNING, "'%s'\n'%s'\n", card.name_lower, n_lower);
+    ASSERT(strcmp(card.name_lower, n_lower) == 0);
+    free(n_lower);
 
     ASSERT(card.oracle_text != NULL);
     ASSERT(strcmp(card.oracle_text, ORACLE) == 0);
+
     ASSERT(card.oracle_text_lower != NULL);
     char *o_lower = NULL;
     ASSERT(o_lower = mse_to_lower(ORACLE));

@@ -42,9 +42,6 @@ mse_colour_enum_t parse_colours(const char *colours)
 
 int parse_card_json(json_t *json, mse_card_t *card)
 {
-    ASSERT(json != NULL);
-    ASSERT(card != NULL);
-
     memset(card, 0, sizeof(*card));
 
     // Read ID

@@ -80,7 +80,7 @@ static int test_mse_to_double()
 static int test_mse_to_lower()
 {
     char *cpy = NULL;
-    ASSERT(cpy = mse_to_lower("HaStEy"));
+    ASSERT(cpy = mse_to_lower("HaStE"));
     ASSERT(strcmp("haste", cpy) == 0);
     free(cpy);
     return 1;
