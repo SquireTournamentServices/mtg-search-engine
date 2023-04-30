@@ -88,8 +88,8 @@ char *mse_to_lower(char *input)
     size_t len = strlen(input);
     char *ret = malloc(len + 1);
     for (size_t i = 0; i < len; i++) {
-        ret[i] = tolower(ret[i]);
+        ret[i] = tolower(input[i]);
     }
-    ret[len] = 0 ;
+    ret[len] = 0;
     return ret;
 }
