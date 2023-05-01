@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 
 int write_double(FILE *f, double d)
 {
@@ -80,4 +81,15 @@ int mse_to_double(char *input, double *ret)
     char *endptr = NULL;
     *ret = strtod(input, &endptr);
     return endptr == &input[strlen(input)];
+}
+
+char *mse_to_lower(char *input)
+{
+    size_t len = strlen(input);
+    char *ret = malloc(len + 1);
+    for (size_t i = 0; i < len; i++) {
+        ret[i] = tolower(input[i]);
+    }
+    ret[len] = 0;
+    return ret;
 }

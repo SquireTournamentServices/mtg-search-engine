@@ -1,4 +1,5 @@
 #include "./card_str_match.h"
+#include "./io_utils.h"
 #include "../testing_h/testing.h"
 #include <pthread.h>
 #include <semaphore.h>
@@ -23,6 +24,39 @@ int mse_compile_regex(char *regex, regex_t *re)
 static int __mse_re_match(char *str, regex_t *re)
 {
     return regexec(re, str, 0, NULL, 0) == 0;
+}
+
+#define __MSE_HASH_DEFAULT 0
+
+int mse_str_match(char *str, char *substr)
+{
+    if (str == NULL) {
+        return 0;
+    }
+    size_t substr_len = strlen(substr);
+    long w_hash = __MSE_HASH_DEFAULT; // Window hash
+
+    // Calculate target hash
+    long substr_hash = __MSE_HASH_DEFAULT;
+    for (size_t i = 0; i < substr_len; i++) {
+        substr_hash += substr[i];
+    }
+
+    for (size_t i = 0; str[i] != 0; i++) {
+        // Slide the window hash along
+        w_hash += str[i];
+        if (i >= substr_len) {
+            w_hash -= str[i - substr_len];
+        }
+
+        // Check that a hash match is not a false positive
+        if (w_hash == substr_hash && i + 1 >= substr_len) {
+            if (memcmp(&str[i - substr_len + 1], substr, substr_len) == 0) {
+                return 1;
+            }
+        }
+    }
+    return 0;
 }
 
 int mse_card_oracle_matches(mse_card_t *card, regex_t *re)
@@ -54,25 +88,42 @@ typedef struct mse_card_match_t {
     pthread_mutex_t lock;
     sem_t sem;
     int err;
+    int is_regex;
 } mse_card_match_t;
+
+typedef struct mse_card_match_cmp_data_t {
+    union {
+        regex_t *re;
+        char *substr;
+    };
+} mse_card_match_cmp_data_t;
 
 typedef struct mse_card_match_worker_data_t {
     mse_card_match_t *match_data;
     avl_tree_node_t *root;
 } mse_card_match_worker_data_t;
 
-static void __mse_match_card_do_match(avl_tree_node_t *node, mse_card_match_t *match_data, regex_t *re)
+static void __mse_match_card_do_match(avl_tree_node_t *node, mse_card_match_t *match_data, mse_card_match_cmp_data_t data)
 {
     int matches = 0;
     switch(match_data->type) {
     case MSE_MATCH_ORACLE:
-        matches = mse_card_oracle_matches((mse_card_t *) node->payload, re);
+        if (match_data->is_regex) {
+            matches = mse_card_oracle_matches((mse_card_t *) node->payload, data.re);
+        } else {
+            matches = mse_str_match(((mse_card_t *) node->payload)->oracle_text_lower, data.substr);
+        }
         break;
     case MSE_MATCH_NAME:
-        matches = mse_card_name_matches((mse_card_t *) node->payload, re);
+        if (match_data->is_regex) {
+            matches = mse_card_name_matches((mse_card_t *) node->payload, data.re);
+        } else {
+            // this is probably not going to be ussed but eh
+            matches = mse_str_match(((mse_card_t *) node->payload)->name_lower, data.substr);
+        }
         break;
     default:
-        lprintf(LOG_ERROR, "Cannot find regex match type\n");
+        lprintf(LOG_ERROR, "Cannot find match type\n");
         match_data->err = 1;
         return;
     }
@@ -100,15 +151,15 @@ static void __mse_match_card_do_match(avl_tree_node_t *node, mse_card_match_t *m
     }
 }
 
-static void __mse_match_card_node(avl_tree_node_t *node, mse_card_match_t *match_data, regex_t *re)
+static void __mse_match_card_node(avl_tree_node_t *node, mse_card_match_t *match_data, mse_card_match_cmp_data_t cmp_data)
 {
     if (node == NULL) {
         return;
     }
 
-    __mse_match_card_do_match(node, match_data, re);
-    __mse_match_card_node(node->l, match_data, re);
-    __mse_match_card_node(node->r, match_data, re);
+    __mse_match_card_do_match(node, match_data, cmp_data);
+    __mse_match_card_node(node->l, match_data, cmp_data);
+    __mse_match_card_node(node->r, match_data, cmp_data);
 }
 
 static void __mse_match_card_worker(void *data, thread_pool_t *pool)
@@ -116,14 +167,22 @@ static void __mse_match_card_worker(void *data, thread_pool_t *pool)
     mse_card_match_worker_data_t *match_data = (mse_card_match_worker_data_t *) data;
 
     regex_t re;
-    if (!mse_compile_regex(match_data->match_data->regex, &re)) {
-        match_data->match_data->err = 1;
-        lprintf(LOG_ERROR, "Cannot compile regex\n");
-        goto cleanup;
+    mse_card_match_cmp_data_t cmp_data;
+    if (match_data->match_data->is_regex) {
+        if (!mse_compile_regex(match_data->match_data->regex, &re)) {
+            match_data->match_data->err = 1;
+            lprintf(LOG_ERROR, "Cannot compile regex\n");
+            goto cleanup;
+        }
+        cmp_data.re = &re;
+    } else {
+        cmp_data.substr = match_data->match_data->regex;
     }
 
-    __mse_match_card_node(match_data->root, match_data->match_data, &re);
-    regfree(&re);
+    __mse_match_card_node(match_data->root, match_data->match_data, cmp_data);
+    if (match_data->match_data->is_regex) {
+        regfree(&re);
+    }
 cleanup:
     sem_post(&match_data->match_data->sem);
     free(match_data);
@@ -133,7 +192,7 @@ static int __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
         thread_pool_t *pool,
         avl_tree_node_t *node,
         int h,
-        regex_t *re)
+        mse_card_match_cmp_data_t data)
 {
     int sum = 0;
 
@@ -169,37 +228,44 @@ static int __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
             return 0;
         }
     } else {
-        __mse_match_card_do_match(node, match_data, re);
+        __mse_match_card_do_match(node, match_data, data);
     }
 
     // Recurse
-    sum += __mse_match_card_worker_enqueue(match_data, pool, node->l, h - 1, re);
-    sum += __mse_match_card_worker_enqueue(match_data, pool, node->r, h - 1, re);
+    sum += __mse_match_card_worker_enqueue(match_data, pool, node->l, h - 1, data);
+    sum += __mse_match_card_worker_enqueue(match_data, pool, node->r, h - 1, data);
     return sum;
 }
 
 static int __mse_match_cards(avl_tree_node_t **ret,
                              avl_tree_node_t *cards_tree,
-                             char *regex,
+                             char *str,
+                             int is_regex,
                              thread_pool_t *pool,
                              mse_card_match_type_t type)
 {
     regex_t re;
-    ASSERT(mse_compile_regex(regex, &re));
+    mse_card_match_cmp_data_t cmp_data;
+    if (is_regex) {
+        ASSERT(mse_compile_regex(str, &re));
+        cmp_data.re = &re;
+    } else {
+        ASSERT(cmp_data.substr = mse_to_lower(str));
+    }
 
     mse_card_match_t data;
     memset(&data, 0, sizeof(data));
     data.type = type;
     data.res = ret;
-    data.regex = regex;
+    data.regex = str;
+    data.is_regex = is_regex;
 
     pthread_mutex_t lock_tmp = PTHREAD_MUTEX_INITIALIZER;
     data.lock = lock_tmp;
 
     int layers = (int) floor(log2(pool->threads_count));
     sem_init(&data.sem, 0, 0); // Each thread calls up()
-
-    int thread_cnt = __mse_match_card_worker_enqueue(&data, pool, cards_tree, layers, &re);
+    int thread_cnt = __mse_match_card_worker_enqueue(&data, pool, cards_tree, layers, cmp_data);
 
     // Wait for the threads then cleanup
     for (int i = 0; i < thread_cnt; i++) {
@@ -209,7 +275,12 @@ static int __mse_match_cards(avl_tree_node_t **ret,
             waiting = sem_trywait(&data.sem) != 0;
         }
     }
-    regfree(&re);
+
+    if (is_regex) {
+        regfree(&re);
+    } else {
+        free(cmp_data.substr);
+    }
     pthread_mutex_destroy(&data.lock);
 
     ASSERT(data.err == 0);
@@ -218,34 +289,44 @@ static int __mse_match_cards(avl_tree_node_t **ret,
 
 int mse_matching_card_oracle(avl_tree_node_t **ret,
                              avl_tree_node_t *cards_tree,
-                             char *regex,
+                             char *str,
+                             int is_regex,
                              thread_pool_t *pool)
 {
-    return __mse_match_cards(ret, cards_tree, regex, pool, MSE_MATCH_ORACLE);
+    return __mse_match_cards(ret, cards_tree, str, is_regex, pool, MSE_MATCH_ORACLE);
 }
 
 int mse_matching_card_name(avl_tree_node_t **ret,
                            avl_tree_node_t *cards_tree,
-                           char *regex,
+                           char *str,
+                           int is_regex,
                            thread_pool_t *pool)
 {
-    return __mse_match_cards(ret, cards_tree, regex, pool, MSE_MATCH_NAME);
+    return __mse_match_cards(ret, cards_tree, str, is_regex, pool, MSE_MATCH_NAME);
 }
 
 char *escape_regex(char *regex)
 {
     size_t len = strlen(regex);
+    ASSERT(len > 1);
+
     char *ret = malloc(len + 1);
     ASSERT(ret != NULL);
 
-    size_t j = 0;
-    for (size_t i = 0; i < len; i++) {
-        // Strip the regex quote marks
-        if (i == 0 && regex[i] == '/') continue;
-        if (i == len - 1 && regex[i] == '/') continue;
-        ret[j++] = regex[i];
+    size_t offset = 0;
+    int escaping = regex[0] == '/' && regex[len - 1] == '/';
+    if (escaping) {
+        offset++;
     }
-    ret[j] = 0;
+
+    strcpy(ret, &regex[offset]);
+
+    if (escaping) {
+        size_t r_end = len - 1 - offset;
+        if (ret[r_end] == '/') {
+            ret[r_end] = 0;
+        }
+    }
 
     return ret;
 }

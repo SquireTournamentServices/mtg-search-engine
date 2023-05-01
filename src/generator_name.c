@@ -13,7 +13,7 @@ static int __mse_generate_set_name_re(mse_set_generator_t *gen,
     char *re = escape_regex(gen->argument);
     ASSERT(re != NULL);
 
-    int status = mse_matching_card_name(res, cards->card_tree, re, pool);
+    int status = mse_matching_card_name(res, cards->card_tree, re, 1, pool);
     free(re);
 
     ASSERT(status);

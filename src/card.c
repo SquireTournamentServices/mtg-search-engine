@@ -42,9 +42,6 @@ mse_colour_enum_t parse_colours(const char *colours)
 
 int parse_card_json(json_t *json, mse_card_t *card)
 {
-    ASSERT(json != NULL);
-    ASSERT(card != NULL);
-
     memset(card, 0, sizeof(*card));
 
     // Read ID
@@ -71,6 +68,7 @@ int parse_card_json(json_t *json, mse_card_t *card)
     if (oracle_o != NULL) {
         ASSERT(json_is_string(oracle_o));
         ASSERT(card->oracle_text = strdup(json_string_value(oracle_o)));
+        ASSERT(card->oracle_text_lower = mse_to_lower(card->oracle_text));
     }
 
     // Read mana cost
@@ -197,6 +195,7 @@ int parse_card_json(json_t *json, mse_card_t *card)
         card->set_codes_count++;
     }
 
+    ASSERT(card->name_lower = mse_to_lower(card->name));
     return 1;
 }
 
@@ -254,6 +253,11 @@ int read_card(FILE *f, mse_card_t *card)
     for (size_t i = 0; i < card->set_codes_count; i++) {
         ASSERT(read_set_code(f, &card->set_codes[i]));
     }
+
+    ASSERT(card->name_lower = mse_to_lower(card->name));
+    if (card->oracle_text != NULL) {
+        ASSERT(card->oracle_text_lower = mse_to_lower(card->oracle_text));
+    }
     return 1;
 }
 
@@ -267,12 +271,20 @@ void free_card(mse_card_t *card)
         free(card->name);
     }
 
+    if (card->name_lower != NULL) {
+        free(card->name_lower);
+    }
+
     if (card->mana_cost != NULL) {
         free(card->mana_cost);
     }
 
     if (card->oracle_text != NULL) {
         free(card->oracle_text);
+    }
+
+    if (card->oracle_text_lower != NULL) {
+        free(card->oracle_text_lower);
     }
 
     if (card->types != NULL) {

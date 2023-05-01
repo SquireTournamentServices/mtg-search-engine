@@ -1,6 +1,7 @@
 #include "./test_card.h"
 #include "../testing_h/testing.h"
 #include "../src/card.h"
+#include "../src/io_utils.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <jansson.h>
@@ -14,8 +15,21 @@ static int __test_card_props(mse_card_t card)
     ASSERT(card.name != NULL);
     ASSERT(strcmp(card.name, "Ancestor's Chosen") == 0);
 
+    ASSERT(card.name_lower != NULL);
+    char *n_lower = NULL;
+    ASSERT(n_lower = mse_to_lower(card.name));
+    lprintf(LOG_WARNING, "'%s'\n'%s'\n", card.name_lower, n_lower);
+    ASSERT(strcmp(card.name_lower, n_lower) == 0);
+    free(n_lower);
+
     ASSERT(card.oracle_text != NULL);
     ASSERT(strcmp(card.oracle_text, ORACLE) == 0);
+
+    ASSERT(card.oracle_text_lower != NULL);
+    char *o_lower = NULL;
+    ASSERT(o_lower = mse_to_lower(ORACLE));
+    ASSERT(strcmp(o_lower, card.oracle_text_lower) == 0);
+    free(o_lower);
 
     ASSERT(card.colours == card.colour_identity);
     ASSERT(card.colours == MSE_WHITE);

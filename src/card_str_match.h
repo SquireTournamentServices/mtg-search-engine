@@ -6,6 +6,9 @@
 
 #define MSE_RE_FLAGS (REG_EXTENDED | REG_ICASE)
 
+/// A fast method to find if a string matches another
+int mse_str_match(char *str, char *substr);
+
 /// Returns whether or no a string is a regex string
 /// /abc/ is a regex string, otherwise it would be a normal string
 int mse_is_regex_str(char *str);
@@ -22,13 +25,15 @@ int mse_card_name_matches(mse_card_t *card, regex_t *re);
 /// Returns a set of matching cards for an oracle regex
 int mse_matching_card_oracle(avl_tree_node_t **ret,
                              avl_tree_node_t *cards_tree,
-                             char *regex,
+                             char *str,
+                             int is_regex,
                              thread_pool_t *pool);
 
 /// Returns a set of matching cards for a name regex
 int mse_matching_card_name(avl_tree_node_t **ret,
                            avl_tree_node_t *cards_tree,
-                           char *regex,
+                           char *str,
+                           int is_regex,
                            thread_pool_t *pool);
 
 /// The syntax for the langugage wraps regex in slashes, these will be removed by calling this

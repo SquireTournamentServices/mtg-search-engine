@@ -33,8 +33,10 @@ mse_colour_enum_t parse_colours(const char *colours);
 typedef struct mse_card_t {
     uuid_t id;
     char *name;
+    char *name_lower;
     char *mana_cost;
     char *oracle_text;
+    char *oracle_text_lower;
     size_t types_count;
     char **types;
     double power;

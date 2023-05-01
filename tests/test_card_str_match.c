@@ -72,7 +72,7 @@ static int test_card_matches()
 static int test_oracle_match()
 {
     avl_tree_node_t *ret = NULL;
-    ASSERT(mse_matching_card_oracle(&ret, test_cards.card_tree, ORACLE_TEST_REGEX_1, &pool));
+    ASSERT(mse_matching_card_oracle(&ret, test_cards.card_tree, ORACLE_TEST_REGEX_1, 1, &pool));
     ASSERT(ret != NULL);
     ASSERT(tree_size(ret) >= ORACLE_TEST_REGEX_1_MATCHES);
     free_tree(ret);
@@ -82,7 +82,7 @@ static int test_oracle_match()
 static int test_oracle_match_2()
 {
     avl_tree_node_t *ret = NULL;
-    ASSERT(mse_matching_card_oracle(&ret, test_cards.card_tree, ORACLE_TEST_REGEX_2, &pool));
+    ASSERT(mse_matching_card_oracle(&ret, test_cards.card_tree, ORACLE_TEST_REGEX_2, 1, &pool));
     ASSERT(ret != NULL);
     ASSERT(tree_size(ret) >= ORACLE_TEST_REGEX_2_MATHCES);
     free_tree(ret);
@@ -97,7 +97,7 @@ static int test_oracle_match_2()
 static int test_name_match()
 {
     avl_tree_node_t *ret = NULL;
-    ASSERT(mse_matching_card_name(&ret, test_cards.card_tree, NAME_TEST_REGEX_1, &pool));
+    ASSERT(mse_matching_card_name(&ret, test_cards.card_tree, NAME_TEST_REGEX_1, 1, &pool));
     ASSERT(ret != NULL);
     ASSERT(tree_size(ret) >= NAME_TEST_REGEX_1_MATCHES);
     free_tree(ret);
@@ -107,7 +107,7 @@ static int test_name_match()
 static int test_name_match_2()
 {
     avl_tree_node_t *ret = NULL;
-    ASSERT(mse_matching_card_name(&ret, test_cards.card_tree, NAME_TEST_REGEX_2, &pool));
+    ASSERT(mse_matching_card_name(&ret, test_cards.card_tree, NAME_TEST_REGEX_2, 1, &pool));
     ASSERT(ret != NULL);
     ASSERT(tree_size(ret) >= NAME_TEST_REGEX_2_MATHCES);
     free_tree(ret);
@@ -122,10 +122,10 @@ static int test_regex_compile_err()
     ASSERT(mse_compile_regex(INVALID_RE, &re) == 0);
 
     avl_tree_node_t *ret = NULL;
-    ASSERT(!mse_matching_card_oracle(&ret, test_cards.card_tree, INVALID_RE, &pool));
+    ASSERT(!mse_matching_card_oracle(&ret, test_cards.card_tree, INVALID_RE, 1, &pool));
     ASSERT(ret == NULL);
 
-    ASSERT(!mse_matching_card_name(&ret, test_cards.card_tree, INVALID_RE, &pool));
+    ASSERT(!mse_matching_card_name(&ret, test_cards.card_tree, INVALID_RE, 1, &pool));
     ASSERT(ret == NULL);
     return 1;
 }
@@ -139,7 +139,7 @@ static int test_oracle_match_a_lot_of_times()
     return 1;
 }
 
-#define NO_REPLACEMENT_STR "abcdefgh"
+#define NO_REPLACEMENT_STR "abcdefgh/"
 #define STRIPPED_STR "test132123123(abc)+"
 #define STRIP_STR "/" STRIPPED_STR "/"
 
@@ -164,6 +164,35 @@ static int test_regex_escape()
     return 1;
 }
 
+#define TARGET_STR "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat."
+
+static int test_str_match()
+{
+    ASSERT(mse_str_match(TARGET_STR, TARGET_STR));
+    ASSERT(mse_str_match("abc" TARGET_STR, TARGET_STR));
+    ASSERT(mse_str_match(TARGET_STR "abc", TARGET_STR));
+    ASSERT(mse_str_match("abc" TARGET_STR "abc", TARGET_STR));
+
+    ASSERT(mse_str_match("{T}: Target creature gains haste.", "haste"));
+    ASSERT(mse_str_match("First strike Whenever a creature dealt damage by Abattoir Ghoul this turn dies, you gain life equal to that creature’s toughness.", "Whenever a creature"));
+
+    ASSERT(!mse_str_match("abc", TARGET_STR));
+    ASSERT(!mse_str_match("abc", "def"));
+    ASSERT(!mse_str_match(NULL, "def"));
+    return 1;
+}
+
+static int test_oracle_match_substr()
+{
+    avl_tree_node_t *ret = NULL;
+    ASSERT(mse_matching_card_oracle(&ret, test_cards.card_tree, "WhEnEvEr A cReature", 0, &pool));
+    ASSERT(ret != NULL);
+    lprintf(LOG_INFO, "There are %lu nodes\n", tree_size(ret));
+    ASSERT(tree_size(ret) >= 418);
+    free_tree(ret);
+    return 1;
+}
+
 SUB_TEST(test_card_str_match, {&init_test_cards, "Init regex test cards"},
 {&test_card_matches, "Test card matches"},
 {&test_oracle_match, "Test oracle regex match"},
@@ -173,4 +202,6 @@ SUB_TEST(test_card_str_match, {&init_test_cards, "Init regex test cards"},
 {&test_regex_compile_err, "Test regex compile error case"},
 {&test_oracle_match_a_lot_of_times, "Test oracle match a lot of times"},
 {&test_regex_escape, "Test regex escape"},
+{&test_str_match, "Test str match"},
+{&test_oracle_match_substr, "Test oracle match substr"},
 {&free_test_card, "Free regex test cards"})

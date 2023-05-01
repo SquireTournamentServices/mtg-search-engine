@@ -77,9 +77,19 @@ static int test_mse_to_double()
     return 1;
 }
 
+static int test_mse_to_lower()
+{
+    char *cpy = NULL;
+    ASSERT(cpy = mse_to_lower("HaStE"));
+    ASSERT(strcmp("haste", cpy) == 0);
+    free(cpy);
+    return 1;
+}
+
 SUB_TEST(test_io_utils, {&test_double_read_write, "Test double read and, write"},
 {&test_int_read_write, "Test int read and, write"},
 {&test_size_t_read_write, "Test size_t read and, write"},
 {&test_tm_read_write, "Test struct tm read and, write"},
 {&test_str_read_write, "Test string read and, write"},
-{&test_mse_to_double, "Test strtod wrapper"})
+{&test_mse_to_double, "Test strtod wrapper"},
+{&test_mse_to_lower, "Test mse_to_lower"})
