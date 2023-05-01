@@ -257,7 +257,11 @@ static int __mse_match_cards(avl_tree_node_t **ret,
     memset(&data, 0, sizeof(data));
     data.type = type;
     data.res = ret;
-    data.str = str;
+    if (is_regex) {
+        data.str = str;
+    } else {
+        data.str = cmp_data.substr;
+    }
     data.is_regex = is_regex;
 
     pthread_mutex_t lock_tmp = PTHREAD_MUTEX_INITIALIZER;
