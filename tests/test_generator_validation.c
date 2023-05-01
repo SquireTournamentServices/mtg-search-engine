@@ -73,6 +73,7 @@ static int __test_includes_ops(mse_set_generator_type_t gen_type)
 
     // <=
     mse_set_generator_t ret;
+    memset(&ret, 0, sizeof(ret));
     ASSERT(!mse_init_set_generator(&ret, gen_type, op_type, DEFAULT_ARGUMENT, len));
     mse_free_set_generator(&ret);
 
