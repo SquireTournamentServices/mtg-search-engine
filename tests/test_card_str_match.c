@@ -174,6 +174,7 @@ static int test_str_match()
     ASSERT(mse_str_match("abc" TARGET_STR "abc", TARGET_STR));
 
     ASSERT(mse_str_match("{T}: Target creature gains haste.", "haste"));
+    ASSERT(mse_str_match("First strike Whenever a creature dealt damage by Abattoir Ghoul this turn dies, you gain life equal to that creature’s toughness.", "Whenever a creature"));
 
     ASSERT(!mse_str_match("abc", TARGET_STR));
     ASSERT(!mse_str_match("abc", "def"));
@@ -184,9 +185,10 @@ static int test_str_match()
 static int test_oracle_match_substr()
 {
     avl_tree_node_t *ret = NULL;
-    ASSERT(mse_matching_card_oracle(&ret, test_cards.card_tree, "haSTe", 0, &pool));
+    ASSERT(mse_matching_card_oracle(&ret, test_cards.card_tree, "WhEnEvEr A cReature", 0, &pool));
     ASSERT(ret != NULL);
-    ASSERT(tree_size(ret) >= 1013);
+    lprintf(LOG_INFO, "There are %lu nodes\n", tree_size(ret));
+    ASSERT(tree_size(ret) >= 418);
     free_tree(ret);
     return 1;
 }
