@@ -175,6 +175,8 @@ static void __mse_match_card_worker(void *data, thread_pool_t *pool)
             goto cleanup;
         }
         cmp_data.re = &re;
+    } else {
+        cmp_data.substr = match_data->match_data->regex;
     }
 
     __mse_match_card_node(match_data->root, match_data->match_data, cmp_data);
