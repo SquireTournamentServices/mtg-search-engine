@@ -123,7 +123,7 @@ static void __mse_match_card_do_match(avl_tree_node_t *node, mse_card_match_t *m
         }
         break;
     default:
-        lprintf(LOG_ERROR, "Cannot find regex match type\n");
+        lprintf(LOG_ERROR, "Cannot find match type\n");
         match_data->err = 1;
         return;
     }
