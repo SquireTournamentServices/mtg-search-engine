@@ -84,7 +84,7 @@ typedef enum mse_card_match_type_t {
 typedef struct mse_card_match_t {
     mse_card_match_type_t type;
     avl_tree_node_t **res;
-    char *regex;
+    char *str;
     pthread_mutex_t lock;
     sem_t sem;
     int err;
@@ -169,14 +169,14 @@ static void __mse_match_card_worker(void *data, thread_pool_t *pool)
     regex_t re;
     mse_card_match_cmp_data_t cmp_data;
     if (match_data->match_data->is_regex) {
-        if (!mse_compile_regex(match_data->match_data->regex, &re)) {
+        if (!mse_compile_regex(match_data->match_data->str, &re)) {
             match_data->match_data->err = 1;
             lprintf(LOG_ERROR, "Cannot compile regex\n");
             goto cleanup;
         }
         cmp_data.re = &re;
     } else {
-        cmp_data.substr = match_data->match_data->regex;
+        cmp_data.substr = match_data->match_data->str;
     }
 
     __mse_match_card_node(match_data->root, match_data->match_data, cmp_data);
@@ -257,7 +257,7 @@ static int __mse_match_cards(avl_tree_node_t **ret,
     memset(&data, 0, sizeof(data));
     data.type = type;
     data.res = ret;
-    data.regex = str;
+    data.str = str;
     data.is_regex = is_regex;
 
     pthread_mutex_t lock_tmp = PTHREAD_MUTEX_INITIALIZER;
