@@ -126,13 +126,13 @@ static int test_resolve_set_generator()
     return 1;
 }
 
-#define REGEX_1 ".*\\d2.*"
-#define REGEX_2 ".*(\\{[wubrg]\\}){2}.*"
+#define REGEX_1 "/.*\\d2.*/"
+#define COLOUR_1 "r"
 
 static int test_resolve_tree_1()
 {
     mse_interp_node_t *root;
-    ASSERT(root = mse_init_interp_node_operation(MSE_SET_UNION));
+    ASSERT(root = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
 
     mse_set_generator_t generator;
     ASSERT(mse_init_set_generator(&generator,
@@ -143,16 +143,64 @@ static int test_resolve_tree_1()
     ASSERT(root->l = mse_init_interp_node_generator(generator));
 
     ASSERT(mse_init_set_generator(&generator,
-                                  MSE_SET_GENERATOR_ORACLE_TEXT,
-                                  MSE_SET_GENERATOR_OP_EQUALS,
-                                  REGEX_2,
-                                  strlen(REGEX_2)));
+                                  MSE_SET_GENERATOR_COLOUR,
+                                  MSE_SET_GENERATOR_OP_GT_INC,
+                                  COLOUR_1,
+                                  strlen(COLOUR_1)));
     ASSERT(root->r = mse_init_interp_node_generator(generator));
 
     mse_search_intermediate_t ret;
     ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 0, &test_cards));
     ASSERT(ret.node != NULL);
-    ASSERT(tree_size(ret.node) >= 1);
+    ASSERT(tree_size(ret.node) >= 6);
+    free_mse_search_intermediate(&ret);
+
+    ret.node = NULL;
+    ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 1, &test_cards));
+    ASSERT(ret.node== NULL);
+
+    // Cleanup
+    mse_free_interp_node(root);
+    return 1;
+}
+
+#define COLOUR_2 "g"
+#define COLOUR_3 "wubrg"
+
+// (colour>=r and colour>=g) and colour:wubrg
+static int test_resolve_tree_2()
+{
+    mse_interp_node_t *root;
+    ASSERT(root = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+
+    ASSERT(root->l = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+
+    mse_set_generator_t generator;
+    ASSERT(mse_init_set_generator(&generator,
+                                  MSE_SET_GENERATOR_COLOUR,
+                                  MSE_SET_GENERATOR_OP_GT_INC,
+                                  COLOUR_1,
+                                  strlen(COLOUR_1)));
+    ASSERT(root->r = mse_init_interp_node_generator(generator));
+
+    ASSERT(mse_init_set_generator(&generator,
+                                  MSE_SET_GENERATOR_COLOUR,
+                                  MSE_SET_GENERATOR_OP_GT_INC,
+                                  COLOUR_2,
+                                  strlen(COLOUR_2)));
+    ASSERT(root->l->r = mse_init_interp_node_generator(generator));
+
+    ASSERT(mse_init_set_generator(&generator,
+                                  MSE_SET_GENERATOR_COLOUR,
+                                  MSE_SET_GENERATOR_OP_GT_INC,
+                                  COLOUR_3,
+                                  strlen(COLOUR_3)));
+    ASSERT(root->l->l = mse_init_interp_node_generator(generator));
+
+    mse_search_intermediate_t ret;
+    ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 0, &test_cards));
+    ASSERT(ret.node != NULL);
+    ASSERT(tree_size(ret.node) >= 45);
     free_mse_search_intermediate(&ret);
 
     ret.node = NULL;
@@ -170,4 +218,5 @@ SUB_TEST(test_interpretor, {&test_init_free_operator, "Test init free for operat
 {&init_test_cards, "Init test cards"},
 {&test_resolve_set_generator, "Test resolve generator"},
 {&test_resolve_tree_1, "Test resolve tree 1"},
+{&test_resolve_tree_2, "Test resolve tree 2"},
 {&free_test_card, "Free test cards"})
