@@ -10,6 +10,12 @@ typedef struct mse_search_intermediate_t {
 /// often you want to free_tree(node) at some point down the line.
 mse_search_intermediate_t init_mse_search_intermediate_tree(avl_tree_node_t *node);
 
+/// Enum for the operations defined here, used by interpretor.h
+typedef enum mse_set_operator_type_t {
+    MSE_SET_UNION,
+    MSE_SET_INTERSECTION
+} mse_set_operator_type_t;
+
 /// Set union for two intermediates. Freeing this does free the payloads that a and b have, these payloads
 /// are shared references and you have to free them yourself at some point.
 int mse_set_union(mse_search_intermediate_t *ret,
