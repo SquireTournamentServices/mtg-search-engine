@@ -6,10 +6,9 @@
 #include <string.h>
 
 int mse_generate_set_set(mse_set_generator_t *gen,
-                         avl_tree_node_t **res,
+                         mse_search_intermediate_t *res,
                          mse_all_printings_cards_t *cards)
 {
-    *res = NULL;
     mse_set_t card_set_proxy;
     ASSERT(get_set_code(gen->argument, &card_set_proxy.code));
 
@@ -19,15 +18,6 @@ int mse_generate_set_set(mse_set_generator_t *gen,
     }
 
     mse_set_t *set = node->payload;
-
-    // Shallow copy of the set_cards_tree
-    mse_search_intermediate_t ret, a, b;
-    memset(&ret, 0, sizeof(ret));
-    b = ret;
-
-    a.node = set->set_cards_tree;
-
-    ASSERT(mse_set_union(&ret, &a, &b));
-    *res = ret.node;
+    *res = init_mse_search_intermediate_tree(set->set_cards_tree, 1);
     return 1;
 }

@@ -7,7 +7,7 @@
 
 #define MSE_GENERATOR_FIELD_GENERATOR(fname) \
 static int __mse_generate_set_##fname##_eq(mse_set_generator_t *gen, \
-                                       avl_tree_node_t **res, \
+                                       mse_search_intermediate_t *res, \
                                        mse_all_printings_cards_t *cards, \
                                        double arg) \
 { \
@@ -20,12 +20,14 @@ static int __mse_generate_set_##fname##_eq(mse_set_generator_t *gen, \
     upper.id = max_uuid(); \
     lower.fname = upper.fname = arg; \
     /* Search the tree */ \
-    ASSERT(tree_lookup_2(cards->indexes.card_##fname##_tree, res, (void *) &lower, (void *) &upper)); \
+    avl_tree_node_t *node = NULL; \
+    ASSERT(tree_lookup_2(cards->indexes.card_##fname##_tree, &node, (void *) &lower, (void *) &upper)); \
+    *res = init_mse_search_intermediate_tree(node, 0); \
     return 1; \
 } \
  \
 static int __mse_generate_set_##fname##_lt(mse_set_generator_t *gen, \
-                                       avl_tree_node_t **res, \
+                                       mse_search_intermediate_t *res, \
                                        mse_all_printings_cards_t *cards, \
                                        double arg) \
 { \
@@ -37,12 +39,14 @@ static int __mse_generate_set_##fname##_lt(mse_set_generator_t *gen, \
     lower.fname = arg; \
  \
     /* Search the tree */ \
-    ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, res, 1, (void *) &lower)); \
+    avl_tree_node_t *node = NULL; \
+    ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, &node, 1, (void *) &lower)); \
+    *res = init_mse_search_intermediate_tree(node, 0); \
     return 1; \
 } \
  \
 static int __mse_generate_set_##fname##_lt_inc(mse_set_generator_t *gen, \
-        avl_tree_node_t **res, \
+        mse_search_intermediate_t *res, \
         mse_all_printings_cards_t *cards, \
         double arg) \
 { \
@@ -54,12 +58,14 @@ static int __mse_generate_set_##fname##_lt_inc(mse_set_generator_t *gen, \
     lower.fname = arg; \
  \
     /* Search the tree */ \
-    ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, res, 1, (void *) &lower)); \
+    avl_tree_node_t *node = NULL; \
+    ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, &node, 1, (void *) &lower)); \
+    *res = init_mse_search_intermediate_tree(node, 0); \
     return 1; \
 } \
  \
 static int __mse_generate_set_##fname##_gt(mse_set_generator_t *gen, \
-                                       avl_tree_node_t **res, \
+                                       mse_search_intermediate_t *res, \
                                        mse_all_printings_cards_t *cards, \
                                        double arg) \
 { \
@@ -70,12 +76,14 @@ static int __mse_generate_set_##fname##_gt(mse_set_generator_t *gen, \
     lower.fname = arg; \
  \
     /* Search the tree */ \
-    ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, res, 0, (void *) &lower)); \
+    avl_tree_node_t *node = NULL; \
+    ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, &node, 0, (void *) &lower)); \
+    *res = init_mse_search_intermediate_tree(node, 0); \
     return 1; \
 } \
  \
 static int __mse_generate_set_##fname##_gt_inc(mse_set_generator_t *gen, \
-        avl_tree_node_t **res, \
+        mse_search_intermediate_t *res, \
         mse_all_printings_cards_t *cards, \
         double arg) \
 { \
@@ -86,12 +94,14 @@ static int __mse_generate_set_##fname##_gt_inc(mse_set_generator_t *gen, \
     lower.fname = arg; \
  \
     /* Search the tree */ \
-    ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, res, 0, (void *) &lower)); \
+    avl_tree_node_t *node = NULL; \
+    ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, &node, 0, (void *) &lower)); \
+    *res = init_mse_search_intermediate_tree(node, 0); \
     return 1; \
 } \
  \
 int mse_generate_set_##fname(mse_set_generator_t *gen, \
-                           avl_tree_node_t **res, \
+                           mse_search_intermediate_t *res, \
                            mse_all_printings_cards_t *cards) \
 { \
     double arg; \

@@ -63,7 +63,7 @@ static int __mse_resolve_interp_leaf_generator(mse_interp_node_t *node,
     }
 
     ASSERT(mse_generate_set(&node->generator,
-                            &ret->node,
+                            ret,
                             cards,
                             pool));
     return 1;

@@ -31,12 +31,12 @@ static int test_generator_colours_##op_l() \
     mse_set_generator_t ret; \
     ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_##op_u, DEFAULT_ARGUMENT_STR, len)); \
  \
-    avl_tree_node_t *root = NULL; \
-    ASSERT(mse_generate_set(&ret, &root, &gen_cards, &gen_thread_pool)); \
-    ASSERT(tree_size(root) > 0); \
-    ASSERT(test_tree_c_##op_l(root)); \
+    mse_search_intermediate_t inter; \
+    ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
+    ASSERT(tree_size(inter.node) > 0); \
+    ASSERT(test_tree_c_##op_l(inter.node)); \
  \
-    free_tree(root); \
+    free_mse_search_intermediate(&inter); \
     mse_free_set_generator(&ret); \
     return 1; \
 }
@@ -71,12 +71,12 @@ static int test_generator_colour_identity_##op_l() \
     mse_set_generator_t ret; \
     ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_##op_u, DEFAULT_ARGUMENT_STR, len)); \
  \
-    avl_tree_node_t *root = NULL; \
-    ASSERT(mse_generate_set(&ret, &root, &gen_cards, &gen_thread_pool)); \
-    ASSERT(tree_size(root) > 0); \
-    ASSERT(test_tree_ci_##op_l(root)); \
+    mse_search_intermediate_t inter; \
+    ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
+    ASSERT(tree_size(inter.node) > 0); \
+    ASSERT(test_tree_ci_##op_l(inter.node)); \
  \
-    free_tree(root); \
+    free_mse_search_intermediate(&inter); \
     mse_free_set_generator(&ret); \
     return 1; \
 }

@@ -8,11 +8,12 @@ static void __init_mse_search_intermediate(mse_search_intermediate_t *inter)
     memset(inter, 0, sizeof(*inter));
 }
 
-mse_search_intermediate_t init_mse_search_intermediate_tree(avl_tree_node_t *node)
+mse_search_intermediate_t init_mse_search_intermediate_tree(avl_tree_node_t *node, int is_reference)
 {
     mse_search_intermediate_t ret;
     __init_mse_search_intermediate(&ret);
     ret.node = node;
+    ret.is_reference = is_reference;
     return ret;
 }
 
@@ -99,7 +100,7 @@ int mse_set_intersection(mse_search_intermediate_t *ret,
 
 void free_mse_search_intermediate(mse_search_intermediate_t *inter)
 {
-    if (inter->node != NULL) {
+    if (inter->node != NULL && !inter->is_reference) {
         free_tree(inter->node);
     }
     memset(inter, 0, sizeof(*inter));

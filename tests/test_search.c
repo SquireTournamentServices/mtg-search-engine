@@ -29,12 +29,12 @@ static int test_union_tree()
     avl_tree_node_t *tree_1 = get_tree(1, 10);
     ASSERT(tree_size(tree_1) == 10);
     ASSERT(tree_1 != NULL);
-    mse_search_intermediate_t a = init_mse_search_intermediate_tree(tree_1);
+    mse_search_intermediate_t a = init_mse_search_intermediate_tree(tree_1, 0);
 
     avl_tree_node_t *tree_2 = get_tree(11, 20);
     ASSERT(tree_size(tree_2) == 10);
     ASSERT(tree_2 != NULL);
-    mse_search_intermediate_t b = init_mse_search_intermediate_tree(tree_2);
+    mse_search_intermediate_t b = init_mse_search_intermediate_tree(tree_2, 0);
 
     // Test set operations
     mse_search_intermediate_t inter;
@@ -47,22 +47,22 @@ static int test_union_tree()
 
     free_tree(tree_1);
     free_tree(tree_2);
-
     return 1;
 }
 
+/// This is also a test for is_reference, might want to move this elsewhere tbh
 static int test_intersection_tree()
 {
     // Init trees
     avl_tree_node_t *tree_1 = get_tree(1, 100);
     ASSERT(tree_size(tree_1) == 100);
     ASSERT(tree_1 != NULL);
-    mse_search_intermediate_t a = init_mse_search_intermediate_tree(tree_1);
+    mse_search_intermediate_t a = init_mse_search_intermediate_tree(tree_1, 1);
 
     avl_tree_node_t *tree_2 = get_tree(90, 200);
     ASSERT(tree_size(tree_2) == 111);
     ASSERT(tree_2 != NULL);
-    mse_search_intermediate_t b = init_mse_search_intermediate_tree(tree_2);
+    mse_search_intermediate_t b = init_mse_search_intermediate_tree(tree_2, 1);
 
     // Test set operations
     mse_search_intermediate_t inter;
@@ -72,12 +72,12 @@ static int test_intersection_tree()
     ASSERT(tree_size(inter.node) == 11);
 
     free_mse_search_intermediate(&inter);
+    free_mse_search_intermediate(&a);
+    free_mse_search_intermediate(&b);
 
     free_tree(tree_1);
     free_tree(tree_2);
-
     return 1;
-
 }
 
 SUB_TEST(test_search, {&test_union_tree, "Test set union on trees"},

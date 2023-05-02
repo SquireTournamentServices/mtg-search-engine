@@ -20,11 +20,11 @@ static int __test_generator_##fname(mse_set_generator_operator_t op_type, int (*
     mse_set_generator_t ret; \
     ASSERT(mse_init_set_generator(&ret, gen_type, op_type, DEFAULT_ARGUMENT, len)); \
  \
-    avl_tree_node_t *root = NULL; \
-    ASSERT(mse_generate_set(&ret, &root, &gen_cards, &gen_thread_pool)); \
-    ASSERT(tree_size(root) > 0); \
-    ASSERT(test_tree(root)); \
-    free_tree(root); \
+    mse_search_intermediate_t inter; \
+    ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
+    ASSERT(tree_size(inter.node) > 0); \
+    ASSERT(test_tree(inter.node)); \
+    free_mse_search_intermediate(&inter); \
     mse_free_set_generator(&ret); \
     return 1; \
 } \
@@ -38,8 +38,8 @@ static int test_generator_##fname##_invalid_arg() \
     mse_set_generator_t ret; \
     ASSERT(mse_init_set_generator(&ret, gen_type, op_type, BAD_ARGUMENT, len)); \
  \
-    avl_tree_node_t *root = NULL; \
-    ASSERT(mse_generate_set(&ret, &root, &gen_cards, &gen_thread_pool) == 0); \
+    mse_search_intermediate_t inter; \
+    ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool) == 0); \
     mse_free_set_generator(&ret); \
     return 1; \
 } \

@@ -3,6 +3,7 @@
 #include "./avl_tree.h"
 #include "./thread_pool.h"
 #include "./mtg_json.h"
+#include "./search.h"
 
 /// An enum with all of the generator types (what to generate a set off of)
 typedef enum mse_set_generator_type_t {
@@ -57,6 +58,6 @@ int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
                                       mse_set_generator_operator_t op_type);
 
 int mse_generate_set(mse_set_generator_t *gen,
-                     avl_tree_node_t **res,
+                     mse_search_intermediate_t *res,
                      mse_all_printings_cards_t *cards,
                      thread_pool_t *pool);

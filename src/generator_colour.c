@@ -17,7 +17,7 @@ static int __mse_parse_colours(char *colours, mse_colour_enum_t *ret)
 }
 
 int mse_generate_set_colours(mse_set_generator_t *gen,
-                             avl_tree_node_t **res,
+                             mse_search_intermediate_t *res,
                              mse_all_printings_cards_t *cards)
 {
     mse_colour_enum_t colours = 0;
@@ -45,21 +45,12 @@ int mse_generate_set_colours(mse_set_generator_t *gen,
     }
 
     ASSERT(node != NULL);
-
-    // Shallow copy of the node tree
-    mse_search_intermediate_t ret, a, b;
-    memset(&ret, 0, sizeof(ret));
-    b = ret;
-
-    a.node = node;
-
-    ASSERT(mse_set_union(&ret, &a, &b));
-    *res = ret.node;
+    *res = init_mse_search_intermediate_tree(node, 1);
     return 1;
 }
 
 int mse_generate_set_colour_identity(mse_set_generator_t *gen,
-                                     avl_tree_node_t **res,
+                                     mse_search_intermediate_t *res,
                                      mse_all_printings_cards_t *cards)
 {
     mse_colour_enum_t colours = 0;
@@ -87,15 +78,6 @@ int mse_generate_set_colour_identity(mse_set_generator_t *gen,
     }
 
     ASSERT(node != NULL);
-
-    // Shallow copy of the node tree
-    mse_search_intermediate_t ret, a, b;
-    memset(&ret, 0, sizeof(ret));
-    b = ret;
-
-    a.node = node;
-
-    ASSERT(mse_set_union(&ret, &a, &b));
-    *res = ret.node;
+    *res = init_mse_search_intermediate_tree(node, 1);
     return 1;
 }
