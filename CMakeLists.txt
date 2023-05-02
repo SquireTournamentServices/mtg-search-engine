@@ -139,6 +139,12 @@ set(TESTS
     ./tests/test_mse_langs.h
     ./tests/test_mse_langs.c)
 
+# Setup docs
+find_package(Doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
+doxygen_add_docs(mse-docs ${SRC} ${TESTS}
+                 "Generate documentation pages for ${REPO_URL}"})
+
+# Setup gcovr
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 include(CodeCoverage)
@@ -157,6 +163,7 @@ setup_target_for_coverage_gcovr_xml(
 
 set(LIBS jansson CURL::libcurl pthread m c)
 
+# Add library and cli execs
 add_library(mtg-search-engine ${SRC})
 target_link_libraries(mtg-search-engine PRIVATE ${LIBS})
 target_include_directories(mtg-search-engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
@@ -168,6 +175,7 @@ target_include_directories(
   mtg-search-engine-cli PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
                                ${CMAKE_CURRENT_SOURCE_DIR})
 
+# Setup unit tests
 if(UNIX)
   add_executable(mtg-search-engine-tests ${TESTS})
   target_link_libraries(mtg-search-engine-tests PUBLIC ${LIBS}
