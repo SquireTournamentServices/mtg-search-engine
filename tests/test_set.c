@@ -8,7 +8,7 @@
 #include <jansson.h>
 
 #define SET_NAME "My Cool Test Set"
-#define SET_CODE "POO"
+#define SET_CODE "poo"
 /// My birthday - please celebrate it.
 #define SET_RELEASE_DATE "2002-07-10"
 
@@ -31,7 +31,7 @@ static int test_parse_set_json()
     return 1;
 }
 
-#define SET_CODE_2 "UPLIST"
+#define SET_CODE_2 "uplist"
 
 // Some set codes are 4 characters wrong, lets test they work
 static int test_parse_set_json_long_code()
@@ -94,8 +94,8 @@ static int test_write_read_set()
     return 1;
 }
 
-#define SET_CODE_CMP_1 "AAA"
-#define SET_CODE_CMP_2 "BBB"
+#define SET_CODE_CMP_1 "aaa"
+#define SET_CODE_CMP_2 "bbb"
 
 static int test_set_cmp()
 {

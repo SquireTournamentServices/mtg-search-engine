@@ -1,6 +1,7 @@
 #include "./uuid.h"
 #include "../testing_h/testing.h"
 #include <string.h>
+#include <ctype.h>
 
 uuid_t from_string(const char *str, int *status)
 {
@@ -84,7 +85,9 @@ int get_set_code(const char *code, mse_set_code_t *ret)
     ASSERT(len >= MIN_SET_CODE_LEN);
     ASSERT(len <= MAX_SET_CODE_LEN);
 
-    memcpy(ret, code, len);
+    for (size_t i = 0; i < len; i++) {
+        (*ret)[i] = tolower(code[i]);
+    }
     return 1;
 }
 

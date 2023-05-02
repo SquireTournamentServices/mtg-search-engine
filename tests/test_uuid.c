@@ -105,8 +105,8 @@ static int test_uuid_cmp()
     return 1;
 }
 
-#define SET_SHORT "M20"
-#define SET_LONG "UPLIST"
+#define SET_SHORT "m20"
+#define SET_LONG "uplist"
 
 static int test_get_set_code()
 {
@@ -119,6 +119,9 @@ static int test_get_set_code()
 
     ASSERT(get_set_code(SET_LONG, &code));
     ASSERT(strncmp((char *) code, SET_LONG, sizeof(code)) == 0);
+
+    ASSERT(get_set_code("M20", &code));
+    ASSERT(strncmp((char *) code, "m20", sizeof(code)) == 0);
     return 1;
 }
 

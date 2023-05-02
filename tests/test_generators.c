@@ -60,6 +60,10 @@ static int test_generator_init_free()
     ASSERT(ret.generator_op == op_type);
 
     mse_free_set_generator(&ret);
+
+    // Test NULL generator
+    memset(&ret, 0, sizeof(ret));
+    mse_free_set_generator(&ret);
     return 1;
 }
 
