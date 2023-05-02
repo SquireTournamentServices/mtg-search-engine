@@ -23,12 +23,10 @@ static int test_init_free_operator()
     return 1;
 }
 
-#define RANDOM_CONST 0x7F
-
 static int test_init_free_generator()
 {
     mse_set_generator_t generator;
-    memset(&generator, RANDOM_CONST, sizeof(generator));
+    memset(&generator, 0x7F, sizeof(generator));
 
     mse_interp_node_t *node = NULL;
     ASSERT(node = mse_init_interp_node_generator(generator));
@@ -43,5 +41,26 @@ static int test_init_free_generator()
     return 1;
 }
 
+static int test_recursive_free()
+{
+    mse_interp_node_t *node = NULL;
+    ASSERT(node = mse_init_interp_node_operation(MSE_SET_UNION));
+
+    mse_set_generator_t generator;
+    memset(&generator, 0, sizeof(generator));
+
+    ASSERT(node->l = mse_init_interp_node_operation(MSE_SET_UNION));
+    ASSERT(node->l->l = mse_init_interp_node_generator(generator));
+    ASSERT(node->l->r = mse_init_interp_node_generator(generator));
+
+    ASSERT(node->r = mse_init_interp_node_operation(MSE_SET_UNION));
+    ASSERT(node->r->l = mse_init_interp_node_generator(generator));
+    ASSERT(node->r->r = mse_init_interp_node_generator(generator));
+
+    mse_free_interp_node(node);
+    return 1;
+}
+
 SUB_TEST(test_interpretor, {&test_init_free_operator, "Test init free for operator node"},
-{&test_init_free_generator, "Test init free for generator node"})
+{&test_init_free_generator, "Test init free for generator node"},
+{&test_recursive_free, "Test recursive free"})
