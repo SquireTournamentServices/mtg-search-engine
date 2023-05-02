@@ -126,7 +126,7 @@ static int test_resolve_set_generator()
     return 1;
 }
 
-#define REGEX_1 "/.*\\d2.*/"
+#define REGEX_1 "/.*2.*/"
 #define COLOUR_1 "r"
 
 static int test_resolve_tree_1()
