@@ -4,17 +4,22 @@
 #include "./thread_pool.h"
 #include "./mtg_json.h"
 
+/// An enum with all of the generator types (what to generate a set off of)
 typedef enum mse_set_generator_type_t {
     MSE_SET_GENERATOR_COLOUR,
     MSE_SET_GENERATOR_COLOUR_IDENTITY,
+    /// Regex or trie lookup
     MSE_SET_GENERATOR_NAME,
+    /// Regex or substr matching
     MSE_SET_GENERATOR_ORACLE_TEXT,
+    /// Cards in a set
     MSE_SET_GENERATOR_SET,
     MSE_SET_GENERATOR_POWER,
     MSE_SET_GENERATOR_CMC,
     MSE_SET_GENERATOR_TOUGHNESS
 } mse_set_generator_type_t;
 
+/// An enum with all of the operators for a set generator
 typedef enum mse_set_generator_operator_t {
     /// :
     MSE_SET_GENERATOR_OP_INCLUDES,
@@ -47,6 +52,7 @@ int mse_init_set_generator(mse_set_generator_t *ret,
 
 void mse_free_set_generator(mse_set_generator_t *gen);
 
+/// Helper function used in init to check that that the set can be generated
 int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
                                       mse_set_generator_operator_t op_type);
 
