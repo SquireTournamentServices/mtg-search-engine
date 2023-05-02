@@ -71,10 +71,11 @@ int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
 
 
 int mse_generate_set(mse_set_generator_t *gen,
-                     avl_tree_node_t **res,
+                     mse_search_intermediate_t *res,
                      mse_all_printings_cards_t *cards,
                      thread_pool_t *pool)
 {
+    memset(res, 0, sizeof(*res));
     switch(gen->generator_type) {
     case MSE_SET_GENERATOR_COLOUR:
         return mse_generate_set_colours(gen, res, cards);
