@@ -105,6 +105,8 @@ set(SRC
     ./src/generator_colour.c
     ./src/generator_name.h
     ./src/generator_name.c
+    ./src/interpretor.h
+    ./src/interpretor.c
     ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES})
 set(TESTS
@@ -136,6 +138,8 @@ set(TESTS
     ./tests/test_generator_set.c
     ./tests/test_generator_txt.c
     ./tests/test_generator_colours.c
+    ./tests/test_interpretor.h
+    ./tests/test_interpretor.c
     ./tests/test_mse_langs.h
     ./tests/test_mse_langs.c)
 
