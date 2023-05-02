@@ -1,7 +1,68 @@
 #include "./interpretor.h"
 #include "../testing_h/testing.h"
+#include <semaphore.h>
 #include <stdlib.h>
 #include <string.h>
+
+/// Data for the worker threads
+typedef struct mse_interp_node_thread_data_t {
+    // Threading stuffs
+    /// The semaphore of the parent
+    sem_t *sem;
+    /// Whether or not there was an error
+    int *err;
+
+    // Call parameters
+    /// The node to operate on
+    mse_interp_node_t *node;
+    /// The place to return data to
+    mse_search_intermediate_t *ret;
+    /// Whether or not it is a dry run
+    int dry_run;
+    /// The cards index reference
+    mse_all_printings_cards_t *cards;
+} mse_interp_node_thread_data_t;
+
+static void __mse_resolve_interp_tree_worker(void *__data, thread_pool_t *pool)
+{
+    mse_interp_node_thread_data_t *data = (mse_interp_node_thread_data_t *) __data;
+    int r = mse_resolve_interp_tree(data->node, data->ret, pool, data->dry_run, data->cards);
+    if (!r) {
+        lprintf(LOG_ERROR, "Cannot resolve node\n");
+        *data->err = 1;
+    }
+
+    sem_post(data->sem);
+    free(data);
+}
+
+static int __mse_queue_interp_tree_worker(sem_t *sem,
+        int *err,
+        mse_interp_node_t *node,
+        mse_search_intermediate_t *ret,
+        int dry_run,
+        mse_all_printings_cards_t *cards,
+        thread_pool_t *pool)
+{
+    mse_interp_node_thread_data_t *data = malloc(sizeof(*data));
+    ASSERT(data != NULL);
+
+    memset(data, 0, sizeof(*data));
+    data->sem = sem;
+    data->err = err;
+    data->node = node;
+    data->ret = ret;
+    data->dry_run = dry_run;
+    data->cards = cards;
+
+    task_t task = {(void *) data, &__mse_resolve_interp_tree_worker};
+    if (!task_queue_enqueue(&pool->queue, task)) {
+        lprintf(LOG_ERROR, "Cannot enqueue resolve task\n");
+        free(data);
+        return 0;
+    }
+    return 1;
+}
 
 static mse_interp_node_t *__mse_init_interp_node()
 {
@@ -84,10 +145,41 @@ static int __mse_resolve_interp_tree_operator(mse_interp_node_t *node,
     memset(&a, 0, sizeof(a));
     b = a;
 
-    ASSERT(mse_resolve_interp_tree(node->l, &a, pool, dry_run, cards));
-    ASSERT(mse_resolve_interp_tree(node->r, &b, pool, dry_run, cards));
-    if (dry_run) {
-        return 1;
+    int thread_cnt = 0;
+    int err = 0;
+    sem_t sem;
+    ASSERT(sem_init(&sem, 0, 0) == 0);
+
+    if (__mse_queue_interp_tree_worker(&sem, &err, node->l, &a, dry_run, cards, pool)) {
+        thread_cnt++;
+    } else {
+        err =1;
+    }
+    if (__mse_queue_interp_tree_worker(&sem, &err, node->r, &b, dry_run, cards, pool)) {
+        thread_cnt++;
+    } else {
+        err = 1;
+    }
+
+    // Wait for the computation to finish
+    for (int i = 0; i < thread_cnt; i++) {
+        int waiting = 1;
+        while (waiting) {
+            pool_try_consume(pool);
+            waiting = sem_trywait(&sem) != 0;
+        }
+    }
+
+    sem_destroy(&sem);
+    if (dry_run || err) {
+        free_mse_search_intermediate(&a);
+        free_mse_search_intermediate(&b);
+        if (dry_run) {
+            return 1;
+        } else {
+            lprintf(LOG_ERROR, "An error occurred\n");
+            return 0;
+        }
     }
 
     // Perform set operation
