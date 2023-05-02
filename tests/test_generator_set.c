@@ -5,7 +5,7 @@
 #include "../src/generators.h"
 #include <string.h>
 
-#define DEFAULT_ARGUMENT "M20"
+#define DEFAULT_ARGUMENT "m20"
 
 static int test_tree(avl_tree_node_t *node)
 {

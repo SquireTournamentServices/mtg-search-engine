@@ -69,11 +69,11 @@ static int __test_card_props(mse_card_t card)
     ASSERT(card.set_codes_count == 3);
     ASSERT(card.set_codes != NULL);
     for (size_t i = 0; i < card.set_codes_count; i++) {
-        if (strcmp((char *) card.set_codes[i], "10E") == 0) {
+        if (strcmp((char *) card.set_codes[i], "10e") == 0) {
             _10E = 1;
-        } else if (strcmp((char *) card.set_codes[i], "JUD") == 0) {
+        } else if (strcmp((char *) card.set_codes[i], "jud") == 0) {
             _JUD = 1;
-        } else if (strcmp((char *) card.set_codes[i], "UMA") == 0) {
+        } else if (strcmp((char *) card.set_codes[i], "uma") == 0) {
             _UMA = 1;
         }
     }
