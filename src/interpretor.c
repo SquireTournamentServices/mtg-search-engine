@@ -92,6 +92,7 @@ static int __mse_resolve_interp_tree_operator(mse_interp_node_t *node,
 
     // Perform set operation
     int r = 0;
+    memset(ret, 0, sizeof(*ret));
     switch(node->op_type) {
     case MSE_SET_UNION:
         r = mse_set_union(ret, &a, &b);
