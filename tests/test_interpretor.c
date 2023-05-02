@@ -212,6 +212,57 @@ static int test_resolve_tree_2()
     return 1;
 }
 
+static int test_resolve_tree_3()
+{
+    mse_interp_node_t *root;
+    ASSERT(root = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+    ASSERT(root->l = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+    ASSERT(root->r = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+
+    mse_set_generator_t generator;
+    ASSERT(mse_init_set_generator(&generator,
+                                  MSE_SET_GENERATOR_ORACLE_TEXT,
+                                  MSE_SET_GENERATOR_OP_EQUALS,
+                                  REGEX_1,
+                                  strlen(REGEX_1)));
+    ASSERT(root->l->r = mse_init_interp_node_generator(generator));
+
+    ASSERT(mse_init_set_generator(&generator,
+                                  MSE_SET_GENERATOR_ORACLE_TEXT,
+                                  MSE_SET_GENERATOR_OP_EQUALS,
+                                  REGEX_1,
+                                  strlen(REGEX_1)));
+    ASSERT(root->l->l = mse_init_interp_node_generator(generator));
+
+    // Right
+    ASSERT(mse_init_set_generator(&generator,
+                                  MSE_SET_GENERATOR_ORACLE_TEXT,
+                                  MSE_SET_GENERATOR_OP_EQUALS,
+                                  REGEX_1,
+                                  strlen(REGEX_1)));
+    ASSERT(root->r->r = mse_init_interp_node_generator(generator));
+
+    ASSERT(mse_init_set_generator(&generator,
+                                  MSE_SET_GENERATOR_ORACLE_TEXT,
+                                  MSE_SET_GENERATOR_OP_EQUALS,
+                                  REGEX_1,
+                                  strlen(REGEX_1)));
+    ASSERT(root->r->l = mse_init_interp_node_generator(generator));
+
+    mse_search_intermediate_t ret;
+    ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 0, &test_cards));
+    ASSERT(ret.node != NULL);
+    free_mse_search_intermediate(&ret);
+
+    ret.node = NULL;
+    ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 1, &test_cards));
+    ASSERT(ret.node== NULL);
+
+    // Cleanup
+    mse_free_interp_node(root);
+    return 1;
+}
+
 SUB_TEST(test_interpretor, {&test_init_free_operator, "Test init free for operator node"},
 {&test_init_free_generator, "Test init free for generator node"},
 {&test_recursive_free, "Test recursive free"},
@@ -219,4 +270,5 @@ SUB_TEST(test_interpretor, {&test_init_free_operator, "Test init free for operat
 {&test_resolve_set_generator, "Test resolve generator"},
 {&test_resolve_tree_1, "Test resolve tree 1"},
 {&test_resolve_tree_2, "Test resolve tree 2"},
+{&test_resolve_tree_3, "Test resolve tree 3"},
 {&free_test_card, "Free test cards"})
