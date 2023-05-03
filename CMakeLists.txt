@@ -67,7 +67,9 @@ add_custom_command(
 
 # Parser generators
 find_package(BISON)
-set(PARSER_SRC ./src/parser/parser.h)
+bison_target(query_parser ./src/query_parser.y
+             ${CMAKE_CURRENT_BINARY_DIR}/query_parser.c)
+set(PARSER_SRC ${BISON_query_parser_OUTPUTS})
 
 # Define the sources
 set(SRC
