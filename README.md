@@ -13,7 +13,7 @@ and sets. It has a syntax that is similar to Scryfall but it can be embedded any
  - openssl
  - cmake
  - c compiler
- - ragel *when i get round to writing the parser*
+ - <!--nerf-->bison
  - python3
   - `pip install -r requirements.txt`
 

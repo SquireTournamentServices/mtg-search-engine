@@ -65,6 +65,11 @@ add_custom_command(
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
+# Parser generators
+find_package(BISON)
+set(PARSER_SRC ./src/parser/parser.h)
+
+# Define the sources
 set(SRC
     ./testing_h/ansi_colour.h
     ./testing_h/testing.h
@@ -107,6 +112,7 @@ set(SRC
     ./src/generator_name.c
     ./src/interpretor.h
     ./src/interpretor.c
+    ${PARSER_SRC}
     ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES})
 set(TESTS
