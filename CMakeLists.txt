@@ -186,9 +186,6 @@ if(UNIX)
                                                        mtg-search-engine)
   target_include_directories(mtg-search-engine-tests
                              PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-  target_include_directories(
-    mtg-search-engine-tests PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
-                                   ${CMAKE_CURRENT_SOURCE_DIR})
 
   # Copy test data
   set(TEST_CARD_JSON ${CMAKE_CURRENT_BINARY_DIR}/test_card.json)
