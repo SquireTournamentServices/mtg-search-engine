@@ -13,6 +13,7 @@
 #include "src/interpretor.h"
 
 static mse_set_generator_operator_t parser_op_operator = -1;
+static mse_set_operator_t parser_operator = -1;
 static char *tmp_buffer = NULL;
 static char *op_name_buffer = NULL;
 static char *argument_buffer = NULL;
@@ -30,10 +31,16 @@ void yyerror(const char *s);
 %token STRING
 %token REGEX_STRING
 
+%token AND
+%token OR
+
 %{
 #define WORD_REGEX "[a-zA-Z0-9]+"
 #define STRING_REGEX "\"([^\"]|(\\\\\"))+\""
 #define REGEX_STRING_REGEX "\/([^\/]|(\\\\\/))+\/"
+
+#define AND_REGEX "[aA][nN][dD]"
+#define OR_REGEX "[oO][rR]"
 
 #define COPY_TO_TMP_BUFFER \
     tmp_buffer = (char*) malloc(sizeof(char) * (yyleng + 1)); \
@@ -105,6 +112,10 @@ op_argument: string { ; }
            ;
 
 set_generator: op_name op_operator op_operator { mse_handle_set_generator(); }
+
+operator : AND { parser_operator = MSE_SET_INTERSECTION; }
+         | OR { parser_operator = MSE_SET_UNION; }
+         ;
 
 %%
 
