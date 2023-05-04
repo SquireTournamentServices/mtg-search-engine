@@ -5,14 +5,25 @@
 
 %}
 
+SLASH \/
+QUOTE \"
+
 %%
-"[a-zA-Z0-9]+" { return WORD; }
-"\"([^\"]|(\\\\\"))+\"" { return STRING; }
+[a-zA-Z0-9]+ { return WORD; }
+QUOTE([^\"]|(\\\\QUOTE))+QUOTE { return STRING; }
 
-"\\/([^/]|(\\\\\\\\\\/))+\\/" { return REGEX_STRING; }
+SLASH([^/]|(\\\\SLASH))+SLASH { return REGEX_STRING; }
 
-"[aA][nN][dD]" { return AND; }
-"[oO][rR]" { return OR; }
+[aA][nN][dD] { return AND; }
+[oO][rR] { return OR; }
 
-"\\s+" { return WHITESPACE; }
+\\s+ { return WHITESPACE; }
+
+"<" { return LT; }
+"<=" { return LT_INC; }
+">" { return GT; }
+">=" { return GT_INC; }
+":" { return INCLUDES; }
+"=" { return EQUALS; }
+
 %%

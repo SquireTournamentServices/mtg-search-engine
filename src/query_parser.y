@@ -22,15 +22,22 @@ static void yyerror(const char *s)
 }
 %}
 
-%token WORD "[a-zA-Z0-9]+"
-%token STRING "\"([^\"]|(\\\\\"))+\""
+%token LT
+%token LT_INC
+%token GT
+%token GT_INC
+%token INCLUDES
+%token EQUALS
 
-%token REGEX_STRING "\\/([^/]|(\\\\\\\\\\/))+\\/"
+%token WORD
+%token STRING
 
-%token AND "[aA][nN][dD]"
-%token OR "[oO][rR]"
+%token REGEX_STRING
 
-%token WHITESPACE "\\s+"
+%token AND
+%token OR
+
+%token WHITESPACE
 
 %{
 #define COPY_TO_TMP_BUFFER \
@@ -72,12 +79,12 @@ static int mse_handle_set_generator()
 input: query
      ;
 
-op_operator : "<=" { parser_op_operator = MSE_SET_GENERATOR_OP_LT_INC; }
-            | "<" { parser_op_operator = MSE_SET_GENERATOR_OP_LT; }
-            | ">" { parser_op_operator = MSE_SET_GENERATOR_OP_GT; }
-            | ">=" { parser_op_operator = MSE_SET_GENERATOR_OP_GT_INC; }
-            | ":" { parser_op_operator = MSE_SET_GENERATOR_OP_INCLUDES; }
-            | "=" { parser_op_operator = MSE_SET_GENERATOR_OP_EQUALS; }
+op_operator : LT_INC { parser_op_operator = MSE_SET_GENERATOR_OP_LT_INC; }
+            | LT { parser_op_operator = MSE_SET_GENERATOR_OP_LT; }
+            | GT { parser_op_operator = MSE_SET_GENERATOR_OP_GT; }
+            | GT_INC { parser_op_operator = MSE_SET_GENERATOR_OP_GT_INC; }
+            | INCLUDES { parser_op_operator = MSE_SET_GENERATOR_OP_INCLUDES; }
+            | EQUALS { parser_op_operator = MSE_SET_GENERATOR_OP_EQUALS; }
             ;
 
 word: WORD {
