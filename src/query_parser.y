@@ -8,9 +8,10 @@
                         __lprintf
 #include "src/interpretor.h"
 #include "query_parser.h"
+#include "query_lexer.h"
 
-static mse_set_generator_operator_t parser_op_operator = -1;
-static mse_set_operator_type_t parser_operator = -1;
+static mse_set_generator_operator_t parser_op_operator;
+static mse_set_operator_type_t parser_operator;
 static char *tmp_buffer = NULL;
 static char *op_name_buffer = NULL;
 static char *argument_buffer = NULL;
@@ -61,8 +62,6 @@ static int mse_handle_set_generator()
 
     free(argument_buffer);
     argument_buffer = NULL;
-
-    parser_op_operator = -1;  
     return r;
 }
 
@@ -110,7 +109,7 @@ operator : AND { parser_operator = MSE_SET_INTERSECTION; }
          | OR { parser_operator = MSE_SET_UNION; }
          ;
 
-query: 
+query: %empty
      | set_generator
      | set_generator WHITESPACE query
      | set_generator WHITESPACE operator set_generator WHITESPACE query

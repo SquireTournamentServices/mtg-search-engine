@@ -67,9 +67,23 @@ add_custom_command(
 
 # Parser generators
 find_package(BISON)
+find_package(FLEX)
+
+if(WIN32)
+  set(ADDITIONAL_FLEX_FLAGS "--wincompat")
+else()
+  set(ADDITIONAL_FLEX_FLAGS "")
+endif()
+
+flex_target(
+  query_lexer ./src/query_parser.l ${CMAKE_CURRENT_BINARY_DIR}/query_lexer.c
+  DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/query_lexer.h
+  COMPILE_FLAGS ${ADDITIONAL_FLEX_FLAGS})
 bison_target(query_parser ./src/query_parser.y
              ${CMAKE_CURRENT_BINARY_DIR}/query_parser.c)
-set(PARSER_SRC ${BISON_query_parser_OUTPUTS})
+add_flex_bison_dependency(query_lexer query_parser)
+
+set(PARSER_SRC ${BISON_query_parser_OUTPUTS} ${FLEX_query_lexer_OUTPUTS})
 
 # Define the sources
 set(SRC
