@@ -1,7 +1,3 @@
-/*
- * This is probably aweful practice but this one file will contain the entire query parser!
- * It is for use with BISON, idk what I am doing please Adrian Johnstone send me some help.
- */
 %{
 #include <stdlib.h>
 #include <string.h>
@@ -11,37 +7,31 @@
                         ":" ANSI_YELLOW "%d" ANSI_RESET ") \t", __FILE__, __LINE__ ),\
                         __lprintf
 #include "src/interpretor.h"
+#include "query_parser.h"
 
 static mse_set_generator_operator_t parser_op_operator = -1;
-static mse_set_operator_t parser_operator = -1;
+static mse_set_operator_type_t parser_operator = -1;
 static char *tmp_buffer = NULL;
 static char *op_name_buffer = NULL;
 static char *argument_buffer = NULL;
 
-/// Forward declare to suppress errors
-void yyerror(const char *s);
+static void yyerror(const char *s)
+{
+    lprintf(LOG_ERROR, "Parse error: %s\n", s);
+}
 %}
 
-/// Name part of a set generator in a query i.e: 'colour'
-%token OP_NAME
-/// An bivariable function that operates on two input sets i.e: 'and' (which is set intersection)
-%token OPERATOR
+%token WORD "[a-zA-Z0-9]+"
+%token STRING "\"([^\"]|(\\\\\"))+\""
 
-%token WORD
-%token STRING
-%token REGEX_STRING
+%token REGEX_STRING "\\/([^/]|(\\\\\\\\\\/))+\\/"
 
-%token AND
-%token OR
+%token AND "[aA][nN][dD]"
+%token OR "[oO][rR]"
+
+%token WHITESPACE "\\s+"
 
 %{
-#define WORD_REGEX "[a-zA-Z0-9]+"
-#define STRING_REGEX "\"([^\"]|(\\\\\"))+\""
-#define REGEX_STRING_REGEX "\/([^\/]|(\\\\\/))+\/"
-
-#define AND_REGEX "[aA][nN][dD]"
-#define OR_REGEX "[oO][rR]"
-
 #define COPY_TO_TMP_BUFFER \
     tmp_buffer = (char*) malloc(sizeof(char) * (yyleng + 1)); \
     ASSERT(tmp_buffer != NULL); \
@@ -69,7 +59,7 @@ static int mse_handle_set_generator()
     free(op_name_buffer);
     op_name_buffer = NULL;
 
-    free(argumen_buffer);
+    free(argument_buffer);
     argument_buffer = NULL;
 
     parser_op_operator = -1;  
@@ -80,6 +70,9 @@ static int mse_handle_set_generator()
 
 // Token match definitions
 %%
+input: query
+     ;
+
 op_operator : "<=" { parser_op_operator = MSE_SET_GENERATOR_OP_LT_INC; }
             | "<" { parser_op_operator = MSE_SET_GENERATOR_OP_LT; }
             | ">" { parser_op_operator = MSE_SET_GENERATOR_OP_GT; }
@@ -106,17 +99,22 @@ regex_string: REGEX_STRING {
             COPY_TO_TMP_BUFFER
             }
 
-op_argument: string { ; }
-           | regex_string { ; }
-           | word { ; }
+op_argument: string { COPY_TO_ARGUMENT_BUFFER }
+           | regex_string { COPY_TO_ARGUMENT_BUFFER }
+           | word { COPY_TO_ARGUMENT_BUFFER }
            ;
 
-set_generator: op_name op_operator op_operator { mse_handle_set_generator(); }
+set_generator: op_name op_operator op_argument { mse_handle_set_generator(); }
 
 operator : AND { parser_operator = MSE_SET_INTERSECTION; }
          | OR { parser_operator = MSE_SET_UNION; }
          ;
 
+query: 
+     | set_generator
+     | set_generator WHITESPACE query
+     | set_generator WHITESPACE operator set_generator WHITESPACE query
+     ;
 %%
 
 void yyerror(const char *s)
