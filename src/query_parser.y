@@ -117,7 +117,15 @@ query:
      ;
 %%
 
-void yyerror(const char *s)
-{
-    lprintf(LOG_ERROR, "Parse error: %s\n", s);
+int parse_input_string(const char* input_string) {
+    // create a new input buffer and switch to it
+    YY_BUFFER_STATE input_buffer = yy_scan_string(input_string);
+
+    // call the parser
+    int result = yyparse();
+
+    // free the input buffer
+    yy_delete_buffer(input_buffer);
+
+    return result == 0 ? 1 : 0;
 }
