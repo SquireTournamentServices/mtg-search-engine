@@ -12,9 +12,10 @@
                         __lprintf
 #include "src/interpretor.h"
 
-static mse_set_generator_operator_t yy_parser_op_operator = -1;
+static mse_set_generator_operator_t parser_op_operator = -1;
 static char *tmp_buffer = NULL;
 static char *op_name_buffer = NULL;
+static char *argument_buffer = NULL;
 
 /// Forward declare to suppress errors
 void yyerror(const char *s);
@@ -22,45 +23,88 @@ void yyerror(const char *s);
 
 /// Name part of a set generator in a query i.e: 'colour'
 %token OP_NAME
-/// An argument for an op
-%token OP_ARGUMENT
 /// An bivariable function that operates on two input sets i.e: 'and' (which is set intersection)
 %token OPERATOR
 
 %token WORD
+%token STRING
+%token REGEX_STRING
 
 %{
 #define WORD_REGEX "[a-zA-Z0-9]+"
+#define STRING_REGEX "\"([^\"]|(\\\\\"))+\""
+#define REGEX_STRING_REGEX "\/([^\/]|(\\\\\/))+\/"
+
+#define COPY_TO_TMP_BUFFER \
+    tmp_buffer = (char*) malloc(sizeof(char) * (yyleng + 1)); \
+    ASSERT(tmp_buffer != NULL); \
+    strncpy(tmp_buffer, yytext, yyleng); \
+    tmp_buffer[yyleng] = '\0'; \
+    
+#define COPY_TO_ARGUMENT_BUFFER \
+    ASSERT(argument_buffer = strdup(tmp_buffer)); \
+    free(tmp_buffer); \
+    tmp_buffer = NULL;
+
+static int __mse_handle_set_generator()
+{
+    // TODO: Create a set_generator object and put it in the tree
+    return 1;
+}
+
+/// Calls the handler for a set generator then cleans the internal state
+static int mse_handle_set_generator()
+{
+    int r = __mse_handle_set_generator();
+    free(tmp_buffer);
+    tmp_buffer = NULL;
+
+    free(op_name_buffer);
+    op_name_buffer = NULL;
+
+    free(argumen_buffer);
+    argument_buffer = NULL;
+
+    parser_op_operator = -1;  
+    return r;
+}
+
 %}
 
 // Token match definitions
 %%
-op_operator : "<=" { yy_parser_op_operator = MSE_SET_GENERATOR_OP_LT_INC; }
-                  | "<" { yy_parser_op_operator = MSE_SET_GENERATOR_OP_LT; }
-                  | ">" { yy_parser_op_operator = MSE_SET_GENERATOR_OP_GT; }
-                  | ">=" { yy_parser_op_operator = MSE_SET_GENERATOR_OP_GT_INC; }
-                  | ":" { yy_parser_op_operator = MSE_SET_GENERATOR_OP_INCLUDES; }
-                  | "=" { yy_parser_op_operator = MSE_SET_GENERATOR_OP_EQUALS; }
-                  ;
+op_operator : "<=" { parser_op_operator = MSE_SET_GENERATOR_OP_LT_INC; }
+            | "<" { parser_op_operator = MSE_SET_GENERATOR_OP_LT; }
+            | ">" { parser_op_operator = MSE_SET_GENERATOR_OP_GT; }
+            | ">=" { parser_op_operator = MSE_SET_GENERATOR_OP_GT_INC; }
+            | ":" { parser_op_operator = MSE_SET_GENERATOR_OP_INCLUDES; }
+            | "=" { parser_op_operator = MSE_SET_GENERATOR_OP_EQUALS; }
+            ;
 
 word: WORD {
-    /* Allocate a new buffer for the word */
-    tmp_buffer = (char*) malloc(sizeof(char) * (yyleng + 1));
-    ASSERT(tmp_buffer != NULL);
-    /* Copy the word to the temporary buffer */
-    strncpy(tmp_buffer, yytext, yyleng);
-    tmp_buffer[yyleng] = '\0';
+    COPY_TO_TMP_BUFFER
     }
 
 op_name: word {
-       /* Allocate a new buffer for the op_name */
-       op_name_buffer = (char*) malloc(sizeof(char) * (strlen(tmp_buffer) + 1));
-       ASSERT(op_name_buffer != NULL);
-       /* Copy the word from the temporary buffer to the op_name buffer */
-       strcpy(op_name_buffer, tmp_buffer);
+       ASSERT(op_name_buffer = strdup(tmp_buffer));
        free(tmp_buffer);
        tmp_buffer = NULL;
        }
+
+string: STRING {
+      COPY_TO_TMP_BUFFER
+      }
+
+regex_string: REGEX_STRING {
+            COPY_TO_TMP_BUFFER
+            }
+
+op_argument: string { ; }
+           | regex_string { ; }
+           | word { ; }
+           ;
+
+set_generator: op_name op_operator op_operator { mse_handle_set_generator(); }
 
 %%
 
