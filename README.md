@@ -12,8 +12,11 @@ and sets. It has a syntax that is similar to Scryfall but it can be embedded any
 ## Requirements
  - openssl
  - cmake
- - c compiler
+ - cURL
+ - jansson
+ - c compiler *(i.e: gcc)*
  - <!--nerf-->bison
+ - flex
  - python3
   - `pip install -r requirements.txt`
 
