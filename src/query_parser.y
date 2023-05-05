@@ -43,6 +43,7 @@ static void yyerror(const char *s)
 %token OPEN_BRACKET
 %token CLOSE_BRACKET
 
+%token STMT_NEGATE
 %{
 #define COPY_TO_TMP_BUFFER \
     tmp_buffer = (char*) malloc(sizeof(char) * (yyleng + 1)); \
@@ -62,7 +63,7 @@ static int __mse_handle_set_generator()
 }
 
 /// Calls the handler for a set generator then cleans the internal state
-static int mse_handle_set_generator()
+static int mse_handle_set_generator(int negate)
 {
     int r = __mse_handle_set_generator();
     free(tmp_buffer);
@@ -114,9 +115,10 @@ op_argument: string { COPY_TO_ARGUMENT_BUFFER }
            | word { COPY_TO_ARGUMENT_BUFFER }
            ;
 
-set_generator: op_name op_operator op_argument { mse_handle_set_generator(); }
-             | word { mse_handle_set_generator(); }
-             | string { mse_handle_set_generator(); }
+set_generator: op_name op_operator op_argument { mse_handle_set_generator(0); }
+             | STMT_NEGATE op_name op_operator op_argument { mse_handle_set_generator(1); }
+             | word { mse_handle_set_generator(0); }
+             | string { mse_handle_set_generator(0); }
              ;
 
 operator : AND { parser_operator = MSE_SET_INTERSECTION; }

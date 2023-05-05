@@ -28,3 +28,4 @@ cmc:5 and (name:jeff or name:bill)
 cmc:5 and (name:jeff or name:bill) opt
 (name:test)
 (opt)
+toughness:0 -o:"+1/+1" -o:"equal to" -o:modular
