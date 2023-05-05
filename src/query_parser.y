@@ -115,8 +115,8 @@ op_argument: string { COPY_TO_ARGUMENT_BUFFER }
            ;
 
 set_generator: op_name op_operator op_argument { mse_handle_set_generator(); }
-             | word { /* TODO: make this lmao lmao */ }
-             | string { /* TODO: make this lmao lmao */ }
+             | word { mse_handle_set_generator(); }
+             | string { mse_handle_set_generator(); }
              ;
 
 operator : AND { parser_operator = MSE_SET_INTERSECTION; }
@@ -124,10 +124,11 @@ operator : AND { parser_operator = MSE_SET_INTERSECTION; }
          ;
 
 query: %empty
-     | set_generator
-     | set_generator WHITESPACE operator WHITESPACE set_generator WHITESPACE query
+     | set_generator WHITESPACE operator WHITESPACE query
      | set_generator WHITESPACE query
-     | OPEN_BRACKET query CLOSE_BRACKET { /* TODO: make this work lmao */ }
+     | set_generator
+     | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE query
+     | OPEN_BRACKET query CLOSE_BRACKET
      ;
 %%
 
