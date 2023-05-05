@@ -116,6 +116,7 @@ op_argument: string { COPY_TO_ARGUMENT_BUFFER }
 
 set_generator: op_name op_operator op_argument { mse_handle_set_generator(); }
              | WORD { /* TODO: make this lmao lmao */ }
+             | STRING { /* TODO: make this lmao lmao */ }
              ;
 
 operator : AND { parser_operator = MSE_SET_INTERSECTION; }
@@ -140,5 +141,5 @@ int parse_input_string(const char* input_string) {
     // free the input buffer
     yy_delete_buffer(input_buffer);
 
-    return result == 0 ? 1 : 0;
+    return result == 0;
 }
