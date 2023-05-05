@@ -119,7 +119,7 @@ operator : AND { parser_operator = MSE_SET_INTERSECTION; }
 query: %empty
      | set_generator
      | set_generator WHITESPACE query
-     | set_generator WHITESPACE operator set_generator WHITESPACE query
+     | set_generator WHITESPACE operator WHITESPACE set_generator WHITESPACE query
      ;
 %%
 
