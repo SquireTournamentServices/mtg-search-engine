@@ -4,14 +4,10 @@
 #include "mse_query_parser.h"
 %}
 
-SLASH \/
-QUOTE \"
-
 %%
 [a-zA-Z0-9]+ { return WORD; }
-QUOTE([^\"]|(\\\\QUOTE))+QUOTE { return STRING; }
-
-SLASH([^/]|(\\\\SLASH))+SLASH { return REGEX_STRING; }
+\"([^"]|(\\\"))+\" { return STRING; }
+\/([^/]|(\\\/))+\/ { return REGEX_STRING; }
 
 [aA][nN][dD] { return AND; }
 [oO][rR] { return OR; }
