@@ -1,0 +1,23 @@
+c:r
+colour:r
+identity:r
+opt
+cmc:5
+cmc<5
+p>5
+t>=5
+t<=5
+t=5
+name:asdf
+name:"Testing 1 2 3"
+name:"Testing 1 2 3\" asdf "
+name:/a? Testing [a-z]+/
+name:/a? Testing [a-z]+ \/ asdf/
+o=asdasdsada
+oracle="Testing 1 2 3"
+name="Testing 1 2 3\" asdf "
+name=/a? Testing [a-z]+/
+name=/a? Testing [a-z]+ \/ asdf/
+cmc:5 and cmc>5
+cmc:5 or cmc<5
+opt or goblin or "Goblin Motivator" and c<wubrg
