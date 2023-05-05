@@ -22,5 +22,5 @@
 "=" { return EQUALS; }
 "(" { return OPEN_BRACKET; }
 ")" { return CLOSE_BRACKET; }
-
+"-" { return STMT_NEGATE; }
 %%
