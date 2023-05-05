@@ -21,3 +21,5 @@ name=/a? Testing [a-z]+ \/ asdf/
 cmc:5 and cmc>5
 cmc:5 or cmc<5
 opt or goblin or "Goblin Motivator" and c<wubrg
+"Goblin Motivator"
+Goblin Motivator

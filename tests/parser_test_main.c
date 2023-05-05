@@ -13,6 +13,10 @@ static int __test_next_query(FILE *f)
     if (r == NULL) {
         return EOF;
     }
+    // Empty string is also EOF
+    if (buffer[0] == 0) {
+        return EOF;
+    }
 
     // Strip the last char (\n)
     ASSERT(strlen(buffer) > 2);
