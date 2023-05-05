@@ -40,6 +40,9 @@ static void yyerror(const char *s)
 
 %token WHITESPACE
 
+%token OPEN_BRACKET
+%token CLOSE_BRACKET
+
 %{
 #define COPY_TO_TMP_BUFFER \
     tmp_buffer = (char*) malloc(sizeof(char) * (yyleng + 1)); \
@@ -119,8 +122,9 @@ operator : AND { parser_operator = MSE_SET_INTERSECTION; }
 
 query: %empty
      | set_generator
-     | set_generator WHITESPACE query
      | set_generator WHITESPACE operator WHITESPACE set_generator WHITESPACE query
+     | set_generator WHITESPACE query
+     | OPEN_BRACKET query CLOSE_BRACKET { /* TODO: make this work lmao */ }
      ;
 %%
 

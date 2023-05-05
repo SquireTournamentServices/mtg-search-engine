@@ -24,5 +24,7 @@ SLASH([^/]|(\\\\SLASH))+SLASH { return REGEX_STRING; }
 ">=" { return GT_INC; }
 ":" { return INCLUDES; }
 "=" { return EQUALS; }
+"(" { return OPEN_BRACKET; }
+")" { return CLOSE_BRACKET; }
 
 %%
