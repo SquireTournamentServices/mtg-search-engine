@@ -1,8 +1,7 @@
 %option noyywrap noinput nounput
 
 %{
-#include "query_parser.h"
-
+#include "mse_query_parser.h"
 %}
 
 SLASH \/

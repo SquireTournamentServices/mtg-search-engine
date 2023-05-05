@@ -7,8 +7,9 @@
                         ":" ANSI_YELLOW "%d" ANSI_RESET ") \t", __FILE__, __LINE__ ),\
                         __lprintf
 #include "src/interpretor.h"
-#include "query_parser.h"
-#include "query_lexer.h"
+#include "src/query_parser.h"
+#include "mse_query_lexer.h"
+#include "mse_query_parser.h"
 
 static mse_set_generator_operator_t parser_op_operator;
 static mse_set_operator_type_t parser_operator;
