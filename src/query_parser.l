@@ -12,7 +12,7 @@
 [aA][nN][dD] { return AND; }
 [oO][rR] { return OR; }
 
-\\s+ { return WHITESPACE; }
+\s+ { return WHITESPACE; }
 
 "<" { return LT; }
 "<=" { return LT_INC; }
