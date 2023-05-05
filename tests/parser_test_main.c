@@ -21,8 +21,9 @@ static int __test_next_query(FILE *f)
         buffer[last] = 0;
     }
 
-    lprintf(LOG_INFO, "Testing parse of '%s'\n", buffer);
+    lprintf(TEST_INFO, "Testing parse of '%s'\n", buffer);
     ASSERT(parse_input_string(buffer));
+    lprintf(TEST_PASS, "Passed\n");
     return 1;
 }
 
@@ -31,13 +32,26 @@ static int __main()
     FILE *f = fopen("./valid_queries.txt", "r");
     ASSERT(f != NULL);
 
-    while(__test_next_query(f) != EOF);
+    int s = 1;
+    int flag = 1;
+    do {
+        flag = __test_next_query(f);
+        if (!flag) {
+            s = 0;
+        }
+    } while (flag != EOF);
 
     fclose(f);
-    return 1;
+    return s;
 }
 
 int main()
 {
-    return __main() ? 0 : 1;
+    if (__main()) {
+        lprintf(TEST_PASS, "All queries were successfully parsed\n");
+        return 0;
+    } else {
+        lprintf(TEST_FAIL, "Some queries did not parse\n");
+        return 1;
+    }
 }
