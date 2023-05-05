@@ -18,8 +18,13 @@ oracle="Testing 1 2 3"
 name="Testing 1 2 3\" asdf "
 name=/a? Testing [a-z]+/
 name=/a? Testing [a-z]+ \/ asdf/
+cmc:5 cmc>5
 cmc:5 and cmc>5
 cmc:5 or cmc<5
 opt or goblin or "Goblin Motivator" and c<wubrg
 "Goblin Motivator"
 Goblin Motivator
+cmc:5 and (name:jeff or name:bill)
+cmc:5 and (name:jeff or name:bill) opt
+(name:test)
+(opt)
