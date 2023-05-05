@@ -115,8 +115,8 @@ op_argument: string { COPY_TO_ARGUMENT_BUFFER }
            ;
 
 set_generator: op_name op_operator op_argument { mse_handle_set_generator(); }
-             | WORD { /* TODO: make this lmao lmao */ }
-             | STRING { /* TODO: make this lmao lmao */ }
+             | word { /* TODO: make this lmao lmao */ }
+             | string { /* TODO: make this lmao lmao */ }
              ;
 
 operator : AND { parser_operator = MSE_SET_INTERSECTION; }
