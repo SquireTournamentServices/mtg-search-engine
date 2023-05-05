@@ -65,6 +65,28 @@ add_custom_command(
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
+# Parser generators
+find_package(BISON)
+find_package(FLEX)
+
+if(WIN32)
+  set(ADDITIONAL_FLEX_FLAGS "--wincompat")
+else()
+  set(ADDITIONAL_FLEX_FLAGS "")
+endif()
+
+flex_target(
+  query_lexer ./src/query_parser.l ${CMAKE_CURRENT_BINARY_DIR}/mse_query_lexer.c
+  DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/mse_query_lexer.h
+  COMPILE_FLAGS ${ADDITIONAL_FLEX_FLAGS})
+bison_target(query_parser ./src/query_parser.y
+             ${CMAKE_CURRENT_BINARY_DIR}/mse_query_parser.c)
+add_flex_bison_dependency(query_lexer query_parser)
+
+set(PARSER_SRC ./src/query_parser.h ${BISON_query_parser_OUTPUTS}
+               ${FLEX_query_lexer_OUTPUTS})
+
+# Define the sources
 set(SRC
     ./testing_h/ansi_colour.h
     ./testing_h/testing.h
@@ -107,6 +129,7 @@ set(SRC
     ./src/generator_name.c
     ./src/interpretor.h
     ./src/interpretor.c
+    ${PARSER_SRC}
     ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES})
 set(TESTS
@@ -184,11 +207,14 @@ if(UNIX)
   add_executable(mtg-search-engine-tests ${TESTS})
   target_link_libraries(mtg-search-engine-tests PUBLIC ${LIBS}
                                                        mtg-search-engine)
-  target_include_directories(mtg-search-engine-tests
-                             PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+  add_executable(mtg-search-engine-parser-tests ${SRC}
+                                                ./tests/parser_test_main.c)
+  target_link_libraries(mtg-search-engine-parser-tests PUBLIC ${LIBS}
+                                                              mtg-search-engine)
 
   # Copy test data
   set(TEST_CARD_JSON ${CMAKE_CURRENT_BINARY_DIR}/test_card.json)
+  set(TEST_VALID_QUERIES ${CMAKE_CURRENT_BINARY_DIR}/valid_queries.txt)
 
   set(MEM_TESTS_SH ${CMAKE_CURRENT_BINARY_DIR}/mem_tests.sh)
   set(MEM_TESTS_PY ${CMAKE_CURRENT_BINARY_DIR}/mem_tests.py)
@@ -202,7 +228,10 @@ if(UNIX)
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/mem_tests.sh
             ${MEM_TESTS_SH}
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/mem_tests.py
-            ${MEM_TESTS_PY})
+            ${MEM_TESTS_PY}
+    COMMAND
+      ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/tests/valid_queries.txt ${TEST_VALID_QUERIES})
   add_custom_target(TEST_DATA DEPENDS ${TEST_DATA_FILES})
   add_dependencies(mtg-search-engine-tests TEST_DATA)
 
@@ -210,4 +239,5 @@ if(UNIX)
   enable_testing()
   add_test(NAME main-tests COMMAND mtg-search-engine-tests)
   add_test(NAME memory-tests COMMAND bash ${MEM_TESTS_SH})
+  add_test(NAME parser-tests COMMAND mtg-search-engine-parser-tests)
 endif()

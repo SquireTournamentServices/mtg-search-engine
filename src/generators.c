@@ -69,7 +69,6 @@ int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
     return 0;
 }
 
-
 int mse_generate_set(mse_set_generator_t *gen,
                      mse_search_intermediate_t *res,
                      mse_all_printings_cards_t *cards,
