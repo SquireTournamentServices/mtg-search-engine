@@ -11,6 +11,7 @@
 #include "mse_query_lexer.h"
 #include "mse_query_parser.h"
 
+static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static mse_set_generator_operator_t parser_op_operator;
 static mse_set_operator_type_t parser_operator;
 static char *tmp_buffer = NULL;
@@ -135,13 +136,10 @@ query: %empty
 %%
 
 int parse_input_string(const char* input_string) {
-    // create a new input buffer and switch to it
     YY_BUFFER_STATE input_buffer = yy_scan_string(input_string);
-
-    // call the parser
+    pthread_mutex_lock(&lock);
     int result = yyparse();
-
-    // free the input buffer
+    pthread_mutex_unlock(&lock);
     yy_delete_buffer(input_buffer);
 
     return result == 0;
