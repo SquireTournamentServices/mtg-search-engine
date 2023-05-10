@@ -92,6 +92,16 @@ mse_interp_node_t *mse_init_interp_node_generator(mse_set_generator_t generator)
     return ret;
 }
 
+mse_interp_node_t *mse_init_interp_node_consumer(mse_set_consumer_t consumer)
+{
+    mse_interp_node_t *ret = __mse_init_interp_node();
+    ASSERT(ret != NULL);
+
+    ret->type = MSE_INTERP_NODE_SET_CONSUMER;
+    ret->consumer = consumer;
+    return ret;
+}
+
 void mse_free_interp_node(mse_interp_node_t *node)
 {
     if (node == NULL) {
@@ -104,6 +114,8 @@ void mse_free_interp_node(mse_interp_node_t *node)
     case MSE_INTERP_NODE_SET_GENERATOR:
         mse_free_set_generator(&node->generator);
         break;
+    case MSE_INTERP_NODE_SET_CONSUMER:
+        mse_free_set_consumer(&node->consumer);
     }
 
     mse_free_interp_node(node->l);
@@ -127,6 +139,37 @@ static int __mse_resolve_interp_leaf_generator(mse_interp_node_t *node,
                             ret,
                             cards,
                             pool));
+    return 1;
+}
+
+static int __mse_resolve_interp_tree_consumer(mse_interp_node_t *node,
+        mse_search_intermediate_t *ret,
+        thread_pool_t *pool,
+        int dry_run,
+        mse_all_printings_cards_t *cards)
+{
+    // Assert that there is only one child and that it is the left one.
+    // XOR to make sure only one is null
+    ASSERT((node->l == NULL) ^ (node->r == NULL));
+    if (node->l == NULL) {
+        node->l = node->r;
+    }
+
+    // node->l is now the only none-null node
+
+    // Generate the children
+    mse_search_intermediate_t child_ret;
+    ASSERT(mse_resolve_interp_tree(node->l, &child_ret, pool, dry_run, cards));
+
+    // Consume the children
+    int r = mse_consume_set(&node->consumer,
+                            ret,
+                            cards,
+                            &child_ret,
+                            pool);
+
+    free_mse_search_intermediate(&child_ret);
+    ASSERT(r);
     return 1;
 }
 
@@ -213,6 +256,9 @@ int mse_resolve_interp_tree(mse_interp_node_t *root,
         break;
     case MSE_INTERP_NODE_SET_OPERATOR:
         ASSERT(__mse_resolve_interp_tree_operator(root, ret, pool, dry_run, cards));
+        break;
+    case MSE_INTERP_NODE_SET_CONSUMER:
+        ASSERT(__mse_resolve_interp_tree_consumer(root, ret, pool, dry_run, cards));
         break;
     default:
         lprintf(LOG_ERROR, "Undefined node type\n");

@@ -129,6 +129,8 @@ set(SRC
     ./src/generator_name.c
     ./src/interpretor.h
     ./src/interpretor.c
+    ./src/consumer.h
+    ./src/consumer.c
     ${PARSER_SRC}
     ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES})
