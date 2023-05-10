@@ -129,6 +129,8 @@ set(SRC
     ./src/generator_name.c
     ./src/interpretor.h
     ./src/interpretor.c
+    ./src/consumer.h
+    ./src/consumer.c
     ${PARSER_SRC}
     ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES})
@@ -207,8 +209,7 @@ if(UNIX)
   add_executable(mtg-search-engine-tests ${TESTS})
   target_link_libraries(mtg-search-engine-tests PUBLIC ${LIBS}
                                                        mtg-search-engine)
-  add_executable(mtg-search-engine-parser-tests ${SRC}
-                                                ./tests/parser_test_main.c)
+  add_executable(mtg-search-engine-parser-tests ./tests/parser_test_main.c)
   target_link_libraries(mtg-search-engine-parser-tests PUBLIC ${LIBS}
                                                               mtg-search-engine)
 

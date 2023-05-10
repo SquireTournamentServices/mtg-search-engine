@@ -98,6 +98,36 @@ int mse_set_intersection(mse_search_intermediate_t *ret,
     return __mse_set_intersection(&ret->node, a->node, b->node);
 }
 
+static int __mse_set_negate(mse_search_intermediate_t *ret,
+                            avl_tree_node_t *node,
+                            mse_search_intermediate_t *a)
+{
+    // Base case
+    if (node == NULL) {
+        return 1;
+    }
+
+    // If node is not in a then add it to ret
+    if (!find_payload(a->node, node->payload)) {
+        avl_tree_node_t *copy_node = NULL;
+        ASSERT(__copy_node(&copy_node, node));
+        ASSERT(insert_node(&ret->node, copy_node));
+    }
+
+    // Recurse
+    ASSERT(__mse_set_negate(ret, node->l, a));
+    ASSERT(__mse_set_negate(ret, node->r, a));
+    return 1;
+}
+
+int mse_set_negate(mse_search_intermediate_t *ret,
+                   mse_all_printings_cards_t *cards,
+                   mse_search_intermediate_t *a)
+{
+    __init_mse_search_intermediate(ret);
+    return __mse_set_negate(ret, cards->card_tree, a);
+}
+
 void free_mse_search_intermediate(mse_search_intermediate_t *inter)
 {
     if (inter->node != NULL && !inter->is_reference) {

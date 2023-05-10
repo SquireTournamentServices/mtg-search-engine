@@ -4,6 +4,7 @@
 #include "./thread_pool.h"
 #include "./avl_tree.h"
 #include "./mtg_json.h"
+#include "./consumer.h"
 
 /// Type of the node
 typedef enum mse_interp_node_type_t {
@@ -11,6 +12,8 @@ typedef enum mse_interp_node_type_t {
     MSE_INTERP_NODE_SET_GENERATOR,
     /// A set operation such as union or intersection
     MSE_INTERP_NODE_SET_OPERATOR,
+    /// A set consumer operation, this will .filter() a set basically
+    MSE_INTERP_NODE_SET_CONSUMER,
 } mse_interp_node_type_t;
 
 /// A node for the interpretor tree
@@ -20,6 +23,7 @@ typedef struct mse_interp_node_t {
     union {
         mse_set_operator_type_t op_type;
         mse_set_generator_t generator;
+        mse_set_consumer_t consumer;
     };
     struct mse_interp_node_t *l;
     struct mse_interp_node_t *r;
@@ -30,6 +34,9 @@ mse_interp_node_t *mse_init_interp_node_operation(mse_set_operator_type_t operat
 
 /// Inits a set generator node with generator (this object is now owned by the tree)
 mse_interp_node_t *mse_init_interp_node_generator(mse_set_generator_t generator);
+
+/// Inits a set consumer node with consumer (this object is now owned by the tree)
+mse_interp_node_t *mse_init_interp_node_consumer(mse_set_consumer_t consumer);
 
 /// Recursively frees the tree
 void mse_free_interp_node(mse_interp_node_t *node);
