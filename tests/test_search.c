@@ -4,6 +4,7 @@
 #include "../src/avl_tree.h"
 #include "../src/card.h"
 #include "../src/uuid.h"
+#include "../src/mtg_json.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -80,5 +81,66 @@ static int test_intersection_tree()
     return 1;
 }
 
+static int test_set_negation()
+{
+    // Setup mock cards
+    mse_all_printings_cards_t cards;
+    memset(&cards, 0, sizeof(cards));
+
+    mse_card_t card_a, card_b;
+    memset(&card_a, 0, sizeof(card_a));
+    card_b = card_a;
+
+    card_a.name = "Johnny";
+    memset(&card_a.id.bytes, 1, sizeof(card_a.id.bytes));
+
+    card_b.name = "Bing";
+    memset(&card_b.id.bytes, 2, sizeof(card_b.id.bytes));
+
+    // Insert the cards
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card, &card_a);
+    ASSERT(node);
+    ASSERT(insert_node(&cards.card_tree, node));
+
+    node = init_avl_tree_node(NULL, &avl_cmp_card, &card_b);
+    ASSERT(node);
+    ASSERT(insert_node(&cards.card_tree, node));
+    ASSERT(tree_size(cards.card_tree) == 2);
+
+    // Setup and get the results
+    mse_search_intermediate_t ret, a;
+    memset(&ret, 0, sizeof(ret));
+    a = ret;
+
+    // Negation of empty set should be full
+    ASSERT(mse_set_negate(&ret, &cards, &a));
+    ASSERT(tree_size(ret.node) == 2);
+    free_mse_search_intermediate(&ret);
+
+    // Negation of entire set should be empty
+    a.node = cards.card_tree;
+    ASSERT(mse_set_negate(&ret, &cards, &a));
+    ASSERT(ret.node == NULL);
+    free_mse_search_intermediate(&ret);
+    a.node = NULL;
+
+    // Negation of a set with one item should return a set with the other
+    node = init_avl_tree_node(NULL, &avl_cmp_card, &card_a);
+    ASSERT(node);
+    a.node = node;
+
+    ASSERT(mse_set_negate(&ret, &cards, &a));
+    ASSERT(tree_size(ret.node) == 1);
+    ASSERT(ret.node->payload == &card_b);
+
+    free_mse_search_intermediate(&ret);
+    free_mse_search_intermediate(&a);
+
+    // Cleanup
+    free_tree(cards.card_tree);
+    return 1;
+}
+
 SUB_TEST(test_search, {&test_union_tree, "Test set union on trees"},
-{&test_intersection_tree, "Test set intersection on trees"})
+{&test_intersection_tree, "Test set intersection on trees"},
+{&test_set_negation, "Test set negation"})

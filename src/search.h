@@ -1,5 +1,6 @@
 #pragma once
 #include "./avl_tree.h"
+#include "./mtg_json.h"
 
 /// A wrapper for the types of data that set operations are defined on
 typedef struct mse_search_intermediate_t {
@@ -29,6 +30,15 @@ int mse_set_union(mse_search_intermediate_t *ret,
 int mse_set_intersection(mse_search_intermediate_t *ret,
                          mse_search_intermediate_t *a,
                          mse_search_intermediate_t *b);
+
+/// Performs a set negation on the input state, this is far less efficient than performing a optimisation
+/// to the set generator i.e: -name:"asdf" should check that the regex doesn't match, however for large
+/// bracketed statements this is likely the only way to do it
+///
+/// TL;DR: try not to use this methodlmao
+int mse_set_negate(mse_search_intermediate_t *ret,
+                   mse_all_printings_cards_t *cards,
+                   mse_search_intermediate_t *a);
 
 void free_mse_search_intermediate(mse_search_intermediate_t *inter);
 

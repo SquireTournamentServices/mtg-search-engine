@@ -124,8 +124,7 @@ int mse_consume_set(mse_set_consumer_t *gen,
     case MSE_SET_CONSUMER_NAME:
         return mse_consume_set_name(gen, res, child, pool);
     case MSE_SET_CONSUMER_NEGATE:
-        // TODO: Set negation
-        return 0;
+        return mse_set_negate(res, cards, child);
     }
     return 1;
 }
