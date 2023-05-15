@@ -131,6 +131,8 @@ set(SRC
     ./src/interpretor.c
     ./src/consumer.h
     ./src/consumer.c
+    ./src/query_builder.h
+    ./src/query_builder.c
     ${PARSER_SRC}
     ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES})
