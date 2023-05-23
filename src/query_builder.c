@@ -151,11 +151,23 @@ static int __mse_append_node_r(mse_query_builder_t *builder,
 
 static int __mse_append_node(mse_query_builder_t *builder)
 {
-    avl_tree_node_t *root;
-    ASSERT(__mse_append_node_r(builder, &root, NULL));
+    avl_tree_node_t *root = NULL;
+    int rc = 0;
+    if (!__mse_append_node_r(builder, &root, NULL)) {
+        goto cleanup;
+    }
 
     // Append the balanced tree to the parse tree
-    return 1;
+  
+    // Set the return code to success and cleanup
+    ASSERT(root != NULL);
+    rc = 1;
+cleanup:
+    if (!rc) {
+        lprintf(LOG_ERROR, "Cannot append node.\n");
+    }
+    free_tree(root);
+    return rc;
 }
 
 int mse_query_builder_exit_statement(mse_query_builder_t *builder)
