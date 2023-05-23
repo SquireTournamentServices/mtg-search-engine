@@ -9,8 +9,8 @@
 \"([^"]|(\\\"))+\" { return STRING; }
 \/([^/]|(\\\/))+\/ { return REGEX_STRING; }
 
-[aA][nN][dD] { return AND; }
-[oO][rR] { return OR; }
+"and" { return AND; }
+"or" { return OR; }
 
 [\t ]+ { return WHITESPACE; }
 
