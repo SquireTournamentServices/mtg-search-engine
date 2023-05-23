@@ -7,6 +7,7 @@
 /// start of the statement. Finalise is used to clear the stack aferwarsds.
 typedef struct mse_query_builder_stack_entry_t {
     mse_interp_node_t *node;
+    /// Whether this node is an open bracket symbol
     int is_open_bracket;
 } mse_query_builder_stack_entry_t;
 
@@ -16,14 +17,20 @@ typedef struct mse_query_builder_stack_entry_t {
 typedef struct mse_query_builder_t {
     size_t stack_len, stack_ptr;
     mse_query_builder_stack_entry_t *stack;
-    mse_interp_node_t *root, *current;
+    /// This is the root of the tree
+    mse_interp_node_t *root;
+    /// This is the current leaf that things should be ammended to
+    mse_interp_node_t *current;
+    /// This is the parent of current
+    mse_interp_node_t *c_parent;
 } mse_query_builder_t;
 
 /// Inits the builder
 int mse_init_query_builder(mse_query_builder_t *builder);
 
 /// Adds the node to the query builder
-int mse_query_builder_add_node(mse_query_builder_t *builder, mse_interp_node_t *node);
+int mse_query_builder_add_node(mse_query_builder_t *builder,
+                               mse_interp_node_t *node);
 
 /// Called to enter a statement (a bracketed region of a query) call on open bracket in the parser
 int mse_query_builder_enter_statement(mse_query_builder_t *builder);
@@ -33,4 +40,5 @@ int mse_query_builder_exit_statement(mse_query_builder_t *builder);
 
 /// Turns the query into a tree which is placed in ret, the query builder is always
 /// freed by this function. Even no fail you need to free ret with the right function.
-int mse_finalise_query_builder(mse_query_builder_t *builder, mse_interp_node_t **ret);
+int mse_finalise_query_builder(mse_query_builder_t *builder,
+                               mse_interp_node_t **ret);

@@ -8,15 +8,18 @@
 static int __mse_expand_stack(mse_query_builder_t *builder)
 {
     if (builder->stack == NULL) {
-        ASSERT(builder->stack = malloc(sizeof(*builder->stack) * MSE_STACK_INC_SIZE));
+        ASSERT(builder->stack =
+                   malloc(sizeof(*builder->stack) * MSE_STACK_INC_SIZE));
     } else {
-        ASSERT(builder->stack = realloc(builder->stack, sizeof(*builder->stack) * (MSE_STACK_INC_SIZE + builder->stack_len)));
+        ASSERT(builder->stack = realloc(builder->stack,
+                                        sizeof(*builder->stack) * (MSE_STACK_INC_SIZE + builder->stack_len)));
     }
     builder->stack_len += MSE_STACK_INC_SIZE;
     return 1;
 }
 
-static int __mse_push_stack(mse_query_builder_t *builder, mse_query_builder_stack_entry_t entry)
+static int __mse_push_stack(mse_query_builder_t *builder,
+                            mse_query_builder_stack_entry_t entry)
 {
     if (builder->stack_ptr + 1 >= builder->stack_len) {
         ASSERT(__mse_expand_stack(builder));
@@ -26,14 +29,16 @@ static int __mse_push_stack(mse_query_builder_t *builder, mse_query_builder_stac
     return 1;
 }
 
-static int __mse_pop_stack(mse_query_builder_t *builder, mse_query_builder_stack_entry_t *ret)
+static int __mse_pop_stack(mse_query_builder_t *builder,
+                           mse_query_builder_stack_entry_t *ret)
 {
     ASSERT(builder->stack_ptr > 0);
     *ret = builder->stack[--builder->stack_ptr];
     return 1;
 }
 
-static int __mse_peek_stack(mse_query_builder_t *builder, mse_query_builder_stack_entry_t *ret)
+static int __mse_peek_stack(mse_query_builder_t *builder,
+                            mse_query_builder_stack_entry_t *ret)
 {
     ASSERT(builder->stack_ptr > 0);
     *ret = builder->stack[builder->stack_ptr - 1];
@@ -52,7 +57,8 @@ int mse_init_query_builder(mse_query_builder_t *builder)
     return 1;
 }
 
-int mse_query_builder_add_node(mse_query_builder_t *builder, mse_interp_node_t *node)
+int mse_query_builder_add_node(mse_query_builder_t *builder,
+                               mse_interp_node_t *node)
 {
     mse_query_builder_stack_entry_t entry;
     memset(&entry, 0, sizeof(entry));
@@ -72,7 +78,8 @@ int mse_query_builder_enter_statement(mse_query_builder_t *builder)
     return 1;
 }
 
-static int __mse_stmt_finished(mse_query_builder_t *builder, int *ret)
+static int __mse_stmt_finished(mse_query_builder_t *builder,
+                               int *ret)
 {
     if (builder->stack_ptr == 0) {
         return 1;
@@ -98,7 +105,9 @@ static int ptr_cmp(void *a, void *b)
     return 0;
 }
 
-static int __mse_append_node_r(mse_query_builder_t *builder, avl_tree_node_t **root, mse_interp_node_t *node)
+static int __mse_append_node_r(mse_query_builder_t *builder,
+                               avl_tree_node_t **root,
+                               mse_interp_node_t *node)
 {
     // Guard against empty stack
     if (__mse_size_stack(builder) == 0) {
@@ -167,7 +176,8 @@ static void __mse_free_query_builder(mse_query_builder_t *builder)
     memset(builder, 0, sizeof(*builder));
 }
 
-int mse_finalise_query_builder(mse_query_builder_t *builder, mse_interp_node_t **ret)
+int mse_finalise_query_builder(mse_query_builder_t *builder,
+                               mse_interp_node_t **ret)
 {
     __mse_free_query_builder(builder);
     return 1;
