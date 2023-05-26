@@ -57,17 +57,6 @@ int mse_init_query_builder(mse_query_builder_t *builder)
     return 1;
 }
 
-int mse_query_builder_add_node(mse_query_builder_t *builder,
-                               mse_interp_node_t *node)
-{
-    mse_query_builder_stack_entry_t entry;
-    memset(&entry, 0, sizeof(entry));
-    entry.node = node;
-
-    ASSERT(__mse_push_stack(builder, entry));
-    return 1;
-}
-
 int mse_query_builder_enter_statement(mse_query_builder_t *builder)
 {
     mse_query_builder_stack_entry_t entry;
@@ -105,50 +94,34 @@ static int ptr_cmp(void *a, void *b)
     return 0;
 }
 
-static int __mse_append_node_r(mse_query_builder_t *builder,
-                               avl_tree_node_t **root,
-                               mse_interp_node_t *node)
+static int __mse_handle_insert_node(mse_query_builder_t *builder,
+                                    mse_query_builder_stack_entry_t entry,
+                                    mse_interp_node_t *tmp_current)
 {
-    // Guard against empty stack
-    if (__mse_size_stack(builder) == 0) {
-        return 1;
-    }
-
-    // Guard against open bracket
-    mse_query_builder_stack_entry_t entry;
-    ASSERT(__mse_peek_stack(builder, &entry));
+    // Ignore open bracket symbols on the stack
     if (entry.is_open_bracket) {
         return 1;
     }
 
-    // If the next node is a set generator then pop it, recursively handle this, then readd it
-    avl_tree_node_t *avl_node = NULL;
-    ASSERT(entry.node != NULL);
-    switch (entry.node->type) {
-    case MSE_INTERP_NODE_SET_GENERATOR:
-        ASSERT(__mse_pop_stack(builder, &entry));
-        ASSERT(__mse_append_node_r(builder, root, node));
-        ASSERT(__mse_push_stack(builder, entry));
-        break;
-    case MSE_INTERP_NODE_SET_OPERATOR:
-        // If it is not the same operator as the last one then return as the
-        if (entry.node->op_type != node->op_type) {
-            return 1;
-        }
+    // Only add set generators as leaves
+    if (entry.node->type != MSE_INTERP_NODE_SET_GENERATOR) {
+        return 1;
+    }
 
-        ASSERT(avl_node = init_avl_tree_node(NULL, &ptr_cmp, entry.node));
-        ASSERT(insert_node(root, avl_node));
-        ASSERT(__mse_pop_stack(builder, &entry));
-        ASSERT(__mse_append_node_r(builder, root, entry.node));
-        break;
-    case MSE_INTERP_NODE_SET_CONSUMER:
-        lprintf(LOG_ERROR, "Fix me.\n");
+    ASSERT(__mse_pop_stack(builder, &entry));
+    if (tmp_current->l == NULL) {
+        tmp_current->l = entry.node;
+    } else if (tmp_current->r == NULL) {
+        tmp_current->r = entry.node;
+    } else {
+        lprintf(LOG_ERROR, "Expected an empty node in tmp_current\n");
         return 0;
-        break;
     }
     return 1;
 }
 
+/// Inserts an avl node from the balanced operator tree into the interp tree,
+/// this also handles the operands
 static int __mse_add_avl_node(mse_query_builder_t *builder,
                               avl_tree_node_t *root,
                               mse_interp_node_t *tmp_current)
@@ -156,25 +129,7 @@ static int __mse_add_avl_node(mse_query_builder_t *builder,
     if (root == NULL) {
         mse_query_builder_stack_entry_t entry;
         if (__mse_peek_stack(builder, &entry)) {
-            // Ignore open bracket symbols on the stack
-            if (entry.is_open_bracket) {
-                return 1;
-            }
-
-            // Only add set generators as leaves
-            if (entry.node->type != MSE_INTERP_NODE_SET_GENERATOR) {
-                return 1;
-            }
-
-            ASSERT(__mse_pop_stack(builder, &entry));
-            if (tmp_current->l == NULL) {
-                tmp_current->l = entry.node;
-            } else if (tmp_current->r == NULL) {
-                tmp_current->r = entry.node;
-            } else {
-                lprintf(LOG_ERROR, "Expected an empty node in tmp_current\n");
-                return 0;
-            }
+            ASSERT(__mse_handle_insert_node(builder, entry, tmp_current));
         }
         return 1;
     }
@@ -198,26 +153,121 @@ static int __mse_add_avl_node(mse_query_builder_t *builder,
     return 1;
 }
 
+// Forwards declaration
+static int __mse_append_node_r(mse_query_builder_t *builder,
+                               avl_tree_node_t **root,
+                               mse_interp_node_t *node);
+
+/// This method will add a set generator node to the tree and recursively calls __mse_append_node_r
+static int __mse_append_node_r_set_gen(mse_query_builder_t *builder,
+                                       avl_tree_node_t **root,
+                                       mse_interp_node_t *node,
+                                       mse_query_builder_stack_entry_t entry)
+{
+    mse_query_builder_stack_entry_t tmp;
+    int flag = 0;
+    if (__mse_peek_stack(builder, &tmp)) {
+        if (!tmp.is_open_bracket) {
+            if (tmp.node->type == MSE_INTERP_NODE_SET_OPERATOR) {
+                ASSERT(__mse_pop_stack(builder, &tmp));
+                flag = 1;
+            }
+        }
+    }
+    ASSERT(__mse_push_stack(builder, entry));
+    if (flag) {
+        ASSERT(__mse_push_stack(builder, tmp));
+    }
+    ASSERT(__mse_append_node_r(builder, root, node));
+    return 1;
+}
+
+static int __mse_append_node_r(mse_query_builder_t *builder,
+                               avl_tree_node_t **root,
+                               mse_interp_node_t *node)
+{
+    // Guard against empty stack
+    if (__mse_size_stack(builder) == 0) {
+        return 1;
+    }
+
+    // Guard against open bracket
+    mse_query_builder_stack_entry_t entry;
+    ASSERT(__mse_peek_stack(builder, &entry));
+    if (entry.is_open_bracket) {
+        return 1;
+    }
+    ASSERT(__mse_pop_stack(builder, &entry));
+
+    // If the next node is a set generator then pop it, recursively handle this, then readd it
+    avl_tree_node_t *avl_node = NULL;
+    ASSERT(entry.node != NULL);
+    switch (entry.node->type) {
+    case MSE_INTERP_NODE_SET_GENERATOR:
+        ASSERT(__mse_append_node_r_set_gen(builder, root, node, entry));
+        break;
+    case MSE_INTERP_NODE_SET_OPERATOR:
+        // If it is not the same operator as the last one then return as the
+        if (entry.node->op_type != node->op_type) {
+            return 1;
+        }
+
+        ASSERT(avl_node = init_avl_tree_node(NULL, &ptr_cmp, entry.node));
+        ASSERT(insert_node(root, avl_node));
+        ASSERT(__mse_append_node_r(builder, root, entry.node));
+        break;
+    case MSE_INTERP_NODE_SET_CONSUMER:
+        lprintf(LOG_ERROR, "Fix me.\n");
+        return 0;
+    }
+    return 1;
+}
+
+/// This method will
 static int __mse_append_node(mse_query_builder_t *builder)
 {
     avl_tree_node_t *root = NULL;
     int rc = 0;
+
+    // If the stack is empty then we can safely leave
+    if (__mse_size_stack(builder) != 0) {
+        rc = 1;
+        goto cleanup;
+    }
+
     if (!__mse_append_node_r(builder, &root, NULL)) {
         goto cleanup;
     }
 
-    // Append the balanced tree to the parse tree
     builder->c_parent = builder->current;
-    ASSERT(__mse_add_avl_node(builder, root, builder->current));
-
-    // Set the return code to success and cleanup
-    ASSERT(root != NULL);
+    // If root is null then there were no operators of the same type meaning that the next node is either
+    // a set generator, closing brackets or; a different opeator or; a consumer. These are handled as
+    // usual
+    if (root == NULL) {
+        mse_query_builder_stack_entry_t entry;
+        if (!entry.is_open_bracket) {
+            switch (entry.node->type) {
+            case MSE_INTERP_NODE_SET_CONSUMER:
+                lprintf(LOG_ERROR, "Fix me.\n");
+                return 0;
+            case MSE_INTERP_NODE_SET_GENERATOR:
+                ASSERT(__mse_pop_stack(builder, &entry));
+                ASSERT(__mse_handle_insert_node(builder, entry, builder->current));
+                break;
+            case MSE_INTERP_NODE_SET_OPERATOR:
+                break;
+            }
+        }
+    } else {
+        // Append the balanced tree to the parse tree
+        ASSERT(__mse_add_avl_node(builder, root, builder->current));
+    }
     rc = 1;
 cleanup:
     if (!rc) {
         lprintf(LOG_ERROR, "Cannot append node.\n");
     }
-    free_tree(root);
+    free_tree(root); // is fine with potential null
     return rc;
 }
 
@@ -242,6 +292,12 @@ static void __mse_free_query_builder(mse_query_builder_t *builder)
 int mse_finalise_query_builder(mse_query_builder_t *builder,
                                mse_interp_node_t **ret)
 {
+    // Finish adding things to the stack
+    mse_query_builder_stack_entry_t entry;
+    while (__mse_pop_stack(builder, &entry)) {
+        ASSERT(__mse_append_node(builder));
+    }
+    // Free up memory
     __mse_free_query_builder(builder);
     return 1;
 }
