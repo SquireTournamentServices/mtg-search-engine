@@ -149,6 +149,20 @@ static int __mse_append_node_r(mse_query_builder_t *builder,
     return 1;
 }
 
+static int __mse_add_avl_node(mse_query_builder_t *builder,
+                              avl_tree_node_t *root,
+                              int *cnt)
+{
+    if (root == NULL) {
+        return 1;
+    }
+
+    *cnt++;
+    ASSERT(__mse_add_avl_node(builder, root->l, cnt));
+    ASSERT(__mse_add_avl_node(builder, root->r, cnt));
+    return 1;
+}
+
 static int __mse_append_node(mse_query_builder_t *builder)
 {
     avl_tree_node_t *root = NULL;
@@ -158,7 +172,9 @@ static int __mse_append_node(mse_query_builder_t *builder)
     }
 
     // Append the balanced tree to the parse tree
-  
+    int cnt = 0;
+    ASSERT(__mse_add_avl_node(builder, root, &cnt));
+
     // Set the return code to success and cleanup
     ASSERT(root != NULL);
     rc = 1;
