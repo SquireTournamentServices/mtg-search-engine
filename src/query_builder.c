@@ -151,15 +151,50 @@ static int __mse_append_node_r(mse_query_builder_t *builder,
 
 static int __mse_add_avl_node(mse_query_builder_t *builder,
                               avl_tree_node_t *root,
-                              int *cnt)
+                              mse_interp_node_t *tmp_current)
 {
     if (root == NULL) {
+        mse_query_builder_stack_entry_t entry;
+        if (__mse_peek_stack(builder, &entry)) {
+            // Ignore open bracket symbols on the stack
+            if (entry.is_open_bracket) {
+                return 1;
+            }
+
+            // Only add set generators as leaves
+            if (entry.node->type != MSE_INTERP_NODE_SET_GENERATOR) {
+                return 1;
+            }
+
+            ASSERT(__mse_pop_stack(builder, &entry));
+            if (tmp_current->l == NULL) {
+                tmp_current->l = entry.node;
+            } else if (tmp_current->r == NULL) {
+                tmp_current->r = entry.node;
+            } else {
+                lprintf(LOG_ERROR, "Expected an empty node in tmp_current\n");
+                return 0;
+            }
+        }
         return 1;
     }
 
-    *cnt++;
-    ASSERT(__mse_add_avl_node(builder, root->l, cnt));
-    ASSERT(__mse_add_avl_node(builder, root->r, cnt));
+    // Add a node tmp_current
+    mse_query_builder_stack_entry_t entry;
+    ASSERT(__mse_pop_stack(builder, &entry));
+    ASSERT(entry.node->type == MSE_INTERP_NODE_SET_OPERATOR);
+
+    if (builder->current->l == NULL) {
+        builder->current->l = entry.node;
+    } else if (builder->current->r == NULL) {
+        builder->current->r = entry.node;
+    } else {
+        lprintf(LOG_ERROR, "Expected an empty node in builder->current\n");
+    }
+    tmp_current = builder->current = entry.node;
+
+    ASSERT(__mse_add_avl_node(builder, root->l, tmp_current->l));
+    ASSERT(__mse_add_avl_node(builder, root->r, tmp_current->r));
     return 1;
 }
 
@@ -172,8 +207,8 @@ static int __mse_append_node(mse_query_builder_t *builder)
     }
 
     // Append the balanced tree to the parse tree
-    int cnt = 0;
-    ASSERT(__mse_add_avl_node(builder, root, &cnt));
+    builder->c_parent = builder->current;
+    ASSERT(__mse_add_avl_node(builder, root, builder->current));
 
     // Set the return code to success and cleanup
     ASSERT(root != NULL);
