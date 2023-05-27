@@ -5,7 +5,7 @@
 %}
 
 %%
-[a-zA-Z0-9]+ { return WORD; }
+[a-zA-Z0-9_-]+ { return WORD; }
 \"([^"]|(\\\"))+\" { return STRING; }
 \/([^/]|(\\\/))+\/ { return REGEX_STRING; }
 
