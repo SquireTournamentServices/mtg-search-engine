@@ -1,5 +1,6 @@
 #include "../testing_h/testing.h"
 #include "../src/query_parser.h"
+#include "../src/interpretor.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,7 +27,8 @@ static int __test_next_query(FILE *f)
     }
 
     lprintf(TEST_INFO, "Testing parse of '%s'\n", buffer);
-    ASSERT(parse_input_string(buffer));
+    mse_interp_node_t ret;
+    ASSERT(parse_input_string(buffer, &ret));
     lprintf(TEST_PASS, "Passed\n");
     return 1;
 }
