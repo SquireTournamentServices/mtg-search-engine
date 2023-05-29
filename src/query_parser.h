@@ -8,7 +8,7 @@ typedef struct mse_parser_status_t {
     char *tmp_buffer;
     char *op_name_buffer;
     char *argument_buffer;
-    mse_interp_node_t *node;
+    mse_interp_node_t *node, *root, *tree_write;
 } mse_parser_status_t;
 
 int parse_input_string(const char* input_string, mse_interp_node_t *root);

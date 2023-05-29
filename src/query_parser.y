@@ -60,7 +60,13 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 static int __mse_handle_set_generator(mse_parser_status_t *ret)
 {
     ASSERT(ret != NULL);
-    // TODO: Create a set_generator object and put it in the tree
+
+    mse_set_generator_t *tmp;
+    ASSERT(mse_init_set_generator(&tmp,
+                                  ret->parser_operator,
+                                  ret->parser_op_operator,
+                                  ret->argument_buffer,
+                                  strlen(ret->argument_buffer));
     return 1;
 }
 
