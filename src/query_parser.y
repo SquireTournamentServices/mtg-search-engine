@@ -51,20 +51,15 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
     ASSERT(ret->tmp_buffer != NULL); \
     strncpy(ret->tmp_buffer, yytext, yyleng); \
     ret->tmp_buffer[yyleng] = '\0'; \
-    
-#define COPY_TO_ARGUMENT_BUFFER \
-    ASSERT(ret->argument_buffer = strdup(ret->tmp_buffer)); \
-    free(ret->tmp_buffer); \
-    ret->tmp_buffer = NULL;
 
 static int __mse_handle_set_generator(mse_parser_status_t *ret)
 {
     ASSERT(ret != NULL);
 
-    mse_set_generator_t *tmp;
+    mse_set_generator_t tmp;
     ASSERT(mse_init_set_generator(&tmp,
-                                  ret->parser_operator,
-                                  ret->parser_op_operator,
+                                  ret->parser_gen_type,
+                                  ret->parser_op_type,
                                   ret->argument_buffer,
                                   strlen(ret->argument_buffer)));
     return 1;
@@ -73,9 +68,12 @@ static int __mse_handle_set_generator(mse_parser_status_t *ret)
 /// Calls the handler for a set generator then cleans the internal state
 static int mse_handle_set_generator(int negate, mse_parser_status_t *ret)
 {
-    int r = __mse_handle_set_generator(ret);
+    
+    ASSERT(ret->argument_buffer = strdup(ret->tmp_buffer));
     free(ret->tmp_buffer);
     ret->tmp_buffer = NULL;
+
+    int r = __mse_handle_set_generator(ret);
 
     free(ret->op_name_buffer);
     ret->op_name_buffer = NULL;
@@ -92,12 +90,12 @@ static int mse_handle_set_generator(int negate, mse_parser_status_t *ret)
 input: query
      ;
 
-op_operator : LT_INC { ret->parser_op_operator = MSE_SET_GENERATOR_OP_LT_INC; }
-            | LT { ret->parser_op_operator = MSE_SET_GENERATOR_OP_LT; }
-            | GT { ret->parser_op_operator = MSE_SET_GENERATOR_OP_GT; }
-            | GT_INC { ret->parser_op_operator = MSE_SET_GENERATOR_OP_GT_INC; }
-            | INCLUDES { ret->parser_op_operator = MSE_SET_GENERATOR_OP_INCLUDES; }
-            | EQUALS { ret->parser_op_operator = MSE_SET_GENERATOR_OP_EQUALS; }
+op_operator : LT_INC { ret->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }
+            | LT { ret->parser_op_type = MSE_SET_GENERATOR_OP_LT; }
+            | GT { ret->parser_op_type = MSE_SET_GENERATOR_OP_GT; }
+            | GT_INC { ret->parser_op_type = MSE_SET_GENERATOR_OP_GT_INC; }
+            | INCLUDES { ret->parser_op_type = MSE_SET_GENERATOR_OP_INCLUDES; }
+            | EQUALS { ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS; }
             ;
 
 word: WORD {
@@ -118,9 +116,9 @@ regex_string: REGEX_STRING {
             COPY_TO_TMP_BUFFER
             }
 
-op_argument: string { COPY_TO_ARGUMENT_BUFFER }
-           | regex_string { COPY_TO_ARGUMENT_BUFFER }
-           | word { COPY_TO_ARGUMENT_BUFFER }
+op_argument: string { COPY_TO_TMP_BUFFER }
+           | regex_string { COPY_TO_TMP_BUFFER }
+           | word { COPY_TO_TMP_BUFFER }
            ;
 
 set_generator: op_name op_operator op_argument { mse_handle_set_generator(0, ret); }

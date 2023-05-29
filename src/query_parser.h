@@ -3,7 +3,8 @@
 
 /// Internal struct for the status of the parser
 typedef struct mse_parser_status_t {
-    mse_set_generator_operator_t parser_op_operator;
+    mse_set_generator_type_t parser_gen_type;
+    mse_set_generator_operator_t parser_op_type;
     mse_set_operator_type_t parser_operator;
     char *tmp_buffer;
     char *op_name_buffer;
