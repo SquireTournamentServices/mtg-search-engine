@@ -66,7 +66,7 @@ static int __mse_handle_set_generator(mse_parser_status_t *ret)
                                   ret->parser_operator,
                                   ret->parser_op_operator,
                                   ret->argument_buffer,
-                                  strlen(ret->argument_buffer));
+                                  strlen(ret->argument_buffer)));
     return 1;
 }
 
