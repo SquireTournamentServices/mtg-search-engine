@@ -54,7 +54,7 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 
 static int __mse_handle_set_generator(mse_parser_status_t *ret)
 {
-    ASSERT(ret != NULL);
+    ASSERT(mse_init_set_generator(&ret->tmp,
 
     mse_set_generator_t tmp;
     ASSERT(mse_init_set_generator(&tmp,
@@ -133,8 +133,8 @@ operator : AND { ret->parser_operator = MSE_SET_INTERSECTION; }
 
 query: %empty
      | set_generator WHITESPACE operator WHITESPACE query
-     | set_generator WHITESPACE query
-     | set_generator
+     | set_generator WHITESPACE query { /*set and handle and operator and set root*/ }
+     | set_generator { /*set root*/ }
      | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE query
      | OPEN_BRACKET query CLOSE_BRACKET
      ;
