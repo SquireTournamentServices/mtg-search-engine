@@ -55,9 +55,6 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 static int __mse_handle_set_generator(mse_parser_status_t *ret)
 {
     ASSERT(mse_init_set_generator(&ret->tmp,
-
-    mse_set_generator_t tmp;
-    ASSERT(mse_init_set_generator(&tmp,
                                   ret->parser_gen_type,
                                   ret->parser_op_type,
                                   ret->argument_buffer,
@@ -137,6 +134,8 @@ query: %empty
      | set_generator { /*set root*/ }
      | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE query
      | OPEN_BRACKET query CLOSE_BRACKET
+     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE query
+     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET
      ;
 %%
 

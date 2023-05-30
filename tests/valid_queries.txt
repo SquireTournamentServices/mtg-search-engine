@@ -26,6 +26,7 @@ opt or goblin or "Goblin Motivator" and c<wubrg
 Goblin Motivator
 cmc:5 and (name:jeff or name:bill)
 cmc:5 and (name:jeff or name:bill) opt
+cmc:5 and -(name:jeff or name:bill) opt
 (name:test)
 (opt)
 toughness:0 -o:"+1/+1" -o:"equal to" -o:modular
