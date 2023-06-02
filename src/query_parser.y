@@ -54,11 +54,13 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 
 static int __mse_handle_set_generator(mse_parser_status_t *ret)
 {
-    ASSERT(mse_init_set_generator(&ret->tmp,
+    mse_set_generator_t tmp;
+    ASSERT(mse_init_set_generator(&tmp,
                                   ret->parser_gen_type,
                                   ret->parser_op_type,
                                   ret->argument_buffer,
                                   strlen(ret->argument_buffer)));
+    ASSERT(mse_init_interp_node_generator(tmp));
     return 1;
 }
 
@@ -78,6 +80,22 @@ static int mse_handle_set_generator(int negate, mse_parser_status_t *ret)
     free(ret->argument_buffer);
     ret->argument_buffer = NULL;
     return r;
+}
+
+static int __mse_insert_node(mse_parser_status_t *state, mse_interp_node_t *node)
+{
+    ASSERT(node != NULL);
+    if (state->root == NULL) {
+        state->root = state->node = node;
+    } else {
+        if (state->node->l == NULL) {
+             state->node->l = node;
+        } else {
+            state->node->r = node;
+            state->node = node;
+        }
+    }
+    return 1;
 }
 
 %}
@@ -118,30 +136,58 @@ op_argument: string { COPY_TO_TMP_BUFFER }
            | word { COPY_TO_TMP_BUFFER }
            ;
 
-set_generator: op_name op_operator op_argument { mse_handle_set_generator(0, ret); }
-             | STMT_NEGATE op_name op_operator op_argument { mse_handle_set_generator(1, ret); }
-             | word { mse_handle_set_generator(0, ret); }
-             | string { mse_handle_set_generator(0, ret); }
+set_generator: op_name op_operator op_argument { ASSERT(mse_handle_set_generator(0, ret)); }
+             | STMT_NEGATE op_name op_operator op_argument { ASSERT(mse_handle_set_generator(1, ret)); }
+             | word { ASSERT(mse_handle_set_generator(0, ret)); }
+             | string { ASSERT(mse_handle_set_generator(0, ret)); }
              ;
 
-operator : AND { ret->parser_operator = MSE_SET_INTERSECTION; }
-         | OR { ret->parser_operator = MSE_SET_UNION; }
+operator : AND { ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION)); }
+         | OR { ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_UNION)); }
          ;
 
 query: %empty
-     | set_generator WHITESPACE operator WHITESPACE query
-     | set_generator WHITESPACE query { /*set and handle and operator and set root*/ }
-     | set_generator { /*set root*/ }
-     | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE query
-     | OPEN_BRACKET query CLOSE_BRACKET
+     | set_generator WHITESPACE operator WHITESPACE query {
+     ASSERT(__mse_insert_node(ret, ret->op_node));
+     ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+     ret->op_node = NULL;
+     ret->set_generator_node = NULL;
+     }
+     | set_generator WHITESPACE query { 
+     // Create a AND node and insert it
+     ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+     ASSERT(__mse_insert_node(ret, ret->op_node));
+     ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+     ret->op_node = NULL;
+     ret->set_generator_node = NULL;
+     }
+     | set_generator { 
+     ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+     ret->set_generator_node = NULL;
+     }
+     | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE query {
+     // Create a AND node and insert it
+     ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+     ASSERT(__mse_insert_node(ret, ret->op_node));
+     ret->op_node = NULL;
+     }
+     | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE query {
+     ASSERT(__mse_insert_node(ret, ret->op_node));
+     ret->op_node = NULL;
+     }
+     | OPEN_BRACKET query CLOSE_BRACKET {
+     ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+     ret->set_generator_node = NULL;
+     }
+     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE query
      | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE query
      | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET
      ;
 %%
 
-int parse_input_string(const char* input_string, mse_interp_node_t *root)
+int parse_input_string(const char* input_string, mse_interp_node_t **root)
 {
-    root = NULL;
+    *root = NULL;
 
     mse_parser_status_t ret;
     memset(&ret, 0, sizeof(ret));
@@ -165,7 +211,7 @@ int parse_input_string(const char* input_string, mse_interp_node_t *root)
         free(ret.op_name_buffer);
     }
 
-    root = (mse_interp_node_t *) 1; // This makes the test pass, something something TDD
+    *root = ret.root;
     ASSERT(root != NULL);
     return result == 0;
 }
