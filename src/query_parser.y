@@ -146,7 +146,7 @@ operator : AND { ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_IN
          | OR { ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_UNION)); }
          ;
 
-query: %empty
+query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
      | set_generator WHITESPACE operator WHITESPACE query {
      ASSERT(__mse_insert_node(ret, ret->op_node));
      ASSERT(__mse_insert_node(ret, ret->set_generator_node));
