@@ -160,35 +160,40 @@ query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
      ret->op_node = NULL;
      ret->set_generator_node = NULL;
      }
-     | set_generator WHITESPACE query { 
+     | set_generator WHITESPACE { 
      // Create a AND node and insert it
      PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
      PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
      PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
      ret->op_node = NULL;
      ret->set_generator_node = NULL;
-     }
+     } query
      | set_generator { 
      PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
      ret->set_generator_node = NULL;
      }
-     | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE query {
+     | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE {
      // Create a AND node and insert it
      PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
      PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
      ret->op_node = NULL;
-     }
-     | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE query {
+     } query
+     | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
      PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
      ret->op_node = NULL;
-     }
+     } query
      | OPEN_BRACKET query CLOSE_BRACKET {
-     PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
-     ret->set_generator_node = NULL;
+     lprintf(LOG_WARNING, "TODO\n");
      }
-     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE query
-     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE query
-     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET
+     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE query {
+     lprintf(LOG_WARNING, "TODO\n");
+     }
+     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE query {
+     lprintf(LOG_WARNING, "TODO\n");
+     }
+     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET {
+     lprintf(LOG_WARNING, "TODO\n");
+     }
      ;
 %%
 
