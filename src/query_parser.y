@@ -67,7 +67,7 @@ static int __mse_handle_set_generator(mse_parser_status_t *ret)
                                   ret->parser_op_type,
                                   ret->argument_buffer,
                                   strlen(ret->argument_buffer)));
-    ASSERT(mse_init_interp_node_generator(tmp));
+    ASSERT(ret->set_generator_node = mse_init_interp_node_generator(tmp));
     return 1;
 }
 
