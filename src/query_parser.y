@@ -3,14 +3,21 @@
 #include <string.h>
 #include <pthread.h>
 #include "testing_h/testing.h"
-#undef lprintf
-#define lprintf fprintf(LOG_STREAM, "(" ANSI_YELLOW "%s" ANSI_RESET \
-                        ":" ANSI_YELLOW "%d" ANSI_RESET ") \t", __FILE__, __LINE__ ),\
-                        __lprintf
 #include "src/interpretor.h"
 #include "src/query_parser.h"
 #include "mse_query_lexer.h"
 #include "mse_query_parser.h"
+#undef lprintf
+#define lprintf fprintf(LOG_STREAM, "(" ANSI_YELLOW "%s" ANSI_RESET \
+                        ":" ANSI_YELLOW "%d" ANSI_RESET ") \t", __FILE__, __LINE__ ),\
+                        __lprintf
+#define PARSE_ASSERT(x) if (!(x)) \
+{ \
+  lprintf(LOG_ERROR, "Parse Error: Assertion failure, line " \
+      ANSI_RED "%d" ANSI_RESET " in " ANSI_RED "%s" ANSI_RESET "\n", \
+      __LINE__, ___FNANE); \
+  YYABORT; \
+}
 
 static pthread_mutex_t parser_lock = PTHREAD_MUTEX_INITIALIZER;
 
@@ -136,47 +143,47 @@ op_argument: string { COPY_TO_TMP_BUFFER }
            | word { COPY_TO_TMP_BUFFER }
            ;
 
-set_generator: op_name op_operator op_argument { ASSERT(mse_handle_set_generator(0, ret)); }
-             | STMT_NEGATE op_name op_operator op_argument { ASSERT(mse_handle_set_generator(1, ret)); }
-             | word { ASSERT(mse_handle_set_generator(0, ret)); }
-             | string { ASSERT(mse_handle_set_generator(0, ret)); }
+set_generator: op_name op_operator op_argument { PARSE_ASSERT(mse_handle_set_generator(0, ret)); }
+             | STMT_NEGATE op_name op_operator op_argument { PARSE_ASSERT(mse_handle_set_generator(1, ret)); }
+             | word { PARSE_ASSERT(mse_handle_set_generator(0, ret)); }
+             | string { PARSE_ASSERT(mse_handle_set_generator(0, ret)); }
              ;
 
-operator : AND { ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION)); }
-         | OR { ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_UNION)); }
+operator : AND { PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION)); }
+         | OR { PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_UNION)); }
          ;
 
 query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
      | set_generator WHITESPACE operator WHITESPACE query {
-     ASSERT(__mse_insert_node(ret, ret->op_node));
-     ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+     PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
      ret->op_node = NULL;
      ret->set_generator_node = NULL;
      }
      | set_generator WHITESPACE query { 
      // Create a AND node and insert it
-     ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
-     ASSERT(__mse_insert_node(ret, ret->op_node));
-     ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+     PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+     PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
      ret->op_node = NULL;
      ret->set_generator_node = NULL;
      }
      | set_generator { 
-     ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+     PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
      ret->set_generator_node = NULL;
      }
      | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE query {
      // Create a AND node and insert it
-     ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
-     ASSERT(__mse_insert_node(ret, ret->op_node));
+     PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
      ret->op_node = NULL;
      }
      | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE query {
-     ASSERT(__mse_insert_node(ret, ret->op_node));
+     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
      ret->op_node = NULL;
      }
      | OPEN_BRACKET query CLOSE_BRACKET {
-     ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+     PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
      ret->set_generator_node = NULL;
      }
      | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE query
