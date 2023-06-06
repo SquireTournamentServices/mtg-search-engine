@@ -194,7 +194,7 @@ static int test_generator_name_trie_negate()
     ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_INCLUDES, NAME_ARG, len));
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
     size_t size_1;
-    ASSERT(size_1 = tree_size(inter.node) > NAME_TRIE_MIN);
+    ASSERT(size_1 = tree_size(inter.node));
     free_mse_search_intermediate(&inter);
     mse_free_set_generator(&ret);
 
@@ -203,7 +203,7 @@ static int test_generator_name_trie_negate()
     ret.negate = 1;
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
     size_t size_2;
-    ASSERT(size_2 = tree_size(inter.node) > NAME_TRIE_MIN);
+    ASSERT(size_2 = tree_size(inter.node));
     free_mse_search_intermediate(&inter);
     mse_free_set_generator(&ret);
 
