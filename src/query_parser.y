@@ -59,7 +59,7 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
     strncpy(ret->tmp_buffer, yytext, yyleng); \
     ret->tmp_buffer[yyleng] = '\0'; \
 
-static int __mse_handle_set_generator(mse_parser_status_t *ret)
+static int __mse_handle_set_generator(mse_parser_status_t *ret, int negate)
 {
     mse_set_generator_t tmp;
     ASSERT(mse_init_set_generator(&tmp,
@@ -67,6 +67,7 @@ static int __mse_handle_set_generator(mse_parser_status_t *ret)
                                   ret->parser_op_type,
                                   ret->argument_buffer,
                                   strlen(ret->argument_buffer)));
+    tmp.negate = negate;
     ASSERT(ret->set_generator_node = mse_init_interp_node_generator(tmp));
     return 1;
 }
@@ -79,7 +80,7 @@ static int mse_handle_set_generator(int negate, mse_parser_status_t *ret)
     free(ret->tmp_buffer);
     ret->tmp_buffer = NULL;
 
-    int r = __mse_handle_set_generator(ret);
+    int r = __mse_handle_set_generator(ret, negate);
 
     free(ret->op_name_buffer);
     ret->op_name_buffer = NULL;
