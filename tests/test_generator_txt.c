@@ -30,6 +30,27 @@ static int test_tree_oracle_re(avl_tree_node_t *node)
     return 1;
 }
 
+static int test_tree_oracle_re_negate(avl_tree_node_t *node)
+{
+    if (node == NULL) {
+        return 1;
+    }
+
+    regex_t re;
+    char *re_str = escape_regex(REGEX_ARG);
+    ASSERT(re_str != NULL);
+    ASSERT(mse_compile_regex(re_str, &re));
+    free(re_str);
+
+    mse_card_t *card = (mse_card_t *) node->payload;
+    ASSERT(!mse_card_oracle_matches(card, &re));
+
+    regfree(&re);
+    ASSERT(test_tree_oracle_re(node->l));
+    ASSERT(test_tree_oracle_re(node->r));
+    return 1;
+}
+
 static int test_generator_oracle_regex()
 {
     mse_set_generator_type_t gen_type = MSE_SET_GENERATOR_ORACLE_TEXT;
@@ -58,7 +79,7 @@ static int test_generator_oracle_regex()
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
     size_t size_2;
     ASSERT(size_2 = tree_size(inter.node) > 0);
-    ASSERT(test_tree_oracle_re(inter.node));
+    ASSERT(test_tree_oracle_re_negate(inter.node));
     free_mse_search_intermediate(&inter);
     mse_free_set_generator(&ret);
 
