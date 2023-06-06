@@ -19,5 +19,14 @@ int mse_generate_set_set(mse_set_generator_t *gen,
 
     mse_set_t *set = node->payload;
     *res = init_mse_search_intermediate_tree(set->set_cards_tree, 1);
+
+    if (gen->negate) {
+        mse_search_intermediate_t tmp;
+        memset(&tmp, 0, sizeof(tmp));
+
+        ASSERT(mse_set_negate(&tmp, cards, res));
+        free_mse_search_intermediate(res);
+        *res = tmp;
+    }
     return 1;
 }
