@@ -46,8 +46,8 @@ static int test_tree_oracle_re_negate(avl_tree_node_t *node)
     ASSERT(!mse_card_oracle_matches(card, &re));
 
     regfree(&re);
-    ASSERT(test_tree_oracle_re(node->l));
-    ASSERT(test_tree_oracle_re(node->r));
+    ASSERT(test_tree_oracle_re_negate(node->l));
+    ASSERT(test_tree_oracle_re_negate(node->r));
     return 1;
 }
 
