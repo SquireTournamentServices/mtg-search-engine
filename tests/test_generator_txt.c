@@ -48,10 +48,21 @@ static int test_generator_oracle_regex()
     // Test includes
     ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_INCLUDES, REGEX_ARG, len));
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
-    ASSERT(tree_size(inter.node) > 0);
+    size_t size_1;
+    ASSERT(size_1 = tree_size(inter.node) > 0);
+    ASSERT(test_tree_oracle_re(inter.node));
+    free_mse_search_intermediate(&inter);
+
+    // Test negate
+    ret.negate = 1;
+    ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
+    size_t size_2;
+    ASSERT(size_2 = tree_size(inter.node) > 0);
     ASSERT(test_tree_oracle_re(inter.node));
     free_mse_search_intermediate(&inter);
     mse_free_set_generator(&ret);
+
+    ASSERT(size_1 + size_2 == tree_size(gen_cards.card_tree));
     return 1;
 }
 
@@ -165,7 +176,43 @@ static int test_generator_name_trie()
     return 1;
 }
 
+static int test_generator_name_trie_negate()
+{
+    mse_set_generator_type_t gen_type = MSE_SET_GENERATOR_NAME;
+    size_t len = strlen(NAME_ARG);
+
+    mse_set_generator_t ret;
+    ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_EQUALS, NAME_ARG, len));
+
+    mse_search_intermediate_t inter;
+    ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
+    ASSERT(tree_size(inter.node) > NAME_TRIE_MIN);
+    free_mse_search_intermediate(&inter);
+    mse_free_set_generator(&ret);
+
+    // No negate
+    ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_INCLUDES, NAME_ARG, len));
+    ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
+    size_t size_1;
+    ASSERT(size_1 = tree_size(inter.node) > NAME_TRIE_MIN);
+    free_mse_search_intermediate(&inter);
+    mse_free_set_generator(&ret);
+
+    // With negate
+    ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_INCLUDES, NAME_ARG, len));
+    ret.negate = 1;
+    ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
+    size_t size_2;
+    ASSERT(size_2 = tree_size(inter.node) > NAME_TRIE_MIN);
+    free_mse_search_intermediate(&inter);
+    mse_free_set_generator(&ret);
+
+    ASSERT(size_1 != size_2);
+    return 1;
+}
+
 SUB_TEST(test_generator_txt, {&test_generator_oracle_regex, "Test generator oraclere"},
 {&test_generator_name_regex, "Test generator name re"},
 {&test_generator_oracle_substr, "Test generator oracle substr"},
-{&test_generator_name_trie, "Test generator name trie"})
+{&test_generator_name_trie, "Test generator name trie"},
+{&test_generator_name_trie_negate, "Test generator name trie negate"})

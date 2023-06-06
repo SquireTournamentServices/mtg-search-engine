@@ -13,7 +13,7 @@ static int __mse_consume_set_oracle_re(mse_set_consumer_t *gen,
     ASSERT(re != NULL);
 
     avl_tree_node_t *node = NULL;
-    int status = mse_matching_card_oracle(&node, cards->node, re, 1, pool);
+    int status = mse_matching_card_oracle(&node, cards->node, re, 1, 0, pool);
     *res = init_mse_search_intermediate_tree(node, 0);
     free(re);
 
@@ -27,7 +27,7 @@ static int __mse_consume_set_oracle_text_inc(mse_set_consumer_t *gen,
         thread_pool_t *pool)
 {
     avl_tree_node_t *node = NULL;
-    ASSERT(mse_matching_card_oracle(&node, cards->node, gen->argument, 0, pool));
+    ASSERT(mse_matching_card_oracle(&node, cards->node, gen->argument, 0, 0, pool));
     *res = init_mse_search_intermediate_tree(node, 0);
     return 1;
 }
@@ -54,7 +54,7 @@ static int __mse_consume_set_name_re(mse_set_consumer_t *gen,
     ASSERT(re != NULL);
 
     avl_tree_node_t *node = NULL;
-    int status = mse_matching_card_name(&node, cards->node, re, 1, pool);
+    int status = mse_matching_card_name(&node, cards->node, re, 1, 0, pool);
     *res = init_mse_search_intermediate_tree(node, 0);
     free(re);
 
@@ -68,7 +68,7 @@ static int __mse_consume_set_name_text_inc(mse_set_consumer_t *gen,
         thread_pool_t *pool)
 {
     avl_tree_node_t *node = NULL;
-    ASSERT(mse_matching_card_name(&node, cards->node, gen->argument, 0, pool));
+    ASSERT(mse_matching_card_name(&node, cards->node, gen->argument, 0, 0, pool));
     *res = init_mse_search_intermediate_tree(node, 0);
     return 1;
 }
