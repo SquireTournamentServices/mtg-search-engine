@@ -14,7 +14,7 @@ static int __mse_generate_set_name_re(mse_set_generator_t *gen,
     ASSERT(re != NULL);
 
     avl_tree_node_t *node = NULL;
-    int status = mse_matching_card_name(&node, cards->card_tree, re, 1, pool);
+    int status = mse_matching_card_name(&node, cards->card_tree, re, 1, gen->negate, pool);
     *res = init_mse_search_intermediate_tree(node, 0);
     free(re);
 
@@ -57,6 +57,20 @@ static int __mse_generate_set_name_text_inc(mse_set_generator_t *gen,
             lprintf(LOG_ERROR, "Cannot generate set union\n");
             code = 0;
             break;
+        }
+
+        free_mse_search_intermediate(&search_tmp);
+        search_tmp = tmp;
+    }
+
+    if (gen->negate) {
+        mse_search_intermediate_t tmp;
+        memset(&tmp, 0, sizeof(tmp));
+
+        int r = mse_set_negate(&tmp, cards, &search_tmp);
+        if (!r) {
+            lprintf(LOG_ERROR, "Cannot negate set\n");
+            code = 0;
         }
 
         free_mse_search_intermediate(&search_tmp);

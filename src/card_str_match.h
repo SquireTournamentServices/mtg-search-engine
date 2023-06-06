@@ -27,6 +27,7 @@ int mse_matching_card_oracle(avl_tree_node_t **ret,
                              avl_tree_node_t *cards_tree,
                              char *str,
                              int is_regex,
+                             int negate,
                              thread_pool_t *pool);
 
 /// Returns a set of matching cards for a name regex
@@ -34,6 +35,7 @@ int mse_matching_card_name(avl_tree_node_t **ret,
                            avl_tree_node_t *cards_tree,
                            char *str,
                            int is_regex,
+                           int negate,
                            thread_pool_t *pool);
 
 /// The syntax for the langugage wraps regex in slashes, these will be removed by calling this

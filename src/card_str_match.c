@@ -85,6 +85,7 @@ typedef struct mse_card_match_t {
     mse_card_match_type_t type;
     avl_tree_node_t **res;
     char *str;
+    int negate;
     pthread_mutex_t lock;
     sem_t sem;
     int err;
@@ -126,6 +127,11 @@ static void __mse_match_card_do_match(avl_tree_node_t *node, mse_card_match_t *m
         lprintf(LOG_ERROR, "Cannot find match type\n");
         match_data->err = 1;
         return;
+    }
+
+    // Negate logic
+    if (match_data->negate) {
+        matches = !matches;
     }
 
     if (matches) {
@@ -241,6 +247,7 @@ static int __mse_match_cards(avl_tree_node_t **ret,
                              avl_tree_node_t *cards_tree,
                              char *str,
                              int is_regex,
+                             int negate,
                              thread_pool_t *pool,
                              mse_card_match_type_t type)
 {
@@ -257,6 +264,7 @@ static int __mse_match_cards(avl_tree_node_t **ret,
     memset(&data, 0, sizeof(data));
     data.type = type;
     data.res = ret;
+    data.negate = negate;
     if (is_regex) {
         data.str = str;
     } else {
@@ -295,18 +303,20 @@ int mse_matching_card_oracle(avl_tree_node_t **ret,
                              avl_tree_node_t *cards_tree,
                              char *str,
                              int is_regex,
+                             int negate,
                              thread_pool_t *pool)
 {
-    return __mse_match_cards(ret, cards_tree, str, is_regex, pool, MSE_MATCH_ORACLE);
+    return __mse_match_cards(ret, cards_tree, str, is_regex, negate, pool, MSE_MATCH_ORACLE);
 }
 
 int mse_matching_card_name(avl_tree_node_t **ret,
                            avl_tree_node_t *cards_tree,
                            char *str,
                            int is_regex,
+                           int negate,
                            thread_pool_t *pool)
 {
-    return __mse_match_cards(ret, cards_tree, str, is_regex, pool, MSE_MATCH_NAME);
+    return __mse_match_cards(ret, cards_tree, str, is_regex, negate, pool, MSE_MATCH_NAME);
 }
 
 char *escape_regex(char *regex)

@@ -36,11 +36,15 @@ typedef enum mse_set_generator_operator_t {
     MSE_SET_GENERATOR_OP_GT_INC
 } mse_set_generator_operator_t;
 
-/// The set generator and its information
+/// The set generator and its information, use the mse_init_set_generator function
 typedef struct mse_set_generator_t {
     mse_set_generator_type_t generator_type;
     mse_set_generator_operator_t generator_op;
     char *argument;
+    /// Whether to negate the operation, this is an optional parameter
+    /// so I added it here instead of the constructor for compatibility
+    /// (laziness) reasons.
+    int negate;
 } mse_set_generator_t;
 
 /// Runs validation that the operation is defined for the given type
