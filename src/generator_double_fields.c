@@ -26,6 +26,24 @@ static int __mse_generate_set_##fname##_eq(mse_set_generator_t *gen, \
     return 1; \
 } \
  \
+static int __mse_generate_set_##fname##_ne(mse_set_generator_t *gen, \
+                                       mse_search_intermediate_t *res, \
+                                       mse_all_printings_cards_t *cards, \
+                                       double arg) \
+{ \
+    ASSERT(__mse_generate_set_##fname##_eq(gen, res, cards, arg)); \
+ \
+    if (gen->negate) { \
+        mse_search_intermediate_t tmp; \
+        memset(&tmp, 0, sizeof(tmp)); \
+ \
+        ASSERT(mse_set_negate(&tmp, cards, res)); \
+        free_mse_search_intermediate(res); \
+        *res = tmp; \
+    } \
+    return 1; \
+} \
+ \
 static int __mse_generate_set_##fname##_lt(mse_set_generator_t *gen, \
                                        mse_search_intermediate_t *res, \
                                        mse_all_printings_cards_t *cards, \
@@ -107,18 +125,34 @@ int mse_generate_set_##fname(mse_set_generator_t *gen, \
     double arg; \
     ASSERT(mse_to_double(gen->argument, &arg)); \
  \
-    switch(gen->generator_op) { \
-    case MSE_SET_GENERATOR_OP_INCLUDES: \
-    case MSE_SET_GENERATOR_OP_EQUALS: \
-        return __mse_generate_set_##fname##_eq(gen, res, cards, arg); \
-    case MSE_SET_GENERATOR_OP_LT: \
-        return __mse_generate_set_##fname##_lt(gen, res, cards, arg); \
-    case MSE_SET_GENERATOR_OP_LT_INC: \
-        return __mse_generate_set_##fname##_lt_inc(gen, res, cards, arg); \
-    case MSE_SET_GENERATOR_OP_GT: \
-        return __mse_generate_set_##fname##_gt(gen, res, cards, arg); \
-    case MSE_SET_GENERATOR_OP_GT_INC: \
-        return __mse_generate_set_##fname##_gt_inc(gen, res, cards, arg); \
+    if (gen->negate) { \
+        switch(gen->generator_op) { \
+        case MSE_SET_GENERATOR_OP_INCLUDES: \
+        case MSE_SET_GENERATOR_OP_EQUALS: \
+            return __mse_generate_set_##fname##_ne(gen, res, cards, arg); \
+        case MSE_SET_GENERATOR_OP_LT: \
+            return __mse_generate_set_##fname##_gt_inc(gen, res, cards, arg); \
+        case MSE_SET_GENERATOR_OP_LT_INC: \
+            return __mse_generate_set_##fname##_gt(gen, res, cards, arg); \
+        case MSE_SET_GENERATOR_OP_GT: \
+            return __mse_generate_set_##fname##_lt_inc(gen, res, cards, arg); \
+        case MSE_SET_GENERATOR_OP_GT_INC: \
+            return __mse_generate_set_##fname##_lt(gen, res, cards, arg); \
+        } \
+    } else { \
+        switch(gen->generator_op) { \
+        case MSE_SET_GENERATOR_OP_INCLUDES: \
+        case MSE_SET_GENERATOR_OP_EQUALS: \
+            return __mse_generate_set_##fname##_eq(gen, res, cards, arg); \
+        case MSE_SET_GENERATOR_OP_LT: \
+            return __mse_generate_set_##fname##_lt(gen, res, cards, arg); \
+        case MSE_SET_GENERATOR_OP_LT_INC: \
+            return __mse_generate_set_##fname##_lt_inc(gen, res, cards, arg); \
+        case MSE_SET_GENERATOR_OP_GT: \
+            return __mse_generate_set_##fname##_gt(gen, res, cards, arg); \
+        case MSE_SET_GENERATOR_OP_GT_INC: \
+            return __mse_generate_set_##fname##_gt_inc(gen, res, cards, arg); \
+        } \
     } \
  \
     lprintf(LOG_ERROR, "Cannot find operation %d for " #fname "\n", gen->generator_op); \
