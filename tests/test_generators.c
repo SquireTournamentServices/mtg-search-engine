@@ -30,7 +30,7 @@ static int init_generator_tests()
     ASSERT(json != NULL);
 
     memset(&gen_cards, 0, sizeof(gen_cards));
-    ASSERT(__parse_all_printings_cards(&gen_cards, json, &gen_thread_pool));
+    ASSERT(__mse_parse_all_printings_cards(&gen_cards, json, &gen_thread_pool));
     json_decref(json);
 
     ASSERT(gen_cards.card_tree != NULL);
@@ -40,7 +40,7 @@ static int init_generator_tests()
 
 static int free_generator_tests()
 {
-    free_all_printings_cards(&gen_cards);
+    mse_free_all_printings_cards(&gen_cards);
     ASSERT(free_pool(&gen_thread_pool));
     return 1;
 }

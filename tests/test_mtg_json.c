@@ -112,14 +112,14 @@ static int test_free_all_printings_cards()
 {
     mse_all_printings_cards_t ret;
     memset(&ret, 0, sizeof(ret));
-    free_all_printings_cards(&ret);
+    mse_free_all_printings_cards(&ret);
     return 1;
 }
 
 static int test_init_free()
 {
     memset(&test_cards, 0, sizeof(test_cards));
-    ASSERT(get_all_printings_cards(&test_cards, &pool));
+    ASSERT(mse_get_all_printings_cards(&test_cards, &pool));
 
     ASSERT(test_cards.indexes.card_power_tree != NULL);
     size_t p_nodes = get_tree_nodes(test_cards.indexes.card_power_tree);
@@ -132,7 +132,7 @@ static int test_init_free()
     ASSERT(p_nodes == test_cards.card_count);
 
     ASSERT(__test_atomic_card_props());
-    free_all_printings_cards(&test_cards);
+    mse_free_all_printings_cards(&test_cards);
     return 1;
 }
 
@@ -180,10 +180,10 @@ static int test_parse_all_printings_cards_sets()
     ASSERT(json != NULL);
 
     memset(&test_cards, 0, sizeof(test_cards));
-    ASSERT(__parse_all_printings_cards(&test_cards, json, &pool));
+    ASSERT(__mse_parse_all_printings_cards(&test_cards, json, &pool));
     ASSERT(__test_atomic_card_props());
 
-    free_all_printings_cards(&test_cards);
+    mse_free_all_printings_cards(&test_cards);
     json_decref(json);
     return 1;
 }
@@ -192,5 +192,5 @@ SUB_TEST(test_mse_json, {&init_tests, "Init tests"},
 {&test_free_all_printings_cards, "Test free zeroed atomic cards struct"},
 {&test_init_free, "Test init and, free"},
 {&test_curl_write_callback, "Test cURL write callback"},
-{&test_parse_all_printings_cards_sets, "Test that __parse_all_printings_cards reads the sets correctly"},
+{&test_parse_all_printings_cards_sets, "Test that __mse_parse_all_printings_cards reads the sets correctly"},
 {&free_tests, "Free tests"})

@@ -28,7 +28,7 @@ static int init_test_cards()
     ASSERT(json != NULL);
 
     memset(&test_cards, 0, sizeof(test_cards));
-    ASSERT(__parse_all_printings_cards(&test_cards, json, &pool));
+    ASSERT(__mse_parse_all_printings_cards(&test_cards, json, &pool));
     json_decref(json);
 
     ASSERT(test_cards.card_tree != NULL);
@@ -38,7 +38,7 @@ static int init_test_cards()
 
 static int free_test_card()
 {
-    free_all_printings_cards(&test_cards);
+    mse_free_all_printings_cards(&test_cards);
     ASSERT(free_pool(&pool));
     return 1;
 }

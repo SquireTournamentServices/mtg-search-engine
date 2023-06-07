@@ -78,9 +78,9 @@ static void __free_all_printings_cards_set(void *set)
     free(set);
 }
 
-int __handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
-                                     const char *set_code,
-                                     json_t *set_node)
+int __mse_handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
+        const char *set_code,
+        json_t *set_node)
 {
     ASSERT(json_is_object(set_node));
 
@@ -113,7 +113,7 @@ int __handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
     return 1;
 }
 
-int __parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool)
+int __mse_parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool)
 {
     ASSERT(ret != NULL);
     memset(ret, 0, sizeof(*ret));
@@ -139,7 +139,7 @@ int __parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, t
     json_t *value;
     size_t count = 0;
     json_object_foreach(data, key, value) {
-        __handle_all_printings_cards_set(ret, key, value);
+        __mse_handle_all_printings_cards_set(ret, key, value);
         count++;
     }
 
@@ -147,14 +147,14 @@ int __parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, t
     lprintf(LOG_INFO, "Found %lu sets and, %lu cards\n", ret->set_count, ret->card_count);
 
     lprintf(LOG_INFO, "Generating card indexes\n");
-    ASSERT(__generate_indexes(ret, pool));
+    ASSERT(__mse_generate_indexes(ret, pool));
 
     lprintf(LOG_INFO, "Cards and, indexes are now complete\n");
 
     return 1;
 }
 
-int get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool)
+int mse_get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool)
 {
     ASSERT(ret != NULL);
     memset(ret, 0, sizeof(*ret));
@@ -190,7 +190,7 @@ int get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool)
     }
 
     // This only runs if there was no error
-    int status = __parse_all_printings_cards(ret, json, pool);
+    int status = __mse_parse_all_printings_cards(ret, json, pool);
     json_decref(json);
 
     if (!status) {
@@ -250,7 +250,7 @@ static void __free_all_printings_cards_indexes(mse_all_printings_cards_t *cards)
     __free_all_printings_cards_colour_indexes(cards);
 }
 
-void free_all_printings_cards(mse_all_printings_cards_t *cards)
+void mse_free_all_printings_cards(mse_all_printings_cards_t *cards)
 {
     if (cards->set_tree != NULL) {
         free_tree(cards->set_tree);

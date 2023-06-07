@@ -152,7 +152,7 @@ static int __add_cards_to_set(avl_tree_node_t *cards, avl_tree_node_t *sets)
     return 1;
 }
 
-static void __generate_set_cards_index_task(void *__state, thread_pool_t *pool)
+static void __mse_generate_set_cards_index_task(void *__state, thread_pool_t *pool)
 {
     mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
     if (!__add_cards_to_set(state->cards->card_tree, state->cards->set_tree)) {
@@ -171,7 +171,7 @@ static int __insert_node(avl_tree_node_t **root, avl_tree_node_t *node)
     }
 }
 
-#define MSE_INDEX_FIELD_NAME(fname) __generate_card_##fname##_index_task
+#define MSE_INDEX_FIELD_NAME(fname) __mse_generate_card_##fname##_index_task
 #define MSE_INDEX_FOR_FIELD(fname) \
 static int __add_cards_to_##fname##_tree(avl_tree_node_t *cards, avl_tree_node_t **card_##fname##_tree) \
 { \
@@ -218,7 +218,7 @@ static int __add_cards_to_card_name_trie(avl_tree_node_t *node, mse_card_trie_no
     return 1;
 }
 
-static void __generate_card_name_trie_task(void *__state, thread_pool_t *pool)
+static void __mse_generate_card_name_trie_task(void *__state, thread_pool_t *pool)
 {
     mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
     if (!__add_cards_to_card_name_trie(state->cards->card_tree, state->cards->indexes.card_name_trie)) {
@@ -253,7 +253,7 @@ static int __add_cards_to_card_name_parts_trie(avl_tree_node_t *node,
     return 1;
 }
 
-static void __generate_card_name_parts_trie_task(void *__state, thread_pool_t *pool)
+static void __mse_generate_card_name_parts_trie_task(void *__state, thread_pool_t *pool)
 {
     mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
     if (!__add_cards_to_card_name_parts_trie(state->cards->card_tree,
@@ -265,16 +265,16 @@ static void __generate_card_name_parts_trie_task(void *__state, thread_pool_t *p
 
 #define TASK_COUNT(T) (sizeof(T) / sizeof(*T))
 
-int __generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool)
+int __mse_generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool)
 {
     ASSERT(pool != NULL);
     ASSERT(ret != NULL);
     ASSERT(mse_init_card_trie_node(&ret->indexes.card_name_trie));
     ASSERT(mse_init_card_trie_node(&ret->indexes.card_name_parts_trie));
 
-    void (*tasks[])(void *, struct thread_pool_t *) = {&__generate_set_cards_index_task,
-                                                       &__generate_card_name_trie_task,
-                                                       &__generate_card_name_parts_trie_task,
+    void (*tasks[])(void *, struct thread_pool_t *) = {&__mse_generate_set_cards_index_task,
+                                                       &__mse_generate_card_name_trie_task,
+                                                       &__mse_generate_card_name_parts_trie_task,
                                                        &MSE_INDEX_FIELD_NAME(power),
                                                        &MSE_INDEX_FIELD_NAME(toughness),
                                                        &MSE_INDEX_FIELD_NAME(cmc),
