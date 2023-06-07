@@ -1,6 +1,6 @@
 #include "./test_generators.h"
 #include "../testing_h/testing.h"
-#include "../src/generators.h"
+#include "../mse/generators.h"
 #include <string.h>
 #include <jansson.h>
 

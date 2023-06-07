@@ -1,7 +1,7 @@
 #include "./test_mtg_json.h"
 #include "../testing_h/testing.h"
-#include "../src/mtg_json.h"
-#include "../src/thread_pool.h"
+#include "../mse/mtg_json.h"
+#include "../mse/thread_pool.h"
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>

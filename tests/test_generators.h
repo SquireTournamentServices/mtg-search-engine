@@ -1,6 +1,6 @@
 #pragma once
-#include "../src/thread_pool.h"
-#include "../src/mtg_json.h"
+#include "../mse/thread_pool.h"
+#include "../mse/mtg_json.h"
 
 int test_generators();
 /// Called in test_generators, defined here so that the long messy code can be in its own unit

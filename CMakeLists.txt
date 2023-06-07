@@ -76,14 +76,14 @@ else()
 endif()
 
 flex_target(
-  query_lexer ./src/query_parser.l ${CMAKE_CURRENT_BINARY_DIR}/mse_query_lexer.c
+  query_lexer mse/query_parser.l ${CMAKE_CURRENT_BINARY_DIR}/mse_query_lexer.c
   DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/mse_query_lexer.h
   COMPILE_FLAGS ${ADDITIONAL_FLEX_FLAGS})
-bison_target(query_parser ./src/query_parser.y
+bison_target(query_parser mse/query_parser.y
              ${CMAKE_CURRENT_BINARY_DIR}/mse_query_parser.c)
 add_flex_bison_dependency(query_lexer query_parser)
 
-set(PARSER_SRC ./src/query_parser.h ${BISON_query_parser_OUTPUTS}
+set(PARSER_SRC mse/query_parser.h ${BISON_query_parser_OUTPUTS}
                ${FLEX_query_lexer_OUTPUTS})
 
 # Define the sources
@@ -93,44 +93,44 @@ set(SRC
     ./testing_h/testing.c
     ./testing_h/logger.h
     ./testing_h/logger.c
-    ./src/card.h
-    ./src/card.c
-    ./src/card_str_match.h
-    ./src/card_str_match.c
-    ./src/card_txt_fields_trie.h
-    ./src/card_txt_fields_trie.c
-    ./src/set.h
-    ./src/set.c
-    ./src/uuid.h
-    ./src/uuid.c
-    ./src/mtg_json.h
-    ./src/mtg_json.c
-    ./src/mtg_json_indexes.h
-    ./src/mtg_json_indexes.c
-    ./src/thread_pool.h
-    ./src/thread_pool.c
-    ./src/io_utils.h
-    ./src/io_utils.c
-    ./src/avl_tree.h
-    ./src/avl_tree.c
-    ./src/search.h
-    ./src/search.c
-    ./src/generator_set.h
-    ./src/generator_set.c
-    ./src/generators.h
-    ./src/generators.c
-    ./src/generator_double_fields.h
-    ./src/generator_double_fields.c
-    ./src/generator_oracle.h
-    ./src/generator_oracle.c
-    ./src/generator_colour.h
-    ./src/generator_colour.c
-    ./src/generator_name.h
-    ./src/generator_name.c
-    ./src/interpretor.h
-    ./src/interpretor.c
-    ./src/consumer.h
-    ./src/consumer.c
+        mse/card.h
+        mse/card.c
+        mse/card_str_match.h
+        mse/card_str_match.c
+        mse/card_txt_fields_trie.h
+        mse/card_txt_fields_trie.c
+        mse/set.h
+        mse/set.c
+        mse/uuid.h
+        mse/uuid.c
+        mse/mtg_json.h
+        mse/mtg_json.c
+        mse/mtg_json_indexes.h
+        mse/mtg_json_indexes.c
+        mse/thread_pool.h
+        mse/thread_pool.c
+        mse/io_utils.h
+        mse/io_utils.c
+        mse/avl_tree.h
+        mse/avl_tree.c
+        mse/search.h
+        mse/search.c
+        mse/generator_set.h
+        mse/generator_set.c
+        mse/generators.h
+        mse/generators.c
+        mse/generator_double_fields.h
+        mse/generator_double_fields.c
+        mse/generator_oracle.h
+        mse/generator_oracle.c
+        mse/generator_colour.h
+        mse/generator_colour.c
+        mse/generator_name.h
+        mse/generator_name.c
+        mse/interpretor.h
+        mse/interpretor.c
+        mse/consumer.h
+        mse/consumer.c
     ${PARSER_SRC}
     ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES})
@@ -178,7 +178,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 include(CodeCoverage)
 
-set(GCOVR_EXCLUDE "build/*" "tests/*" "src/main.c")
+set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
 
 append_coverage_compiler_flags()
 setup_target_for_coverage_gcovr_xml(
@@ -198,7 +198,7 @@ target_link_libraries(mtg-search-engine PRIVATE ${LIBS})
 target_include_directories(mtg-search-engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
                                                     ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(mtg-search-engine-cli ./src/main.c)
+add_executable(mtg-search-engine-cli mse/main.c)
 target_link_libraries(mtg-search-engine-cli ${LIBS} mtg-search-engine)
 target_include_directories(
   mtg-search-engine-cli PUBLIC ${CMAKE_CURRENT_BINARY_DIR}

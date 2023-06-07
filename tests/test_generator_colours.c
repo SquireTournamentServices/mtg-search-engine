@@ -1,7 +1,7 @@
 #include "./test_generators.h"
-#include "../src/card.h"
-#include "../src/generators.h"
-#include "../src/avl_tree.h"
+#include "../mse/card.h"
+#include "../mse/generators.h"
+#include "../mse/avl_tree.h"
 #include "../testing_h/testing.h"
 #include <string.h>
 

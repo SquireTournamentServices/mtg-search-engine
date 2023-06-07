@@ -1,10 +1,10 @@
 #include "./test_search.h"
 #include "../testing_h/testing.h"
-#include "../src/search.h"
-#include "../src/avl_tree.h"
-#include "../src/card.h"
-#include "../src/uuid.h"
-#include "../src/mtg_json.h"
+#include "../mse/search.h"
+#include "../mse/avl_tree.h"
+#include "../mse/card.h"
+#include "../mse/uuid.h"
+#include "../mse/mtg_json.h"
 #include <string.h>
 #include <stdlib.h>
 

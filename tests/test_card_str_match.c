@@ -1,7 +1,7 @@
 #include "./test_card_str_match.h"
 #include "../testing_h/testing.h"
-#include "../src/card_str_match.h"
-#include "../src/mtg_json.h"
+#include "../mse/card_str_match.h"
+#include "../mse/mtg_json.h"
 #include <stdio.h>
 #include <string.h>
 #include <jansson.h>

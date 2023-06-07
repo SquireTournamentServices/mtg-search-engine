@@ -1,6 +1,6 @@
 #include "./test_uuid.h"
 #include "../testing_h/testing.h"
-#include "../src/uuid.h"
+#include "../mse/uuid.h"
 #include <unistd.h>
 #include <string.h>
 

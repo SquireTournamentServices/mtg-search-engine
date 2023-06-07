@@ -1,6 +1,6 @@
 #include "../testing_h/testing.h"
-#include "../src/query_parser.h"
-#include "../src/interpretor.h"
+#include "../mse/query_parser.h"
+#include "../mse/interpretor.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

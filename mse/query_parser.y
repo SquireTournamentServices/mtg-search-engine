@@ -3,8 +3,8 @@
 #include <string.h>
 #include <pthread.h>
 #include "testing_h/testing.h"
-#include "src/interpretor.h"
-#include "src/query_parser.h"
+#include "mse/interpretor.h"
+#include "mse/query_parser.h"
 #include "mse_query_lexer.h"
 #include "mse_query_parser.h"
 #undef lprintf
@@ -27,7 +27,7 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 }
 %}
 %code requires {
-    #include "src/query_parser.h"
+    #include "mse/query_parser.h"
 }
 %parse-param {mse_parser_status_t *ret}
 

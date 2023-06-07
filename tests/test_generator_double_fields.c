@@ -1,7 +1,7 @@
 #include "./test_generators.h"
 #include "../testing_h/testing.h"
-#include "../src/avl_tree.h"
-#include "../src/generators.h"
+#include "../mse/avl_tree.h"
+#include "../mse/generators.h"
 #include <string.h>
 #include <math.h>
 

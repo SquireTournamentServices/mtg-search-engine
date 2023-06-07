@@ -1,7 +1,7 @@
 #include "./test_card_txt_field_trie.h"
 #include "../testing_h/testing.h"
-#include "../src/card_txt_fields_trie.h"
-#include "../src/uuid.h"
+#include "../mse/card_txt_fields_trie.h"
+#include "../mse/uuid.h"
 #include <stdlib.h>
 #include <string.h>
 

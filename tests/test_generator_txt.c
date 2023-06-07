@@ -1,6 +1,6 @@
 #include "./test_generators.h"
-#include "../src/generators.h"
-#include "../src/card_str_match.h"
+#include "../mse/generators.h"
+#include "../mse/card_str_match.h"
 #include "../testing_h/testing.h"
 #include <string.h>
 #include <regex.h>

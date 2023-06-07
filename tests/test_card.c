@@ -1,7 +1,7 @@
 #include "./test_card.h"
 #include "../testing_h/testing.h"
-#include "../src/card.h"
-#include "../src/io_utils.h"
+#include "../mse/card.h"
+#include "../mse/io_utils.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <jansson.h>

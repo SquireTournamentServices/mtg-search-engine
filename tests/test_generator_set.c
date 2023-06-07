@@ -1,8 +1,8 @@
 #include "./test_generators.h"
 #include "../testing_h/testing.h"
-#include "../src/card.h"
-#include "../src/avl_tree.h"
-#include "../src/generators.h"
+#include "../mse/card.h"
+#include "../mse/avl_tree.h"
+#include "../mse/generators.h"
 #include <string.h>
 
 #define DEFAULT_ARGUMENT "m20"

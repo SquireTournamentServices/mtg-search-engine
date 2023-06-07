@@ -1,6 +1,6 @@
 #include "./test_interpretor.h"
 #include "../testing_h/testing.h"
-#include "../src/interpretor.h"
+#include "../mse/interpretor.h"
 #include <string.h>
 
 // Some vile testing globals
