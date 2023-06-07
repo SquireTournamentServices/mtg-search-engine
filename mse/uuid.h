@@ -1,13 +1,15 @@
 #pragma once
 #include <stdio.h>
 
-typedef struct uuid_t {
+typedef struct mse_uuid_t {
     unsigned char bytes[16];
-} uuid_t;
+} mse_uuid_t;
 
-uuid_t from_string(const char *str, int *status);
-int write_uuid(FILE *f, uuid_t uuid); // Returns 0 on error
-int read_uuid(FILE *f, uuid_t *uuid); // Returns 0 on error
+mse_uuid_t mse_from_string(const char *str, int *status);
+/// Returns 0 on error
+int mse_write_uuid(FILE *f, mse_uuid_t uuid);
+/// Returns 0 on error
+int mse_read_uuid(FILE *f, mse_uuid_t *uuid);
 
 #define __MSE_FUTURE_PROOF 1
 // Future prrof it a bit by subtracting one from the number
@@ -17,18 +19,20 @@ int read_uuid(FILE *f, uuid_t *uuid); // Returns 0 on error
 typedef unsigned char mse_set_code_t[MAX_SET_CODE_LEN];
 
 /// Reads a set code
-int get_set_code(const char *code, mse_set_code_t *ret);
+int mse_get_set_code(const char *code, mse_set_code_t *ret);
 
-int write_set_code(FILE *f, mse_set_code_t code); // Returns 0 on error
-int read_set_code(FILE *f, mse_set_code_t *code); // returns 0 on error
+/// Returns 0 on error
+int mse_write_set_code(FILE *f, mse_set_code_t code);
+/// Returns 0 on error
+int mse_read_set_code(FILE *f, mse_set_code_t *code);
 
 /// Return code is similar to that of memcmp, maybe because it uses memcmp...
-int uuid_cmp(uuid_t a, uuid_t b);
+int mse_uuid_cmp(mse_uuid_t a, mse_uuid_t b);
 
 /// Returns the maximum possible UUID, this can be used when doing an lookup in an AVL tree for an element where
 /// the UUID makes up part of a composite key. In card.h the power and, toughness trees use a composite key of
 /// the numerical value and the UUID, by using the max UUID for the thing to compare to, i.e: compare (x, max_x)
-uuid_t max_uuid();
+mse_uuid_t mse_max_uuid();
 
-/// Gets the minimum UUID, similar to max_uuid
-uuid_t min_uuid();
+/// Gets the minimum UUID, similar to mse_max_uuid
+mse_uuid_t mse_min_uuid();

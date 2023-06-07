@@ -54,7 +54,7 @@ int mse_parse_card_json(json_t *json, mse_card_t *card)
     ASSERT(json_is_string(id_o));
 
     int status = 0;
-    card->id = from_string(json_string_value(id_o), &status);
+    card->id = mse_from_string(json_string_value(id_o), &status);
     ASSERT(status);
 
     // Read name
@@ -191,7 +191,7 @@ int mse_parse_card_json(json_t *json, mse_card_t *card)
         ASSERT(card->set_codes = realloc(card->set_codes,
                                          sizeof(*card->set_codes) * (1 + card->set_codes_count)));
 
-        ASSERT(get_set_code(json_string_value(value), &card->set_codes[card->set_codes_count]));
+        ASSERT(mse_get_set_code(json_string_value(value), &card->set_codes[card->set_codes_count]));
         card->set_codes_count++;
     }
 
@@ -201,7 +201,7 @@ int mse_parse_card_json(json_t *json, mse_card_t *card)
 
 int mse_write_card(FILE *f, mse_card_t card)
 {
-    ASSERT(write_uuid(f, card.id));
+    ASSERT(mse_write_uuid(f, card.id));
     ASSERT(mse_write_str(f, card.name));
     ASSERT(mse_write_str(f, card.mana_cost));
     ASSERT(mse_write_str(f, card.oracle_text));
@@ -220,7 +220,7 @@ int mse_write_card(FILE *f, mse_card_t card)
 
     ASSERT(mse_write_size_t(f, card.set_codes_count));
     for (size_t i = 0; i < card.set_codes_count; i++) {
-        ASSERT(write_set_code(f, card.set_codes[i]));
+        ASSERT(mse_write_set_code(f, card.set_codes[i]));
     }
     return 1;
 }
@@ -228,7 +228,7 @@ int mse_write_card(FILE *f, mse_card_t card)
 int mse_read_card(FILE *f, mse_card_t *card)
 {
     memset(card, 0, sizeof(*card));
-    ASSERT(read_uuid(f, &card->id));
+    ASSERT(mse_read_uuid(f, &card->id));
     ASSERT(mse_read_str(f, &card->name));
     ASSERT(mse_read_str(f, &card->mana_cost));
     ASSERT(mse_read_str(f, &card->oracle_text));
@@ -251,7 +251,7 @@ int mse_read_card(FILE *f, mse_card_t *card)
     ASSERT(mse_read_size_t(f, &card->set_codes_count));
     ASSERT(card->set_codes = malloc(sizeof(*card->set_codes) * card->set_codes_count));
     for (size_t i = 0; i < card->set_codes_count; i++) {
-        ASSERT(read_set_code(f, &card->set_codes[i]));
+        ASSERT(mse_read_set_code(f, &card->set_codes[i]));
     }
 
     ASSERT(card->name_lower = mse_to_lower(card->name));
@@ -307,7 +307,7 @@ int mse_avl_cmp_card(void *a, void *b)
 {
     mse_card_t *ca = (mse_card_t *) a;
     mse_card_t *cb = (mse_card_t *) b;
-    return uuid_cmp(ca->id, cb->id);
+    return mse_uuid_cmp(ca->id, cb->id);
 }
 
 #define MSE_CARD_DOUBLE_CMP(a, b, field) \

@@ -16,8 +16,8 @@ static int __mse_generate_set_##fname##_eq(mse_set_generator_t *gen, \
     memset(&lower, 0, sizeof(lower)); \
     upper = lower; \
  \
-    lower.id = min_uuid(); \
-    upper.id = max_uuid(); \
+    lower.id = mse_min_uuid(); \
+    upper.id = mse_max_uuid(); \
     lower.fname = upper.fname = arg; \
     /* Search the tree */ \
     avl_tree_node_t *node = NULL; \
@@ -52,7 +52,7 @@ static int __mse_generate_set_##fname##_lt(mse_set_generator_t *gen, \
     /* Prepare the bounds of the search */ \
     mse_card_t lower; \
     memset(&lower, 0, sizeof(lower)); \
-    lower.id = min_uuid(); \
+    lower.id = mse_min_uuid(); \
  \
     lower.fname = arg; \
  \
@@ -71,7 +71,7 @@ static int __mse_generate_set_##fname##_lt_inc(mse_set_generator_t *gen, \
     /* Prepare the bounds of the search */ \
     mse_card_t lower; \
     memset(&lower, 0xFF, sizeof(lower)); \
-    lower.id = max_uuid(); \
+    lower.id = mse_max_uuid(); \
  \
     lower.fname = arg; \
  \
@@ -90,7 +90,7 @@ static int __mse_generate_set_##fname##_gt(mse_set_generator_t *gen, \
     /* Prepare the bounds of the search */ \
     mse_card_t lower; \
     memset(&lower, 0xFF, sizeof(lower)); \
-    lower.id = max_uuid(); \
+    lower.id = mse_max_uuid(); \
     lower.fname = arg; \
  \
     /* Search the tree */ \
@@ -108,7 +108,7 @@ static int __mse_generate_set_##fname##_gt_inc(mse_set_generator_t *gen, \
     /* Prepare the bounds of the search */ \
     mse_card_t lower; \
     memset(&lower, 0, sizeof(lower)); \
-    lower.id = min_uuid(); \
+    lower.id = mse_min_uuid(); \
     lower.fname = arg; \
  \
     /* Search the tree */ \
@@ -160,5 +160,7 @@ int mse_generate_set_##fname(mse_set_generator_t *gen, \
 }
 
 MSE_GENERATOR_FIELD_GENERATOR(power)
+
 MSE_GENERATOR_FIELD_GENERATOR(toughness)
+
 MSE_GENERATOR_FIELD_GENERATOR(cmc)

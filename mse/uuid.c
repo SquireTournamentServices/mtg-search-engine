@@ -3,9 +3,9 @@
 #include <string.h>
 #include <ctype.h>
 
-uuid_t from_string(const char *str, int *status)
+mse_uuid_t mse_from_string(const char *str, int *status)
 {
-    uuid_t ret;
+    mse_uuid_t ret;
     memset(&ret, 0, sizeof(ret));
     if (str == NULL) {
         *status = 0;
@@ -62,19 +62,19 @@ uuid_t from_string(const char *str, int *status)
     return ret;
 }
 
-int write_uuid(FILE *f, uuid_t uuid)
+int mse_write_uuid(FILE *f, mse_uuid_t uuid)
 {
     ASSERT(fwrite(uuid.bytes, sizeof(uuid.bytes), 1, f));
     return 1;
 }
 
-int read_uuid(FILE *f, uuid_t *uuid)
+int mse_read_uuid(FILE *f, mse_uuid_t *uuid)
 {
     ASSERT(fread(uuid->bytes, sizeof(uuid->bytes), 1, f));
     return 1;
 }
 
-int get_set_code(const char *code, mse_set_code_t *ret)
+int mse_get_set_code(const char *code, mse_set_code_t *ret)
 {
     ASSERT(ret != NULL);
     memset(ret, 0, sizeof(*ret));
@@ -91,19 +91,19 @@ int get_set_code(const char *code, mse_set_code_t *ret)
     return 1;
 }
 
-int write_set_code(FILE *f, mse_set_code_t code)
+int mse_write_set_code(FILE *f, mse_set_code_t code)
 {
     ASSERT(fwrite(code, sizeof(mse_set_code_t), 1, f));
     return 1;
 }
 
-int read_set_code(FILE *f, mse_set_code_t *code)
+int mse_read_set_code(FILE *f, mse_set_code_t *code)
 {
     ASSERT(fread(code, sizeof(mse_set_code_t), 1, f));
     return 1;
 }
 
-int uuid_cmp(uuid_t a, uuid_t b)
+int mse_uuid_cmp(mse_uuid_t a, mse_uuid_t b)
 {
     for (int i = sizeof(a.bytes) - 1; i >= 0; i--) {
         if (a.bytes[i] < b.bytes[i]) {
@@ -115,16 +115,16 @@ int uuid_cmp(uuid_t a, uuid_t b)
     return 0;
 }
 
-uuid_t max_uuid()
+mse_uuid_t mse_max_uuid()
 {
-    uuid_t ret;
+    mse_uuid_t ret;
     memset(ret.bytes, 0xFF, sizeof(ret.bytes));
     return ret;
 }
 
-uuid_t min_uuid()
+mse_uuid_t mse_min_uuid()
 {
-    uuid_t ret;
+    mse_uuid_t ret;
     memset(ret.bytes, 0, sizeof(ret.bytes));
     return ret;
 }

@@ -120,7 +120,7 @@ static int test_card_lookup_aprox()
 
     mse_card_t dandanier;
     memset(&dandanier, 0, sizeof(dandanier));
-    dandanier.id = max_uuid();
+    dandanier.id = mse_max_uuid();
     ASSERT(mse_card_trie_insert(node, &dandanier, DANDAN "ier"));
 
     mse_card_t dandanierier;

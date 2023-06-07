@@ -31,7 +31,7 @@ mse_colour_enum_t mse_parse_colours(const char *colours);
 #define MTG_SPECIAL_NUMERICAL_VAL NAN
 
 typedef struct mse_card_t {
-    uuid_t id;
+    mse_uuid_t id;
     char *name;
     char *name_lower;
     char *mana_cost;

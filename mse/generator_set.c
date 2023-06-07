@@ -10,7 +10,7 @@ int mse_generate_set_set(mse_set_generator_t *gen,
                          mse_all_printings_cards_t *cards)
 {
     mse_set_t card_set_proxy;
-    ASSERT(get_set_code(gen->argument, &card_set_proxy.code));
+    ASSERT(mse_get_set_code(gen->argument, &card_set_proxy.code));
 
     avl_tree_node_t *node = find_payload(cards->set_tree, (void *) &card_set_proxy);
     if (node == NULL) {

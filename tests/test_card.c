@@ -148,22 +148,22 @@ static int test_avl_cmp_card()
     memset(&a, 0, sizeof(a));
     memset(&b, 0, sizeof(b));
 
-    ASSERT(uuid_cmp(a.id, b.id) == 0);
+    ASSERT(mse_uuid_cmp(a.id, b.id) == 0);
     ASSERT(mse_avl_cmp_card((void *) &a, (void *) &b) == 0);
 
     a.id.bytes[0] = 0xFF;
-    int tmp = uuid_cmp(a.id, b.id);
+    int tmp = mse_uuid_cmp(a.id, b.id);
     ASSERT(tmp > 0);
     ASSERT(mse_avl_cmp_card((void *) &a, (void *) &b) == tmp);
 
     a.id.bytes[0] = 0;
     b.id.bytes[0] = 0xFF;
-    tmp = uuid_cmp(a.id, b.id);
+    tmp = mse_uuid_cmp(a.id, b.id);
     ASSERT(tmp < 0);
     ASSERT(mse_avl_cmp_card((void *) &a, (void *) &b) == tmp);
 
-    a.id = min_uuid();
-    b.id = max_uuid();
+    a.id = mse_min_uuid();
+    b.id = mse_max_uuid();
     ASSERT(mse_avl_cmp_card(&a, &b) < 0);
 
     return 1;
@@ -179,8 +179,8 @@ static int test_card_field_cmp()
     ASSERT(mse_avl_cmp_card_toughness(&a, &b) == 0);
     ASSERT(mse_avl_cmp_card_cmc(&a, &b) == 0);
 
-    a.id = min_uuid();
-    b.id = max_uuid();
+    a.id = mse_min_uuid();
+    b.id = mse_max_uuid();
 
     ASSERT(mse_avl_cmp_card_power(&a, &b) < 0);
     ASSERT(mse_avl_cmp_card_toughness(&a, &b) < 0);

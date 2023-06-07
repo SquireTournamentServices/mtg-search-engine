@@ -15,7 +15,7 @@ int mse_parse_set_json(json_t *set_node, mse_set_t *ret, const char *code)
     ASSERT(ret != NULL);
 
     // Copy set code
-    ASSERT(get_set_code(code, &ret->code));
+    ASSERT(mse_get_set_code(code, &ret->code));
 
     // Copy set name
     json_t *name_node = json_object_get(set_node, "name");
@@ -33,7 +33,7 @@ int mse_parse_set_json(json_t *set_node, mse_set_t *ret, const char *code)
 int mse_write_set(FILE *f, mse_set_t set)
 {
     ASSERT(mse_write_str(f, set.name));
-    ASSERT(write_set_code(f, set.code));
+    ASSERT(mse_write_set_code(f, set.code));
     ASSERT(mse_write_tm(f, set.release));
     return 1;
 }
@@ -42,7 +42,7 @@ int mse_read_set(FILE *f, mse_set_t *set)
 {
     memset(set, 0, sizeof(*set));
     ASSERT(mse_read_str(f, &set->name));
-    ASSERT(read_set_code(f, &set->code));
+    ASSERT(mse_read_set_code(f, &set->code));
     ASSERT(mse_read_tm(f, &set->release));
     return 1;
 }
