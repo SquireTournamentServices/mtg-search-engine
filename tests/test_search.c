@@ -17,7 +17,7 @@ static avl_tree_node_t *get_tree(int min, int max)
         memset(ptr, 0, sizeof(*ptr));
         memset(ptr->id.bytes, i, sizeof(*ptr->id.bytes));
 
-        avl_tree_node_t *node = init_avl_tree_node(&free, &avl_cmp_card, (void *) ptr);
+        avl_tree_node_t *node = init_avl_tree_node(&free, &mse_avl_cmp_card, (void *) ptr);
         ASSERT(node != NULL);
         ASSERT(insert_node(&tree, node));
     }
@@ -98,11 +98,11 @@ static int test_set_negation()
     memset(&card_b.id.bytes, 2, sizeof(card_b.id.bytes));
 
     // Insert the cards
-    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card, &card_a);
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &mse_avl_cmp_card, &card_a);
     ASSERT(node);
     ASSERT(insert_node(&cards.card_tree, node));
 
-    node = init_avl_tree_node(NULL, &avl_cmp_card, &card_b);
+    node = init_avl_tree_node(NULL, &mse_avl_cmp_card, &card_b);
     ASSERT(node);
     ASSERT(insert_node(&cards.card_tree, node));
     ASSERT(tree_size(cards.card_tree) == 2);
@@ -125,7 +125,7 @@ static int test_set_negation()
     a.node = NULL;
 
     // Negation of a set with one item should return a set with the other
-    node = init_avl_tree_node(NULL, &avl_cmp_card, &card_a);
+    node = init_avl_tree_node(NULL, &mse_avl_cmp_card, &card_a);
     ASSERT(node);
     a.node = node;
 

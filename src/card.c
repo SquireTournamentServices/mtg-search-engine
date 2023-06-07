@@ -303,7 +303,7 @@ void mse_free_card(mse_card_t *card)
     memset(card, 0, sizeof(*card));
 }
 
-int avl_cmp_card(void *a, void *b)
+int mse_avl_cmp_card(void *a, void *b)
 {
     mse_card_t *ca = (mse_card_t *) a;
     mse_card_t *cb = (mse_card_t *) b;
@@ -314,7 +314,7 @@ int avl_cmp_card(void *a, void *b)
     mse_card_t *ca = (mse_card_t *) a; \
     mse_card_t *cb = (mse_card_t *) b; \
     if ((int) ca->field == (int) cb->field) { \
-        return avl_cmp_card(a, b); \
+        return mse_avl_cmp_card(a, b); \
     } \
     double cmp = ca->field - cb->field; \
     if (cmp < 0) { \

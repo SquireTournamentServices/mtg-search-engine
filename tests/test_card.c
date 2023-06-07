@@ -149,22 +149,22 @@ static int test_avl_cmp_card()
     memset(&b, 0, sizeof(b));
 
     ASSERT(uuid_cmp(a.id, b.id) == 0);
-    ASSERT(avl_cmp_card((void *) &a, (void *) &b) == 0);
+    ASSERT(mse_avl_cmp_card((void *) &a, (void *) &b) == 0);
 
     a.id.bytes[0] = 0xFF;
     int tmp = uuid_cmp(a.id, b.id);
     ASSERT(tmp > 0);
-    ASSERT(avl_cmp_card((void *) &a, (void *) &b) == tmp);
+    ASSERT(mse_avl_cmp_card((void *) &a, (void *) &b) == tmp);
 
     a.id.bytes[0] = 0;
     b.id.bytes[0] = 0xFF;
     tmp = uuid_cmp(a.id, b.id);
     ASSERT(tmp < 0);
-    ASSERT(avl_cmp_card((void *) &a, (void *) &b) == tmp);
+    ASSERT(mse_avl_cmp_card((void *) &a, (void *) &b) == tmp);
 
     a.id = min_uuid();
     b.id = max_uuid();
-    ASSERT(avl_cmp_card(&a, &b) < 0);
+    ASSERT(mse_avl_cmp_card(&a, &b) < 0);
 
     return 1;
 }

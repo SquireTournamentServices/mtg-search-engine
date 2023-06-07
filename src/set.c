@@ -53,7 +53,7 @@ int add_card_to_set(mse_set_t *set, mse_card_t *card)
     ASSERT(card != NULL);
 
     // The card's memory is owned by the index struct that the set struct is part of
-    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card, (void *) card);
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &mse_avl_cmp_card, (void *) card);
     ASSERT(node != NULL);
 
     if (!insert_node(&set->set_cards_tree, node)) {

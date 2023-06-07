@@ -34,7 +34,7 @@ static int MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type) \
  \
     mse_card_t *card = (mse_card_t *) cards->payload; \
     if (mse_colour_##cmp_type(card->colour_field, colours)) { \
-        avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card, cards->payload); \
+        avl_tree_node_t *node = init_avl_tree_node(NULL, &mse_avl_cmp_card, cards->payload); \
         ASSERT(insert_node(tree, node)); \
     } \
  \
@@ -179,7 +179,7 @@ static int __add_cards_to_##fname##_tree(avl_tree_node_t *cards, avl_tree_node_t
         return 1; \
     } \
  \
-    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card_##fname, cards->payload); \
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &mse_avl_cmp_card_##fname, cards->payload); \
     int r = __insert_node(card_##fname##_tree, node); \
     if (!r) { \
         lprintf(LOG_ERROR, "Cannot insert a card into the " #fname " tree\n"); \

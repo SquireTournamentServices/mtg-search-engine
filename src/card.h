@@ -49,13 +49,13 @@ typedef struct mse_card_t {
 } mse_card_t;
 
 // As this is a library to search cards all the trees that this uses are trees whose payloads are cards.
-#define MSE_CARD_DEFAULT_COMPARE_FUNCTION &avl_cmp_card
+#define MSE_CARD_DEFAULT_COMPARE_FUNCTION &mse_avl_cmp_card
 #define MSE_CARD_DEFAULT_FREE_FUNCTION NULL
 
 int mse_parse_card_json(json_t *json, mse_card_t *card);
 int mse_write_card(FILE *f, mse_card_t card);
 int mse_read_card(FILE *f, mse_card_t *card);
-int avl_cmp_card(void *a, void *b);
+int mse_avl_cmp_card(void *a, void *b);
 
 void mse_free_card(mse_card_t *card);
 
