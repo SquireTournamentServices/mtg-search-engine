@@ -42,4 +42,4 @@ int mse_matching_card_name(avl_tree_node_t **ret,
 /// Takes a regex string i.e:
 /// abc\\/bcdef -> abc\/bcdef
 /// /test123/ -> test123
-char *escape_regex(char *regex);
+char *mse_escape_regex(char *regex);

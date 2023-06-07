@@ -319,7 +319,7 @@ int mse_matching_card_name(avl_tree_node_t **ret,
     return __mse_match_cards(ret, cards_tree, str, is_regex, negate, pool, MSE_MATCH_NAME);
 }
 
-char *escape_regex(char *regex)
+char *mse_escape_regex(char *regex)
 {
     size_t len = strlen(regex);
     ASSERT(len > 1);

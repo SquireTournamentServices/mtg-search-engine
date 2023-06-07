@@ -9,7 +9,7 @@ static int __mse_consume_set_oracle_re(mse_set_consumer_t *gen,
                                        mse_search_intermediate_t *cards,
                                        thread_pool_t *pool)
 {
-    char *re = escape_regex(gen->argument);
+    char *re = mse_escape_regex(gen->argument);
     ASSERT(re != NULL);
 
     avl_tree_node_t *node = NULL;
@@ -50,7 +50,7 @@ static int __mse_consume_set_name_re(mse_set_consumer_t *gen,
                                      mse_search_intermediate_t *cards,
                                      thread_pool_t *pool)
 {
-    char *re = escape_regex(gen->argument);
+    char *re = mse_escape_regex(gen->argument);
     ASSERT(re != NULL);
 
     avl_tree_node_t *node = NULL;

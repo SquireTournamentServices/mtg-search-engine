@@ -157,17 +157,17 @@ static int test_oracle_match_a_lot_of_times()
 
 static int test_regex_escape()
 {
-    char *tmp = escape_regex(NO_REPLACEMENT_STR);
+    char *tmp = mse_escape_regex(NO_REPLACEMENT_STR);
     ASSERT(tmp != NULL);
     ASSERT(strcmp(tmp, NO_REPLACEMENT_STR) == 0);
     free(tmp);
 
-    tmp = escape_regex(STRIP_STR);
+    tmp = mse_escape_regex(STRIP_STR);
     ASSERT(tmp != NULL);
     ASSERT(strcmp(tmp, STRIPPED_STR) == 0);
     free(tmp);
 
-    tmp = escape_regex(ESCAPED_SLASH);
+    tmp = mse_escape_regex(ESCAPED_SLASH);
     ASSERT(tmp != NULL);
     ASSERT(strcmp("1/1", tmp) == 0);
     free(tmp);

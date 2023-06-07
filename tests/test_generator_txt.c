@@ -16,7 +16,7 @@ static int test_tree_oracle_re(avl_tree_node_t *node)
     }
 
     regex_t re;
-    char *re_str = escape_regex(REGEX_ARG);
+    char *re_str = mse_escape_regex(REGEX_ARG);
     ASSERT(re_str != NULL);
     ASSERT(mse_compile_regex(re_str, &re));
     free(re_str);
@@ -37,7 +37,7 @@ static int test_tree_oracle_re_negate(avl_tree_node_t *node)
     }
 
     regex_t re;
-    char *re_str = escape_regex(REGEX_ARG);
+    char *re_str = mse_escape_regex(REGEX_ARG);
     ASSERT(re_str != NULL);
     ASSERT(mse_compile_regex(re_str, &re));
     free(re_str);
@@ -132,7 +132,7 @@ static int test_tree_name_re(avl_tree_node_t *node)
     }
 
     regex_t re;
-    char *re_str = escape_regex(REGEX_ARG);
+    char *re_str = mse_escape_regex(REGEX_ARG);
     ASSERT(re_str != NULL);
     ASSERT(mse_compile_regex(re_str, &re));
     free(re_str);
