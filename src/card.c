@@ -323,17 +323,17 @@ int avl_cmp_card(void *a, void *b)
         return 1; \
     } \
 
-int avl_cmp_card_power(void *a, void *b)
+int mse_avl_cmp_card_power(void *a, void *b)
 {
     MSE_CARD_DOUBLE_CMP(a, b, power)
 }
 
-int avl_cmp_card_toughness(void *a, void *b)
+int mse_avl_cmp_card_toughness(void *a, void *b)
 {
     MSE_CARD_DOUBLE_CMP(a, b, toughness)
 }
 
-int avl_cmp_card_cmc(void *a, void *b)
+int mse_avl_cmp_card_cmc(void *a, void *b)
 {
     MSE_CARD_DOUBLE_CMP(a, b, cmc)
 }

@@ -175,22 +175,22 @@ static int test_card_field_cmp()
     memset(&a, 0, sizeof(a));
     b = a;
 
-    ASSERT(avl_cmp_card_power(&a, &b) == 0);
-    ASSERT(avl_cmp_card_toughness(&a, &b) == 0);
-    ASSERT(avl_cmp_card_cmc(&a, &b) == 0);
+    ASSERT(mse_avl_cmp_card_power(&a, &b) == 0);
+    ASSERT(mse_avl_cmp_card_toughness(&a, &b) == 0);
+    ASSERT(mse_avl_cmp_card_cmc(&a, &b) == 0);
 
     a.id = min_uuid();
     b.id = max_uuid();
 
-    ASSERT(avl_cmp_card_power(&a, &b) < 0);
-    ASSERT(avl_cmp_card_toughness(&a, &b) < 0);
-    ASSERT(avl_cmp_card_cmc(&a, &b) < 0);
+    ASSERT(mse_avl_cmp_card_power(&a, &b) < 0);
+    ASSERT(mse_avl_cmp_card_toughness(&a, &b) < 0);
+    ASSERT(mse_avl_cmp_card_cmc(&a, &b) < 0);
 
     a.power = b.power + 3;
-    ASSERT(avl_cmp_card_power(&a, &b) > 0);
+    ASSERT(mse_avl_cmp_card_power(&a, &b) > 0);
 
     a.power = b.power - 3;
-    ASSERT(avl_cmp_card_power(&a, &b) < 0);
+    ASSERT(mse_avl_cmp_card_power(&a, &b) < 0);
     return 1;
 }
 

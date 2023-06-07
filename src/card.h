@@ -60,9 +60,9 @@ int avl_cmp_card(void *a, void *b);
 void mse_free_card(mse_card_t *card);
 
 // Indexes comparison functions
-int avl_cmp_card_power(void *a, void *b);
-int avl_cmp_card_toughness(void *a, void *b);
-int avl_cmp_card_cmc(void *a, void *b);
+int mse_avl_cmp_card_power(void *a, void *b);
+int mse_avl_cmp_card_toughness(void *a, void *b);
+int mse_avl_cmp_card_cmc(void *a, void *b);
 
 // Pop count on Microshit Windoze
 #ifdef _MSC_VER
