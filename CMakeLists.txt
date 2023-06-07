@@ -171,7 +171,7 @@ set(TESTS
 # Setup docs
 find_package(Doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
 doxygen_add_docs(mse-docs ${SRC} ${TESTS}
-                 "Generate documentation pages for ${REPO_URL}"})
+                 "Generate documentation pages for ${REPO_URL}")
 
 # Setup gcovr
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
