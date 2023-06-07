@@ -24,7 +24,7 @@ static int __test_generator_##fname(mse_set_generator_operator_t op_type, int (*
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
     ASSERT(tree_size(inter.node) > 0); \
     ASSERT(test_tree(inter.node)); \
-    free_mse_search_intermediate(&inter); \
+    mse_free_search_intermediate(&inter); \
     mse_free_set_generator(&ret); \
     return 1; \
 } \
@@ -166,7 +166,7 @@ static int __test_generator_##fname##_n(mse_set_generator_operator_t op_type, in
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
     ASSERT(tree_size(inter.node) > 0); \
     ASSERT(test_tree(inter.node)); \
-    free_mse_search_intermediate(&inter); \
+    mse_free_search_intermediate(&inter); \
     mse_free_set_generator(&ret); \
     return 1; \
 } \

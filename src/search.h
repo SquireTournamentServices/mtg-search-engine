@@ -40,7 +40,8 @@ int mse_set_negate(mse_search_intermediate_t *ret,
                    mse_all_printings_cards_t *cards,
                    mse_search_intermediate_t *a);
 
-void free_mse_search_intermediate(mse_search_intermediate_t *inter);
+/// Frees a search intermediate that has been initialised, call even on init fail.
+void mse_free_search_intermediate(mse_search_intermediate_t *inter);
 
 typedef enum mse_search_sort_type_t {
     MSE_SORT_CARD_NAME,

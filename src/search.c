@@ -128,7 +128,7 @@ int mse_set_negate(mse_search_intermediate_t *ret,
     return __mse_set_negate(ret, cards->card_tree, a);
 }
 
-void free_mse_search_intermediate(mse_search_intermediate_t *inter)
+void mse_free_search_intermediate(mse_search_intermediate_t *inter)
 {
     if (inter->node != NULL && !inter->is_reference) {
         free_tree(inter->node);

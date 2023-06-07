@@ -38,7 +38,7 @@ static int __mse_generate_set_##fname##_ne(mse_set_generator_t *gen, \
         memset(&tmp, 0, sizeof(tmp)); \
  \
         ASSERT(mse_set_negate(&tmp, cards, res)); \
-        free_mse_search_intermediate(res); \
+        mse_free_search_intermediate(res); \
         *res = tmp; \
     } \
     return 1; \

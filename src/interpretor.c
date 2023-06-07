@@ -168,7 +168,7 @@ static int __mse_resolve_interp_tree_consumer(mse_interp_node_t *node,
                             &child_ret,
                             pool);
 
-    free_mse_search_intermediate(&child_ret);
+    mse_free_search_intermediate(&child_ret);
     ASSERT(r);
     return 1;
 }
@@ -215,8 +215,8 @@ static int __mse_resolve_interp_tree_operator(mse_interp_node_t *node,
 
     sem_destroy(&sem);
     if (dry_run || err) {
-        free_mse_search_intermediate(&a);
-        free_mse_search_intermediate(&b);
+        mse_free_search_intermediate(&a);
+        mse_free_search_intermediate(&b);
         if (dry_run) {
             return 1;
         } else {
@@ -238,8 +238,8 @@ static int __mse_resolve_interp_tree_operator(mse_interp_node_t *node,
     }
 
     // Cleanup
-    free_mse_search_intermediate(&a);
-    free_mse_search_intermediate(&b);
+    mse_free_search_intermediate(&a);
+    mse_free_search_intermediate(&b);
     ASSERT(r);
     return 1;
 }

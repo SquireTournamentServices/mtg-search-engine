@@ -52,14 +52,14 @@ static int __mse_generate_set_name_text_inc(mse_set_generator_t *gen,
         r = mse_set_union(&tmp, &search_tmp, &tmp_trie);
 
         // Free before the error check
-        free_mse_search_intermediate(&tmp_trie);
+        mse_free_search_intermediate(&tmp_trie);
         if (!r) {
             lprintf(LOG_ERROR, "Cannot generate set union\n");
             code = 0;
             break;
         }
 
-        free_mse_search_intermediate(&search_tmp);
+        mse_free_search_intermediate(&search_tmp);
         search_tmp = tmp;
     }
 
@@ -73,14 +73,14 @@ static int __mse_generate_set_name_text_inc(mse_set_generator_t *gen,
             code = 0;
         }
 
-        free_mse_search_intermediate(&search_tmp);
+        mse_free_search_intermediate(&search_tmp);
         search_tmp = tmp;
     }
 
     // Cleanup
     free_mse_card_parts(&parts);
     if (!code) {
-        free_mse_search_intermediate(&search_tmp);
+        mse_free_search_intermediate(&search_tmp);
         lprintf(LOG_ERROR, "Cannot generate set for name text inc\n");
         return 0;
     }

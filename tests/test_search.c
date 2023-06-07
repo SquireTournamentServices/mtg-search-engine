@@ -44,7 +44,7 @@ static int test_union_tree()
     ASSERT(inter.node != NULL);
     ASSERT(tree_size(inter.node) == tree_size(a.node) + tree_size(b.node));
 
-    free_mse_search_intermediate(&inter);
+    mse_free_search_intermediate(&inter);
 
     free_tree(tree_1);
     free_tree(tree_2);
@@ -72,9 +72,9 @@ static int test_intersection_tree()
     ASSERT(inter.node != NULL);
     ASSERT(tree_size(inter.node) == 11);
 
-    free_mse_search_intermediate(&inter);
-    free_mse_search_intermediate(&a);
-    free_mse_search_intermediate(&b);
+    mse_free_search_intermediate(&inter);
+    mse_free_search_intermediate(&a);
+    mse_free_search_intermediate(&b);
 
     free_tree(tree_1);
     free_tree(tree_2);
@@ -115,13 +115,13 @@ static int test_set_negation()
     // Negation of empty set should be full
     ASSERT(mse_set_negate(&ret, &cards, &a));
     ASSERT(tree_size(ret.node) == 2);
-    free_mse_search_intermediate(&ret);
+    mse_free_search_intermediate(&ret);
 
     // Negation of entire set should be empty
     a.node = cards.card_tree;
     ASSERT(mse_set_negate(&ret, &cards, &a));
     ASSERT(ret.node == NULL);
-    free_mse_search_intermediate(&ret);
+    mse_free_search_intermediate(&ret);
     a.node = NULL;
 
     // Negation of a set with one item should return a set with the other
@@ -133,8 +133,8 @@ static int test_set_negation()
     ASSERT(tree_size(ret.node) == 1);
     ASSERT(ret.node->payload == &card_b);
 
-    free_mse_search_intermediate(&ret);
-    free_mse_search_intermediate(&a);
+    mse_free_search_intermediate(&ret);
+    mse_free_search_intermediate(&a);
 
     // Cleanup
     free_tree(cards.card_tree);
