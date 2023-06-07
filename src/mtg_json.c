@@ -102,7 +102,7 @@ int __handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
         mse_card_t *card = malloc(sizeof(*card));
         node = init_avl_tree_node(&__free_all_printings_cards_card, &avl_cmp_card, card);
 
-        ASSERT(parse_card_json(value, card));
+        ASSERT(mse_parse_card_json(value, card));
         if (insert_node(&ret->card_tree, node)) {
             ret->card_count++;
         } else {

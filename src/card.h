@@ -52,9 +52,9 @@ typedef struct mse_card_t {
 #define MSE_CARD_DEFAULT_COMPARE_FUNCTION &avl_cmp_card
 #define MSE_CARD_DEFAULT_FREE_FUNCTION NULL
 
-int parse_card_json(json_t *json, mse_card_t *card);
-int write_card(FILE *f, mse_card_t card);
-int read_card(FILE *f, mse_card_t *card);
+int mse_parse_card_json(json_t *json, mse_card_t *card);
+int mse_write_card(FILE *f, mse_card_t card);
+int mse_read_card(FILE *f, mse_card_t *card);
 int avl_cmp_card(void *a, void *b);
 
 void free_card(mse_card_t *card);

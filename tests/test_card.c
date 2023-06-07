@@ -94,7 +94,7 @@ static int test_card_parse_json()
     ASSERT(json != NULL);
 
     mse_card_t card;
-    ASSERT(parse_card_json(json, &card));
+    ASSERT(mse_parse_card_json(json, &card));
     ASSERT(__test_card_props(card));
 
     free_card(&card);
@@ -113,7 +113,7 @@ static int test_card_write_read()
     ASSERT(json != NULL);
 
     mse_card_t card;
-    ASSERT(parse_card_json(json, &card));
+    ASSERT(mse_parse_card_json(json, &card));
 
     // Create pipe
     int fid[2];
@@ -126,12 +126,12 @@ static int test_card_write_read()
     ASSERT(w != NULL);
 
     // Test write
-    ASSERT(write_card(w, card));
+    ASSERT(mse_write_card(w, card));
     fclose(w);
     free_card(&card);
 
     mse_card_t card_2;
-    ASSERT(read_card(r, &card_2));
+    ASSERT(mse_read_card(r, &card_2));
     fclose(r);
 
     ASSERT(__test_card_props(card_2));

@@ -40,7 +40,7 @@ mse_colour_enum_t mse_parse_colours(const char *colours)
     return ret;
 }
 
-int parse_card_json(json_t *json, mse_card_t *card)
+int mse_parse_card_json(json_t *json, mse_card_t *card)
 {
     memset(card, 0, sizeof(*card));
 
@@ -199,7 +199,7 @@ int parse_card_json(json_t *json, mse_card_t *card)
     return 1;
 }
 
-int write_card(FILE *f, mse_card_t card)
+int mse_write_card(FILE *f, mse_card_t card)
 {
     ASSERT(write_uuid(f, card.id));
     ASSERT(write_str(f, card.name));
@@ -225,7 +225,7 @@ int write_card(FILE *f, mse_card_t card)
     return 1;
 }
 
-int read_card(FILE *f, mse_card_t *card)
+int mse_read_card(FILE *f, mse_card_t *card)
 {
     memset(card, 0, sizeof(*card));
     ASSERT(read_uuid(f, &card->id));
