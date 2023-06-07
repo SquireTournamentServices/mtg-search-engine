@@ -301,13 +301,13 @@ int __mse_generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool)
         sem_wait(&state.semaphore);
     }
     int tmp = state.ret;
-    free_index_generator_state(&state);
+    mse_free_index_generator_state(&state);
 
     ASSERT(tmp);
     return 1;
 }
 
-void free_index_generator_state(mse_index_generator_state_t *state)
+void mse_free_index_generator_state(mse_index_generator_state_t *state)
 {
     sem_destroy(&state->semaphore);
     memset(state, 0, sizeof(*state));
