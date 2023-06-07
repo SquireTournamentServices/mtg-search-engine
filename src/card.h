@@ -57,7 +57,7 @@ int mse_write_card(FILE *f, mse_card_t card);
 int mse_read_card(FILE *f, mse_card_t *card);
 int avl_cmp_card(void *a, void *b);
 
-void free_card(mse_card_t *card);
+void mse_free_card(mse_card_t *card);
 
 // Indexes comparison functions
 int avl_cmp_card_power(void *a, void *b);

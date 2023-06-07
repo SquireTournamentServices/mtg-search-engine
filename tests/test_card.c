@@ -97,7 +97,7 @@ static int test_card_parse_json()
     ASSERT(mse_parse_card_json(json, &card));
     ASSERT(__test_card_props(card));
 
-    free_card(&card);
+    mse_free_card(&card);
 
     json_decref(json);
     return 1;
@@ -128,7 +128,7 @@ static int test_card_write_read()
     // Test write
     ASSERT(mse_write_card(w, card));
     fclose(w);
-    free_card(&card);
+    mse_free_card(&card);
 
     mse_card_t card_2;
     ASSERT(mse_read_card(r, &card_2));
@@ -136,7 +136,7 @@ static int test_card_write_read()
 
     ASSERT(__test_card_props(card_2));
 
-    free_card(&card_2);
+    mse_free_card(&card_2);
 
     json_decref(json);
     return 1;

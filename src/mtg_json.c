@@ -68,7 +68,7 @@ static void __get_all_printings_cards_curl_thread(void *data, struct thread_pool
 
 static void __free_all_printings_cards_card(void *card)
 {
-    free_card((mse_card_t *) card);
+    mse_free_card((mse_card_t *) card);
     free(card);
 }
 

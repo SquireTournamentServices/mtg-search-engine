@@ -261,7 +261,7 @@ int mse_read_card(FILE *f, mse_card_t *card)
     return 1;
 }
 
-void free_card(mse_card_t *card)
+void mse_free_card(mse_card_t *card)
 {
     if (card == NULL) {
         return;
