@@ -9,7 +9,7 @@
 
 // Some vile testing globals
 static mse_all_printings_cards_t test_cards;
-static thread_pool_t pool;
+static mse_thread_pool_t pool;
 
 static json_t *get_all_printings_cards_from_file()
 {
@@ -26,7 +26,7 @@ static json_t *get_all_printings_cards_from_file()
 
 static int init_test_cards()
 {
-    ASSERT(init_pool(&pool));
+    ASSERT(mse_init_pool(&pool));
 
     json_t *json = get_all_printings_cards_from_file();
     ASSERT(json != NULL);
@@ -43,7 +43,7 @@ static int init_test_cards()
 static int free_test_card()
 {
     mse_free_all_printings_cards(&test_cards);
-    ASSERT(free_pool(&pool));
+    ASSERT(mse_free_pool(&pool));
     return 1;
 }
 
@@ -71,31 +71,31 @@ static int test_card_matches()
 
 static int test_oracle_match()
 {
-    avl_tree_node_t *ret = NULL;
+    mse_avl_tree_node_t *ret = NULL;
     ASSERT(mse_matching_card_oracle(&ret, test_cards.card_tree, ORACLE_TEST_REGEX_1, 1, 0, &pool));
     ASSERT(ret != NULL);
-    ASSERT(tree_size(ret) >= ORACLE_TEST_REGEX_1_MATCHES);
-    free_tree(ret);
+    ASSERT(mse_tree_size(ret) >= ORACLE_TEST_REGEX_1_MATCHES);
+    mse_free_tree(ret);
     return 1;
 }
 
 static int test_oracle_match_2()
 {
-    avl_tree_node_t *ret = NULL;
+    mse_avl_tree_node_t *ret = NULL;
     ASSERT(mse_matching_card_oracle(&ret, test_cards.card_tree, ORACLE_TEST_REGEX_2, 1, 0, &pool));
     ASSERT(ret != NULL);
-    ASSERT(tree_size(ret) >= ORACLE_TEST_REGEX_2_MATHCES);
-    free_tree(ret);
+    ASSERT(mse_tree_size(ret) >= ORACLE_TEST_REGEX_2_MATHCES);
+    mse_free_tree(ret);
     return 1;
 }
 
 static int test_oracle_match_3()
 {
-    avl_tree_node_t *ret = NULL;
+    mse_avl_tree_node_t *ret = NULL;
     ASSERT(mse_matching_card_oracle(&ret, test_cards.card_tree, ORACLE_TEST_REGEX_2, 1, 1, &pool));
     ASSERT(ret != NULL);
-    ASSERT(tree_size(ret) >= ORACLE_TEST_REGEX_2_MATHCES);
-    free_tree(ret);
+    ASSERT(mse_tree_size(ret) >= ORACLE_TEST_REGEX_2_MATHCES);
+    mse_free_tree(ret);
     return 1;
 }
 
@@ -106,21 +106,21 @@ static int test_oracle_match_3()
 
 static int test_name_match()
 {
-    avl_tree_node_t *ret = NULL;
+    mse_avl_tree_node_t *ret = NULL;
     ASSERT(mse_matching_card_name(&ret, test_cards.card_tree, NAME_TEST_REGEX_1, 1, 0, &pool));
     ASSERT(ret != NULL);
-    ASSERT(tree_size(ret) >= NAME_TEST_REGEX_1_MATCHES);
-    free_tree(ret);
+    ASSERT(mse_tree_size(ret) >= NAME_TEST_REGEX_1_MATCHES);
+    mse_free_tree(ret);
     return 1;
 }
 
 static int test_name_match_2()
 {
-    avl_tree_node_t *ret = NULL;
+    mse_avl_tree_node_t *ret = NULL;
     ASSERT(mse_matching_card_name(&ret, test_cards.card_tree, NAME_TEST_REGEX_2, 1, 0, &pool));
     ASSERT(ret != NULL);
-    ASSERT(tree_size(ret) >= NAME_TEST_REGEX_2_MATHCES);
-    free_tree(ret);
+    ASSERT(mse_tree_size(ret) >= NAME_TEST_REGEX_2_MATHCES);
+    mse_free_tree(ret);
     return 1;
 }
 
@@ -131,7 +131,7 @@ static int test_regex_compile_err()
     regex_t re;
     ASSERT(mse_compile_regex(INVALID_RE, &re) == 0);
 
-    avl_tree_node_t *ret = NULL;
+    mse_avl_tree_node_t *ret = NULL;
     ASSERT(!mse_matching_card_oracle(&ret, test_cards.card_tree, INVALID_RE, 1, 0, &pool));
     ASSERT(ret == NULL);
 
@@ -194,12 +194,12 @@ static int test_str_match()
 
 static int test_oracle_match_substr()
 {
-    avl_tree_node_t *ret = NULL;
+    mse_avl_tree_node_t *ret = NULL;
     ASSERT(mse_matching_card_oracle(&ret, test_cards.card_tree, "WhEnEvEr A cReature", 0, 0, &pool));
     ASSERT(ret != NULL);
-    lprintf(LOG_INFO, "There are %lu nodes\n", tree_size(ret));
-    ASSERT(tree_size(ret) >= 418);
-    free_tree(ret);
+    lprintf(LOG_INFO, "There are %lu nodes\n", mse_tree_size(ret));
+    ASSERT(mse_tree_size(ret) >= 418);
+    mse_free_tree(ret);
     return 1;
 }
 

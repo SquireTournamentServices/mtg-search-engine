@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static size_t __tree_height(avl_tree_node_t *node)
+static size_t __tree_height(mse_avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 0;
@@ -13,13 +13,13 @@ static size_t __tree_height(avl_tree_node_t *node)
     return node->height;
 }
 
-void free_tree(avl_tree_node_t *tree)
+void mse_free_tree(mse_avl_tree_node_t *tree)
 {
     if (tree == NULL) {
         return;
     }
-    free_tree(tree->l);
-    free_tree(tree->r);
+    mse_free_tree(tree->l);
+    mse_free_tree(tree->r);
 
     if (tree->free_payload != NULL) {
         tree->free_payload(tree->payload);
@@ -27,25 +27,25 @@ void free_tree(avl_tree_node_t *tree)
     free(tree);
 }
 
-int tree_balance(avl_tree_node_t *root)
+int mse_tree_balance(mse_avl_tree_node_t *node)
 {
-    if (root == NULL) {
+    if (node == NULL) {
         return 0;
     }
 
-    int lh = __tree_height(root->l);
-    int rh = __tree_height(root->r);
+    int lh = __tree_height(node->l);
+    int rh = __tree_height(node->r);
 
     return lh - rh;
 }
 
-avl_tree_node_t *init_avl_tree_node(void (*free_payload)(void *payload),
-                                    int (*cmp_payload)(void *a, void *b),
-                                    void *payload)
+mse_avl_tree_node_t *mse_init_avl_tree_node(void (*free_payload)(void *payload),
+                                            int (*cmp_payload)(void *a, void *b),
+                                            void *payload)
 {
     ASSERT(cmp_payload != NULL);
 
-    avl_tree_node_t *tree = malloc(sizeof * tree);
+    mse_avl_tree_node_t *tree = malloc(sizeof * tree);
     ASSERT(tree != NULL);
 
     tree->payload = payload;
@@ -56,7 +56,7 @@ avl_tree_node_t *init_avl_tree_node(void (*free_payload)(void *payload),
     return tree;
 }
 
-static void __print_tree(avl_tree_node_t *tree, int h)
+static void __print_tree(mse_avl_tree_node_t *tree, int h)
 {
     for (int i = 0; i < h; i++) {
         printf("  |");
@@ -76,12 +76,12 @@ static void __print_tree(avl_tree_node_t *tree, int h)
     }
 }
 
-void print_tree(avl_tree_node_t *root)
+void mse_print_tree(mse_avl_tree_node_t *root)
 {
     __print_tree(root, 0);
 }
 
-static void __rotate_update_heights(avl_tree_node_t *root)
+static void __rotate_update_heights(mse_avl_tree_node_t *root)
 {
     if (root->r != NULL) {
         root->r->height = MAX(__tree_height(root->r->l),
@@ -96,15 +96,15 @@ static void __rotate_update_heights(avl_tree_node_t *root)
                        __tree_height(root->r)) + 1;
 }
 
-static avl_tree_node_t *__rotate_r(avl_tree_node_t *y)
+static mse_avl_tree_node_t *__rotate_r(mse_avl_tree_node_t *y)
 {
     /* Rotation (right):
     *      x          y
     *    y   c  ->  a   x
     *  a   b          b   c
     **/
-    avl_tree_node_t *x = y->l;
-    avl_tree_node_t *t2 = x->r;
+    mse_avl_tree_node_t *x = y->l;
+    mse_avl_tree_node_t *t2 = x->r;
 
     // Perform rotation
     x->r = y;
@@ -114,15 +114,15 @@ static avl_tree_node_t *__rotate_r(avl_tree_node_t *y)
     return x;
 }
 
-static avl_tree_node_t *__rotate_l(avl_tree_node_t *x)
+static mse_avl_tree_node_t *__rotate_l(mse_avl_tree_node_t *x)
 {
     /* Rotation (left):
     *    x              y
     *  a   y    ->    a   x
     *    b   c      b   c
     **/
-    avl_tree_node_t *y = x->r;
-    avl_tree_node_t *t2 = y->l;
+    mse_avl_tree_node_t *y = x->r;
+    mse_avl_tree_node_t *t2 = y->l;
 
     // Perform rotation
     y->l = x;
@@ -132,7 +132,7 @@ static avl_tree_node_t *__rotate_l(avl_tree_node_t *x)
     return y;
 }
 
-static int __cmp_payload(avl_tree_node_t *a, avl_tree_node_t *b)
+static int __cmp_payload(mse_avl_tree_node_t *a, mse_avl_tree_node_t *b)
 {
     if (a == NULL || b == NULL) {
         return 0;
@@ -141,7 +141,7 @@ static int __cmp_payload(avl_tree_node_t *a, avl_tree_node_t *b)
     }
 }
 
-static avl_tree_node_t *__do_insert_node(avl_tree_node_t *root, avl_tree_node_t *node)
+static mse_avl_tree_node_t *__do_insert_node(mse_avl_tree_node_t *root, mse_avl_tree_node_t *node)
 {
     // Base case
     if (root == NULL) {
@@ -151,7 +151,7 @@ static avl_tree_node_t *__do_insert_node(avl_tree_node_t *root, avl_tree_node_t 
     // BST insert
     int cmp = __cmp_payload(node, root);
 
-    // cmp != 0 as insert_node checks this
+    // cmp != 0 as mse_insert_node checks this
     if (cmp <= 0) {
         // Add left
         root->l = __do_insert_node(root->l, node);
@@ -165,7 +165,7 @@ static avl_tree_node_t *__do_insert_node(avl_tree_node_t *root, avl_tree_node_t 
                        __tree_height(root->r)) + 1;
 
     // Balance trees
-    int balance = tree_balance(root);
+    int balance = mse_tree_balance(root);
     int cmp_left = __cmp_payload(node, root->l);
     int cmp_right = __cmp_payload(node, root->r);
 
@@ -184,7 +184,7 @@ static avl_tree_node_t *__do_insert_node(avl_tree_node_t *root, avl_tree_node_t 
     return root;
 }
 
-int insert_node(avl_tree_node_t **root, avl_tree_node_t *node)
+int mse_insert_node(mse_avl_tree_node_t **root, mse_avl_tree_node_t *node)
 {
     if (*root == NULL) {
         *root = node;
@@ -192,14 +192,14 @@ int insert_node(avl_tree_node_t **root, avl_tree_node_t *node)
     }
     ASSERT(root != NULL);
     ASSERT(node != NULL);
-    if (find_payload(*root, node->payload)) {
+    if (mse_find_payload(*root, node->payload)) {
         return 0;
     }
     *root = __do_insert_node(*root, node);
     return 1;
 }
 
-avl_tree_node_t *find_payload(avl_tree_node_t *node, void *payload)
+mse_avl_tree_node_t *mse_find_payload(mse_avl_tree_node_t *node, void *payload)
 {
     if (node == NULL) {
         return NULL;
@@ -209,40 +209,40 @@ avl_tree_node_t *find_payload(avl_tree_node_t *node, void *payload)
     if (cmp == 0) {
         return node;
     } else if (cmp < 0) {
-        return find_payload(node->l, payload);
+        return mse_find_payload(node->l, payload);
     } else {
-        return find_payload(node->r, payload);
+        return mse_find_payload(node->r, payload);
     }
 }
 
-size_t tree_size(avl_tree_node_t *node)
+size_t mse_tree_size(mse_avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 0;
     }
 
-    return 1 + tree_size(node->l) + tree_size(node->r);
+    return 1 + mse_tree_size(node->l) + mse_tree_size(node->r);
 }
 
-avl_tree_node_t *shallow_copy_tree_node(avl_tree_node_t *node)
+mse_avl_tree_node_t *mse_shallow_copy_tree_node(mse_avl_tree_node_t *node)
 {
     if (node == NULL) {
         return NULL;
     }
 
-    return init_avl_tree_node(node->free_payload, node->cmp_payload, node->payload);
+    return mse_init_avl_tree_node(node->free_payload, node->cmp_payload, node->payload);
 }
 
-static int __add_node_to_lookup(avl_tree_node_t **res, avl_tree_node_t *__node)
+static int __add_node_to_lookup(mse_avl_tree_node_t **res, mse_avl_tree_node_t *__node)
 {
-    avl_tree_node_t *node = shallow_copy_tree_node(__node);
+    mse_avl_tree_node_t *node = mse_shallow_copy_tree_node(__node);
     ASSERT(node != NULL);
     node->free_payload = NULL; // The memory is owned by the tree that generated the lookup
-    ASSERT(insert_node(res, node));
+    ASSERT(mse_insert_node(res, node));
     return 1;
 }
 
-static int __tree_lookup(avl_tree_node_t *node, avl_tree_node_t **res, int less_than, void *cmp_payload)
+static int __tree_lookup(mse_avl_tree_node_t *node, mse_avl_tree_node_t **res, int less_than, void *cmp_payload)
 {
     if (node == NULL) {
         return 1;
@@ -265,13 +265,13 @@ static int __tree_lookup(avl_tree_node_t *node, avl_tree_node_t **res, int less_
     return 1;
 }
 
-int tree_lookup(avl_tree_node_t *root, avl_tree_node_t **res, int less_than, void *cmp_payload)
+int mse_tree_lookup(mse_avl_tree_node_t *root, mse_avl_tree_node_t **res, int less_than, void *cmp_payload)
 {
     *res = NULL;
     return __tree_lookup(root, res, less_than, cmp_payload);
 }
 
-static int __tree_lookup_2(avl_tree_node_t *node, avl_tree_node_t **res, void *lower, void *upper)
+static int __tree_lookup_2(mse_avl_tree_node_t *node, mse_avl_tree_node_t **res, void *lower, void *upper)
 {
     if (node == NULL) {
         return 1;
@@ -295,7 +295,7 @@ static int __tree_lookup_2(avl_tree_node_t *node, avl_tree_node_t **res, void *l
     return 1;
 }
 
-int tree_lookup_2(avl_tree_node_t *root, avl_tree_node_t **res, void *lower, void *upper)
+int mse_tree_lookup_2(mse_avl_tree_node_t *root, mse_avl_tree_node_t **res, void *lower, void *upper)
 {
     *res = NULL;
     if (root != NULL) {

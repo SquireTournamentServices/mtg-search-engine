@@ -6,15 +6,15 @@
 
 static int test_pool_init_free()
 {
-    thread_pool_t pool;
-    ASSERT(init_pool(&pool));
+    mse_thread_pool_t pool;
+    ASSERT(mse_init_pool(&pool));
     ASSERT(pool.threads != NULL);
     ASSERT(pool.threads_count > 1);
-    ASSERT(free_pool(&pool));
+    ASSERT(mse_free_pool(&pool));
     return 1;
 }
 
-static void basic_calc(void *data, thread_pool_t *pool)
+static void basic_calc(void *data, mse_thread_pool_t *pool)
 {
     size_t num = (size_t) data;
     if (num < 1000) {
@@ -32,15 +32,15 @@ static void basic_calc(void *data, thread_pool_t *pool)
 
 static int test_pool_enqueue()
 {
-    thread_pool_t pool;
-    ASSERT(init_pool(&pool));
+    mse_thread_pool_t pool;
+    ASSERT(mse_init_pool(&pool));
 
     for (size_t i = 0; i < 100 * pool.threads_count; i++) {
-        task_t task = {(void *) 5L, &basic_calc};
-        ASSERT(task_queue_enqueue(&pool.queue, task));
+        mse_task_t task = {(void *) 5L, &basic_calc};
+        ASSERT(mse_task_queue_enqueue(&pool.queue, task));
     }
 
-    ASSERT(free_pool(&pool));
+    ASSERT(mse_free_pool(&pool));
     return 1;
 }
 

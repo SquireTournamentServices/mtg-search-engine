@@ -49,6 +49,6 @@ void mse_free_interp_node(mse_interp_node_t *node);
 ///   this function will recurse over the tree to generate one output (ret)
 int mse_resolve_interp_tree(mse_interp_node_t *root,
                             mse_search_intermediate_t *ret,
-                            thread_pool_t *pool,
+                            mse_thread_pool_t *pool,
                             int dry_run,
                             mse_all_printings_cards_t *cards);

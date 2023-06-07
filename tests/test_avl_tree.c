@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-static int __test_heights(avl_tree_node_t *root, size_t h)
+static int __test_heights(mse_avl_tree_node_t *root, size_t h)
 {
     if (root == NULL) {
         return 1;
@@ -16,12 +16,12 @@ static int __test_heights(avl_tree_node_t *root, size_t h)
     return 1;
 }
 
-static int test_heights(avl_tree_node_t *root)
+static int test_heights(mse_avl_tree_node_t *root)
 {
     return __test_heights(root, root->height + 1);
 }
 
-static int test_tree_props(avl_tree_node_t *node)
+static int test_tree_props(mse_avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 1;
@@ -53,17 +53,17 @@ static int cmp_size_t(void *a, void *b)
 static int test_tree_init_free()
 {
     void *payload = (void *) 1L;
-    avl_tree_node_t *node = init_avl_tree_node(NULL, &cmp_size_t, payload);
+    mse_avl_tree_node_t *node = mse_init_avl_tree_node(NULL, &cmp_size_t, payload);
     ASSERT(node != NULL);
     ASSERT(node->height == 1);
     ASSERT(node->payload == payload);
     ASSERT(node->free_payload == NULL);
     ASSERT(node->cmp_payload == &cmp_size_t);
-    ASSERT(find_payload(node, node->payload) == node);
-    ASSERT(find_payload(node, payload) == node);
-    ASSERT(tree_size(node) == 1);
-    print_tree(node);
-    free_tree(node);
+    ASSERT(mse_find_payload(node, node->payload) == node);
+    ASSERT(mse_find_payload(node, payload) == node);
+    ASSERT(mse_tree_size(node) == 1);
+    mse_print_tree(node);
+    mse_free_tree(node);
 
     return 1;
 }
@@ -89,7 +89,7 @@ static int test_tree_insert()
     ASSERT(ptr != NULL);
     *ptr = -1;
 
-    avl_tree_node_t *tree = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+    mse_avl_tree_node_t *tree = mse_init_avl_tree_node(&free, &cmp_int_pointer, ptr);
     ASSERT(tree != NULL);
 
     // Add to tree
@@ -98,22 +98,22 @@ static int test_tree_insert()
         ASSERT(ptr != NULL);
         *ptr = i;
 
-        avl_tree_node_t *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+        mse_avl_tree_node_t *node = mse_init_avl_tree_node(&free, &cmp_int_pointer, ptr);
         ASSERT(node != NULL);
         ASSERT(node->payload == ptr);
 
-        ASSERT(find_payload(tree, node->payload) == NULL);
-        ASSERT(insert_node(&tree, node));
-        ASSERT(find_payload(tree, node->payload) == node);
-        ASSERT(tree_size(tree) == i + 2);
+        ASSERT(mse_find_payload(tree, node->payload) == NULL);
+        ASSERT(mse_insert_node(&tree, node));
+        ASSERT(mse_find_payload(tree, node->payload) == node);
+        ASSERT(mse_tree_size(tree) == i + 2);
     }
 
     lprintf(LOG_INFO, "Tree height %lu for %lu node\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
     ASSERT(test_tree_props(tree));
-    ASSERT(tree_size(tree) == MAX_NODES + 1);
+    ASSERT(mse_tree_size(tree) == MAX_NODES + 1);
 
-    free_tree(tree);
+    mse_free_tree(tree);
     return 1;
 }
 
@@ -121,36 +121,36 @@ static int test_tree_insert()
 
 static int test_tree_insert_2()
 {
-    avl_tree_node_t *tree = init_avl_tree_node(NULL, &cmp_size_t,
-                            (void *) (size_t) (NODES_3 + 5));
+    mse_avl_tree_node_t *tree = mse_init_avl_tree_node(NULL, &cmp_size_t,
+                                                       (void *) (size_t) (NODES_3 + 5));
     ASSERT(tree != NULL);
 
     // Add to tree
     for (size_t i = 0; i < NODES_3; i++) {
-        avl_tree_node_t *node = init_avl_tree_node(NULL, &cmp_size_t, (void *) i);
+        mse_avl_tree_node_t *node = mse_init_avl_tree_node(NULL, &cmp_size_t, (void *) i);
         ASSERT(node != NULL);
-        ASSERT(find_payload(tree, node->payload) == NULL);
-        ASSERT(insert_node(&tree, node));
-        ASSERT(find_payload(tree, node->payload) == node);
+        ASSERT(mse_find_payload(tree, node->payload) == NULL);
+        ASSERT(mse_insert_node(&tree, node));
+        ASSERT(mse_find_payload(tree, node->payload) == node);
     }
 
     lprintf(LOG_INFO, "Tree height %lu for %lu nodes\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
     ASSERT(test_tree_props(tree));
-    ASSERT(tree_size(tree) == NODES_3 + 1);
-    print_tree(tree);
+    ASSERT(mse_tree_size(tree) == NODES_3 + 1);
+    mse_print_tree(tree);
 
-    free_tree(tree);
+    mse_free_tree(tree);
     return 1;
 }
 
 static int test_find_payload_null()
 {
-    ASSERT(find_payload(NULL, (void *) 1L) == NULL);
+    ASSERT(mse_find_payload(NULL, (void *) 1L) == NULL);
     return 1;
 }
 
-static int __assert_compare_node_lt(avl_tree_node_t *node, void *payload)
+static int __assert_compare_node_lt(mse_avl_tree_node_t *node, void *payload)
 {
     if (node == NULL) {
         return 1;
@@ -162,7 +162,7 @@ static int __assert_compare_node_lt(avl_tree_node_t *node, void *payload)
     return 1;
 }
 
-static int __assert_compare_node_gt(avl_tree_node_t *node, void *payload)
+static int __assert_compare_node_gt(mse_avl_tree_node_t *node, void *payload)
 {
     if (node == NULL) {
         return 1;
@@ -174,7 +174,7 @@ static int __assert_compare_node_gt(avl_tree_node_t *node, void *payload)
     return 1;
 }
 
-static int __assert_compare_node_lt_gt(avl_tree_node_t *node, void *ptr_1, void *ptr_2)
+static int __assert_compare_node_lt_gt(mse_avl_tree_node_t *node, void *ptr_1, void *ptr_2)
 {
     if (node == NULL) {
         return 1;
@@ -193,7 +193,7 @@ static int test_tree_lookup()
     ASSERT(ptr != NULL);
     *ptr = -1;
 
-    avl_tree_node_t *tree = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+    mse_avl_tree_node_t *tree = mse_init_avl_tree_node(&free, &cmp_int_pointer, ptr);
     ASSERT(tree != NULL);
 
     // Add to tree
@@ -202,11 +202,11 @@ static int test_tree_lookup()
         ASSERT(ptr != NULL);
         *ptr = i;
 
-        avl_tree_node_t *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+        mse_avl_tree_node_t *node = mse_init_avl_tree_node(&free, &cmp_int_pointer, ptr);
         ASSERT(node != NULL);
         ASSERT(node->payload == ptr);
 
-        ASSERT(insert_node(&tree, node));
+        ASSERT(mse_insert_node(&tree, node));
     }
 
     // Sanity check
@@ -225,32 +225,32 @@ static int test_tree_lookup()
     ASSERT(ptr != NULL);
     *ptr = MAX_NODES / 3;
 
-    avl_tree_node_t *res = NULL;
+    mse_avl_tree_node_t *res = NULL;
 
     // Test less than
-    ASSERT(tree_lookup(tree, &res, 1, ptr));
+    ASSERT(mse_tree_lookup(tree, &res, 1, ptr));
     ASSERT(res != NULL);
 
-    lprintf(LOG_INFO, "%lu %d\n", tree_size(res), *ptr);
-    ASSERT(tree_size(res) == (size_t) *ptr);
+    lprintf(LOG_INFO, "%lu %d\n", mse_tree_size(res), *ptr);
+    ASSERT(mse_tree_size(res) == (size_t) *ptr);
 
     ASSERT(res->free_payload == NULL);
     ASSERT(res->cmp_payload == tree->cmp_payload);
     ASSERT(__assert_compare_node_lt(res, ptr));
-    free_tree(res);
+    mse_free_tree(res);
 
     // Test greater than
     res = NULL;
-    ASSERT(tree_lookup(tree, &res, 0, ptr));
+    ASSERT(mse_tree_lookup(tree, &res, 0, ptr));
     ASSERT(res != NULL);
 
-    lprintf(LOG_INFO, "%lu %d\n", tree_size(res), MAX_NODES - *ptr - 1);
-    ASSERT(tree_size(res) == (size_t) MAX_NODES - *ptr - 1);
+    lprintf(LOG_INFO, "%lu %d\n", mse_tree_size(res), MAX_NODES - *ptr - 1);
+    ASSERT(mse_tree_size(res) == (size_t) MAX_NODES - *ptr - 1);
 
     ASSERT(res->free_payload == NULL);
     ASSERT(res->cmp_payload == tree->cmp_payload);
     ASSERT(__assert_compare_node_gt(res, ptr));
-    free_tree(res);
+    mse_free_tree(res);
 
     free(ptr);
 
@@ -258,9 +258,9 @@ static int test_tree_lookup()
     lprintf(LOG_INFO, "Tree height %lu for %lu node\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
     ASSERT(test_tree_props(tree));
-    ASSERT(tree_size(tree) == MAX_NODES);
+    ASSERT(mse_tree_size(tree) == MAX_NODES);
 
-    free_tree(tree);
+    mse_free_tree(tree);
     return 1;
 }
 
@@ -270,7 +270,7 @@ static int test_tree_lookup_2()
     ASSERT(ptr != NULL);
     *ptr = -1;
 
-    avl_tree_node_t *tree = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+    mse_avl_tree_node_t *tree = mse_init_avl_tree_node(&free, &cmp_int_pointer, ptr);
     ASSERT(tree != NULL);
 
     // Add to tree
@@ -279,11 +279,11 @@ static int test_tree_lookup_2()
         ASSERT(ptr != NULL);
         *ptr = i;
 
-        avl_tree_node_t *node = init_avl_tree_node(&free, &cmp_int_pointer, ptr);
+        mse_avl_tree_node_t *node = mse_init_avl_tree_node(&free, &cmp_int_pointer, ptr);
         ASSERT(node != NULL);
         ASSERT(node->payload == ptr);
 
-        ASSERT(insert_node(&tree, node));
+        ASSERT(mse_insert_node(&tree, node));
     }
 
     // Test lookup
@@ -295,13 +295,13 @@ static int test_tree_lookup_2()
     ASSERT(ptr_2 != NULL);
     *ptr_2 = MAX_NODES / 2;
 
-    avl_tree_node_t *res = NULL;
-    ASSERT(tree_lookup_2(tree, &res, ptr, ptr_2));
+    mse_avl_tree_node_t *res = NULL;
+    ASSERT(mse_tree_lookup_2(tree, &res, ptr, ptr_2));
     ASSERT(res != NULL);
-    lprintf(LOG_INFO, "%lu %d\n", tree_size(res), *ptr_2 - *ptr - 1);
-    ASSERT(tree_size(res) == (size_t) *ptr_2 - *ptr - 1);
+    lprintf(LOG_INFO, "%lu %d\n", mse_tree_size(res), *ptr_2 - *ptr - 1);
+    ASSERT(mse_tree_size(res) == (size_t) *ptr_2 - *ptr - 1);
     ASSERT(__assert_compare_node_lt_gt(res, ptr, ptr_2));
-    free_tree(res);
+    mse_free_tree(res);
 
     free(ptr);
     free(ptr_2);
@@ -310,30 +310,30 @@ static int test_tree_lookup_2()
     lprintf(LOG_INFO, "Tree height %lu for %lu node\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
     ASSERT(test_tree_props(tree));
-    ASSERT(tree_size(tree) == MAX_NODES + 1);
+    ASSERT(mse_tree_size(tree) == MAX_NODES + 1);
 
-    free_tree(tree);
+    mse_free_tree(tree);
     return 1;
 }
 
 static int test_shallow_copy_tree_node()
 {
-    ASSERT(shallow_copy_tree_node(NULL) == NULL);
+    ASSERT(mse_shallow_copy_tree_node(NULL) == NULL);
 
-    avl_tree_node_t *tree = init_avl_tree_node(NULL, &cmp_size_t,
-                            (void *) (size_t) (NODES_3 + 5));
+    mse_avl_tree_node_t *tree = mse_init_avl_tree_node(NULL, &cmp_size_t,
+                                                       (void *) (size_t) (NODES_3 + 5));
     ASSERT(tree != NULL);
 
     // Add to tree
     for (size_t i = 0; i < NODES_3; i++) {
-        avl_tree_node_t *node = init_avl_tree_node(NULL, &cmp_size_t, (void *) i);
+        mse_avl_tree_node_t *node = mse_init_avl_tree_node(NULL, &cmp_size_t, (void *) i);
         ASSERT(node != NULL);
-        ASSERT(find_payload(tree, node->payload) == NULL);
-        ASSERT(insert_node(&tree, node));
-        ASSERT(find_payload(tree, node->payload) == node);
+        ASSERT(mse_find_payload(tree, node->payload) == NULL);
+        ASSERT(mse_insert_node(&tree, node));
+        ASSERT(mse_find_payload(tree, node->payload) == node);
     }
 
-    avl_tree_node_t *copy = shallow_copy_tree_node(tree);
+    mse_avl_tree_node_t *copy = mse_shallow_copy_tree_node(tree);
     ASSERT(copy != tree);
     ASSERT(copy->l == NULL);
     ASSERT(copy->r == NULL);
@@ -341,15 +341,15 @@ static int test_shallow_copy_tree_node()
     ASSERT(copy->payload == tree->payload);
     ASSERT(copy->free_payload == tree->free_payload);
     ASSERT(copy->cmp_payload == tree->cmp_payload);
-    free_tree(copy);
+    mse_free_tree(copy);
 
     lprintf(LOG_INFO, "Tree height %lu for %lu nodes\n", tree->height, MAX_NODES);
     ASSERT(test_heights(tree));
     ASSERT(test_tree_props(tree));
-    ASSERT(tree_size(tree) == NODES_3 + 1);
-    print_tree(tree);
+    ASSERT(mse_tree_size(tree) == NODES_3 + 1);
+    mse_print_tree(tree);
 
-    free_tree(tree);
+    mse_free_tree(tree);
     return 1;
 }
 

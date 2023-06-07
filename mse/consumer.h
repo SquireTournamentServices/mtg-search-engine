@@ -34,4 +34,4 @@ int mse_consume_set(mse_set_consumer_t *gen,
                     mse_search_intermediate_t *res,
                     mse_all_printings_cards_t *cards,
                     mse_search_intermediate_t *child,
-                    thread_pool_t *pool);
+                    mse_thread_pool_t *pool);

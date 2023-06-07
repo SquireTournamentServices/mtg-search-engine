@@ -12,7 +12,7 @@
 static int found_eq;
 
 #define TEST_FEILD_GENERATORS_FUNC_FOR(fname, type_name_suffix) \
-static int __test_generator_##fname(mse_set_generator_operator_t op_type, int (*test_tree)(avl_tree_node_t *node)) \
+static int __test_generator_##fname(mse_set_generator_operator_t op_type, int (*test_tree)(mse_avl_tree_node_t *node)) \
 { \
     mse_set_generator_type_t gen_type = MSE_SET_GENERATOR_##type_name_suffix; \
     size_t len = strlen(DEFAULT_ARGUMENT); \
@@ -22,7 +22,7 @@ static int __test_generator_##fname(mse_set_generator_operator_t op_type, int (*
  \
     mse_search_intermediate_t inter; \
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
-    ASSERT(tree_size(inter.node) > 0); \
+    ASSERT(mse_tree_size(inter.node) > 0); \
     ASSERT(test_tree(inter.node)); \
     mse_free_search_intermediate(&inter); \
     mse_free_set_generator(&ret); \
@@ -44,7 +44,7 @@ static int test_generator_##fname##_invalid_arg() \
     return 1; \
 } \
  \
-static int test_tree_##fname##_eq(avl_tree_node_t *node) \
+static int test_tree_##fname##_eq(mse_avl_tree_node_t *node) \
 { \
     if (node == NULL) { \
         return 1; \
@@ -69,7 +69,7 @@ static int test_generator_##fname##_inc() \
     return 1; \
 } \
  \
-static int test_tree_##fname##_lt(avl_tree_node_t *node) \
+static int test_tree_##fname##_lt(mse_avl_tree_node_t *node) \
 { \
     if (node == NULL) { \
         return 1; \
@@ -89,7 +89,7 @@ static int test_generator_##fname##_lt() \
     return 1; \
 } \
  \
-static int test_tree_##fname##_lt_inc(avl_tree_node_t *node) \
+static int test_tree_##fname##_lt_inc(mse_avl_tree_node_t *node) \
 { \
     if (node == NULL) { \
         return 1; \
@@ -111,7 +111,7 @@ static int test_generator_##fname##_lt_inc() \
     return 1; \
 } \
  \
-static int test_tree_##fname##_gt(avl_tree_node_t *node) \
+static int test_tree_##fname##_gt(mse_avl_tree_node_t *node) \
 { \
     if (node == NULL) { \
         return 1; \
@@ -131,7 +131,7 @@ static int test_generator_##fname##_gt() \
     return 1; \
 } \
  \
-static int test_tree_##fname##_gt_inc(avl_tree_node_t *node) \
+static int test_tree_##fname##_gt_inc(mse_avl_tree_node_t *node) \
 { \
     if (node == NULL) { \
         return 1; \
@@ -153,7 +153,7 @@ static int test_generator_##fname##_gt_inc() \
     return 1; \
 } \
 /* Negate tests */ \
-static int __test_generator_##fname##_n(mse_set_generator_operator_t op_type, int (*test_tree)(avl_tree_node_t *node)) \
+static int __test_generator_##fname##_n(mse_set_generator_operator_t op_type, int (*test_tree)(mse_avl_tree_node_t *node)) \
 { \
     mse_set_generator_type_t gen_type = MSE_SET_GENERATOR_##type_name_suffix; \
     size_t len = strlen(DEFAULT_ARGUMENT); \
@@ -164,14 +164,14 @@ static int __test_generator_##fname##_n(mse_set_generator_operator_t op_type, in
  \
     mse_search_intermediate_t inter; \
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
-    ASSERT(tree_size(inter.node) > 0); \
+    ASSERT(mse_tree_size(inter.node) > 0); \
     ASSERT(test_tree(inter.node)); \
     mse_free_search_intermediate(&inter); \
     mse_free_set_generator(&ret); \
     return 1; \
 } \
  \
-static int test_tree_##fname##_eq_n(avl_tree_node_t *node) \
+static int test_tree_##fname##_eq_n(mse_avl_tree_node_t *node) \
 { \
     if (node == NULL) { \
         return 1; \
@@ -196,7 +196,7 @@ static int test_generator_##fname##_inc_n() \
     return 1; \
 } \
  \
-static int test_tree_##fname##_lt_n(avl_tree_node_t *node) \
+static int test_tree_##fname##_lt_n(mse_avl_tree_node_t *node) \
 { \
     if (node == NULL) { \
         return 1; \
@@ -215,7 +215,7 @@ static int test_generator_##fname##_lt_n() \
     return 1; \
 } \
  \
-static int test_tree_##fname##_lt_inc_n(avl_tree_node_t *node) \
+static int test_tree_##fname##_lt_inc_n(mse_avl_tree_node_t *node) \
 { \
     if (node == NULL) { \
         return 1; \
@@ -237,7 +237,7 @@ static int test_generator_##fname##_lt_inc_n() \
     return 1; \
 } \
  \
-static int test_tree_##fname##_gt_n(avl_tree_node_t *node) \
+static int test_tree_##fname##_gt_n(mse_avl_tree_node_t *node) \
 { \
     if (node == NULL) { \
         return 1; \
@@ -256,7 +256,7 @@ static int test_generator_##fname##_gt_n() \
     return 1; \
 } \
  \
-static int test_tree_##fname##_gt_inc_n(avl_tree_node_t *node) \
+static int test_tree_##fname##_gt_inc_n(mse_avl_tree_node_t *node) \
 { \
     if (node == NULL) { \
         return 1; \

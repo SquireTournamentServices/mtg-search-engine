@@ -19,7 +19,7 @@ size_t __mse_json_write_callback(char *ptr,
 /// The indexes for the cards which are in a large list and sorted by
 /// the bit flags from 00000 to 11111
 typedef struct mse_colour_index_t {
-    avl_tree_node_t * colour_indexes[MSE_COLOUR_INDEX_MAX_CARDS];
+    mse_avl_tree_node_t * colour_indexes[MSE_COLOUR_INDEX_MAX_CARDS];
 } mse_colour_index_t;
 
 void mse_free_colour_index(mse_colour_index_t *index);
@@ -42,11 +42,11 @@ typedef struct mse_cards_colours_indexes_t {
 /// in card_tree
 typedef struct mse_cards_indexes_t {
     /// Index for power
-    avl_tree_node_t *card_power_tree;
+    mse_avl_tree_node_t *card_power_tree;
     /// Index for toughness
-    avl_tree_node_t *card_toughness_tree;
+    mse_avl_tree_node_t *card_toughness_tree;
     /// Index for card cmc
-    avl_tree_node_t *card_cmc_tree;
+    mse_avl_tree_node_t *card_cmc_tree;
     /// Card names trie where the full filtered name is used
     mse_card_trie_node_t *card_name_trie;
     /// Card names parts trie where the full filtered name is used
@@ -63,12 +63,12 @@ typedef struct mse_all_printings_cards_t {
     /// Amount of sets
     size_t set_count;
     /// AVL BST tree for the sets, sorted by set code
-    avl_tree_node_t *set_tree;
+    mse_avl_tree_node_t *set_tree;
 
     /// Amount of cards
     size_t card_count;
     /// AVL BST tree for the cards, sorted by UUID
-    avl_tree_node_t *card_tree;
+    mse_avl_tree_node_t *card_tree;
 
     /// Indexes
     mse_cards_indexes_t indexes;
@@ -82,14 +82,14 @@ int __mse_handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
 
 /// Exposed internal method for use within internal testing
 /// This method will parse the json cards all of the indexes
-int __mse_parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool);
+int __mse_parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, mse_thread_pool_t *pool);
 
 /// Returns 1 on success, 0 on failure
 /// Do not call mse_free_all_printings_cards on fail
-int mse_get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool);
+int mse_get_all_printings_cards(mse_all_printings_cards_t *ret, mse_thread_pool_t *pool);
 
 /// This function will generate all of the indexes for a card, defined in mse_json_indexes.c
-int __mse_generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool);
+int __mse_generate_indexes(mse_all_printings_cards_t *ret, mse_thread_pool_t *pool);
 
 /// Frees atomic cards
 void mse_free_all_printings_cards(mse_all_printings_cards_t *cards);

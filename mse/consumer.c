@@ -7,12 +7,12 @@
 static int __mse_consume_set_oracle_re(mse_set_consumer_t *gen,
                                        mse_search_intermediate_t *res,
                                        mse_search_intermediate_t *cards,
-                                       thread_pool_t *pool)
+                                       mse_thread_pool_t *pool)
 {
     char *re = mse_escape_regex(gen->argument);
     ASSERT(re != NULL);
 
-    avl_tree_node_t *node = NULL;
+    mse_avl_tree_node_t *node = NULL;
     int status = mse_matching_card_oracle(&node, cards->node, re, 1, 0, pool);
     *res = mse_init_search_intermediate_tree(node, 0);
     free(re);
@@ -24,9 +24,9 @@ static int __mse_consume_set_oracle_re(mse_set_consumer_t *gen,
 static int __mse_consume_set_oracle_text_inc(mse_set_consumer_t *gen,
         mse_search_intermediate_t *res,
         mse_search_intermediate_t *cards,
-        thread_pool_t *pool)
+        mse_thread_pool_t *pool)
 {
-    avl_tree_node_t *node = NULL;
+    mse_avl_tree_node_t *node = NULL;
     ASSERT(mse_matching_card_oracle(&node, cards->node, gen->argument, 0, 0, pool));
     *res = mse_init_search_intermediate_tree(node, 0);
     return 1;
@@ -35,7 +35,7 @@ static int __mse_consume_set_oracle_text_inc(mse_set_consumer_t *gen,
 static int mse_consume_set_oracle(mse_set_consumer_t *gen,
                                   mse_search_intermediate_t *res,
                                   mse_search_intermediate_t *cards,
-                                  thread_pool_t *pool)
+                                  mse_thread_pool_t *pool)
 {
     if (mse_is_regex_str(gen->argument)) {
         return __mse_consume_set_oracle_re(gen, res, cards, pool);
@@ -48,12 +48,12 @@ static int mse_consume_set_oracle(mse_set_consumer_t *gen,
 static int __mse_consume_set_name_re(mse_set_consumer_t *gen,
                                      mse_search_intermediate_t *res,
                                      mse_search_intermediate_t *cards,
-                                     thread_pool_t *pool)
+                                     mse_thread_pool_t *pool)
 {
     char *re = mse_escape_regex(gen->argument);
     ASSERT(re != NULL);
 
-    avl_tree_node_t *node = NULL;
+    mse_avl_tree_node_t *node = NULL;
     int status = mse_matching_card_name(&node, cards->node, re, 1, 0, pool);
     *res = mse_init_search_intermediate_tree(node, 0);
     free(re);
@@ -65,9 +65,9 @@ static int __mse_consume_set_name_re(mse_set_consumer_t *gen,
 static int __mse_consume_set_name_text_inc(mse_set_consumer_t *gen,
         mse_search_intermediate_t *res,
         mse_search_intermediate_t *cards,
-        thread_pool_t *pool)
+        mse_thread_pool_t *pool)
 {
-    avl_tree_node_t *node = NULL;
+    mse_avl_tree_node_t *node = NULL;
     ASSERT(mse_matching_card_name(&node, cards->node, gen->argument, 0, 0, pool));
     *res = mse_init_search_intermediate_tree(node, 0);
     return 1;
@@ -76,7 +76,7 @@ static int __mse_consume_set_name_text_inc(mse_set_consumer_t *gen,
 static int mse_consume_set_name(mse_set_consumer_t *gen,
                                 mse_search_intermediate_t *res,
                                 mse_search_intermediate_t *cards,
-                                thread_pool_t *pool)
+                                mse_thread_pool_t *pool)
 {
     if (mse_is_regex_str(gen->argument)) {
         return __mse_consume_set_name_re(gen, res, cards, pool);
@@ -115,7 +115,7 @@ int mse_consume_set(mse_set_consumer_t *gen,
                     mse_search_intermediate_t *res,
                     mse_all_printings_cards_t *cards,
                     mse_search_intermediate_t *child,
-                    thread_pool_t *pool)
+                    mse_thread_pool_t *pool)
 {
     memset(res, 0, sizeof(*res));
     switch(gen->generator_type) {
