@@ -1,7 +1,7 @@
 #include "./test_card_str_match.h"
 #include "../testing_h/testing.h"
-#include "../src/card_str_match.h"
-#include "../src/mtg_json.h"
+#include "../mse/card_str_match.h"
+#include "../mse/mtg_json.h"
 #include <stdio.h>
 #include <string.h>
 #include <jansson.h>
@@ -32,7 +32,7 @@ static int init_test_cards()
     ASSERT(json != NULL);
 
     memset(&test_cards, 0, sizeof(test_cards));
-    ASSERT(__parse_all_printings_cards(&test_cards, json, &pool));
+    ASSERT(__mse_parse_all_printings_cards(&test_cards, json, &pool));
     json_decref(json);
 
     ASSERT(test_cards.card_tree != NULL);
@@ -42,7 +42,7 @@ static int init_test_cards()
 
 static int free_test_card()
 {
-    free_all_printings_cards(&test_cards);
+    mse_free_all_printings_cards(&test_cards);
     ASSERT(free_pool(&pool));
     return 1;
 }
@@ -157,17 +157,17 @@ static int test_oracle_match_a_lot_of_times()
 
 static int test_regex_escape()
 {
-    char *tmp = escape_regex(NO_REPLACEMENT_STR);
+    char *tmp = mse_escape_regex(NO_REPLACEMENT_STR);
     ASSERT(tmp != NULL);
     ASSERT(strcmp(tmp, NO_REPLACEMENT_STR) == 0);
     free(tmp);
 
-    tmp = escape_regex(STRIP_STR);
+    tmp = mse_escape_regex(STRIP_STR);
     ASSERT(tmp != NULL);
     ASSERT(strcmp(tmp, STRIPPED_STR) == 0);
     free(tmp);
 
-    tmp = escape_regex(ESCAPED_SLASH);
+    tmp = mse_escape_regex(ESCAPED_SLASH);
     ASSERT(tmp != NULL);
     ASSERT(strcmp("1/1", tmp) == 0);
     free(tmp);

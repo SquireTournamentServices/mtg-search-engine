@@ -1,7 +1,7 @@
 #include "./test_card.h"
 #include "../testing_h/testing.h"
-#include "../src/card.h"
-#include "../src/io_utils.h"
+#include "../mse/card.h"
+#include "../mse/io_utils.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <jansson.h>
@@ -94,10 +94,10 @@ static int test_card_parse_json()
     ASSERT(json != NULL);
 
     mse_card_t card;
-    ASSERT(parse_card_json(json, &card));
+    ASSERT(mse_parse_card_json(json, &card));
     ASSERT(__test_card_props(card));
 
-    free_card(&card);
+    mse_free_card(&card);
 
     json_decref(json);
     return 1;
@@ -113,7 +113,7 @@ static int test_card_write_read()
     ASSERT(json != NULL);
 
     mse_card_t card;
-    ASSERT(parse_card_json(json, &card));
+    ASSERT(mse_parse_card_json(json, &card));
 
     // Create pipe
     int fid[2];
@@ -126,17 +126,17 @@ static int test_card_write_read()
     ASSERT(w != NULL);
 
     // Test write
-    ASSERT(write_card(w, card));
+    ASSERT(mse_write_card(w, card));
     fclose(w);
-    free_card(&card);
+    mse_free_card(&card);
 
     mse_card_t card_2;
-    ASSERT(read_card(r, &card_2));
+    ASSERT(mse_read_card(r, &card_2));
     fclose(r);
 
     ASSERT(__test_card_props(card_2));
 
-    free_card(&card_2);
+    mse_free_card(&card_2);
 
     json_decref(json);
     return 1;
@@ -148,23 +148,23 @@ static int test_avl_cmp_card()
     memset(&a, 0, sizeof(a));
     memset(&b, 0, sizeof(b));
 
-    ASSERT(uuid_cmp(a.id, b.id) == 0);
-    ASSERT(avl_cmp_card((void *) &a, (void *) &b) == 0);
+    ASSERT(mse_uuid_cmp(a.id, b.id) == 0);
+    ASSERT(mse_avl_cmp_card((void *) &a, (void *) &b) == 0);
 
     a.id.bytes[0] = 0xFF;
-    int tmp = uuid_cmp(a.id, b.id);
+    int tmp = mse_uuid_cmp(a.id, b.id);
     ASSERT(tmp > 0);
-    ASSERT(avl_cmp_card((void *) &a, (void *) &b) == tmp);
+    ASSERT(mse_avl_cmp_card((void *) &a, (void *) &b) == tmp);
 
     a.id.bytes[0] = 0;
     b.id.bytes[0] = 0xFF;
-    tmp = uuid_cmp(a.id, b.id);
+    tmp = mse_uuid_cmp(a.id, b.id);
     ASSERT(tmp < 0);
-    ASSERT(avl_cmp_card((void *) &a, (void *) &b) == tmp);
+    ASSERT(mse_avl_cmp_card((void *) &a, (void *) &b) == tmp);
 
-    a.id = min_uuid();
-    b.id = max_uuid();
-    ASSERT(avl_cmp_card(&a, &b) < 0);
+    a.id = mse_min_uuid();
+    b.id = mse_max_uuid();
+    ASSERT(mse_avl_cmp_card(&a, &b) < 0);
 
     return 1;
 }
@@ -175,22 +175,22 @@ static int test_card_field_cmp()
     memset(&a, 0, sizeof(a));
     b = a;
 
-    ASSERT(avl_cmp_card_power(&a, &b) == 0);
-    ASSERT(avl_cmp_card_toughness(&a, &b) == 0);
-    ASSERT(avl_cmp_card_cmc(&a, &b) == 0);
+    ASSERT(mse_avl_cmp_card_power(&a, &b) == 0);
+    ASSERT(mse_avl_cmp_card_toughness(&a, &b) == 0);
+    ASSERT(mse_avl_cmp_card_cmc(&a, &b) == 0);
 
-    a.id = min_uuid();
-    b.id = max_uuid();
+    a.id = mse_min_uuid();
+    b.id = mse_max_uuid();
 
-    ASSERT(avl_cmp_card_power(&a, &b) < 0);
-    ASSERT(avl_cmp_card_toughness(&a, &b) < 0);
-    ASSERT(avl_cmp_card_cmc(&a, &b) < 0);
+    ASSERT(mse_avl_cmp_card_power(&a, &b) < 0);
+    ASSERT(mse_avl_cmp_card_toughness(&a, &b) < 0);
+    ASSERT(mse_avl_cmp_card_cmc(&a, &b) < 0);
 
     a.power = b.power + 3;
-    ASSERT(avl_cmp_card_power(&a, &b) > 0);
+    ASSERT(mse_avl_cmp_card_power(&a, &b) > 0);
 
     a.power = b.power - 3;
-    ASSERT(avl_cmp_card_power(&a, &b) < 0);
+    ASSERT(mse_avl_cmp_card_power(&a, &b) < 0);
     return 1;
 }
 

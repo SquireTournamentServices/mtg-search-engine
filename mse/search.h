@@ -11,7 +11,7 @@ typedef struct mse_search_intermediate_t {
 /// This wraps a tree in a mse_search_intermediate_t for use within operations. There is no allocation here
 /// often you want to free_tree(node) at some point down the line.
 /// is_reference is whether the node is a reference to another objects memory or if it should be owned by this object
-mse_search_intermediate_t init_mse_search_intermediate_tree(avl_tree_node_t *node, int is_reference);
+mse_search_intermediate_t mse_init_search_intermediate_tree(avl_tree_node_t *node, int is_reference);
 
 /// Enum for the operations defined here, used by interpretor.h
 typedef enum mse_set_operator_type_t {
@@ -40,7 +40,8 @@ int mse_set_negate(mse_search_intermediate_t *ret,
                    mse_all_printings_cards_t *cards,
                    mse_search_intermediate_t *a);
 
-void free_mse_search_intermediate(mse_search_intermediate_t *inter);
+/// Frees a search intermediate that has been initialised, call even on init fail.
+void mse_free_search_intermediate(mse_search_intermediate_t *inter);
 
 typedef enum mse_search_sort_type_t {
     MSE_SORT_CARD_NAME,

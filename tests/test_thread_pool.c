@@ -2,7 +2,7 @@
 #include <math.h>
 #include "./test_thread_pool.h"
 #include "../testing_h/testing.h"
-#include "../src/thread_pool.h"
+#include "../mse/thread_pool.h"
 
 static int test_pool_init_free()
 {

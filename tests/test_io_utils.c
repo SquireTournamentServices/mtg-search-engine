@@ -1,6 +1,6 @@
 #include "./test_io_utils.h"
 #include "../testing_h/testing.h"
-#include "../src/io_utils.h"
+#include "../mse/io_utils.h"
 #include <limits.h>
 #include <unistd.h>
 #include <string.h>
@@ -20,10 +20,10 @@ static int test_##type##_read_write() \
     ASSERT(r != NULL); \
     FILE *w = fdopen(fid[1], "wb"); \
     ASSERT(w != NULL); \
-    ASSERT(write_##type(w, val_1)); \
+    ASSERT(mse_write_##type(w, val_1)); \
     fclose(w); \
     type val_2; \
-    ASSERT(read_##type(r, &val_2)); \
+    ASSERT(mse_read_##type(r, &val_2)); \
     ASSERT(memcmp(&val_1, &val_2, sizeof(val_1)) == 0); \
     fclose(r); \
     return 1; \
@@ -51,11 +51,11 @@ static int test_str_read_write()
     FILE *w = fdopen(fid[1], "wb");
     ASSERT(w != NULL);
 
-    ASSERT(write_str(w, val_1));
+    ASSERT(mse_write_str(w, val_1));
     fclose(w);
 
     char *val_2;
-    ASSERT(read_str(r, &val_2));
+    ASSERT(mse_read_str(r, &val_2));
 
     ASSERT(val_2 != NULL);
     ASSERT(strcmp(val_1, val_2) == 0);

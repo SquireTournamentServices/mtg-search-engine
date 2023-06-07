@@ -8,8 +8,8 @@ typedef struct mse_card_trie_node_t {
     avl_tree_node_t *cards;
 } mse_card_trie_node_t;
 
-int init_mse_card_trie_node(mse_card_trie_node_t **node);
-void free_mse_card_trie_node(mse_card_trie_node_t *node);
+int mse_init_card_trie_node(mse_card_trie_node_t **node);
+void mse_free_card_trie_node(mse_card_trie_node_t *node);
 
 /// Inserts a card into the trie, adding nodes where needed
 int mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t *card, char *str);
@@ -33,4 +33,4 @@ typedef struct mse_card_name_parts_t {
 } mse_card_name_parts_t;
 
 int mse_split_card_name(char *name, mse_card_name_parts_t *ret);
-void free_mse_card_parts(mse_card_name_parts_t *ret);
+void mse_free_card_parts(mse_card_name_parts_t *ret);

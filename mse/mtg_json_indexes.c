@@ -34,7 +34,7 @@ static int MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type) \
  \
     mse_card_t *card = (mse_card_t *) cards->payload; \
     if (mse_colour_##cmp_type(card->colour_field, colours)) { \
-        avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card, cards->payload); \
+        avl_tree_node_t *node = init_avl_tree_node(NULL, &mse_avl_cmp_card, cards->payload); \
         ASSERT(insert_node(tree, node)); \
     } \
  \
@@ -117,7 +117,7 @@ MSE_INDEX_FOR_COLOUR_FIELD(colour_identity)
 &MSE_INDEX_COLOUR_NAME(colour_field, eq)
 
 // Set cards index
-static int __add_card_to_set(mse_card_t *card, avl_tree_node_t *sets)
+static int __mse_add_card_to_set(mse_card_t *card, avl_tree_node_t *sets)
 {
     for (size_t i = 0; i < card->set_codes_count; i++) {
         // Create a proxy element for the tree search as the tree will be comparing mse_set_t objects
@@ -127,7 +127,7 @@ static int __add_card_to_set(mse_card_t *card, avl_tree_node_t *sets)
         avl_tree_node_t *set_node = find_payload(sets, &card_set_proxy);
 
         if (set_node != NULL) {
-            add_card_to_set((mse_set_t *) set_node->payload, card);
+            mse_add_card_to_set((mse_set_t *) set_node->payload, card);
         } else {
             char set_code[MAX_SET_CODE_LEN + 1];
             set_code[MAX_SET_CODE_LEN] = 0;
@@ -146,13 +146,13 @@ static int __add_cards_to_set(avl_tree_node_t *cards, avl_tree_node_t *sets)
         return 1;
     }
 
-    ASSERT(__add_card_to_set((mse_card_t *) cards->payload, sets));
+    ASSERT(__mse_add_card_to_set((mse_card_t *) cards->payload, sets));
     ASSERT(__add_cards_to_set(cards->l, sets));
     ASSERT(__add_cards_to_set(cards->r, sets));
     return 1;
 }
 
-static void __generate_set_cards_index_task(void *__state, thread_pool_t *pool)
+static void __mse_generate_set_cards_index_task(void *__state, thread_pool_t *pool)
 {
     mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
     if (!__add_cards_to_set(state->cards->card_tree, state->cards->set_tree)) {
@@ -171,7 +171,7 @@ static int __insert_node(avl_tree_node_t **root, avl_tree_node_t *node)
     }
 }
 
-#define MSE_INDEX_FIELD_NAME(fname) __generate_card_##fname##_index_task
+#define MSE_INDEX_FIELD_NAME(fname) __mse_generate_card_##fname##_index_task
 #define MSE_INDEX_FOR_FIELD(fname) \
 static int __add_cards_to_##fname##_tree(avl_tree_node_t *cards, avl_tree_node_t **card_##fname##_tree) \
 { \
@@ -179,7 +179,7 @@ static int __add_cards_to_##fname##_tree(avl_tree_node_t *cards, avl_tree_node_t
         return 1; \
     } \
  \
-    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card_##fname, cards->payload); \
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &mse_avl_cmp_card_##fname, cards->payload); \
     int r = __insert_node(card_##fname##_tree, node); \
     if (!r) { \
         lprintf(LOG_ERROR, "Cannot insert a card into the " #fname " tree\n"); \
@@ -218,7 +218,7 @@ static int __add_cards_to_card_name_trie(avl_tree_node_t *node, mse_card_trie_no
     return 1;
 }
 
-static void __generate_card_name_trie_task(void *__state, thread_pool_t *pool)
+static void __mse_generate_card_name_trie_task(void *__state, thread_pool_t *pool)
 {
     mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
     if (!__add_cards_to_card_name_trie(state->cards->card_tree, state->cards->indexes.card_name_trie)) {
@@ -245,7 +245,7 @@ static int __add_cards_to_card_name_parts_trie(avl_tree_node_t *node,
             break;
         }
     }
-    free_mse_card_parts(&parts);
+    mse_free_card_parts(&parts);
     ASSERT(r);
 
     ASSERT(__add_cards_to_card_name_parts_trie(node->l, card_name_parts_trie));
@@ -253,7 +253,7 @@ static int __add_cards_to_card_name_parts_trie(avl_tree_node_t *node,
     return 1;
 }
 
-static void __generate_card_name_parts_trie_task(void *__state, thread_pool_t *pool)
+static void __mse_generate_card_name_parts_trie_task(void *__state, thread_pool_t *pool)
 {
     mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
     if (!__add_cards_to_card_name_parts_trie(state->cards->card_tree,
@@ -265,16 +265,16 @@ static void __generate_card_name_parts_trie_task(void *__state, thread_pool_t *p
 
 #define TASK_COUNT(T) (sizeof(T) / sizeof(*T))
 
-int __generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool)
+int __mse_generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool)
 {
     ASSERT(pool != NULL);
     ASSERT(ret != NULL);
-    ASSERT(init_mse_card_trie_node(&ret->indexes.card_name_trie));
-    ASSERT(init_mse_card_trie_node(&ret->indexes.card_name_parts_trie));
+    ASSERT(mse_init_card_trie_node(&ret->indexes.card_name_trie));
+    ASSERT(mse_init_card_trie_node(&ret->indexes.card_name_parts_trie));
 
-    void (*tasks[])(void *, struct thread_pool_t *) = {&__generate_set_cards_index_task,
-                                                       &__generate_card_name_trie_task,
-                                                       &__generate_card_name_parts_trie_task,
+    void (*tasks[])(void *, struct thread_pool_t *) = {&__mse_generate_set_cards_index_task,
+                                                       &__mse_generate_card_name_trie_task,
+                                                       &__mse_generate_card_name_parts_trie_task,
                                                        &MSE_INDEX_FIELD_NAME(power),
                                                        &MSE_INDEX_FIELD_NAME(toughness),
                                                        &MSE_INDEX_FIELD_NAME(cmc),
@@ -301,13 +301,13 @@ int __generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool)
         sem_wait(&state.semaphore);
     }
     int tmp = state.ret;
-    free_index_generator_state(&state);
+    mse_free_index_generator_state(&state);
 
     ASSERT(tmp);
     return 1;
 }
 
-void free_index_generator_state(mse_index_generator_state_t *state)
+void mse_free_index_generator_state(mse_index_generator_state_t *state)
 {
     sem_destroy(&state->semaphore);
     memset(state, 0, sizeof(*state));

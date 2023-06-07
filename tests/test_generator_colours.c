@@ -1,7 +1,7 @@
 #include "./test_generators.h"
-#include "../src/card.h"
-#include "../src/generators.h"
-#include "../src/avl_tree.h"
+#include "../mse/card.h"
+#include "../mse/generators.h"
+#include "../mse/avl_tree.h"
 #include "../testing_h/testing.h"
 #include <string.h>
 
@@ -36,7 +36,7 @@ static int test_generator_colours_##op_l() \
     ASSERT(tree_size(inter.node) > 0); \
     ASSERT(test_tree_c_##op_l(inter.node)); \
  \
-    free_mse_search_intermediate(&inter); \
+    mse_free_search_intermediate(&inter); \
     mse_free_set_generator(&ret); \
     return 1; \
 }
@@ -76,7 +76,7 @@ static int test_generator_colour_identity_##op_l() \
     ASSERT(tree_size(inter.node) > 0); \
     ASSERT(test_tree_ci_##op_l(inter.node)); \
  \
-    free_mse_search_intermediate(&inter); \
+    mse_free_search_intermediate(&inter); \
     mse_free_set_generator(&ret); \
     return 1; \
 }

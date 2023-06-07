@@ -3,15 +3,15 @@
 #include "./card.h"
 #include <string.h>
 
-static void __init_mse_search_intermediate(mse_search_intermediate_t *inter)
+static void __mse_init_search_intermediate(mse_search_intermediate_t *inter)
 {
     memset(inter, 0, sizeof(*inter));
 }
 
-mse_search_intermediate_t init_mse_search_intermediate_tree(avl_tree_node_t *node, int is_reference)
+mse_search_intermediate_t mse_init_search_intermediate_tree(avl_tree_node_t *node, int is_reference)
 {
     mse_search_intermediate_t ret;
-    __init_mse_search_intermediate(&ret);
+    __mse_init_search_intermediate(&ret);
     ret.node = node;
     ret.is_reference = is_reference;
     return ret;
@@ -55,7 +55,7 @@ int mse_set_union(mse_search_intermediate_t *ret,
                   mse_search_intermediate_t *a,
                   mse_search_intermediate_t *b)
 {
-    __init_mse_search_intermediate(ret);
+    __mse_init_search_intermediate(ret);
     ASSERT(__insert_tree_set_union(&ret->node, a->node));
     ASSERT(__insert_tree_set_union(&ret->node, b->node));
     return 1;
@@ -84,7 +84,7 @@ int mse_set_intersection(mse_search_intermediate_t *ret,
                          mse_search_intermediate_t *a,
                          mse_search_intermediate_t *b)
 {
-    __init_mse_search_intermediate(ret);
+    __mse_init_search_intermediate(ret);
     if (a->node == NULL || b->node == NULL) {
         return 1;
     }
@@ -124,11 +124,11 @@ int mse_set_negate(mse_search_intermediate_t *ret,
                    mse_all_printings_cards_t *cards,
                    mse_search_intermediate_t *a)
 {
-    __init_mse_search_intermediate(ret);
+    __mse_init_search_intermediate(ret);
     return __mse_set_negate(ret, cards->card_tree, a);
 }
 
-void free_mse_search_intermediate(mse_search_intermediate_t *inter)
+void mse_free_search_intermediate(mse_search_intermediate_t *inter)
 {
     if (inter->node != NULL && !inter->is_reference) {
         free_tree(inter->node);

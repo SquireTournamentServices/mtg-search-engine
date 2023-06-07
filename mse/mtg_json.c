@@ -68,27 +68,27 @@ static void __get_all_printings_cards_curl_thread(void *data, struct thread_pool
 
 static void __free_all_printings_cards_card(void *card)
 {
-    free_card((mse_card_t *) card);
+    mse_free_card((mse_card_t *) card);
     free(card);
 }
 
 static void __free_all_printings_cards_set(void *set)
 {
-    free_set((mse_set_t *) set);
+    mse_free_set((mse_set_t *) set);
     free(set);
 }
 
-int __handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
-                                     const char *set_code,
-                                     json_t *set_node)
+int __mse_handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
+        const char *set_code,
+        json_t *set_node)
 {
     ASSERT(json_is_object(set_node));
 
     mse_set_t *set = malloc(sizeof(*set));
     ASSERT(set != NULL);
-    ASSERT(parse_set_json(set_node, set, set_code));
+    ASSERT(mse_parse_set_json(set_node, set, set_code));
 
-    avl_tree_node_t *node = init_avl_tree_node(&__free_all_printings_cards_set, &avl_cmp_set, set);
+    avl_tree_node_t *node = init_avl_tree_node(&__free_all_printings_cards_set, &mse_avl_cmp_set, set);
     ASSERT(insert_node(&ret->set_tree, node));
 
     json_t *cards = json_object_get(set_node, "cards");
@@ -100,9 +100,9 @@ int __handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
     json_array_foreach(cards, index, value) {
         ASSERT(json_is_object(value));
         mse_card_t *card = malloc(sizeof(*card));
-        node = init_avl_tree_node(&__free_all_printings_cards_card, &avl_cmp_card, card);
+        node = init_avl_tree_node(&__free_all_printings_cards_card, &mse_avl_cmp_card, card);
 
-        ASSERT(parse_card_json(value, card));
+        ASSERT(mse_parse_card_json(value, card));
         if (insert_node(&ret->card_tree, node)) {
             ret->card_count++;
         } else {
@@ -113,7 +113,7 @@ int __handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
     return 1;
 }
 
-int __parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool)
+int __mse_parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool)
 {
     ASSERT(ret != NULL);
     memset(ret, 0, sizeof(*ret));
@@ -139,7 +139,7 @@ int __parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, t
     json_t *value;
     size_t count = 0;
     json_object_foreach(data, key, value) {
-        __handle_all_printings_cards_set(ret, key, value);
+        __mse_handle_all_printings_cards_set(ret, key, value);
         count++;
     }
 
@@ -147,14 +147,14 @@ int __parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, t
     lprintf(LOG_INFO, "Found %lu sets and, %lu cards\n", ret->set_count, ret->card_count);
 
     lprintf(LOG_INFO, "Generating card indexes\n");
-    ASSERT(__generate_indexes(ret, pool));
+    ASSERT(__mse_generate_indexes(ret, pool));
 
     lprintf(LOG_INFO, "Cards and, indexes are now complete\n");
 
     return 1;
 }
 
-int get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool)
+int mse_get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool)
 {
     ASSERT(ret != NULL);
     memset(ret, 0, sizeof(*ret));
@@ -190,7 +190,7 @@ int get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool)
     }
 
     // This only runs if there was no error
-    int status = __parse_all_printings_cards(ret, json, pool);
+    int status = __mse_parse_all_printings_cards(ret, json, pool);
     json_decref(json);
 
     if (!status) {
@@ -202,7 +202,7 @@ int get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool)
     return 1;
 }
 
-void free_mse_colour_index(mse_colour_index_t *index)
+void mse_free_colour_index(mse_colour_index_t *index)
 {
     for (size_t i = 0; i < sizeof(index->colour_indexes) / sizeof(*index->colour_indexes); i++) {
         if (index->colour_indexes[i] != NULL) {
@@ -213,11 +213,11 @@ void free_mse_colour_index(mse_colour_index_t *index)
 }
 
 #define MSE_FREE_COLOUR_FIELD(colour_field) \
-free_mse_colour_index(&cards->indexes.colour_index.colour_field##_lt); \
-free_mse_colour_index(&cards->indexes.colour_index.colour_field##_lt_inc); \
-free_mse_colour_index(&cards->indexes.colour_index.colour_field##_gt); \
-free_mse_colour_index(&cards->indexes.colour_index.colour_field##_gt_inc); \
-free_mse_colour_index(&cards->indexes.colour_index.colour_field##_eq);
+mse_free_colour_index(&cards->indexes.colour_index.colour_field##_lt); \
+mse_free_colour_index(&cards->indexes.colour_index.colour_field##_lt_inc); \
+mse_free_colour_index(&cards->indexes.colour_index.colour_field##_gt); \
+mse_free_colour_index(&cards->indexes.colour_index.colour_field##_gt_inc); \
+mse_free_colour_index(&cards->indexes.colour_index.colour_field##_eq);
 
 static void __free_all_printings_cards_colour_indexes(mse_all_printings_cards_t *cards)
 {
@@ -240,17 +240,17 @@ static void __free_all_printings_cards_indexes(mse_all_printings_cards_t *cards)
     }
 
     if (cards->indexes.card_name_trie != NULL) {
-        free_mse_card_trie_node(cards->indexes.card_name_trie);
+        mse_free_card_trie_node(cards->indexes.card_name_trie);
     }
 
     if (cards->indexes.card_name_parts_trie != NULL) {
-        free_mse_card_trie_node(cards->indexes.card_name_parts_trie);
+        mse_free_card_trie_node(cards->indexes.card_name_parts_trie);
     }
 
     __free_all_printings_cards_colour_indexes(cards);
 }
 
-void free_all_printings_cards(mse_all_printings_cards_t *cards)
+void mse_free_all_printings_cards(mse_all_printings_cards_t *cards)
 {
     if (cards->set_tree != NULL) {
         free_tree(cards->set_tree);

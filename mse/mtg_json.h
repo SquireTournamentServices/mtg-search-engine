@@ -22,7 +22,7 @@ typedef struct mse_colour_index_t {
     avl_tree_node_t * colour_indexes[MSE_COLOUR_INDEX_MAX_CARDS];
 } mse_colour_index_t;
 
-void free_mse_colour_index(mse_colour_index_t *index);
+void mse_free_colour_index(mse_colour_index_t *index);
 
 #define MSE_COLOUR_INDEX_GENERATOR(index_base_name) \
 mse_colour_index_t index_base_name##_lt; \
@@ -76,27 +76,26 @@ typedef struct mse_all_printings_cards_t {
 
 /// Exposed internal method for use within internal testing
 /// This function will handle a set node and add the set and, cards
-int __handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
-                                     const char *set_code,
-                                     json_t *set_node);
+int __mse_handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
+        const char *set_code,
+        json_t *set_node);
 
 /// Exposed internal method for use within internal testing
 /// This method will parse the json cards all of the indexes
-int __parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool);
+int __mse_parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool);
 
 /// Returns 1 on success, 0 on failure
-/// Do not call free_all_printings_cards on fail
-int get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool);
+/// Do not call mse_free_all_printings_cards on fail
+int mse_get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool);
 
 /// This function will generate all of the indexes for a card, defined in mse_json_indexes.c
-int __generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool);
+int __mse_generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool);
 
 /// Frees atomic cards
-void free_all_printings_cards(mse_all_printings_cards_t *cards);
+void mse_free_all_printings_cards(mse_all_printings_cards_t *cards);
 
 /// This will store all cards  and, their indexes
 typedef struct mse_indexed_cards_t {
     mse_all_printings_cards_t all_printings_cards;
 
 } mse_indexed_cards_t;
-

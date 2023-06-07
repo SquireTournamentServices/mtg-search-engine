@@ -3,8 +3,8 @@
 #include <string.h>
 #include <pthread.h>
 #include "testing_h/testing.h"
-#include "src/interpretor.h"
-#include "src/query_parser.h"
+#include "mse/interpretor.h"
+#include "mse/query_parser.h"
 #include "mse_query_lexer.h"
 #include "mse_query_parser.h"
 #undef lprintf
@@ -27,7 +27,7 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 }
 %}
 %code requires {
-    #include "src/query_parser.h"
+    #include "mse/query_parser.h"
 }
 %parse-param {mse_parser_status_t *ret}
 
@@ -186,12 +186,16 @@ query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
      | OPEN_BRACKET query CLOSE_BRACKET {
      lprintf(LOG_WARNING, "TODO\n");
      }
-     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE query {
-     lprintf(LOG_WARNING, "TODO\n");
-     }
-     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE query {
-     lprintf(LOG_WARNING, "TODO\n");
-     }
+     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
+     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+     ret->op_node = NULL;
+     } query
+     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE {
+     // Create a AND node and insert it
+     PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+     ret->op_node = NULL;
+     } query
      | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET {
      lprintf(LOG_WARNING, "TODO\n");
      }

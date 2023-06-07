@@ -26,12 +26,12 @@ mse_colour_enum_t mse_parse_colour(char colour);
 /// This will parse a card's mana cost or, a colour,
 /// 4{W}{U} will return MSE_BLUE | MSE_WHITE
 /// W will return MSE_WHITE
-mse_colour_enum_t parse_colours(const char *colours);
+mse_colour_enum_t mse_parse_colours(const char *colours);
 
 #define MTG_SPECIAL_NUMERICAL_VAL NAN
 
 typedef struct mse_card_t {
-    uuid_t id;
+    mse_uuid_t id;
     char *name;
     char *name_lower;
     char *mana_cost;
@@ -49,20 +49,20 @@ typedef struct mse_card_t {
 } mse_card_t;
 
 // As this is a library to search cards all the trees that this uses are trees whose payloads are cards.
-#define MSE_CARD_DEFAULT_COMPARE_FUNCTION &avl_cmp_card
+#define MSE_CARD_DEFAULT_COMPARE_FUNCTION &mse_avl_cmp_card
 #define MSE_CARD_DEFAULT_FREE_FUNCTION NULL
 
-int parse_card_json(json_t *json, mse_card_t *card);
-int write_card(FILE *f, mse_card_t card);
-int read_card(FILE *f, mse_card_t *card);
-int avl_cmp_card(void *a, void *b);
+int mse_parse_card_json(json_t *json, mse_card_t *card);
+int mse_write_card(FILE *f, mse_card_t card);
+int mse_read_card(FILE *f, mse_card_t *card);
+int mse_avl_cmp_card(void *a, void *b);
 
-void free_card(mse_card_t *card);
+void mse_free_card(mse_card_t *card);
 
 // Indexes comparison functions
-int avl_cmp_card_power(void *a, void *b);
-int avl_cmp_card_toughness(void *a, void *b);
-int avl_cmp_card_cmc(void *a, void *b);
+int mse_avl_cmp_card_power(void *a, void *b);
+int mse_avl_cmp_card_toughness(void *a, void *b);
+int mse_avl_cmp_card_cmc(void *a, void *b);
 
 // Pop count on Microshit Windoze
 #ifdef _MSC_VER

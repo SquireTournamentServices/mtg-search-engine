@@ -10,12 +10,12 @@ static int __mse_generate_set_name_re(mse_set_generator_t *gen,
                                       mse_all_printings_cards_t *cards,
                                       thread_pool_t *pool)
 {
-    char *re = escape_regex(gen->argument);
+    char *re = mse_escape_regex(gen->argument);
     ASSERT(re != NULL);
 
     avl_tree_node_t *node = NULL;
     int status = mse_matching_card_name(&node, cards->card_tree, re, 1, gen->negate, pool);
-    *res = init_mse_search_intermediate_tree(node, 0);
+    *res = mse_init_search_intermediate_tree(node, 0);
     free(re);
 
     ASSERT(status);
@@ -52,14 +52,14 @@ static int __mse_generate_set_name_text_inc(mse_set_generator_t *gen,
         r = mse_set_union(&tmp, &search_tmp, &tmp_trie);
 
         // Free before the error check
-        free_mse_search_intermediate(&tmp_trie);
+        mse_free_search_intermediate(&tmp_trie);
         if (!r) {
             lprintf(LOG_ERROR, "Cannot generate set union\n");
             code = 0;
             break;
         }
 
-        free_mse_search_intermediate(&search_tmp);
+        mse_free_search_intermediate(&search_tmp);
         search_tmp = tmp;
     }
 
@@ -73,19 +73,19 @@ static int __mse_generate_set_name_text_inc(mse_set_generator_t *gen,
             code = 0;
         }
 
-        free_mse_search_intermediate(&search_tmp);
+        mse_free_search_intermediate(&search_tmp);
         search_tmp = tmp;
     }
 
     // Cleanup
-    free_mse_card_parts(&parts);
+    mse_free_card_parts(&parts);
     if (!code) {
-        free_mse_search_intermediate(&search_tmp);
+        mse_free_search_intermediate(&search_tmp);
         lprintf(LOG_ERROR, "Cannot generate set for name text inc\n");
         return 0;
     }
 
-    *res = init_mse_search_intermediate_tree(search_tmp.node, 0);
+    *res = mse_init_search_intermediate_tree(search_tmp.node, 0);
     return 1;
 }
 

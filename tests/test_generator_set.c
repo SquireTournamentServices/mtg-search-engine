@@ -1,8 +1,8 @@
 #include "./test_generators.h"
 #include "../testing_h/testing.h"
-#include "../src/card.h"
-#include "../src/avl_tree.h"
-#include "../src/generators.h"
+#include "../mse/card.h"
+#include "../mse/avl_tree.h"
+#include "../mse/generators.h"
 #include <string.h>
 
 #define DEFAULT_ARGUMENT "m20"
@@ -61,7 +61,7 @@ int test_generator_set()
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
     ASSERT(tree_size(inter.node) > 0);
     ASSERT(test_tree(inter.node));
-    free_mse_search_intermediate(&inter);
+    mse_free_search_intermediate(&inter);
     mse_free_set_generator(&ret);
 
     // Test includes
@@ -69,7 +69,7 @@ int test_generator_set()
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
     ASSERT(tree_size(inter.node) > 0);
     ASSERT(test_tree(inter.node));
-    free_mse_search_intermediate(&inter);
+    mse_free_search_intermediate(&inter);
     mse_free_set_generator(&ret);
 
     // Test negate
@@ -78,7 +78,7 @@ int test_generator_set()
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
     ASSERT(tree_size(inter.node) > 0);
     ASSERT(test_tree_negate(inter.node));
-    free_mse_search_intermediate(&inter);
+    mse_free_search_intermediate(&inter);
     mse_free_set_generator(&ret);
     return 1;
 }

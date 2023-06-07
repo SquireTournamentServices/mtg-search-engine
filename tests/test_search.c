@@ -1,10 +1,10 @@
 #include "./test_search.h"
 #include "../testing_h/testing.h"
-#include "../src/search.h"
-#include "../src/avl_tree.h"
-#include "../src/card.h"
-#include "../src/uuid.h"
-#include "../src/mtg_json.h"
+#include "../mse/search.h"
+#include "../mse/avl_tree.h"
+#include "../mse/card.h"
+#include "../mse/uuid.h"
+#include "../mse/mtg_json.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -17,7 +17,7 @@ static avl_tree_node_t *get_tree(int min, int max)
         memset(ptr, 0, sizeof(*ptr));
         memset(ptr->id.bytes, i, sizeof(*ptr->id.bytes));
 
-        avl_tree_node_t *node = init_avl_tree_node(&free, &avl_cmp_card, (void *) ptr);
+        avl_tree_node_t *node = init_avl_tree_node(&free, &mse_avl_cmp_card, (void *) ptr);
         ASSERT(node != NULL);
         ASSERT(insert_node(&tree, node));
     }
@@ -30,12 +30,12 @@ static int test_union_tree()
     avl_tree_node_t *tree_1 = get_tree(1, 10);
     ASSERT(tree_size(tree_1) == 10);
     ASSERT(tree_1 != NULL);
-    mse_search_intermediate_t a = init_mse_search_intermediate_tree(tree_1, 0);
+    mse_search_intermediate_t a = mse_init_search_intermediate_tree(tree_1, 0);
 
     avl_tree_node_t *tree_2 = get_tree(11, 20);
     ASSERT(tree_size(tree_2) == 10);
     ASSERT(tree_2 != NULL);
-    mse_search_intermediate_t b = init_mse_search_intermediate_tree(tree_2, 0);
+    mse_search_intermediate_t b = mse_init_search_intermediate_tree(tree_2, 0);
 
     // Test set operations
     mse_search_intermediate_t inter;
@@ -44,7 +44,7 @@ static int test_union_tree()
     ASSERT(inter.node != NULL);
     ASSERT(tree_size(inter.node) == tree_size(a.node) + tree_size(b.node));
 
-    free_mse_search_intermediate(&inter);
+    mse_free_search_intermediate(&inter);
 
     free_tree(tree_1);
     free_tree(tree_2);
@@ -58,12 +58,12 @@ static int test_intersection_tree()
     avl_tree_node_t *tree_1 = get_tree(1, 100);
     ASSERT(tree_size(tree_1) == 100);
     ASSERT(tree_1 != NULL);
-    mse_search_intermediate_t a = init_mse_search_intermediate_tree(tree_1, 1);
+    mse_search_intermediate_t a = mse_init_search_intermediate_tree(tree_1, 1);
 
     avl_tree_node_t *tree_2 = get_tree(90, 200);
     ASSERT(tree_size(tree_2) == 111);
     ASSERT(tree_2 != NULL);
-    mse_search_intermediate_t b = init_mse_search_intermediate_tree(tree_2, 1);
+    mse_search_intermediate_t b = mse_init_search_intermediate_tree(tree_2, 1);
 
     // Test set operations
     mse_search_intermediate_t inter;
@@ -72,9 +72,9 @@ static int test_intersection_tree()
     ASSERT(inter.node != NULL);
     ASSERT(tree_size(inter.node) == 11);
 
-    free_mse_search_intermediate(&inter);
-    free_mse_search_intermediate(&a);
-    free_mse_search_intermediate(&b);
+    mse_free_search_intermediate(&inter);
+    mse_free_search_intermediate(&a);
+    mse_free_search_intermediate(&b);
 
     free_tree(tree_1);
     free_tree(tree_2);
@@ -98,11 +98,11 @@ static int test_set_negation()
     memset(&card_b.id.bytes, 2, sizeof(card_b.id.bytes));
 
     // Insert the cards
-    avl_tree_node_t *node = init_avl_tree_node(NULL, &avl_cmp_card, &card_a);
+    avl_tree_node_t *node = init_avl_tree_node(NULL, &mse_avl_cmp_card, &card_a);
     ASSERT(node);
     ASSERT(insert_node(&cards.card_tree, node));
 
-    node = init_avl_tree_node(NULL, &avl_cmp_card, &card_b);
+    node = init_avl_tree_node(NULL, &mse_avl_cmp_card, &card_b);
     ASSERT(node);
     ASSERT(insert_node(&cards.card_tree, node));
     ASSERT(tree_size(cards.card_tree) == 2);
@@ -115,17 +115,17 @@ static int test_set_negation()
     // Negation of empty set should be full
     ASSERT(mse_set_negate(&ret, &cards, &a));
     ASSERT(tree_size(ret.node) == 2);
-    free_mse_search_intermediate(&ret);
+    mse_free_search_intermediate(&ret);
 
     // Negation of entire set should be empty
     a.node = cards.card_tree;
     ASSERT(mse_set_negate(&ret, &cards, &a));
     ASSERT(ret.node == NULL);
-    free_mse_search_intermediate(&ret);
+    mse_free_search_intermediate(&ret);
     a.node = NULL;
 
     // Negation of a set with one item should return a set with the other
-    node = init_avl_tree_node(NULL, &avl_cmp_card, &card_a);
+    node = init_avl_tree_node(NULL, &mse_avl_cmp_card, &card_a);
     ASSERT(node);
     a.node = node;
 
@@ -133,8 +133,8 @@ static int test_set_negation()
     ASSERT(tree_size(ret.node) == 1);
     ASSERT(ret.node->payload == &card_b);
 
-    free_mse_search_intermediate(&ret);
-    free_mse_search_intermediate(&a);
+    mse_free_search_intermediate(&ret);
+    mse_free_search_intermediate(&a);
 
     // Cleanup
     free_tree(cards.card_tree);

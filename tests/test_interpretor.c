@@ -1,6 +1,6 @@
 #include "./test_interpretor.h"
 #include "../testing_h/testing.h"
-#include "../src/interpretor.h"
+#include "../mse/interpretor.h"
 #include <string.h>
 
 // Some vile testing globals
@@ -28,7 +28,7 @@ static int init_test_cards()
     ASSERT(json != NULL);
 
     memset(&test_cards, 0, sizeof(test_cards));
-    ASSERT(__parse_all_printings_cards(&test_cards, json, &pool));
+    ASSERT(__mse_parse_all_printings_cards(&test_cards, json, &pool));
     json_decref(json);
 
     ASSERT(test_cards.card_tree != NULL);
@@ -38,7 +38,7 @@ static int init_test_cards()
 
 static int free_test_card()
 {
-    free_all_printings_cards(&test_cards);
+    mse_free_all_printings_cards(&test_cards);
     ASSERT(free_pool(&pool));
     return 1;
 }
@@ -115,7 +115,7 @@ static int test_resolve_set_generator()
     ASSERT(mse_resolve_interp_tree(node, &ret, &pool, 0, &test_cards));
     ASSERT(ret.node != NULL);
     ASSERT(tree_size(ret.node) >= 329);
-    free_mse_search_intermediate(&ret);
+    mse_free_search_intermediate(&ret);
 
     ret.node = NULL;
     ASSERT(mse_resolve_interp_tree(node, &ret, &pool, 1, &test_cards));
@@ -153,7 +153,7 @@ static int test_resolve_tree_1()
     ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 0, &test_cards));
     ASSERT(ret.node != NULL);
     ASSERT(tree_size(ret.node) >= 6);
-    free_mse_search_intermediate(&ret);
+    mse_free_search_intermediate(&ret);
 
     ret.node = NULL;
     ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 1, &test_cards));
@@ -201,7 +201,7 @@ static int test_resolve_tree_2()
     ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 0, &test_cards));
     ASSERT(ret.node != NULL);
     ASSERT(tree_size(ret.node) >= 45);
-    free_mse_search_intermediate(&ret);
+    mse_free_search_intermediate(&ret);
 
     ret.node = NULL;
     ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 1, &test_cards));
@@ -252,7 +252,7 @@ static int test_resolve_tree_3()
     mse_search_intermediate_t ret;
     ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 0, &test_cards));
     ASSERT(ret.node != NULL);
-    free_mse_search_intermediate(&ret);
+    mse_free_search_intermediate(&ret);
 
     ret.node = NULL;
     ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 1, &test_cards));

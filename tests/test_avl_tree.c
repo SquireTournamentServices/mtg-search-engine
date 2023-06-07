@@ -1,6 +1,6 @@
 #include "./test_avl_tree.h"
 #include "../testing_h/testing.h"
-#include "../src/avl_tree.h"
+#include "../mse/avl_tree.h"
 #include <string.h>
 #include <time.h>
 

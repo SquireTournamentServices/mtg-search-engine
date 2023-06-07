@@ -29,7 +29,7 @@ mse_colour_enum_t mse_parse_colour(char colour)
 
 }
 
-mse_colour_enum_t parse_colours(const char *colours)
+mse_colour_enum_t mse_parse_colours(const char *colours)
 {
     mse_colour_enum_t ret = 0;
     ASSERT(colours != NULL);
@@ -40,7 +40,7 @@ mse_colour_enum_t parse_colours(const char *colours)
     return ret;
 }
 
-int parse_card_json(json_t *json, mse_card_t *card)
+int mse_parse_card_json(json_t *json, mse_card_t *card)
 {
     memset(card, 0, sizeof(*card));
 
@@ -54,7 +54,7 @@ int parse_card_json(json_t *json, mse_card_t *card)
     ASSERT(json_is_string(id_o));
 
     int status = 0;
-    card->id = from_string(json_string_value(id_o), &status);
+    card->id = mse_from_string(json_string_value(id_o), &status);
     ASSERT(status);
 
     // Read name
@@ -164,7 +164,7 @@ int parse_card_json(json_t *json, mse_card_t *card)
 
     json_array_foreach(colours_o, index, value) {
         ASSERT(json_is_string(value));
-        card->colours |= parse_colours(json_string_value(value));
+        card->colours |= mse_parse_colours(json_string_value(value));
     }
 
     // Read colour identity
@@ -174,7 +174,7 @@ int parse_card_json(json_t *json, mse_card_t *card)
 
     json_array_foreach(colour_identity_o, index, value) {
         ASSERT(json_is_string(value));
-        card->colour_identity |= parse_colours(json_string_value(value));
+        card->colour_identity |= mse_parse_colours(json_string_value(value));
     }
 
     // Read sets (printings)
@@ -191,7 +191,7 @@ int parse_card_json(json_t *json, mse_card_t *card)
         ASSERT(card->set_codes = realloc(card->set_codes,
                                          sizeof(*card->set_codes) * (1 + card->set_codes_count)));
 
-        ASSERT(get_set_code(json_string_value(value), &card->set_codes[card->set_codes_count]));
+        ASSERT(mse_get_set_code(json_string_value(value), &card->set_codes[card->set_codes_count]));
         card->set_codes_count++;
     }
 
@@ -199,59 +199,59 @@ int parse_card_json(json_t *json, mse_card_t *card)
     return 1;
 }
 
-int write_card(FILE *f, mse_card_t card)
+int mse_write_card(FILE *f, mse_card_t card)
 {
-    ASSERT(write_uuid(f, card.id));
-    ASSERT(write_str(f, card.name));
-    ASSERT(write_str(f, card.mana_cost));
-    ASSERT(write_str(f, card.oracle_text));
-    ASSERT(write_size_t(f, card.types_count));
+    ASSERT(mse_write_uuid(f, card.id));
+    ASSERT(mse_write_str(f, card.name));
+    ASSERT(mse_write_str(f, card.mana_cost));
+    ASSERT(mse_write_str(f, card.oracle_text));
+    ASSERT(mse_write_size_t(f, card.types_count));
     for (size_t i = 0; i < card.types_count; i++) {
-        ASSERT(write_str(f, card.types[i]));
+        ASSERT(mse_write_str(f, card.types[i]));
     }
 
-    ASSERT(write_double(f, card.power));
-    ASSERT(write_double(f, card.toughness));
-    ASSERT(write_double(f, card.cmc));
+    ASSERT(mse_write_double(f, card.power));
+    ASSERT(mse_write_double(f, card.toughness));
+    ASSERT(mse_write_double(f, card.cmc));
     int tmp = card.colours;
-    ASSERT(write_int(f, tmp));
+    ASSERT(mse_write_int(f, tmp));
     tmp = card.colour_identity;
-    ASSERT(write_int(f, tmp));
+    ASSERT(mse_write_int(f, tmp));
 
-    ASSERT(write_size_t(f, card.set_codes_count));
+    ASSERT(mse_write_size_t(f, card.set_codes_count));
     for (size_t i = 0; i < card.set_codes_count; i++) {
-        ASSERT(write_set_code(f, card.set_codes[i]));
+        ASSERT(mse_write_set_code(f, card.set_codes[i]));
     }
     return 1;
 }
 
-int read_card(FILE *f, mse_card_t *card)
+int mse_read_card(FILE *f, mse_card_t *card)
 {
     memset(card, 0, sizeof(*card));
-    ASSERT(read_uuid(f, &card->id));
-    ASSERT(read_str(f, &card->name));
-    ASSERT(read_str(f, &card->mana_cost));
-    ASSERT(read_str(f, &card->oracle_text));
-    ASSERT(read_size_t(f, &card->types_count));
+    ASSERT(mse_read_uuid(f, &card->id));
+    ASSERT(mse_read_str(f, &card->name));
+    ASSERT(mse_read_str(f, &card->mana_cost));
+    ASSERT(mse_read_str(f, &card->oracle_text));
+    ASSERT(mse_read_size_t(f, &card->types_count));
 
     ASSERT(card->types = malloc(sizeof(*card->types) * card->types_count));
     for (size_t i = 0; i < card->types_count; i++) {
-        ASSERT(read_str(f, &card->types[i]));
+        ASSERT(mse_read_str(f, &card->types[i]));
     }
 
-    ASSERT(read_double(f, &card->power));
-    ASSERT(read_double(f, &card->toughness));
-    ASSERT(read_double(f, &card->cmc));
+    ASSERT(mse_read_double(f, &card->power));
+    ASSERT(mse_read_double(f, &card->toughness));
+    ASSERT(mse_read_double(f, &card->cmc));
     int tmp;
-    ASSERT(read_int(f, &tmp));
+    ASSERT(mse_read_int(f, &tmp));
     card->colours = tmp;
-    ASSERT(read_int(f, &tmp));
+    ASSERT(mse_read_int(f, &tmp));
     card->colour_identity = tmp;
 
-    ASSERT(read_size_t(f, &card->set_codes_count));
+    ASSERT(mse_read_size_t(f, &card->set_codes_count));
     ASSERT(card->set_codes = malloc(sizeof(*card->set_codes) * card->set_codes_count));
     for (size_t i = 0; i < card->set_codes_count; i++) {
-        ASSERT(read_set_code(f, &card->set_codes[i]));
+        ASSERT(mse_read_set_code(f, &card->set_codes[i]));
     }
 
     ASSERT(card->name_lower = mse_to_lower(card->name));
@@ -261,7 +261,7 @@ int read_card(FILE *f, mse_card_t *card)
     return 1;
 }
 
-void free_card(mse_card_t *card)
+void mse_free_card(mse_card_t *card)
 {
     if (card == NULL) {
         return;
@@ -303,18 +303,18 @@ void free_card(mse_card_t *card)
     memset(card, 0, sizeof(*card));
 }
 
-int avl_cmp_card(void *a, void *b)
+int mse_avl_cmp_card(void *a, void *b)
 {
     mse_card_t *ca = (mse_card_t *) a;
     mse_card_t *cb = (mse_card_t *) b;
-    return uuid_cmp(ca->id, cb->id);
+    return mse_uuid_cmp(ca->id, cb->id);
 }
 
 #define MSE_CARD_DOUBLE_CMP(a, b, field) \
     mse_card_t *ca = (mse_card_t *) a; \
     mse_card_t *cb = (mse_card_t *) b; \
     if ((int) ca->field == (int) cb->field) { \
-        return avl_cmp_card(a, b); \
+        return mse_avl_cmp_card(a, b); \
     } \
     double cmp = ca->field - cb->field; \
     if (cmp < 0) { \
@@ -323,17 +323,17 @@ int avl_cmp_card(void *a, void *b)
         return 1; \
     } \
 
-int avl_cmp_card_power(void *a, void *b)
+int mse_avl_cmp_card_power(void *a, void *b)
 {
     MSE_CARD_DOUBLE_CMP(a, b, power)
 }
 
-int avl_cmp_card_toughness(void *a, void *b)
+int mse_avl_cmp_card_toughness(void *a, void *b)
 {
     MSE_CARD_DOUBLE_CMP(a, b, toughness)
 }
 
-int avl_cmp_card_cmc(void *a, void *b)
+int mse_avl_cmp_card_cmc(void *a, void *b)
 {
     MSE_CARD_DOUBLE_CMP(a, b, cmc)
 }

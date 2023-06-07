@@ -93,14 +93,14 @@
 #    setup_target_for_coverage_*().
 #    Example:
 #      set(COVERAGE_EXCLUDES
-#          '${PROJECT_SOURCE_DIR}/src/dir1/*'
-#          '/path/to/my/src/dir2/*')
+#          '${PROJECT_SOURCE_DIR}/mse/dir1/*'
+#          '/path/to/my/mse/dir2/*')
 #    Or, use the EXCLUDE argument to setup_target_for_coverage_*().
 #    Example:
 #      setup_target_for_coverage_lcov(
 #          NAME coverage
 #          EXECUTABLE testrunner
-#          EXCLUDE "${PROJECT_SOURCE_DIR}/src/dir1/*" "/path/to/my/src/dir2/*")
+#          EXCLUDE "${PROJECT_SOURCE_DIR}/mse/dir1/*" "/path/to/my/mse/dir2/*")
 #
 # 4.a NOTE: With CMake 3.4+, COVERAGE_EXCLUDES or EXCLUDE can also be set
 #     relative to the BASE_DIRECTORY (default: PROJECT_SOURCE_DIR)
@@ -109,7 +109,7 @@
 #       setup_target_for_coverage_gcovr_html(
 #           NAME coverage
 #           EXECUTABLE testrunner
-#           BASE_DIRECTORY "${PROJECT_SOURCE_DIR}/src"
+#           BASE_DIRECTORY "${PROJECT_SOURCE_DIR}/mse"
 #           EXCLUDE "dir2/*")
 #
 # 5. Use the functions described below to create a custom make target which
@@ -196,7 +196,7 @@ endif()
 #     DEPENDENCIES testrunner                     # Dependencies to build first
 #     BASE_DIRECTORY "../"                        # Base directory for report
 #                                                 #  (defaults to PROJECT_SOURCE_DIR)
-#     EXCLUDE "src/dir1/*" "src/dir2/*"           # Patterns to exclude (can be relative
+#     EXCLUDE "mse/dir1/*" "mse/dir2/*"           # Patterns to exclude (can be relative
 #                                                 #  to BASE_DIRECTORY, with CMake 3.4+)
 #     NO_DEMANGLE                                 # Don't demangle C++ symbols
 #                                                 #  even if c++filt is found
@@ -354,7 +354,7 @@ endfunction() # setup_target_for_coverage_lcov
 #     DEPENDENCIES executable_target         # Dependencies to build first
 #     BASE_DIRECTORY "../"                   # Base directory for report
 #                                            #  (defaults to PROJECT_SOURCE_DIR)
-#     EXCLUDE "src/dir1/*" "src/dir2/*"      # Patterns to exclude (can be relative
+#     EXCLUDE "mse/dir1/*" "mse/dir2/*"      # Patterns to exclude (can be relative
 #                                            #  to BASE_DIRECTORY, with CMake 3.4+)
 # )
 # The user can set the variable GCOVR_ADDITIONAL_ARGS to supply additional flags to the
@@ -446,7 +446,7 @@ endfunction() # setup_target_for_coverage_gcovr_xml
 #     DEPENDENCIES executable_target         # Dependencies to build first
 #     BASE_DIRECTORY "../"                   # Base directory for report
 #                                            #  (defaults to PROJECT_SOURCE_DIR)
-#     EXCLUDE "src/dir1/*" "src/dir2/*"      # Patterns to exclude (can be relative
+#     EXCLUDE "mse/dir1/*" "mse/dir2/*"      # Patterns to exclude (can be relative
 #                                            #  to BASE_DIRECTORY, with CMake 3.4+)
 # )
 # The user can set the variable GCOVR_ADDITIONAL_ARGS to supply additional flags to the
@@ -549,7 +549,7 @@ endfunction() # setup_target_for_coverage_gcovr_html
 #     DEPENDENCIES testrunner                     # Dependencies to build first
 #     BASE_DIRECTORY "../"                        # Base directory for report
 #                                                 #  (defaults to PROJECT_SOURCE_DIR)
-#     EXCLUDE "src/dir1/" "src/dir2/"             # Patterns to exclude.
+#     EXCLUDE "mse/dir1/" "mse/dir2/"             # Patterns to exclude.
 #     NO_DEMANGLE                                 # Don't demangle C++ symbols
 #                                                 #  even if c++filt is found
 #     SKIP_HTML                                   # Don't create html report
