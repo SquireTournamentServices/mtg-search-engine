@@ -45,7 +45,7 @@ int mse_generate_set_colours(mse_set_generator_t *gen,
     }
 
     ASSERT(node != NULL);
-    *res = init_mse_search_intermediate_tree(node, 1);
+    *res = mse_init_search_intermediate_tree(node, 1);
     return 1;
 }
 
@@ -78,6 +78,6 @@ int mse_generate_set_colour_identity(mse_set_generator_t *gen,
     }
 
     ASSERT(node != NULL);
-    *res = init_mse_search_intermediate_tree(node, 1);
+    *res = mse_init_search_intermediate_tree(node, 1);
     return 1;
 }

@@ -22,7 +22,7 @@ static int __mse_generate_set_##fname##_eq(mse_set_generator_t *gen, \
     /* Search the tree */ \
     avl_tree_node_t *node = NULL; \
     ASSERT(tree_lookup_2(cards->indexes.card_##fname##_tree, &node, (void *) &lower, (void *) &upper)); \
-    *res = init_mse_search_intermediate_tree(node, 0); \
+    *res = mse_init_search_intermediate_tree(node, 0); \
     return 1; \
 } \
  \
@@ -59,7 +59,7 @@ static int __mse_generate_set_##fname##_lt(mse_set_generator_t *gen, \
     /* Search the tree */ \
     avl_tree_node_t *node = NULL; \
     ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, &node, 1, (void *) &lower)); \
-    *res = init_mse_search_intermediate_tree(node, 0); \
+    *res = mse_init_search_intermediate_tree(node, 0); \
     return 1; \
 } \
  \
@@ -78,7 +78,7 @@ static int __mse_generate_set_##fname##_lt_inc(mse_set_generator_t *gen, \
     /* Search the tree */ \
     avl_tree_node_t *node = NULL; \
     ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, &node, 1, (void *) &lower)); \
-    *res = init_mse_search_intermediate_tree(node, 0); \
+    *res = mse_init_search_intermediate_tree(node, 0); \
     return 1; \
 } \
  \
@@ -96,7 +96,7 @@ static int __mse_generate_set_##fname##_gt(mse_set_generator_t *gen, \
     /* Search the tree */ \
     avl_tree_node_t *node = NULL; \
     ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, &node, 0, (void *) &lower)); \
-    *res = init_mse_search_intermediate_tree(node, 0); \
+    *res = mse_init_search_intermediate_tree(node, 0); \
     return 1; \
 } \
  \
@@ -114,7 +114,7 @@ static int __mse_generate_set_##fname##_gt_inc(mse_set_generator_t *gen, \
     /* Search the tree */ \
     avl_tree_node_t *node = NULL; \
     ASSERT(tree_lookup(cards->indexes.card_##fname##_tree, &node, 0, (void *) &lower)); \
-    *res = init_mse_search_intermediate_tree(node, 0); \
+    *res = mse_init_search_intermediate_tree(node, 0); \
     return 1; \
 } \
  \

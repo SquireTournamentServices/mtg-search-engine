@@ -15,7 +15,7 @@ static int __mse_generate_set_name_re(mse_set_generator_t *gen,
 
     avl_tree_node_t *node = NULL;
     int status = mse_matching_card_name(&node, cards->card_tree, re, 1, gen->negate, pool);
-    *res = init_mse_search_intermediate_tree(node, 0);
+    *res = mse_init_search_intermediate_tree(node, 0);
     free(re);
 
     ASSERT(status);
@@ -85,7 +85,7 @@ static int __mse_generate_set_name_text_inc(mse_set_generator_t *gen,
         return 0;
     }
 
-    *res = init_mse_search_intermediate_tree(search_tmp.node, 0);
+    *res = mse_init_search_intermediate_tree(search_tmp.node, 0);
     return 1;
 }
 

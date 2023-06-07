@@ -30,12 +30,12 @@ static int test_union_tree()
     avl_tree_node_t *tree_1 = get_tree(1, 10);
     ASSERT(tree_size(tree_1) == 10);
     ASSERT(tree_1 != NULL);
-    mse_search_intermediate_t a = init_mse_search_intermediate_tree(tree_1, 0);
+    mse_search_intermediate_t a = mse_init_search_intermediate_tree(tree_1, 0);
 
     avl_tree_node_t *tree_2 = get_tree(11, 20);
     ASSERT(tree_size(tree_2) == 10);
     ASSERT(tree_2 != NULL);
-    mse_search_intermediate_t b = init_mse_search_intermediate_tree(tree_2, 0);
+    mse_search_intermediate_t b = mse_init_search_intermediate_tree(tree_2, 0);
 
     // Test set operations
     mse_search_intermediate_t inter;
@@ -58,12 +58,12 @@ static int test_intersection_tree()
     avl_tree_node_t *tree_1 = get_tree(1, 100);
     ASSERT(tree_size(tree_1) == 100);
     ASSERT(tree_1 != NULL);
-    mse_search_intermediate_t a = init_mse_search_intermediate_tree(tree_1, 1);
+    mse_search_intermediate_t a = mse_init_search_intermediate_tree(tree_1, 1);
 
     avl_tree_node_t *tree_2 = get_tree(90, 200);
     ASSERT(tree_size(tree_2) == 111);
     ASSERT(tree_2 != NULL);
-    mse_search_intermediate_t b = init_mse_search_intermediate_tree(tree_2, 1);
+    mse_search_intermediate_t b = mse_init_search_intermediate_tree(tree_2, 1);
 
     // Test set operations
     mse_search_intermediate_t inter;
