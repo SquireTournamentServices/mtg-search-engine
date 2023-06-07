@@ -26,7 +26,7 @@ mse_colour_enum_t mse_parse_colour(char colour);
 /// This will parse a card's mana cost or, a colour,
 /// 4{W}{U} will return MSE_BLUE | MSE_WHITE
 /// W will return MSE_WHITE
-mse_colour_enum_t parse_colours(const char *colours);
+mse_colour_enum_t mse_parse_colours(const char *colours);
 
 #define MTG_SPECIAL_NUMERICAL_VAL NAN
 

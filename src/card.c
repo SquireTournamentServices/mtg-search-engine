@@ -29,7 +29,7 @@ mse_colour_enum_t mse_parse_colour(char colour)
 
 }
 
-mse_colour_enum_t parse_colours(const char *colours)
+mse_colour_enum_t mse_parse_colours(const char *colours)
 {
     mse_colour_enum_t ret = 0;
     ASSERT(colours != NULL);
@@ -164,7 +164,7 @@ int parse_card_json(json_t *json, mse_card_t *card)
 
     json_array_foreach(colours_o, index, value) {
         ASSERT(json_is_string(value));
-        card->colours |= parse_colours(json_string_value(value));
+        card->colours |= mse_parse_colours(json_string_value(value));
     }
 
     // Read colour identity
@@ -174,7 +174,7 @@ int parse_card_json(json_t *json, mse_card_t *card)
 
     json_array_foreach(colour_identity_o, index, value) {
         ASSERT(json_is_string(value));
-        card->colour_identity |= parse_colours(json_string_value(value));
+        card->colour_identity |= mse_parse_colours(json_string_value(value));
     }
 
     // Read sets (printings)
