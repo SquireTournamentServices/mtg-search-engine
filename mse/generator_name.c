@@ -78,7 +78,7 @@ static int __mse_generate_set_name_text_inc(mse_set_generator_t *gen,
     }
 
     // Cleanup
-    free_mse_card_parts(&parts);
+    mse_free_card_parts(&parts);
     if (!code) {
         mse_free_search_intermediate(&search_tmp);
         lprintf(LOG_ERROR, "Cannot generate set for name text inc\n");

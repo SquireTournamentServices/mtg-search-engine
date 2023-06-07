@@ -245,7 +245,7 @@ static int __add_cards_to_card_name_parts_trie(avl_tree_node_t *node,
             break;
         }
     }
-    free_mse_card_parts(&parts);
+    mse_free_card_parts(&parts);
     ASSERT(r);
 
     ASSERT(__add_cards_to_card_name_parts_trie(node->l, card_name_parts_trie));
@@ -269,8 +269,8 @@ int __generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool)
 {
     ASSERT(pool != NULL);
     ASSERT(ret != NULL);
-    ASSERT(init_mse_card_trie_node(&ret->indexes.card_name_trie));
-    ASSERT(init_mse_card_trie_node(&ret->indexes.card_name_parts_trie));
+    ASSERT(mse_init_card_trie_node(&ret->indexes.card_name_trie));
+    ASSERT(mse_init_card_trie_node(&ret->indexes.card_name_parts_trie));
 
     void (*tasks[])(void *, struct thread_pool_t *) = {&__generate_set_cards_index_task,
                                                        &__generate_card_name_trie_task,

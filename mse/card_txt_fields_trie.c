@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 
-int init_mse_card_trie_node(mse_card_trie_node_t **node)
+int mse_init_card_trie_node(mse_card_trie_node_t **node)
 {
     *node = malloc(sizeof(**node));
     ASSERT(node != NULL);
@@ -14,14 +14,14 @@ int init_mse_card_trie_node(mse_card_trie_node_t **node)
     return 1;
 }
 
-static void __free_mse_card_trie_node(mse_card_trie_node_t *node)
+static void __mse_free_card_trie_node(mse_card_trie_node_t *node)
 {
     if (node == NULL) {
         return;
     }
 
     for (size_t i = 0; i < MSE_ALPHABET_LENGTH; i++) {
-        __free_mse_card_trie_node(node->children[i]);
+        __mse_free_card_trie_node(node->children[i]);
     }
 
     if (node->cards != NULL) {
@@ -30,10 +30,10 @@ static void __free_mse_card_trie_node(mse_card_trie_node_t *node)
     free(node);
 }
 
-void free_mse_card_trie_node(mse_card_trie_node_t *node)
+void mse_free_card_trie_node(mse_card_trie_node_t *node)
 {
     lprintf(LOG_INFO, "Freeing trie, this make take some time\n");
-    __free_mse_card_trie_node(node);
+    __mse_free_card_trie_node(node);
     lprintf(LOG_INFO, "Done, thanks for waiting\n");
 }
 
@@ -170,7 +170,7 @@ static int __mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t *card, 
 
     // Insert the trie node if needed
     if (root->children[c_index] == NULL) {
-        ASSERT(init_mse_card_trie_node(&root->children[c_index]));
+        ASSERT(mse_init_card_trie_node(&root->children[c_index]));
     }
     return __mse_card_trie_insert(root->children[c_index], card, str, index + 1);
 }
@@ -238,7 +238,7 @@ static int __mse_insert_to_name_parts(mse_card_name_parts_t *ret, char *fname)
 {
     char **tmp = realloc(ret->parts, sizeof(*ret->parts) * (ret->len + 1));
     if (tmp == NULL) {
-        free_mse_card_parts(ret);
+        mse_free_card_parts(ret);
         return 0;
     }
 
@@ -285,7 +285,7 @@ static int __mse_split_card_name(char *name, mse_card_name_parts_t *ret)
         if (!r) {
             lprintf(LOG_ERROR, "Cannot insert name to parts struct\n");
             free(part);
-            free_mse_card_parts(ret);
+            mse_free_card_parts(ret);
             return 0;
         }
 
@@ -295,7 +295,7 @@ static int __mse_split_card_name(char *name, mse_card_name_parts_t *ret)
     return 1;
 }
 
-void free_mse_card_parts(mse_card_name_parts_t *ret)
+void mse_free_card_parts(mse_card_name_parts_t *ret)
 {
     if (ret->parts != NULL) {
         for (size_t i = 0; i < ret->len; i++) {
@@ -316,7 +316,7 @@ int mse_split_card_name(char *name, mse_card_name_parts_t *ret)
     ASSERT(tmp != NULL);
     int r = __mse_split_card_name(tmp, ret);
     if (!r) {
-        free_mse_card_parts(ret);
+        mse_free_card_parts(ret);
     }
 
     free(tmp);

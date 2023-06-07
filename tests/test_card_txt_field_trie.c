@@ -34,28 +34,28 @@ static int test_filter_str()
 static int test_trie_init_free()
 {
     mse_card_trie_node_t *node = NULL;
-    ASSERT(init_mse_card_trie_node(&node));
+    ASSERT(mse_init_card_trie_node(&node));
     ASSERT(node != NULL);
 
     for (size_t i = 0; i < sizeof(node->children) / sizeof(*node->children); i++) {
         ASSERT(node->children[i] == NULL);
     }
-    free_mse_card_trie_node(node);
+    mse_free_card_trie_node(node);
     return 1;
 }
 
 static int test_trie_init_free_children()
 {
     mse_card_trie_node_t *node = NULL;
-    ASSERT(init_mse_card_trie_node(&node));
+    ASSERT(mse_init_card_trie_node(&node));
     ASSERT(node != NULL);
 
     mse_card_trie_node_t *node_2 = NULL;
-    ASSERT(init_mse_card_trie_node(&node_2));
+    ASSERT(mse_init_card_trie_node(&node_2));
     ASSERT(node_2 != NULL);
     node->children[3] = node_2;
 
-    free_mse_card_trie_node(node);
+    mse_free_card_trie_node(node);
     return 1;
 }
 
@@ -64,7 +64,7 @@ static int test_trie_init_free_children()
 static int test_card_insert()
 {
     mse_card_trie_node_t *node = NULL;
-    ASSERT(init_mse_card_trie_node(&node));
+    ASSERT(mse_init_card_trie_node(&node));
     ASSERT(node != NULL);
 
     mse_card_t card;
@@ -77,14 +77,14 @@ static int test_card_insert()
         ASSERT(root != NULL);
     }
 
-    free_mse_card_trie_node(node);
+    mse_free_card_trie_node(node);
     return 1;
 }
 
 static int test_card_lookup()
 {
     mse_card_trie_node_t *node = NULL;
-    ASSERT(init_mse_card_trie_node(&node));
+    ASSERT(mse_init_card_trie_node(&node));
     ASSERT(node != NULL);
 
     mse_card_t card;
@@ -103,14 +103,14 @@ static int test_card_lookup()
     ASSERT(mse_card_trie_lookup(node, "poopoo", &ret));
     ASSERT(ret == NULL);
 
-    free_mse_card_trie_node(node);
+    mse_free_card_trie_node(node);
     return 1;
 }
 
 static int test_card_lookup_aprox()
 {
     mse_card_trie_node_t *node = NULL;
-    ASSERT(init_mse_card_trie_node(&node));
+    ASSERT(mse_init_card_trie_node(&node));
     ASSERT(node != NULL);
 
     // This test case is cursed I am so sorry
@@ -137,7 +137,7 @@ static int test_card_lookup_aprox()
     ASSERT(mse_card_trie_lookup_aprox(node, "hasuidhasijdh" DANDAN, &ret));
     ASSERT(ret == NULL);
 
-    free_mse_card_trie_node(node);
+    mse_free_card_trie_node(node);
     return 1;
 }
 
@@ -163,7 +163,7 @@ static int test_card_name_split()
     ASSERT(strcmp(ret.parts[0], "gbln") == 0);
     ASSERT(strcmp(ret.parts[1], "mtvtr") == 0);
 
-    free_mse_card_parts(&ret);
+    mse_free_card_parts(&ret);
     return 1;
 }
 

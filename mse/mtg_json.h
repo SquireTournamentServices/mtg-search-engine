@@ -22,7 +22,7 @@ typedef struct mse_colour_index_t {
     avl_tree_node_t * colour_indexes[MSE_COLOUR_INDEX_MAX_CARDS];
 } mse_colour_index_t;
 
-void free_mse_colour_index(mse_colour_index_t *index);
+void mse_free_colour_index(mse_colour_index_t *index);
 
 #define MSE_COLOUR_INDEX_GENERATOR(index_base_name) \
 mse_colour_index_t index_base_name##_lt; \

@@ -71,7 +71,7 @@ static int __test_card_parts_trie_index(avl_tree_node_t *node)
         ASSERT(ret != NULL);
         free_tree(ret);
     }
-    free_mse_card_parts(&parts);
+    mse_free_card_parts(&parts);
 
     ASSERT(__test_card_parts_trie_index(node->l));
     ASSERT(__test_card_parts_trie_index(node->r));
