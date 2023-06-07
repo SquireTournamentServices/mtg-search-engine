@@ -74,7 +74,7 @@ static void __free_all_printings_cards_card(void *card)
 
 static void __free_all_printings_cards_set(void *set)
 {
-    free_set((mse_set_t *) set);
+    mse_free_set((mse_set_t *) set);
     free(set);
 }
 
@@ -86,9 +86,9 @@ int __mse_handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
 
     mse_set_t *set = malloc(sizeof(*set));
     ASSERT(set != NULL);
-    ASSERT(parse_set_json(set_node, set, set_code));
+    ASSERT(mse_parse_set_json(set_node, set, set_code));
 
-    avl_tree_node_t *node = init_avl_tree_node(&__free_all_printings_cards_set, &avl_cmp_set, set);
+    avl_tree_node_t *node = init_avl_tree_node(&__free_all_printings_cards_set, &mse_avl_cmp_set, set);
     ASSERT(insert_node(&ret->set_tree, node));
 
     json_t *cards = json_object_get(set_node, "cards");

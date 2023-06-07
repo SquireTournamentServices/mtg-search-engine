@@ -14,11 +14,11 @@ typedef struct mse_set_t {
     avl_tree_node_t *set_cards_tree;
 } mse_set_t;
 
-int parse_set_json(json_t *set_node, mse_set_t *ret, const char *code);
-int write_set(FILE *f, mse_set_t set);
-int read_set(FILE *f, mse_set_t *set);
-int add_card_to_set(mse_set_t *set, mse_card_t *card);
-void free_set(mse_set_t *set);
+int mse_parse_set_json(json_t *set_node, mse_set_t *ret, const char *code);
+int mse_write_set(FILE *f, mse_set_t set);
+int mse_read_set(FILE *f, mse_set_t *set);
+int mse_add_card_to_set(mse_set_t *set, mse_card_t *card);
+void mse_free_set(mse_set_t *set);
 
-int cmp_set(mse_set_t *a, mse_set_t *b);
-int avl_cmp_set(void *a, void *b);
+int mse_cmp_set(mse_set_t *a, mse_set_t *b);
+int mse_avl_cmp_set(void *a, void *b);

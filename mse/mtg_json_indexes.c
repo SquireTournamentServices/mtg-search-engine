@@ -117,7 +117,7 @@ MSE_INDEX_FOR_COLOUR_FIELD(colour_identity)
 &MSE_INDEX_COLOUR_NAME(colour_field, eq)
 
 // Set cards index
-static int __add_card_to_set(mse_card_t *card, avl_tree_node_t *sets)
+static int __mse_add_card_to_set(mse_card_t *card, avl_tree_node_t *sets)
 {
     for (size_t i = 0; i < card->set_codes_count; i++) {
         // Create a proxy element for the tree search as the tree will be comparing mse_set_t objects
@@ -127,7 +127,7 @@ static int __add_card_to_set(mse_card_t *card, avl_tree_node_t *sets)
         avl_tree_node_t *set_node = find_payload(sets, &card_set_proxy);
 
         if (set_node != NULL) {
-            add_card_to_set((mse_set_t *) set_node->payload, card);
+            mse_add_card_to_set((mse_set_t *) set_node->payload, card);
         } else {
             char set_code[MAX_SET_CODE_LEN + 1];
             set_code[MAX_SET_CODE_LEN] = 0;
@@ -146,7 +146,7 @@ static int __add_cards_to_set(avl_tree_node_t *cards, avl_tree_node_t *sets)
         return 1;
     }
 
-    ASSERT(__add_card_to_set((mse_card_t *) cards->payload, sets));
+    ASSERT(__mse_add_card_to_set((mse_card_t *) cards->payload, sets));
     ASSERT(__add_cards_to_set(cards->l, sets));
     ASSERT(__add_cards_to_set(cards->r, sets));
     return 1;
