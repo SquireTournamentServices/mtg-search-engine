@@ -12,7 +12,7 @@ static mse_thread_pool_t pool;
 static mse_all_printings_cards_t test_cards;
 static json_t *json;
 
-static size_t get_tree_nodes(avl_tree_node_t *node)
+static size_t get_tree_nodes(mse_avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 0;
@@ -37,24 +37,24 @@ static int test_all_printings_cards_found()
     return 1;
 }
 
-static int __test_card_trie_index(avl_tree_node_t *node)
+static int __test_card_trie_index(mse_avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 1;
     }
 
-    avl_tree_node_t *ret = NULL;
+    mse_avl_tree_node_t *ret = NULL;
     mse_card_t *card = (mse_card_t *) node->payload;
     ASSERT(mse_card_trie_lookup(test_cards.indexes.card_name_trie, card->name, &ret));
     ASSERT(ret != NULL);
-    free_tree(ret);
+    mse_free_tree(ret);
 
     ASSERT(__test_card_trie_index(node->l));
     ASSERT(__test_card_trie_index(node->r));
     return 1;
 }
 
-static int __test_card_parts_trie_index(avl_tree_node_t *node)
+static int __test_card_parts_trie_index(mse_avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 1;
@@ -65,11 +65,11 @@ static int __test_card_parts_trie_index(avl_tree_node_t *node)
     ASSERT(mse_split_card_name(card->name, &parts));
 
     for (size_t i = 0; i < parts.len; i++) {
-        avl_tree_node_t *ret = NULL;
+        mse_avl_tree_node_t *ret = NULL;
         ASSERT(mse_card_trie_lookup(test_cards.indexes.card_name_parts_trie, parts.parts[i], &ret));
 
         ASSERT(ret != NULL);
-        free_tree(ret);
+        mse_free_tree(ret);
     }
     mse_free_card_parts(&parts);
 
@@ -80,9 +80,9 @@ static int __test_card_parts_trie_index(avl_tree_node_t *node)
 
 static int test_indexes()
 {
-    ASSERT(tree_size(test_cards.indexes.card_power_tree) > 0);
-    ASSERT(tree_size(test_cards.indexes.card_toughness_tree) > 0);
-    ASSERT(tree_size(test_cards.indexes.card_cmc_tree) > 0);
+    ASSERT(mse_tree_size(test_cards.indexes.card_power_tree) > 0);
+    ASSERT(mse_tree_size(test_cards.indexes.card_toughness_tree) > 0);
+    ASSERT(mse_tree_size(test_cards.indexes.card_cmc_tree) > 0);
     ASSERT(test_cards.indexes.card_name_trie != NULL);
     ASSERT(__test_card_trie_index(test_cards.card_tree));
 

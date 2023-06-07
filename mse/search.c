@@ -8,7 +8,7 @@ static void __mse_init_search_intermediate(mse_search_intermediate_t *inter)
     memset(inter, 0, sizeof(*inter));
 }
 
-mse_search_intermediate_t mse_init_search_intermediate_tree(avl_tree_node_t *node, int is_reference)
+mse_search_intermediate_t mse_init_search_intermediate_tree(mse_avl_tree_node_t *node, int is_reference)
 {
     mse_search_intermediate_t ret;
     __mse_init_search_intermediate(&ret);
@@ -17,35 +17,35 @@ mse_search_intermediate_t mse_init_search_intermediate_tree(avl_tree_node_t *nod
     return ret;
 }
 
-static int __copy_node(avl_tree_node_t **node, avl_tree_node_t *node_old)
+static int __copy_node(mse_avl_tree_node_t **node, mse_avl_tree_node_t *node_old)
 {
-    *node = shallow_copy_tree_node(node_old);
+    *node = mse_shallow_copy_tree_node(node_old);
     ASSERT(*node != NULL);
     (*node)->cmp_payload = MSE_CARD_DEFAULT_COMPARE_FUNCTION;
     (*node)->free_payload = MSE_CARD_DEFAULT_FREE_FUNCTION;
     return 1;
 }
 
-static int __insert_tree_set_union(avl_tree_node_t **tree, avl_tree_node_t *node_old)
+static int __insert_tree_set_union(mse_avl_tree_node_t **tree, mse_avl_tree_node_t *node_old)
 {
     if (node_old == NULL) {
         return 1;
     }
 
-    avl_tree_node_t *node = NULL;
+    mse_avl_tree_node_t *node = NULL;
     ASSERT(__copy_node(&node, node_old));
 
-    if (!insert_node(tree, node)) {
-        free_tree(node);
+    if (!mse_insert_node(tree, node)) {
+        mse_free_tree(node);
     }
 
     if (!__insert_tree_set_union(tree, node_old->l)) {
-        free_tree(node);
+        mse_free_tree(node);
         return 0;
     }
 
     if (!__insert_tree_set_union(tree, node_old->r)) {
-        free_tree(node);
+        mse_free_tree(node);
         return 0;
     }
     return 1;
@@ -61,18 +61,18 @@ int mse_set_union(mse_search_intermediate_t *ret,
     return 1;
 }
 
-static int __mse_set_intersection(avl_tree_node_t **ret,
-                                  avl_tree_node_t *node,
-                                  avl_tree_node_t *tree)
+static int __mse_set_intersection(mse_avl_tree_node_t **ret,
+                                  mse_avl_tree_node_t *node,
+                                  mse_avl_tree_node_t *tree)
 {
     if (node == NULL) {
         return 1;
     }
 
-    if (find_payload(tree, node->payload)) {
-        avl_tree_node_t *node_copy = NULL;
+    if (mse_find_payload(tree, node->payload)) {
+        mse_avl_tree_node_t *node_copy = NULL;
         ASSERT(__copy_node(&node_copy, node));
-        ASSERT(insert_node(ret, node_copy));
+        ASSERT(mse_insert_node(ret, node_copy));
     }
 
     ASSERT(__mse_set_intersection(ret, node->l, tree));
@@ -99,7 +99,7 @@ int mse_set_intersection(mse_search_intermediate_t *ret,
 }
 
 static int __mse_set_negate(mse_search_intermediate_t *ret,
-                            avl_tree_node_t *node,
+                            mse_avl_tree_node_t *node,
                             mse_search_intermediate_t *a)
 {
     // Base case
@@ -108,10 +108,10 @@ static int __mse_set_negate(mse_search_intermediate_t *ret,
     }
 
     // If node is not in a then add it to ret
-    if (!find_payload(a->node, node->payload)) {
-        avl_tree_node_t *copy_node = NULL;
+    if (!mse_find_payload(a->node, node->payload)) {
+        mse_avl_tree_node_t *copy_node = NULL;
         ASSERT(__copy_node(&copy_node, node));
-        ASSERT(insert_node(&ret->node, copy_node));
+        ASSERT(mse_insert_node(&ret->node, copy_node));
     }
 
     // Recurse
@@ -131,7 +131,7 @@ int mse_set_negate(mse_search_intermediate_t *ret,
 void mse_free_search_intermediate(mse_search_intermediate_t *inter)
 {
     if (inter->node != NULL && !inter->is_reference) {
-        free_tree(inter->node);
+        mse_free_tree(inter->node);
     }
     memset(inter, 0, sizeof(*inter));
 }

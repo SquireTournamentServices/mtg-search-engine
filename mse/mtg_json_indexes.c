@@ -15,8 +15,8 @@ __impl_recursive_add_card_to_##colour_field##_##cmp_type##_index
 __impl_thread_add_card_to_##colour_field##_##cmp_type##_index
 
 typedef struct mse_colour_index_generator_state_t {
-    avl_tree_node_t *cards;
-    avl_tree_node_t **tree;
+    mse_avl_tree_node_t *cards;
+    mse_avl_tree_node_t **tree;
     mse_colour_enum_t colours;
     int *err;
     sem_t *semaphore;
@@ -24,8 +24,8 @@ typedef struct mse_colour_index_generator_state_t {
 
 #define MSE_INDEX_FOR_COLOUR(colour_field, cmp_type) \
 static int MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type) \
-    (avl_tree_node_t *cards, \
-    avl_tree_node_t **tree, \
+    (mse_avl_tree_node_t *cards, \
+    mse_avl_tree_node_t **tree, \
     mse_colour_enum_t colours) \
 { \
     if (cards == NULL) { \
@@ -34,8 +34,8 @@ static int MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type) \
  \
     mse_card_t *card = (mse_card_t *) cards->payload; \
     if (mse_colour_##cmp_type(card->colour_field, colours)) { \
-        avl_tree_node_t *node = init_avl_tree_node(NULL, &mse_avl_cmp_card, cards->payload); \
-        ASSERT(insert_node(tree, node)); \
+        mse_avl_tree_node_t *node = mse_init_avl_tree_node(NULL, &mse_avl_cmp_card, cards->payload); \
+        ASSERT(mse_insert_node(tree, node)); \
     } \
  \
     ASSERT(MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type)(cards->l, tree, colours)); \
@@ -117,14 +117,14 @@ MSE_INDEX_FOR_COLOUR_FIELD(colour_identity)
 &MSE_INDEX_COLOUR_NAME(colour_field, eq)
 
 // Set cards index
-static int __mse_add_card_to_set(mse_card_t *card, avl_tree_node_t *sets)
+static int __mse_add_card_to_set(mse_card_t *card, mse_avl_tree_node_t *sets)
 {
     for (size_t i = 0; i < card->set_codes_count; i++) {
         // Create a proxy element for the tree search as the tree will be comparing mse_set_t objects
         mse_set_t card_set_proxy;
         memcpy(card_set_proxy.code, card->set_codes[i], sizeof(card_set_proxy.code));
 
-        avl_tree_node_t *set_node = find_payload(sets, &card_set_proxy);
+        mse_avl_tree_node_t *set_node = mse_find_payload(sets, &card_set_proxy);
 
         if (set_node != NULL) {
             mse_add_card_to_set((mse_set_t *) set_node->payload, card);
@@ -140,7 +140,7 @@ static int __mse_add_card_to_set(mse_card_t *card, avl_tree_node_t *sets)
     return 1;
 }
 
-static int __add_cards_to_set(avl_tree_node_t *cards, avl_tree_node_t *sets)
+static int __add_cards_to_set(mse_avl_tree_node_t *cards, mse_avl_tree_node_t *sets)
 {
     if (cards == NULL) {
         return 1;
@@ -161,29 +161,29 @@ static void __mse_generate_set_cards_index_task(void *__state, mse_thread_pool_t
     sem_post(&(state->semaphore));
 }
 
-static int __insert_node(avl_tree_node_t **root, avl_tree_node_t *node)
+static int __insert_node(mse_avl_tree_node_t **root, mse_avl_tree_node_t *node)
 {
     if (*root == NULL) {
         *root = node;
         return 1;
     } else {
-        return insert_node(root, node);
+        return mse_insert_node(root, node);
     }
 }
 
 #define MSE_INDEX_FIELD_NAME(fname) __mse_generate_card_##fname##_index_task
 #define MSE_INDEX_FOR_FIELD(fname) \
-static int __add_cards_to_##fname##_tree(avl_tree_node_t *cards, avl_tree_node_t **card_##fname##_tree) \
+static int __add_cards_to_##fname##_tree(mse_avl_tree_node_t *cards, mse_avl_tree_node_t **card_##fname##_tree) \
 { \
     if (cards == NULL) { \
         return 1; \
     } \
  \
-    avl_tree_node_t *node = init_avl_tree_node(NULL, &mse_avl_cmp_card_##fname, cards->payload); \
+    mse_avl_tree_node_t *node = mse_init_avl_tree_node(NULL, &mse_avl_cmp_card_##fname, cards->payload); \
     int r = __insert_node(card_##fname##_tree, node); \
     if (!r) { \
         lprintf(LOG_ERROR, "Cannot insert a card into the " #fname " tree\n"); \
-        free_tree(node); \
+        mse_free_tree(node); \
         return 0; \
     } \
     ASSERT(__add_cards_to_##fname##_tree(cards->l, card_##fname##_tree)); \
@@ -204,7 +204,7 @@ MSE_INDEX_FOR_FIELD(power);
 MSE_INDEX_FOR_FIELD(toughness);
 MSE_INDEX_FOR_FIELD(cmc);
 
-static int __add_cards_to_card_name_trie(avl_tree_node_t *node, mse_card_trie_node_t *card_name_trie)
+static int __add_cards_to_card_name_trie(mse_avl_tree_node_t *node, mse_card_trie_node_t *card_name_trie)
 {
     if (node == NULL) {
         return 1;
@@ -227,8 +227,8 @@ static void __mse_generate_card_name_trie_task(void *__state, mse_thread_pool_t 
     sem_post(&(state->semaphore));
 }
 
-static int __add_cards_to_card_name_parts_trie(avl_tree_node_t *node,
-        mse_card_trie_node_t *card_name_parts_trie)
+static int __add_cards_to_card_name_parts_trie(mse_avl_tree_node_t *node,
+                                               mse_card_trie_node_t *card_name_parts_trie)
 {
     if (node == NULL) {
         return 1;

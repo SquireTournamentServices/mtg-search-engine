@@ -25,7 +25,7 @@ static void __mse_free_card_trie_node(mse_card_trie_node_t *node)
     }
 
     if (node->cards != NULL) {
-        free_tree(node->cards);
+        mse_free_tree(node->cards);
     }
     free(node);
 }
@@ -37,7 +37,7 @@ void mse_free_card_trie_node(mse_card_trie_node_t *node)
     lprintf(LOG_INFO, "Done, thanks for waiting\n");
 }
 
-static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, avl_tree_node_t **ret, int i)
+static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, mse_avl_tree_node_t **ret, int i)
 {
     if (str[i] == 0) {
         // Copy the tree
@@ -64,7 +64,7 @@ static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, avl_tre
     return __mse_card_trie_lookup(root->children[c_index], str, ret, i + 1);
 }
 
-int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret)
+int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, mse_avl_tree_node_t **ret)
 {
     *ret = NULL;
     char *str_f = mse_filter_text(str);
@@ -76,22 +76,22 @@ int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, avl_tree_node_t 
     return 1;
 }
 
-static int __mse_insert_avl(avl_tree_node_t **root, avl_tree_node_t *node)
+static int __mse_insert_avl(mse_avl_tree_node_t **root, mse_avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 1;
     }
 
-    avl_tree_node_t *node_copy = shallow_copy_tree_node(node);
+    mse_avl_tree_node_t *node_copy = mse_shallow_copy_tree_node(node);
     ASSERT(node_copy != NULL);
 
     node_copy->cmp_payload = MSE_CARD_DEFAULT_COMPARE_FUNCTION;
     node_copy->free_payload = MSE_CARD_DEFAULT_FREE_FUNCTION;
 
-    int r = insert_node(root, node_copy);
+    int r = mse_insert_node(root, node_copy);
     if (!r) {
         lprintf(LOG_WARNING, "Card already in output trie\n");
-        free_tree(node_copy);
+        mse_free_tree(node_copy);
     }
 
     ASSERT(__mse_insert_avl(root, node->l));
@@ -99,7 +99,7 @@ static int __mse_insert_avl(avl_tree_node_t **root, avl_tree_node_t *node)
     return 1;
 }
 
-static int __mse_insert_trie_children(mse_card_trie_node_t *node, avl_tree_node_t **ret)
+static int __mse_insert_trie_children(mse_card_trie_node_t *node, mse_avl_tree_node_t **ret)
 {
     if (node == NULL) {
         return 1;
@@ -112,7 +112,7 @@ static int __mse_insert_trie_children(mse_card_trie_node_t *node, avl_tree_node_
     return 1;
 }
 
-static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t *root, char *str, avl_tree_node_t **ret, int i)
+static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t *root, char *str, mse_avl_tree_node_t **ret, int i)
 {
     if (str[i] == 0) {
         ASSERT(__mse_insert_trie_children(root, ret));
@@ -132,7 +132,7 @@ static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t *root, char *str, a
     return __mse_card_trie_lookup_aprox(root->children[c_index], str, ret, i + 1);
 }
 
-int mse_card_trie_lookup_aprox(mse_card_trie_node_t *trie, char *str, avl_tree_node_t **ret)
+int mse_card_trie_lookup_aprox(mse_card_trie_node_t *trie, char *str, mse_avl_tree_node_t **ret)
 {
     *ret = NULL;
     char *str_f = mse_filter_text(str);
@@ -146,12 +146,12 @@ int mse_card_trie_lookup_aprox(mse_card_trie_node_t *trie, char *str, avl_tree_n
 
 static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mse_card_t *card)
 {
-    avl_tree_node_t *node = init_avl_tree_node(MSE_CARD_DEFAULT_FREE_FUNCTION,
-                            MSE_CARD_DEFAULT_COMPARE_FUNCTION,
-                            (void *) card);
+    mse_avl_tree_node_t *node = mse_init_avl_tree_node(MSE_CARD_DEFAULT_FREE_FUNCTION,
+                                                       MSE_CARD_DEFAULT_COMPARE_FUNCTION,
+                                                       (void *) card);
     ASSERT(node != NULL);
-    if (!insert_node(&root->cards, node)) {
-        free_tree(node);
+    if (!mse_insert_node(&root->cards, node)) {
+        mse_free_tree(node);
     }
     return 1;
 }

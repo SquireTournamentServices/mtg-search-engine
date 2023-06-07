@@ -7,7 +7,7 @@
 
 #define DEFAULT_ARGUMENT "m20"
 
-static int test_tree(avl_tree_node_t *node)
+static int test_tree(mse_avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 1;
@@ -28,7 +28,7 @@ static int test_tree(avl_tree_node_t *node)
     return 1;
 }
 
-static int test_tree_negate(avl_tree_node_t *node)
+static int test_tree_negate(mse_avl_tree_node_t *node)
 {
     if (node == NULL) {
         return 1;
@@ -59,7 +59,7 @@ int test_generator_set()
 
     mse_search_intermediate_t inter;
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
-    ASSERT(tree_size(inter.node) > 0);
+    ASSERT(mse_tree_size(inter.node) > 0);
     ASSERT(test_tree(inter.node));
     mse_free_search_intermediate(&inter);
     mse_free_set_generator(&ret);
@@ -67,7 +67,7 @@ int test_generator_set()
     // Test includes
     ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_INCLUDES, DEFAULT_ARGUMENT, len));
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
-    ASSERT(tree_size(inter.node) > 0);
+    ASSERT(mse_tree_size(inter.node) > 0);
     ASSERT(test_tree(inter.node));
     mse_free_search_intermediate(&inter);
     mse_free_set_generator(&ret);
@@ -76,7 +76,7 @@ int test_generator_set()
     ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_INCLUDES, DEFAULT_ARGUMENT, len));
     ret.negate = 1;
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
-    ASSERT(tree_size(inter.node) > 0);
+    ASSERT(mse_tree_size(inter.node) > 0);
     ASSERT(test_tree_negate(inter.node));
     mse_free_search_intermediate(&inter);
     mse_free_set_generator(&ret);

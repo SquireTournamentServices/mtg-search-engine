@@ -24,7 +24,7 @@ int mse_generate_set_colours(mse_set_generator_t *gen,
     ASSERT(__mse_parse_colours(gen->argument, &colours));
 
     // Get the data
-    avl_tree_node_t *node =  NULL;
+    mse_avl_tree_node_t *node =  NULL;
     switch(gen->generator_op) {
     case MSE_SET_GENERATOR_OP_LT:
         node = cards->indexes.colour_index.colours_lt.colour_indexes[colours];
@@ -57,7 +57,7 @@ int mse_generate_set_colour_identity(mse_set_generator_t *gen,
     ASSERT(__mse_parse_colours(gen->argument, &colours));
 
     // Get the data
-    avl_tree_node_t *node =  NULL;
+    mse_avl_tree_node_t *node =  NULL;
     switch(gen->generator_op) {
     case MSE_SET_GENERATOR_OP_LT:
         node = cards->indexes.colour_index.colour_identity_lt.colour_indexes[colours];

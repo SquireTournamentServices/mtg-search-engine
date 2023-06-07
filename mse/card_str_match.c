@@ -83,7 +83,7 @@ typedef enum mse_card_match_type_t {
 
 typedef struct mse_card_match_t {
     mse_card_match_type_t type;
-    avl_tree_node_t **res;
+    mse_avl_tree_node_t **res;
     char *str;
     int negate;
     pthread_mutex_t lock;
@@ -101,10 +101,10 @@ typedef struct mse_card_match_cmp_data_t {
 
 typedef struct mse_card_match_worker_data_t {
     mse_card_match_t *match_data;
-    avl_tree_node_t *root;
+    mse_avl_tree_node_t *root;
 } mse_card_match_worker_data_t;
 
-static void __mse_match_card_do_match(avl_tree_node_t *node, mse_card_match_t *match_data, mse_card_match_cmp_data_t data)
+static void __mse_match_card_do_match(mse_avl_tree_node_t *node, mse_card_match_t *match_data, mse_card_match_cmp_data_t data)
 {
     int matches = 0;
     switch(match_data->type) {
@@ -135,7 +135,7 @@ static void __mse_match_card_do_match(avl_tree_node_t *node, mse_card_match_t *m
     }
 
     if (matches) {
-        avl_tree_node_t *node_copy = shallow_copy_tree_node(node);
+        mse_avl_tree_node_t *node_copy = mse_shallow_copy_tree_node(node);
         if (node_copy == NULL) {
             lprintf(LOG_ERROR, "Cannot allocate tree node\n");
             match_data->err = 1;
@@ -146,18 +146,18 @@ static void __mse_match_card_do_match(avl_tree_node_t *node, mse_card_match_t *m
         node_copy->free_payload = MSE_CARD_DEFAULT_FREE_FUNCTION;
 
         pthread_mutex_lock(&match_data->lock);
-        int r = insert_node(match_data->res, node_copy);
+        int r = mse_insert_node(match_data->res, node_copy);
         pthread_mutex_unlock(&match_data->lock);
 
         if (!r) {
             lprintf(LOG_ERROR, "Node insert failed\n");
             match_data->err = 1;
-            free_tree(node_copy);
+            mse_free_tree(node_copy);
         }
     }
 }
 
-static void __mse_match_card_node(avl_tree_node_t *node, mse_card_match_t *match_data, mse_card_match_cmp_data_t cmp_data)
+static void __mse_match_card_node(mse_avl_tree_node_t *node, mse_card_match_t *match_data, mse_card_match_cmp_data_t cmp_data)
 {
     if (node == NULL) {
         return;
@@ -195,10 +195,10 @@ cleanup:
 }
 
 static int __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
-        mse_thread_pool_t *pool,
-        avl_tree_node_t *node,
-        int h,
-        mse_card_match_cmp_data_t data)
+                                           mse_thread_pool_t *pool,
+                                           mse_avl_tree_node_t *node,
+                                           int h,
+                                           mse_card_match_cmp_data_t data)
 {
     int sum = 0;
 
@@ -243,8 +243,8 @@ static int __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
     return sum;
 }
 
-static int __mse_match_cards(avl_tree_node_t **ret,
-                             avl_tree_node_t *cards_tree,
+static int __mse_match_cards(mse_avl_tree_node_t **ret,
+                             mse_avl_tree_node_t *cards_tree,
                              char *str,
                              int is_regex,
                              int negate,
@@ -299,8 +299,8 @@ static int __mse_match_cards(avl_tree_node_t **ret,
     return 1;
 }
 
-int mse_matching_card_oracle(avl_tree_node_t **ret,
-                             avl_tree_node_t *cards_tree,
+int mse_matching_card_oracle(mse_avl_tree_node_t **ret,
+                             mse_avl_tree_node_t *cards_tree,
                              char *str,
                              int is_regex,
                              int negate,
@@ -309,8 +309,8 @@ int mse_matching_card_oracle(avl_tree_node_t **ret,
     return __mse_match_cards(ret, cards_tree, str, is_regex, negate, pool, MSE_MATCH_ORACLE);
 }
 
-int mse_matching_card_name(avl_tree_node_t **ret,
-                           avl_tree_node_t *cards_tree,
+int mse_matching_card_name(mse_avl_tree_node_t **ret,
+                           mse_avl_tree_node_t *cards_tree,
                            char *str,
                            int is_regex,
                            int negate,

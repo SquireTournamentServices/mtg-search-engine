@@ -9,7 +9,7 @@
 #define DEFAULT_ARGUMENT_STR "WU"
 
 #define COLOUR_GEN_TEST(op_l, op_u, op) \
-static int test_tree_c_##op_l(avl_tree_node_t *node) \
+static int test_tree_c_##op_l(mse_avl_tree_node_t *node) \
 { \
     if (node == NULL) { \
         return 1; \
@@ -33,7 +33,7 @@ static int test_generator_colours_##op_l() \
  \
     mse_search_intermediate_t inter; \
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
-    ASSERT(tree_size(inter.node) > 0); \
+    ASSERT(mse_tree_size(inter.node) > 0); \
     ASSERT(test_tree_c_##op_l(inter.node)); \
  \
     mse_free_search_intermediate(&inter); \
@@ -49,7 +49,7 @@ COLOUR_GEN_TEST(eq, EQUALS, eq);
 COLOUR_GEN_TEST(inc, INCLUDES, eq);
 
 #define COLOUR_IDENTITY_GEN_TEST(op_l, op_u, op) \
-static int test_tree_ci_##op_l(avl_tree_node_t *node) \
+static int test_tree_ci_##op_l(mse_avl_tree_node_t *node) \
 { \
     if (node == NULL) { \
         return 1; \
@@ -73,7 +73,7 @@ static int test_generator_colour_identity_##op_l() \
  \
     mse_search_intermediate_t inter; \
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
-    ASSERT(tree_size(inter.node) > 0); \
+    ASSERT(mse_tree_size(inter.node) > 0); \
     ASSERT(test_tree_ci_##op_l(inter.node)); \
  \
     mse_free_search_intermediate(&inter); \

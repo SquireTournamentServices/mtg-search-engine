@@ -4,14 +4,14 @@
 
 /// A wrapper for the types of data that set operations are defined on
 typedef struct mse_search_intermediate_t {
-    avl_tree_node_t *node;
+    mse_avl_tree_node_t *node;
     int is_reference;
 } mse_search_intermediate_t;
 
 /// This wraps a tree in a mse_search_intermediate_t for use within operations. There is no allocation here
-/// often you want to free_tree(node) at some point down the line.
+/// often you want to mse_free_tree(node) at some point down the line.
 /// is_reference is whether the node is a reference to another objects memory or if it should be owned by this object
-mse_search_intermediate_t mse_init_search_intermediate_tree(avl_tree_node_t *node, int is_reference);
+mse_search_intermediate_t mse_init_search_intermediate_tree(mse_avl_tree_node_t *node, int is_reference);
 
 /// Enum for the operations defined here, used by interpretor.h
 typedef enum mse_set_operator_type_t {
@@ -52,7 +52,7 @@ typedef enum mse_search_sort_type_t {
 } mse_search_sort_type_t;
 
 typedef struct mse_search_result_t {
-    avl_tree_node_t *cards;
+    mse_avl_tree_node_t *cards;
     size_t cards_count;
     mse_search_sort_type_t current_sort;
 } mse_search_result_t;

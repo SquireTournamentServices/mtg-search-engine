@@ -23,16 +23,16 @@ int mse_card_oracle_matches(mse_card_t *card, regex_t *re);
 int mse_card_name_matches(mse_card_t *card, regex_t *re);
 
 /// Returns a set of matching cards for an oracle regex
-int mse_matching_card_oracle(avl_tree_node_t **ret,
-                             avl_tree_node_t *cards_tree,
+int mse_matching_card_oracle(mse_avl_tree_node_t **ret,
+                             mse_avl_tree_node_t *cards_tree,
                              char *str,
                              int is_regex,
                              int negate,
                              mse_thread_pool_t *pool);
 
 /// Returns a set of matching cards for a name regex
-int mse_matching_card_name(avl_tree_node_t **ret,
-                           avl_tree_node_t *cards_tree,
+int mse_matching_card_name(mse_avl_tree_node_t **ret,
+                           mse_avl_tree_node_t *cards_tree,
                            char *str,
                            int is_regex,
                            int negate,

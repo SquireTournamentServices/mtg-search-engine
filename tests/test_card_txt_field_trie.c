@@ -91,14 +91,14 @@ static int test_card_lookup()
     memset(&card, 0, sizeof(card));
     ASSERT(mse_card_trie_insert(node, &card, DANDAN));
 
-    avl_tree_node_t *ret = NULL;
+    mse_avl_tree_node_t *ret = NULL;
     ASSERT(mse_card_trie_lookup(node, DANDAN, &ret));
     ASSERT(ret != NULL);
-    free_tree(ret);
+    mse_free_tree(ret);
 
     ASSERT(mse_card_trie_lookup(node, DANDAN_F, &ret));
     ASSERT(ret != NULL);
-    free_tree(ret);
+    mse_free_tree(ret);
 
     ASSERT(mse_card_trie_lookup(node, "poopoo", &ret));
     ASSERT(ret == NULL);
@@ -128,11 +128,11 @@ static int test_card_lookup_aprox()
     dandanierier.id.bytes[0] = 3;
     ASSERT(mse_card_trie_insert(node, &dandanierier, DANDAN "ierier"));
 
-    avl_tree_node_t *ret = NULL;
+    mse_avl_tree_node_t *ret = NULL;
     ASSERT(mse_card_trie_lookup_aprox(node, DANDAN, &ret));
     ASSERT(ret != NULL);
-    ASSERT(tree_size(ret) == 3);
-    free_tree(ret);
+    ASSERT(mse_tree_size(ret) == 3);
+    mse_free_tree(ret);
 
     ASSERT(mse_card_trie_lookup_aprox(node, "hasuidhasijdh" DANDAN, &ret));
     ASSERT(ret == NULL);

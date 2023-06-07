@@ -114,7 +114,7 @@ static int test_resolve_set_generator()
     mse_search_intermediate_t ret;
     ASSERT(mse_resolve_interp_tree(node, &ret, &pool, 0, &test_cards));
     ASSERT(ret.node != NULL);
-    ASSERT(tree_size(ret.node) >= 329);
+    ASSERT(mse_tree_size(ret.node) >= 329);
     mse_free_search_intermediate(&ret);
 
     ret.node = NULL;
@@ -152,7 +152,7 @@ static int test_resolve_tree_1()
     mse_search_intermediate_t ret;
     ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 0, &test_cards));
     ASSERT(ret.node != NULL);
-    ASSERT(tree_size(ret.node) >= 6);
+    ASSERT(mse_tree_size(ret.node) >= 6);
     mse_free_search_intermediate(&ret);
 
     ret.node = NULL;
@@ -200,7 +200,7 @@ static int test_resolve_tree_2()
     mse_search_intermediate_t ret;
     ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 0, &test_cards));
     ASSERT(ret.node != NULL);
-    ASSERT(tree_size(ret.node) >= 45);
+    ASSERT(mse_tree_size(ret.node) >= 45);
     mse_free_search_intermediate(&ret);
 
     ret.node = NULL;
