@@ -59,7 +59,7 @@ curl_set_error:
     }
 }
 
-static void __get_all_printings_cards_curl_thread(void *data, struct thread_pool_t *pool)
+static void __get_all_printings_cards_curl_thread(void *data, struct mse_thread_pool_t *pool)
 {
     FILE *w = (FILE *) data;
     __do_get_all_printings_cards_curl(w);
@@ -113,7 +113,7 @@ int __mse_handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
     return 1;
 }
 
-int __mse_parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool)
+int __mse_parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, mse_thread_pool_t *pool)
 {
     ASSERT(ret != NULL);
     memset(ret, 0, sizeof(*ret));
@@ -154,7 +154,7 @@ int __mse_parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *card
     return 1;
 }
 
-int mse_get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool)
+int mse_get_all_printings_cards(mse_all_printings_cards_t *ret, mse_thread_pool_t *pool)
 {
     ASSERT(ret != NULL);
     memset(ret, 0, sizeof(*ret));
@@ -171,8 +171,8 @@ int mse_get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *p
     ASSERT(w != NULL);
 
     // Start curl request that writes to a pipe in another thread
-    task_t task = {(void *) w, &__get_all_printings_cards_curl_thread};
-    ASSERT(task_queue_enqueue(&pool->queue, task));
+    mse_task_t task = {(void *) w, &__get_all_printings_cards_curl_thread};
+    ASSERT(mse_task_queue_enqueue(&pool->queue, task));
 
     lprintf(LOG_INFO, "Downloading cards...\n");
 

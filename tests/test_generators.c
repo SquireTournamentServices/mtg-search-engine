@@ -6,7 +6,7 @@
 
 #define DEFAULT_ARGUMENT "thopt"
 
-thread_pool_t gen_thread_pool;
+mse_thread_pool_t gen_thread_pool;
 mse_all_printings_cards_t gen_cards;
 
 static json_t *get_all_printings_cards_from_file()
@@ -24,7 +24,7 @@ static json_t *get_all_printings_cards_from_file()
 
 static int init_generator_tests()
 {
-    ASSERT(init_pool(&gen_thread_pool));
+    ASSERT(mse_init_pool(&gen_thread_pool));
 
     json_t *json = get_all_printings_cards_from_file();
     ASSERT(json != NULL);
@@ -41,7 +41,7 @@ static int init_generator_tests()
 static int free_generator_tests()
 {
     mse_free_all_printings_cards(&gen_cards);
-    ASSERT(free_pool(&gen_thread_pool));
+    ASSERT(mse_free_pool(&gen_thread_pool));
     return 1;
 }
 

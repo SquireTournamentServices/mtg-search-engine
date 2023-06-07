@@ -5,7 +5,7 @@
 
 // Some vile testing globals
 static mse_all_printings_cards_t test_cards;
-static thread_pool_t pool;
+static mse_thread_pool_t pool;
 
 static json_t *get_all_printings_cards_from_file()
 {
@@ -22,7 +22,7 @@ static json_t *get_all_printings_cards_from_file()
 
 static int init_test_cards()
 {
-    ASSERT(init_pool(&pool));
+    ASSERT(mse_init_pool(&pool));
 
     json_t *json = get_all_printings_cards_from_file();
     ASSERT(json != NULL);
@@ -39,7 +39,7 @@ static int init_test_cards()
 static int free_test_card()
 {
     mse_free_all_printings_cards(&test_cards);
-    ASSERT(free_pool(&pool));
+    ASSERT(mse_free_pool(&pool));
     return 1;
 }
 

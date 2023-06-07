@@ -8,7 +8,7 @@
 #include <jansson.h>
 
 // Some vile testing globals
-static thread_pool_t pool;
+static mse_thread_pool_t pool;
 static mse_all_printings_cards_t test_cards;
 static json_t *json;
 
@@ -98,13 +98,13 @@ SUB_TEST(__test_atomic_card_props, {&test_all_printings_cards_sets_found, "Test 
 // Start tests
 static int init_tests()
 {
-    ASSERT(init_pool(&pool));
+    ASSERT(mse_init_pool(&pool));
     return 1;
 }
 
 static int free_tests()
 {
-    ASSERT(free_pool(&pool));
+    ASSERT(mse_free_pool(&pool));
     return 1;
 }
 

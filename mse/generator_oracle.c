@@ -6,7 +6,7 @@
 static int __mse_generate_set_oracle_re(mse_set_generator_t *gen,
                                         mse_search_intermediate_t *res,
                                         mse_all_printings_cards_t *cards,
-                                        thread_pool_t *pool)
+                                        mse_thread_pool_t *pool)
 {
     char *re = mse_escape_regex(gen->argument);
     ASSERT(re != NULL);
@@ -23,7 +23,7 @@ static int __mse_generate_set_oracle_re(mse_set_generator_t *gen,
 static int __mse_generate_set_oracle_text_inc(mse_set_generator_t *gen,
         mse_search_intermediate_t *res,
         mse_all_printings_cards_t *cards,
-        thread_pool_t *pool)
+        mse_thread_pool_t *pool)
 {
     avl_tree_node_t *node = NULL;
     ASSERT(mse_matching_card_oracle(&node, cards->card_tree, gen->argument, 0, gen->negate, pool));
@@ -34,7 +34,7 @@ static int __mse_generate_set_oracle_text_inc(mse_set_generator_t *gen,
 int mse_generate_set_oracle(mse_set_generator_t *gen,
                             mse_search_intermediate_t *res,
                             mse_all_printings_cards_t *cards,
-                            thread_pool_t *pool)
+                            mse_thread_pool_t *pool)
 {
     if (mse_is_regex_str(gen->argument)) {
         return __mse_generate_set_oracle_re(gen, res, cards, pool);

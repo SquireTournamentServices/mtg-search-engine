@@ -82,14 +82,14 @@ int __mse_handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
 
 /// Exposed internal method for use within internal testing
 /// This method will parse the json cards all of the indexes
-int __mse_parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, thread_pool_t *pool);
+int __mse_parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *cards, mse_thread_pool_t *pool);
 
 /// Returns 1 on success, 0 on failure
 /// Do not call mse_free_all_printings_cards on fail
-int mse_get_all_printings_cards(mse_all_printings_cards_t *ret, thread_pool_t *pool);
+int mse_get_all_printings_cards(mse_all_printings_cards_t *ret, mse_thread_pool_t *pool);
 
 /// This function will generate all of the indexes for a card, defined in mse_json_indexes.c
-int __mse_generate_indexes(mse_all_printings_cards_t *ret, thread_pool_t *pool);
+int __mse_generate_indexes(mse_all_printings_cards_t *ret, mse_thread_pool_t *pool);
 
 /// Frees atomic cards
 void mse_free_all_printings_cards(mse_all_printings_cards_t *cards);

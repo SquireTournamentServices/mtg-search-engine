@@ -13,7 +13,7 @@
 #include <unistd.h>
 #endif
 
-static int __task_queue_front(task_queue_t *queue, task_t *ret)
+static int __task_queue_front(mse_task_queue_t *queue, mse_task_t *ret)
 {
     // Lock the queue
     int r = 0;
@@ -23,7 +23,7 @@ static int __task_queue_front(task_queue_t *queue, task_t *ret)
     }
 
     // Get the head of the queue
-    task_node_t *node = queue->head;
+    mse_task_node_t *node = queue->head;
 
     // Sanity check that a valid node was found
     if (node == NULL) {
@@ -39,7 +39,7 @@ static int __task_queue_front(task_queue_t *queue, task_t *ret)
     }
 
     // free the old node and, return the value
-    task_t task = node->payload;
+    mse_task_t task = node->payload;
     free(node);
     *ret = task;
 
@@ -50,14 +50,14 @@ cleanup:
     return r;
 }
 
-int task_queue_front(task_queue_t *queue, task_t *ret)
+int mse_task_queue_front(mse_task_queue_t *queue, mse_task_t *ret)
 {
     // Get the semaphore and, wait for some data
     sem_wait(&queue->semaphore);
     return __task_queue_front(queue, ret);
 }
 
-int task_queue_try_front(task_queue_t *queue, task_t *ret)
+int mse_task_queue_try_front(mse_task_queue_t *queue, mse_task_t *ret)
 {
     // Get the semaphore and, wait for some data
     if (sem_trywait(&queue->semaphore) != 0) {
@@ -66,10 +66,10 @@ int task_queue_try_front(task_queue_t *queue, task_t *ret)
     return __task_queue_front(queue, ret);
 }
 
-int task_queue_enqueue(task_queue_t *queue, task_t task)
+int mse_task_queue_enqueue(mse_task_queue_t *queue, mse_task_t task)
 {
     // Create new task node
-    task_node_t *node = malloc(sizeof * node);
+    mse_task_node_t *node = malloc(sizeof * node);
     ASSERT(node != NULL);
     node->next = NULL;
     node->payload = task;
@@ -90,18 +90,18 @@ int task_queue_enqueue(task_queue_t *queue, task_t task)
     return 1;
 }
 
-void pool_try_consume(thread_pool_t *pool)
+void mse_pool_try_consume(mse_thread_pool_t *pool)
 {
-    task_t task;
-    if (task_queue_try_front(&pool->queue, &task)) {
+    mse_task_t task;
+    if (mse_task_queue_try_front(&pool->queue, &task)) {
         task.exec_func(task.data, pool);
     }
 }
 
-static void pool_consume(thread_pool_t *pool)
+static void pool_consume(mse_thread_pool_t *pool)
 {
-    task_t task;
-    if (task_queue_front(&pool->queue, &task)) {
+    mse_task_t task;
+    if (mse_task_queue_front(&pool->queue, &task)) {
         task.exec_func(task.data, pool);
     } else {
         if (pool->running) {
@@ -112,7 +112,7 @@ static void pool_consume(thread_pool_t *pool)
 
 static void *thread_pool_consumer_func(void *pool_raw)
 {
-    thread_pool_t *pool = (thread_pool_t *) pool_raw;
+    mse_thread_pool_t *pool = (mse_thread_pool_t *) pool_raw;
     while (pool->running) {
         pool_consume(pool);
     }
@@ -120,7 +120,7 @@ static void *thread_pool_consumer_func(void *pool_raw)
     return NULL;
 }
 
-int init_queue(task_queue_t *queue)
+int mse_init_queue(mse_task_queue_t *queue)
 {
     pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
     queue->lock = lock;
@@ -129,14 +129,14 @@ int init_queue(task_queue_t *queue)
     return 1;
 }
 
-void reset_pool(task_queue_t *queue)
+void mse_reset_pool(mse_task_queue_t *queue)
 {
     pthread_mutex_lock(&queue->lock);
     size_t cnt = 0;
 
     // Free all of the nodes
     while (queue->head != NULL) {
-        task_node_t *node = queue->head;
+        mse_task_node_t *node = queue->head;
         queue->head = queue->head->next;
         free(node);
         cnt++;
@@ -151,7 +151,7 @@ void reset_pool(task_queue_t *queue)
     pthread_mutex_unlock(&queue->lock);
 }
 
-int init_pool(thread_pool_t *p)
+int mse_init_pool(mse_thread_pool_t *p)
 {
 #ifdef __WIN32
     SYSTEM_INFO sysinfo;
@@ -165,7 +165,7 @@ int init_pool(thread_pool_t *p)
 
     lprintf(LOG_INFO, "Created a thread pool with %d workers\n", cpus);
 
-    ASSERT(init_queue(&p->queue));
+    ASSERT(mse_init_queue(&p->queue));
     p->running = 1;
     p->threads_count = cpus;
     p->threads = malloc(sizeof * p->threads * p->threads_count);
@@ -176,17 +176,17 @@ int init_pool(thread_pool_t *p)
     return 1;
 }
 
-int free_pool(thread_pool_t *p)
+int mse_free_pool(mse_thread_pool_t *p)
 {
     lprintf(LOG_INFO, "Stopping all worker threads\n");
     ASSERT(p != NULL);
 
     // Local alias for the queue
-    task_queue_t *queue = &p->queue;
+    mse_task_queue_t *queue = &p->queue;
     p->running = 0;
 
     // Empty the queue
-    reset_pool(queue);
+    mse_reset_pool(queue);
 
     // Wake up all the threads as the queue will be empty they should fail soon
     for (size_t i = 0; i < p->threads_count; i++) {

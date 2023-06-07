@@ -23,7 +23,7 @@ typedef struct mse_interp_node_thread_data_t {
     mse_all_printings_cards_t *cards;
 } mse_interp_node_thread_data_t;
 
-static void __mse_resolve_interp_tree_worker(void *__data, thread_pool_t *pool)
+static void __mse_resolve_interp_tree_worker(void *__data, mse_thread_pool_t *pool)
 {
     mse_interp_node_thread_data_t *data = (mse_interp_node_thread_data_t *) __data;
     int r = mse_resolve_interp_tree(data->node, data->ret, pool, data->dry_run, data->cards);
@@ -42,7 +42,7 @@ static int __mse_queue_interp_tree_worker(sem_t *sem,
         mse_search_intermediate_t *ret,
         int dry_run,
         mse_all_printings_cards_t *cards,
-        thread_pool_t *pool)
+        mse_thread_pool_t *pool)
 {
     mse_interp_node_thread_data_t *data = malloc(sizeof(*data));
     ASSERT(data != NULL);
@@ -55,8 +55,8 @@ static int __mse_queue_interp_tree_worker(sem_t *sem,
     data->dry_run = dry_run;
     data->cards = cards;
 
-    task_t task = {(void *) data, &__mse_resolve_interp_tree_worker};
-    if (!task_queue_enqueue(&pool->queue, task)) {
+    mse_task_t task = {(void *) data, &__mse_resolve_interp_tree_worker};
+    if (!mse_task_queue_enqueue(&pool->queue, task)) {
         lprintf(LOG_ERROR, "Cannot enqueue resolve task\n");
         free(data);
         return 0;
@@ -125,7 +125,7 @@ void mse_free_interp_node(mse_interp_node_t *node)
 
 static int __mse_resolve_interp_leaf_generator(mse_interp_node_t *node,
         mse_search_intermediate_t *ret,
-        thread_pool_t *pool,
+        mse_thread_pool_t *pool,
         int dry_run,
         mse_all_printings_cards_t *cards)
 {
@@ -144,7 +144,7 @@ static int __mse_resolve_interp_leaf_generator(mse_interp_node_t *node,
 
 static int __mse_resolve_interp_tree_consumer(mse_interp_node_t *node,
         mse_search_intermediate_t *ret,
-        thread_pool_t *pool,
+        mse_thread_pool_t *pool,
         int dry_run,
         mse_all_printings_cards_t *cards)
 {
@@ -175,7 +175,7 @@ static int __mse_resolve_interp_tree_consumer(mse_interp_node_t *node,
 
 static int __mse_resolve_interp_tree_operator(mse_interp_node_t *node,
         mse_search_intermediate_t *ret,
-        thread_pool_t *pool,
+        mse_thread_pool_t *pool,
         int dry_run,
         mse_all_printings_cards_t *cards)
 {
@@ -208,7 +208,7 @@ static int __mse_resolve_interp_tree_operator(mse_interp_node_t *node,
     for (int i = 0; i < thread_cnt; i++) {
         int waiting = 1;
         while (waiting) {
-            pool_try_consume(pool);
+            mse_pool_try_consume(pool);
             waiting = sem_trywait(&sem) != 0;
         }
     }
@@ -246,7 +246,7 @@ static int __mse_resolve_interp_tree_operator(mse_interp_node_t *node,
 
 int mse_resolve_interp_tree(mse_interp_node_t *root,
                             mse_search_intermediate_t *ret,
-                            thread_pool_t *pool,
+                            mse_thread_pool_t *pool,
                             int dry_run,
                             mse_all_printings_cards_t *cards)
 {

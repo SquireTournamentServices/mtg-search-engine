@@ -168,7 +168,7 @@ static void __mse_match_card_node(avl_tree_node_t *node, mse_card_match_t *match
     __mse_match_card_node(node->r, match_data, cmp_data);
 }
 
-static void __mse_match_card_worker(void *data, thread_pool_t *pool)
+static void __mse_match_card_worker(void *data, mse_thread_pool_t *pool)
 {
     mse_card_match_worker_data_t *match_data = (mse_card_match_worker_data_t *) data;
 
@@ -195,7 +195,7 @@ cleanup:
 }
 
 static int __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
-        thread_pool_t *pool,
+        mse_thread_pool_t *pool,
         avl_tree_node_t *node,
         int h,
         mse_card_match_cmp_data_t data)
@@ -224,8 +224,8 @@ static int __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
         data->match_data = match_data;
         data->root = node;
 
-        task_t task = {data, &__mse_match_card_worker};
-        if (task_queue_enqueue(&pool->queue, task)) {
+        mse_task_t task = {data, &__mse_match_card_worker};
+        if (mse_task_queue_enqueue(&pool->queue, task)) {
             sum++;
         } else {
             lprintf(LOG_ERROR, "Cannot enqueue regex match\n");
@@ -248,7 +248,7 @@ static int __mse_match_cards(avl_tree_node_t **ret,
                              char *str,
                              int is_regex,
                              int negate,
-                             thread_pool_t *pool,
+                             mse_thread_pool_t *pool,
                              mse_card_match_type_t type)
 {
     regex_t re;
@@ -283,7 +283,7 @@ static int __mse_match_cards(avl_tree_node_t **ret,
     for (int i = 0; i < thread_cnt; i++) {
         int waiting = 1;
         while (waiting) {
-            pool_try_consume(pool);
+            mse_pool_try_consume(pool);
             waiting = sem_trywait(&data.sem) != 0;
         }
     }
@@ -304,7 +304,7 @@ int mse_matching_card_oracle(avl_tree_node_t **ret,
                              char *str,
                              int is_regex,
                              int negate,
-                             thread_pool_t *pool)
+                             mse_thread_pool_t *pool)
 {
     return __mse_match_cards(ret, cards_tree, str, is_regex, negate, pool, MSE_MATCH_ORACLE);
 }
@@ -314,7 +314,7 @@ int mse_matching_card_name(avl_tree_node_t **ret,
                            char *str,
                            int is_regex,
                            int negate,
-                           thread_pool_t *pool)
+                           mse_thread_pool_t *pool)
 {
     return __mse_match_cards(ret, cards_tree, str, is_regex, negate, pool, MSE_MATCH_NAME);
 }

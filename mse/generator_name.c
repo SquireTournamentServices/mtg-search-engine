@@ -8,7 +8,7 @@
 static int __mse_generate_set_name_re(mse_set_generator_t *gen,
                                       mse_search_intermediate_t *res,
                                       mse_all_printings_cards_t *cards,
-                                      thread_pool_t *pool)
+                                      mse_thread_pool_t *pool)
 {
     char *re = mse_escape_regex(gen->argument);
     ASSERT(re != NULL);
@@ -25,7 +25,7 @@ static int __mse_generate_set_name_re(mse_set_generator_t *gen,
 static int __mse_generate_set_name_text_inc(mse_set_generator_t *gen,
         mse_search_intermediate_t *res,
         mse_all_printings_cards_t *cards,
-        thread_pool_t *pool)
+        mse_thread_pool_t *pool)
 {
     // Split the name into pieces
     mse_card_name_parts_t parts;
@@ -92,7 +92,7 @@ static int __mse_generate_set_name_text_inc(mse_set_generator_t *gen,
 int mse_generate_set_name(mse_set_generator_t *gen,
                           mse_search_intermediate_t *res,
                           mse_all_printings_cards_t *cards,
-                          thread_pool_t *pool)
+                          mse_thread_pool_t *pool)
 {
     if (mse_is_regex_str(gen->argument)) {
         return __mse_generate_set_name_re(gen, res, cards, pool);
