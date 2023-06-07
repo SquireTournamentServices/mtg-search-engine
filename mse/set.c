@@ -32,18 +32,18 @@ int parse_set_json(json_t *set_node, mse_set_t *ret, const char *code)
 
 int write_set(FILE *f, mse_set_t set)
 {
-    ASSERT(write_str(f, set.name));
+    ASSERT(mse_write_str(f, set.name));
     ASSERT(write_set_code(f, set.code));
-    ASSERT(write_tm(f, set.release));
+    ASSERT(mse_write_tm(f, set.release));
     return 1;
 }
 
 int read_set(FILE *f, mse_set_t *set)
 {
     memset(set, 0, sizeof(*set));
-    ASSERT(read_str(f, &set->name));
+    ASSERT(mse_read_str(f, &set->name));
     ASSERT(read_set_code(f, &set->code));
-    ASSERT(read_tm(f, &set->release));
+    ASSERT(mse_read_tm(f, &set->release));
     return 1;
 }
 

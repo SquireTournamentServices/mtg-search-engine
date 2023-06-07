@@ -202,23 +202,23 @@ int mse_parse_card_json(json_t *json, mse_card_t *card)
 int mse_write_card(FILE *f, mse_card_t card)
 {
     ASSERT(write_uuid(f, card.id));
-    ASSERT(write_str(f, card.name));
-    ASSERT(write_str(f, card.mana_cost));
-    ASSERT(write_str(f, card.oracle_text));
-    ASSERT(write_size_t(f, card.types_count));
+    ASSERT(mse_write_str(f, card.name));
+    ASSERT(mse_write_str(f, card.mana_cost));
+    ASSERT(mse_write_str(f, card.oracle_text));
+    ASSERT(mse_write_size_t(f, card.types_count));
     for (size_t i = 0; i < card.types_count; i++) {
-        ASSERT(write_str(f, card.types[i]));
+        ASSERT(mse_write_str(f, card.types[i]));
     }
 
-    ASSERT(write_double(f, card.power));
-    ASSERT(write_double(f, card.toughness));
-    ASSERT(write_double(f, card.cmc));
+    ASSERT(mse_write_double(f, card.power));
+    ASSERT(mse_write_double(f, card.toughness));
+    ASSERT(mse_write_double(f, card.cmc));
     int tmp = card.colours;
-    ASSERT(write_int(f, tmp));
+    ASSERT(mse_write_int(f, tmp));
     tmp = card.colour_identity;
-    ASSERT(write_int(f, tmp));
+    ASSERT(mse_write_int(f, tmp));
 
-    ASSERT(write_size_t(f, card.set_codes_count));
+    ASSERT(mse_write_size_t(f, card.set_codes_count));
     for (size_t i = 0; i < card.set_codes_count; i++) {
         ASSERT(write_set_code(f, card.set_codes[i]));
     }
@@ -229,26 +229,26 @@ int mse_read_card(FILE *f, mse_card_t *card)
 {
     memset(card, 0, sizeof(*card));
     ASSERT(read_uuid(f, &card->id));
-    ASSERT(read_str(f, &card->name));
-    ASSERT(read_str(f, &card->mana_cost));
-    ASSERT(read_str(f, &card->oracle_text));
-    ASSERT(read_size_t(f, &card->types_count));
+    ASSERT(mse_read_str(f, &card->name));
+    ASSERT(mse_read_str(f, &card->mana_cost));
+    ASSERT(mse_read_str(f, &card->oracle_text));
+    ASSERT(mse_read_size_t(f, &card->types_count));
 
     ASSERT(card->types = malloc(sizeof(*card->types) * card->types_count));
     for (size_t i = 0; i < card->types_count; i++) {
-        ASSERT(read_str(f, &card->types[i]));
+        ASSERT(mse_read_str(f, &card->types[i]));
     }
 
-    ASSERT(read_double(f, &card->power));
-    ASSERT(read_double(f, &card->toughness));
-    ASSERT(read_double(f, &card->cmc));
+    ASSERT(mse_read_double(f, &card->power));
+    ASSERT(mse_read_double(f, &card->toughness));
+    ASSERT(mse_read_double(f, &card->cmc));
     int tmp;
-    ASSERT(read_int(f, &tmp));
+    ASSERT(mse_read_int(f, &tmp));
     card->colours = tmp;
-    ASSERT(read_int(f, &tmp));
+    ASSERT(mse_read_int(f, &tmp));
     card->colour_identity = tmp;
 
-    ASSERT(read_size_t(f, &card->set_codes_count));
+    ASSERT(mse_read_size_t(f, &card->set_codes_count));
     ASSERT(card->set_codes = malloc(sizeof(*card->set_codes) * card->set_codes_count));
     for (size_t i = 0; i < card->set_codes_count; i++) {
         ASSERT(read_set_code(f, &card->set_codes[i]));
