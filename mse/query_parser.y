@@ -221,7 +221,14 @@ query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
      PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
      ret->op_node = NULL;
      } query
-     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE {
+     | STMT_NEGATE {
+     ret->tmp = ret->node;
+     PARSE_ASSERT(__mse_negate(ret));
+     } OPEN_BRACKET query CLOSE_BRACKET WHITESPACE {
+     ret->node = ret->tmp;
+     if (ret->node->r != NULL) {
+         ret->node = ret->node->l;
+     }
      // Create a AND node and insert it
      PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
      PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
