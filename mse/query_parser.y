@@ -30,6 +30,7 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
     #include "mse/query_parser.h"
 }
 %parse-param {mse_parser_status_t *ret}
+%glr-parser
 
 %token LT
 %token LT_INC
@@ -144,23 +145,31 @@ op_argument: string { COPY_TO_TMP_BUFFER }
            | word { COPY_TO_TMP_BUFFER }
            ;
 
-set_generator: op_name op_operator op_argument { PARSE_ASSERT(mse_handle_set_generator(0, ret)); }
-             | STMT_NEGATE op_name op_operator op_argument { PARSE_ASSERT(mse_handle_set_generator(1, ret)); }
+set_generator: op_name op_operator op_argument {
+             PARSE_ASSERT(mse_handle_set_generator(0, ret)); 
+             }
+             | STMT_NEGATE op_name op_operator op_argument {
+             PARSE_ASSERT(mse_handle_set_generator(1, ret)); 
+             }
              | word { PARSE_ASSERT(mse_handle_set_generator(0, ret)); }
              | string { PARSE_ASSERT(mse_handle_set_generator(0, ret)); }
              ;
 
-operator : AND { PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION)); }
-         | OR { PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_UNION)); }
+operator : AND {
+         PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+         }
+         | OR {
+         PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_UNION));
+         }
          ;
 
 query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
-     | set_generator WHITESPACE operator WHITESPACE query {
+     | set_generator WHITESPACE operator WHITESPACE {
      PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
      PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
      ret->op_node = NULL;
      ret->set_generator_node = NULL;
-     }
+     } query
      | set_generator WHITESPACE { 
      // Create a AND node and insert it
      PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));

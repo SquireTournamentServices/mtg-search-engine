@@ -5,10 +5,6 @@
 %}
 
 %%
-[a-zA-Z0-9_-]+ { return WORD; }
-\"([^"]|(\\\"))+\" { return STRING; }
-\/([^/]|(\\\/))+\/ { return REGEX_STRING; }
-
 [aA][nN][dD] { return AND; }
 [oO][rR] { return OR; }
 
@@ -23,4 +19,8 @@
 "(" { return OPEN_BRACKET; }
 ")" { return CLOSE_BRACKET; }
 "-" { return STMT_NEGATE; }
+
+[a-zA-Z0-9_-]+ { return WORD; }
+\"([^"]|(\\\"))+\" { return STRING; }
+\/([^/]|(\\\/))+\/ { return REGEX_STRING; }
 %%
