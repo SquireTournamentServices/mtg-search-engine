@@ -107,6 +107,30 @@ static int __mse_insert_node(mse_parser_status_t *state, mse_interp_node_t *node
     return 1;
 }
 
+static int __mse_negate(mse_parser_status_t *state)
+{
+    mse_set_consumer_t consumer;
+    ASSERT(mse_init_set_consumer(&consumer,
+                                 MSE_SET_CONSUMER_NEGATE,
+                                 "",
+                                 0));
+
+    mse_interp_node_t *node = NULL;
+    ASSERT(node = mse_init_interp_node_consumer(consumer));
+    if (state->root == NULL) {
+        state->root = state->node = node;
+    } else {
+        if (state->node->l == NULL) {
+             state->node->l = node;
+        } else {
+            // I can promise that this is not as sketchy as it looks
+            state->node->l->l = node;
+            state->node = node;
+        }
+    }
+    return 1;
+}
+
 %}
 
 // Token match definitions
@@ -192,9 +216,7 @@ query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
      PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
      ret->op_node = NULL;
      } query
-     | OPEN_BRACKET query CLOSE_BRACKET {
-     lprintf(LOG_WARNING, "TODO\n");
-     }
+     | OPEN_BRACKET query CLOSE_BRACKET { }
      | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
      PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
      ret->op_node = NULL;
@@ -205,9 +227,9 @@ query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
      PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
      ret->op_node = NULL;
      } query
-     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET {
-     lprintf(LOG_WARNING, "TODO\n");
-     }
+     | STMT_NEGATE {
+     PARSE_ASSERT(__mse_negate(ret));
+     } OPEN_BRACKET query CLOSE_BRACKET
      ;
 %%
 
