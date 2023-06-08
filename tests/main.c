@@ -11,8 +11,8 @@
 #include "./test_mse_langs.h"
 #include "./test_search.h"
 #include "./test_card_str_match.h"
-#include "./test_generators.h"
 #include "./test_card_txt_field_trie.h"
+#include "./test_generators.h"
 #include "./test_interpretor.h"
 
 static int sanity_test()

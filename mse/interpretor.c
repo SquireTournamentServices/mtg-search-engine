@@ -156,6 +156,9 @@ static int __mse_resolve_interp_tree_consumer(mse_interp_node_t *node,
     }
 
     // node->l is now the only none-null node
+    if (dry_run) {
+        return 1;
+    }
 
     // Generate the children
     mse_search_intermediate_t child_ret;
