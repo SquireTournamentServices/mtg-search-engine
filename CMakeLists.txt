@@ -163,6 +163,7 @@ set(TESTS
     ./tests/test_generator_set.c
     ./tests/test_generator_txt.c
     ./tests/test_generator_colours.c
+    ./tests/test_consumer.c
     ./tests/test_interpretor.h
     ./tests/test_interpretor.c
     ./tests/test_mse_langs.h
