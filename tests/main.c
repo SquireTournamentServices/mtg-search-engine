@@ -14,6 +14,7 @@
 #include "./test_card_txt_field_trie.h"
 #include "./test_generators.h"
 #include "./test_interpretor.h"
+#include "./test_parser.h"
 
 static int sanity_test()
 {
@@ -37,7 +38,8 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 /* Tests that require the data source */
 {&test_card_str_match, "Test card string match"},
 {&test_generators, "Test generators"},
-{&test_interpretor, "Test interpretor"})
+{&test_interpretor, "Test interpretor"},
+{&test_parser, "Test parser"})
 
 int main(int argc, char** argv)
 {

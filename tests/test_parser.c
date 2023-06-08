@@ -1,6 +1,7 @@
 #include "../testing_h/testing.h"
 #include "../mse/query_parser.h"
 #include "../mse/interpretor.h"
+#include "./test_parser.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,7 +36,7 @@ static int __test_next_query(FILE *f)
     return 1;
 }
 
-static int __main()
+int test_parser()
 {
     FILE *f = fopen("./valid_queries.txt", "r");
     ASSERT(f != NULL);
@@ -51,15 +52,4 @@ static int __main()
 
     fclose(f);
     return s;
-}
-
-int main()
-{
-    if (__main()) {
-        lprintf(TEST_PASS, "All queries were successfully parsed\n");
-        return 0;
-    } else {
-        lprintf(TEST_FAIL, "Some queries did not parse\n");
-        return 1;
-    }
 }
