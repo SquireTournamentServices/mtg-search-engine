@@ -166,6 +166,8 @@ set(TESTS
     ./tests/test_consumer.c
     ./tests/test_interpretor.h
     ./tests/test_interpretor.c
+    ./tests/test_parser.h
+    ./tests/test_parser.c
     ./tests/test_mse_langs.h
     ./tests/test_mse_langs.c)
 
@@ -210,9 +212,6 @@ if(UNIX)
   add_executable(mtg-search-engine-tests ${TESTS})
   target_link_libraries(mtg-search-engine-tests PUBLIC ${LIBS}
                                                        mtg-search-engine)
-  add_executable(mtg-search-engine-parser-tests ./tests/parser_test_main.c)
-  target_link_libraries(mtg-search-engine-parser-tests PUBLIC ${LIBS}
-                                                              mtg-search-engine)
 
   # Copy test data
   set(TEST_CARD_JSON ${CMAKE_CURRENT_BINARY_DIR}/test_card.json)
