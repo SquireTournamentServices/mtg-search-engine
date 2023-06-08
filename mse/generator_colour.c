@@ -25,27 +25,58 @@ int mse_generate_set_colours(mse_set_generator_t *gen,
 
     // Get the data
     mse_avl_tree_node_t *node =  NULL;
-    switch(gen->generator_op) {
-    case MSE_SET_GENERATOR_OP_LT:
-        node = cards->indexes.colour_index.colours_lt.colour_indexes[colours];
-        break;
-    case MSE_SET_GENERATOR_OP_LT_INC:
-        node = cards->indexes.colour_index.colours_lt_inc.colour_indexes[colours];
-        break;
-    case MSE_SET_GENERATOR_OP_GT:
-        node = cards->indexes.colour_index.colours_gt.colour_indexes[colours];
-        break;
-    case MSE_SET_GENERATOR_OP_GT_INC:
-        node = cards->indexes.colour_index.colours_gt_inc.colour_indexes[colours];
-        break;
-    case MSE_SET_GENERATOR_OP_EQUALS:
-    case MSE_SET_GENERATOR_OP_INCLUDES:
-        node = cards->indexes.colour_index.colours_eq.colour_indexes[colours];
-        break;
+    if (gen->negate) {
+        switch(gen->generator_op) {
+        case MSE_SET_GENERATOR_OP_LT:
+            node = cards->indexes.colour_index.colours_gt_inc.colour_indexes[colours];
+            break;
+        case MSE_SET_GENERATOR_OP_LT_INC:
+            node = cards->indexes.colour_index.colours_gt.colour_indexes[colours];
+            break;
+        case MSE_SET_GENERATOR_OP_GT:
+            node = cards->indexes.colour_index.colours_lt_inc.colour_indexes[colours];
+            break;
+        case MSE_SET_GENERATOR_OP_GT_INC:
+            node = cards->indexes.colour_index.colours_lt.colour_indexes[colours];
+            break;
+        case MSE_SET_GENERATOR_OP_EQUALS:
+        case MSE_SET_GENERATOR_OP_INCLUDES:
+            node = cards->indexes.colour_index.colours_eq.colour_indexes[colours];
+            break;
+        }
+    } else {
+        switch(gen->generator_op) {
+        case MSE_SET_GENERATOR_OP_LT:
+            node = cards->indexes.colour_index.colours_lt.colour_indexes[colours];
+            break;
+        case MSE_SET_GENERATOR_OP_LT_INC:
+            node = cards->indexes.colour_index.colours_lt_inc.colour_indexes[colours];
+            break;
+        case MSE_SET_GENERATOR_OP_GT:
+            node = cards->indexes.colour_index.colours_gt.colour_indexes[colours];
+            break;
+        case MSE_SET_GENERATOR_OP_GT_INC:
+            node = cards->indexes.colour_index.colours_gt_inc.colour_indexes[colours];
+            break;
+        case MSE_SET_GENERATOR_OP_EQUALS:
+        case MSE_SET_GENERATOR_OP_INCLUDES:
+            node = cards->indexes.colour_index.colours_eq.colour_indexes[colours];
+            break;
+        }
     }
 
     ASSERT(node != NULL);
     *res = mse_init_search_intermediate_tree(node, 1);
+
+    if (gen->negate) {
+        if (gen->generator_op == MSE_SET_GENERATOR_OP_INCLUDES
+                || gen->generator_op == MSE_SET_GENERATOR_OP_EQUALS) {
+            mse_search_intermediate_t tmp;
+            ASSERT(mse_set_negate(&tmp, cards, res));
+            mse_free_search_intermediate(res);
+            *res = tmp;
+        }
+    }
     return 1;
 }
 
