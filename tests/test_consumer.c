@@ -47,7 +47,6 @@ static int test_consumer_negate_no_cards()
     ASSERT(consumer.generator_type == MSE_SET_CONSUMER_NEGATE);
     ASSERT(consumer.argument != NULL);
     ASSERT(strlen(consumer.argument) == 0);
-    mse_free_set_consumer(&consumer);
 
     mse_avl_tree_node_t *root = NULL;
     mse_search_intermediate_t ret, child;
@@ -58,6 +57,7 @@ static int test_consumer_negate_no_cards()
     ASSERT(mse_tree_size(ret.node) == mse_tree_size(gen_cards.card_tree));
 
     mse_free_search_intermediate(&ret);
+    mse_free_set_consumer(&consumer);
     return 1;
 }
 
