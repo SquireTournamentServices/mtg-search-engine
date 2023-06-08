@@ -36,8 +36,8 @@ static int test_generator_colours_##op_l() \
     ASSERT(mse_tree_size(inter.node) > 0); \
     ASSERT(test_tree_c_##op_l(inter.node, ret.negate)); \
  \
-    ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
     ret.negate = 1; \
+    ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
     ASSERT(mse_tree_size(inter.node) > 0); \
     ASSERT(test_tree_c_##op_l(inter.node, ret.negate)); \
  \
@@ -81,8 +81,8 @@ static int test_generator_colour_identity_##op_l() \
     ASSERT(mse_tree_size(inter.node) > 0); \
     ASSERT(test_tree_ci_##op_l(inter.node, ret.negate)); \
  \
-    ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
     ret.negate = 1; \
+    ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool)); \
     ASSERT(mse_tree_size(inter.node) > 0); \
     ASSERT(test_tree_ci_##op_l(inter.node, ret.negate)); \
     mse_free_search_intermediate(&inter); \
