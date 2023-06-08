@@ -167,7 +167,7 @@ static int test_resolve_tree_1()
 #define COLOUR_2 "g"
 #define COLOUR_3 "wubrg"
 
-// (colour>=r and colour>=g) and colour:wubrg
+// (colour>=wubrg and colour>=g) and colour:r
 static int test_resolve_tree_2()
 {
     mse_interp_node_t *root;
@@ -200,6 +200,7 @@ static int test_resolve_tree_2()
     mse_search_intermediate_t ret;
     ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 0, &test_cards));
     ASSERT(ret.node != NULL);
+    lprintf(LOG_INFO, "There are %lu nodes\n", mse_tree_size(ret.node));
     ASSERT(mse_tree_size(ret.node) >= 45);
     mse_free_search_intermediate(&ret);
 
@@ -290,7 +291,7 @@ static int test_consumer_tree()
 
     ret.node = NULL;
     ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 1, &test_cards));
-    ASSERT(ret.node== NULL);
+    ASSERT(ret.node == NULL);
 
     // Cleanup
     mse_free_interp_node(root);
