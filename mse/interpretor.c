@@ -199,7 +199,7 @@ static int __mse_resolve_interp_tree_operator(mse_interp_node_t *node,
     if (__mse_queue_interp_tree_worker(&sem, &err, node->l, &a, dry_run, cards, pool)) {
         thread_cnt++;
     } else {
-        err =1;
+        err = 1;
     }
     if (__mse_queue_interp_tree_worker(&sem, &err, node->r, &b, dry_run, cards, pool)) {
         thread_cnt++;
