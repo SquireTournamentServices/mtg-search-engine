@@ -14,8 +14,8 @@ typedef struct mse_avl_tree_node_t {
 } mse_avl_tree_node_t;
 
 mse_avl_tree_node_t *mse_init_avl_tree_node(void (*free_payload)(void *payload),
-                                            int (*cmp_payload)(void *a, void *b),
-                                            void *payload);
+        int (*cmp_payload)(void *a, void *b),
+        void *payload);
 int mse_tree_balance(mse_avl_tree_node_t *node);
 void mse_free_tree(mse_avl_tree_node_t *tree);
 void mse_print_tree(mse_avl_tree_node_t *root);

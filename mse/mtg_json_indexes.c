@@ -228,7 +228,7 @@ static void __mse_generate_card_name_trie_task(void *__state, mse_thread_pool_t 
 }
 
 static int __add_cards_to_card_name_parts_trie(mse_avl_tree_node_t *node,
-                                               mse_card_trie_node_t *card_name_parts_trie)
+        mse_card_trie_node_t *card_name_parts_trie)
 {
     if (node == NULL) {
         return 1;

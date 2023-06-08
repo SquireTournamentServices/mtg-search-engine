@@ -122,7 +122,7 @@ static int test_tree_insert()
 static int test_tree_insert_2()
 {
     mse_avl_tree_node_t *tree = mse_init_avl_tree_node(NULL, &cmp_size_t,
-                                                       (void *) (size_t) (NODES_3 + 5));
+                                (void *) (size_t) (NODES_3 + 5));
     ASSERT(tree != NULL);
 
     // Add to tree
@@ -321,7 +321,7 @@ static int test_shallow_copy_tree_node()
     ASSERT(mse_shallow_copy_tree_node(NULL) == NULL);
 
     mse_avl_tree_node_t *tree = mse_init_avl_tree_node(NULL, &cmp_size_t,
-                                                       (void *) (size_t) (NODES_3 + 5));
+                                (void *) (size_t) (NODES_3 + 5));
     ASSERT(tree != NULL);
 
     // Add to tree

@@ -195,10 +195,10 @@ cleanup:
 }
 
 static int __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
-                                           mse_thread_pool_t *pool,
-                                           mse_avl_tree_node_t *node,
-                                           int h,
-                                           mse_card_match_cmp_data_t data)
+        mse_thread_pool_t *pool,
+        mse_avl_tree_node_t *node,
+        int h,
+        mse_card_match_cmp_data_t data)
 {
     int sum = 0;
 
