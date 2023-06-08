@@ -151,7 +151,7 @@ static int test_consumer_name_txt()
 {
     mse_set_consumer_t consumer;
     ASSERT(mse_init_set_consumer(&consumer,
-                                 MSE_SET_CONSUMER_ORACLE,
+                                 MSE_SET_CONSUMER_NAME,
                                  ARGUMENT,
                                  strlen(ARGUMENT)));
 
