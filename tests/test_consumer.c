@@ -1,9 +1,11 @@
 #include "../testing_h/testing.h"
 #include "../mse/consumer.h"
+#include "../mse/generators.h"
 #include "./test_generators.h"
 #include <string.h>
 
-#define ARGUMENT "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat."
+#define ARGUMENT "wee"
+#define ARGUMENT_RE ".*hopt.*"
 
 static int test_consumer_init_free()
 {
@@ -61,5 +63,36 @@ static int test_consumer_negate_no_cards()
     return 1;
 }
 
+static int test_consumer_negate_normal_case()
+{
+    mse_set_consumer_t consumer;
+    ASSERT(mse_init_set_consumer(&consumer,
+                                 MSE_SET_CONSUMER_NEGATE,
+                                 "",
+                                 0));
+    ASSERT(consumer.generator_type == MSE_SET_CONSUMER_NEGATE);
+    ASSERT(consumer.argument != NULL);
+    ASSERT(strlen(consumer.argument) == 0);
+
+    mse_search_intermediate_t ret, child;
+    mse_set_generator_t generator;
+    ASSERT(mse_init_set_generator(&generator,
+                                  MSE_SET_GENERATOR_ORACLE_TEXT,
+                                  MSE_SET_GENERATOR_OP_EQUALS,
+                                  ARGUMENT_RE,
+                                  strlen(ARGUMENT_RE)));
+    ASSERT(mse_generate_set(&generator, &child, &gen_cards, &gen_thread_pool));
+    mse_free_set_generator(&generator);
+
+    ASSERT(mse_consume_set(&consumer, &ret, &gen_cards, &child, &gen_thread_pool));
+    ASSERT(mse_tree_size(ret.node) == mse_tree_size(gen_cards.card_tree) - mse_tree_size(child.node));
+
+    mse_free_search_intermediate(&ret);
+    mse_free_search_intermediate(&child);
+    mse_free_set_consumer(&consumer);
+    return 1;
+}
+
 SUB_TEST(test_consumer, {&test_consumer_init_free, "Test consumer init and free"},
-{&test_consumer_negate_no_cards, "Test consumer negate"})
+{&test_consumer_negate_no_cards, "Test consumer negate NULL tree"},
+{&test_consumer_negate_normal_case, "Test consumer negate"})
