@@ -40,8 +40,8 @@ int mse_tree_balance(mse_avl_tree_node_t *node)
 }
 
 mse_avl_tree_node_t *mse_init_avl_tree_node(void (*free_payload)(void *payload),
-                                            int (*cmp_payload)(void *a, void *b),
-                                            void *payload)
+        int (*cmp_payload)(void *a, void *b),
+        void *payload)
 {
     ASSERT(cmp_payload != NULL);
 

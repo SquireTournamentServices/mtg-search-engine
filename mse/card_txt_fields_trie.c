@@ -147,8 +147,8 @@ int mse_card_trie_lookup_aprox(mse_card_trie_node_t *trie, char *str, mse_avl_tr
 static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mse_card_t *card)
 {
     mse_avl_tree_node_t *node = mse_init_avl_tree_node(MSE_CARD_DEFAULT_FREE_FUNCTION,
-                                                       MSE_CARD_DEFAULT_COMPARE_FUNCTION,
-                                                       (void *) card);
+                                MSE_CARD_DEFAULT_COMPARE_FUNCTION,
+                                (void *) card);
     ASSERT(node != NULL);
     if (!mse_insert_node(&root->cards, node)) {
         mse_free_tree(node);
