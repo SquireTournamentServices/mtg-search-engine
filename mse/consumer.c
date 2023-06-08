@@ -94,8 +94,7 @@ int mse_init_set_consumer(mse_set_consumer_t *ret,
     ret->generator_type = gen_type;
 
     size_t buf_len = sizeof(*ret->argument) * (len + 1);
-    ret->argument = malloc(buf_len);
-    ASSERT(ret->argument != NULL);
+    ASSERT(ret->argument = malloc(buf_len));
 
     // strlcpy is not defined :(
     memset(ret->argument, 0, buf_len);
