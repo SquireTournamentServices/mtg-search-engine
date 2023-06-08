@@ -219,7 +219,6 @@ if(UNIX)
 
   set(MEM_TESTS_SH ${CMAKE_CURRENT_BINARY_DIR}/mem_tests.sh)
   set(MEM_TESTS_PY ${CMAKE_CURRENT_BINARY_DIR}/mem_tests.py)
-  set(ALL_PRINTINGS ${CMAKE_CURRENT_BINARY_DIR}/AllPrintings.json)
   set(TESTING_SCRIPTS ${MEM_TESTS_PY} ${MEM_TESTS_SH})
 
   set(TEST_DATA_FILES ${TEST_CARD_JSON} ${TESTING_SCRIPTS}
@@ -232,8 +231,6 @@ if(UNIX)
             ${MEM_TESTS_SH}
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/mem_tests.py
             ${MEM_TESTS_PY}
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_SOURCE_DIR}/AllPrintings.json ${ALL_PRINTINGS}
     COMMAND
       ${CMAKE_COMMAND} -E copy
       ${CMAKE_CURRENT_SOURCE_DIR}/tests/valid_queries.txt ${TEST_VALID_QUERIES})
