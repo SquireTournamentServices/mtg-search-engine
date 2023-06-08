@@ -184,7 +184,7 @@ set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
 append_coverage_compiler_flags()
 setup_target_for_coverage_gcovr_xml(
   NAME
-  mse_coverage
+  mse-coverage
   EXECUTABLE
   mtg-search-engine-tests
   test
@@ -220,10 +220,11 @@ if(UNIX)
 
   set(MEM_TESTS_SH ${CMAKE_CURRENT_BINARY_DIR}/mem_tests.sh)
   set(MEM_TESTS_PY ${CMAKE_CURRENT_BINARY_DIR}/mem_tests.py)
+  set(ALL_PRINTINGS ${CMAKE_CURRENT_BINARY_DIR}/AllPrintings.json)
   set(TESTING_SCRIPTS ${MEM_TESTS_PY} ${MEM_TESTS_SH})
 
   set(TEST_DATA_FILES ${TEST_CARD_JSON} ${TESTING_SCRIPTS}
-                      ${TEST_VALID_QUERIES})
+                      ${TEST_VALID_QUERIES} ${ALL_PRINTINGS})
   add_custom_command(
     OUTPUT ${TEST_DATA_FILES}
     COMMAND ${CMAKE_COMMAND} -E copy
@@ -232,6 +233,8 @@ if(UNIX)
             ${MEM_TESTS_SH}
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/mem_tests.py
             ${MEM_TESTS_PY}
+    COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_CURRENT_SOURCE_DIR}/AllPrintings.json ${ALL_PRINTINGS}
     COMMAND
       ${CMAKE_COMMAND} -E copy
       ${CMAKE_CURRENT_SOURCE_DIR}/tests/valid_queries.txt ${TEST_VALID_QUERIES})

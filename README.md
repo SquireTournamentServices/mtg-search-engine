@@ -27,7 +27,7 @@ and sets. It has a syntax that is similar to Scryfall but it can be embedded any
  - valgrind
 
 ## Building and Testing
-This project is written in C and, targets all platforms.
+This project is written in C and, targets all platforms. 
 
 ```
 # .
@@ -39,4 +39,13 @@ cmake .. # -DCMAKE_BUILD_TYPE=DEBUG # Debug mode ??
 cmake --build . -j
 
 # ctest -V -j # Run tests ??
+```
+
+### Testing on poor internet
+Local test flag for slow internet: `MSE_TEST`, use this to make the program always read a cached copy of AllPrintings.json, 
+really useful when running on crap internet.
+
+```sh
+export MSE_TEST=true
+./mtg-search-engine-tests
 ```

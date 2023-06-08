@@ -20,11 +20,24 @@ size_t __mse_json_write_callback(char *ptr,
 }
 
 #define CURL_ASSERT(x) if ((x) != CURLE_OK) { lprintf(LOG_ERROR, "Cannot perform operation %s on cURL request\n", #x); goto curl_set_error; }
+#define TEST_FLAG "MSE_TEST"
 
 static void __do_get_all_printings_cards_curl(FILE *w)
 {
+    if (getenv(TEST_FLAG) != NULL) {
+        lprintf(LOG_WARNING, "Test flag %s is set\n", TEST_FLAG);
+        FILE *f = fopen(MSE_ALL_PRINTINGS_FILE, "r");
+        if (f == NULL) {
+            lprintf(LOG_ERROR, "Cannot read %s", MSE_ALL_PRINTINGS_FILE, " file\n");
+            return;
+        }
+        for (int c; c = fgetc(f), c != EOF; fputc(c, w));
+        fclose(f);
+        return;
+    }
+
     CURL *curl = curl_easy_init();
-    if(curl) {
+    if (curl) {
         CURLcode res = 0;
 
         // Set timeouts
@@ -34,7 +47,7 @@ static void __do_get_all_printings_cards_curl(FILE *w)
         CURL_ASSERT(curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout));
 
         // Set url, user-agent and, headers
-        CURL_ASSERT(curl_easy_setopt(curl, CURLOPT_URL, ATOMIC_CARDS_URL));
+        CURL_ASSERT(curl_easy_setopt(curl, CURLOPT_URL, MSE_ATOMIC_CARDS_URL));
         CURL_ASSERT(curl_easy_setopt(curl, CURLOPT_USE_SSL, 1L));
         CURL_ASSERT(curl_easy_setopt(curl, CURLOPT_USERAGENT, MSE_PROJECT_NAME));
         CURL_ASSERT(curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L));

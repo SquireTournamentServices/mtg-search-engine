@@ -6,7 +6,8 @@
 #include "./card_txt_fields_trie.h"
 #include <jansson.h>
 
-#define ATOMIC_CARDS_URL "https://mtgjson.com/api/v5/AllPrintings.json"
+#define MSE_ATOMIC_CARDS_URL "https://mtgjson.com/api/v5/AllPrintings.json"
+#define MSE_ALL_PRINTINGS_FILE "AllPrintings.json"
 
 /// Exposed internal method for use within internal testing
 size_t __mse_json_write_callback(char *ptr,
