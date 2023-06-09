@@ -83,9 +83,6 @@ static int mse_handle_set_generator(int negate, mse_parser_status_t *ret)
 
     int r = __mse_handle_set_generator(ret, negate);
 
-    free(ret->op_name_buffer);
-    ret->op_name_buffer = NULL;
-
     free(ret->argument_buffer);
     ret->argument_buffer = NULL;
     return r;
@@ -338,9 +335,6 @@ static void __mse_free_parser_status(mse_parser_status_t *status)
     }
     if (status->argument_buffer != NULL) {
         free(status->argument_buffer);
-    }
-    if (status->op_name_buffer != NULL) {
-        free(status->op_name_buffer);
     }
 
     if (status->stack_roots != NULL) {
