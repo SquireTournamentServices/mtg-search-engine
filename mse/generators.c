@@ -99,17 +99,32 @@ int mse_generate_set(mse_set_generator_t *gen,
 
 static int __mse_gen_type_1_char(char c, mse_set_generator_type_t *ret)
 {
-  switch (tolower(c)) {
-    case 'c': *ret = MSE_SET_GENERATOR_COLOUR; break;
-    case 'i': *ret = MSE_SET_GENERATOR_COLOUR_IDENTITY; break;
-    case 'p': *ret = MSE_SET_GENERATOR_POWER; break;
-    case 't': *ret = MSE_SET_GENERATOR_TOUGHNESS; break;
-    case 'n': *ret = MSE_SET_GENERATOR_NAME; break;
-    case 'o': *ret = MSE_SET_GENERATOR_ORACLE_TEXT; break;
-    case 's': *ret = MSE_SET_GENERATOR_SET; break;
-    default: return 0;
-  }
-  return 1;
+    switch (tolower(c)) {
+    case 'c':
+        *ret = MSE_SET_GENERATOR_COLOUR;
+        break;
+    case 'i':
+        *ret = MSE_SET_GENERATOR_COLOUR_IDENTITY;
+        break;
+    case 'p':
+        *ret = MSE_SET_GENERATOR_POWER;
+        break;
+    case 't':
+        *ret = MSE_SET_GENERATOR_TOUGHNESS;
+        break;
+    case 'n':
+        *ret = MSE_SET_GENERATOR_NAME;
+        break;
+    case 'o':
+        *ret = MSE_SET_GENERATOR_ORACLE_TEXT;
+        break;
+    case 's':
+        *ret = MSE_SET_GENERATOR_SET;
+        break;
+    default:
+        return 0;
+    }
+    return 1;
 }
 
 #define __MSE_GEN_TYPE_CMP(s, type) \
@@ -125,7 +140,7 @@ int mse_gen_type(char *str, mse_set_generator_type_t *ret)
     char *tmp = strdup(str);
     ASSERT(tmp != NULL);
     for (size_t i = 0; i < len; i++) {
-      tmp[i] = tolower(tmp[i]);
+        tmp[i] = tolower(tmp[i]);
     }
 
     int found = 0;
