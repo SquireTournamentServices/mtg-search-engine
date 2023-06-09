@@ -91,19 +91,75 @@ static int mse_handle_set_generator(int negate, mse_parser_status_t *ret)
     return r;
 }
 
+static int __mse_insert_node_special(mse_parser_status_t *state, 
+                                     mse_interp_node_t *node)
+{
+    if (state->node->r == NULL) {
+        state->node->r = node;
+        state->node = node;
+        return 1;
+    }
+
+    // Rotates the tree
+    //   snode
+    // l       r
+    // To
+    //           node
+    //     snode       r
+    // l
+    mse_interp_node_t tmp = *state->node;
+    *state->node = *node;
+    state->node->l = node;
+    state->node->r = tmp.r;
+
+    *node = tmp;
+    node->r = NULL;
+    
+    state->node = node;
+    return 1;
+}
+
 static int __mse_insert_node(mse_parser_status_t *state, mse_interp_node_t *node)
 {
     ASSERT(node != NULL);
     if (state->root == NULL) {
         state->root = state->node = node;
-    } else {
-        if (state->node->l == NULL) {
-             state->node->l = node;
-        } else {
-            state->node->r = node;
-            state->node = node;
-        }
+        return 1;
     }
+
+    if (state->node->l == NULL) {
+        state->node->l = node;
+    return 1;
+    } else {
+        return __mse_insert_node_special(state, node);
+    }
+}
+
+static int __mse_parser_status_push(mse_parser_status_t *state)
+{
+    ASSERT(state->stack_roots = realloc(state->stack_roots,
+                                        ++state->stack_roots_len));
+    state->stack_roots[state->stack_roots_len - 1] = state->node;
+    return 1;
+}
+
+static int __mse_parser_status_pop(mse_parser_status_t *state)
+{
+    ASSERT(state->stack_roots_len > 0);
+    mse_interp_node_t *tmp = state->stack_roots[state->stack_roots_len - 1];
+    if (state->stack_roots_len - 1 == 0) {
+        free(state->stack_roots);
+        state->stack_roots = NULL;
+    } else {
+        ASSERT(state->stack_roots = realloc(state->stack_roots,
+                                            state->stack_roots_len));
+    }
+    state->stack_roots_len--;
+
+    if (tmp == NULL) {
+        tmp = state->root;
+    }
+    state->node = tmp;
     return 1;
 }
 
@@ -125,8 +181,8 @@ static int __mse_negate(mse_parser_status_t *state)
         } else {
             // I can promise that this is not as sketchy as it looks
             state->node->l->l = node;
-            state->node = node;
         }
+        state->node = node;
     }
     return 1;
 }
@@ -189,58 +245,108 @@ operator : AND {
 
 query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
      | set_generator WHITESPACE operator WHITESPACE {
-     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
-     PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
-     ret->op_node = NULL;
-     ret->set_generator_node = NULL;
+         PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+         PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+         ret->op_node = NULL;
+         ret->set_generator_node = NULL;
      } query
+
      | set_generator WHITESPACE { 
-     // Create a AND node and insert it
-     PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
-     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
-     PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
-     ret->op_node = NULL;
-     ret->set_generator_node = NULL;
+         // Create a AND node and insert it
+         PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+         PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+         PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+         ret->op_node = NULL;
+         ret->set_generator_node = NULL;
      } query
+
      | set_generator { 
-     PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
-     ret->set_generator_node = NULL;
+         PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+         ret->set_generator_node = NULL;
      }
-     | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE {
-     // Create a AND node and insert it
-     PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
-     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
-     ret->op_node = NULL;
+
+     // Special case where operation needs to be handled first
+     | OPEN_BRACKET {
+         PARSE_ASSERT(__mse_parser_status_push(ret));
+     } query CLOSE_BRACKET WHITESPACE {
+         PARSE_ASSERT(__mse_parser_status_pop(ret));
+         // Create a AND node and insert it
+         PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+         PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+         ret->op_node = NULL;
      } query
-     | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
-     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
-     ret->op_node = NULL;
+
+     // Special case where operation needs to be handled first
+     | OPEN_BRACKET {
+         PARSE_ASSERT(__mse_parser_status_push(ret));
+     } query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
+         PARSE_ASSERT(__mse_parser_status_pop(ret));
+         PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+         ret->op_node = NULL;
      } query
-     | OPEN_BRACKET query CLOSE_BRACKET { }
-     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
-     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
-     ret->op_node = NULL;
-     } query
+
+     | OPEN_BRACKET  {
+         PARSE_ASSERT(__mse_parser_status_push(ret));
+     } query CLOSE_BRACKET { 
+         PARSE_ASSERT(__mse_parser_status_pop(ret));
+     }
+
+     // Special case where operation needs to be handled first
      | STMT_NEGATE {
-     ret->tmp = ret->node;
-     PARSE_ASSERT(__mse_negate(ret));
+         PARSE_ASSERT(__mse_parser_status_push(ret));
+         PARSE_ASSERT(__mse_negate(ret));
+     } OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
+         PARSE_ASSERT(__mse_parser_status_pop(ret));
+         if (ret->node->r != NULL) {
+            ret->node = ret->node->l;
+         }
+         PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+         ret->op_node = NULL;
+     } query
+
+     // Special case where operation needs to be handled first
+     | STMT_NEGATE {
+         PARSE_ASSERT(__mse_parser_status_push(ret));
+         PARSE_ASSERT(__mse_negate(ret));
      } OPEN_BRACKET query CLOSE_BRACKET WHITESPACE {
-     ret->node = ret->tmp;
-     if (ret->node->r != NULL) {
-         ret->node = ret->node->l;
-     }
-     // Create a AND node and insert it
-     PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
-     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
-     ret->op_node = NULL;
+         PARSE_ASSERT(__mse_parser_status_pop(ret));
+         if (ret->node->r != NULL) {
+            ret->node = ret->node->l;
+         }
+         // Create a AND node and insert it
+         PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+         PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+         ret->op_node = NULL;
      } query
+
      | STMT_NEGATE {
-     PARSE_ASSERT(__mse_negate(ret));
+         PARSE_ASSERT(__mse_negate(ret));
      } OPEN_BRACKET query CLOSE_BRACKET
      ;
 %%
 
-int parse_input_string(const char* input_string, mse_interp_node_t **root)
+static void __mse_free_parser_status(mse_parser_status_t *status)
+{
+    if (status->tmp_buffer != NULL) {
+        free(status->tmp_buffer);
+    }
+    if (status->argument_buffer != NULL) {
+        free(status->argument_buffer);
+    }
+    if (status->op_name_buffer != NULL) {
+        free(status->op_name_buffer);
+    }
+
+    if (status->stack_roots != NULL) {
+        for (size_t i = 0; i < status->stack_roots_len; i++) {
+            lprintf(LOG_WARNING, "Unused nodes on the stack\n");
+            mse_free_interp_node(status->stack_roots[i]);
+        }
+        free(status->stack_roots);
+    }
+}
+
+int mse_parse_input_string(const char* input_string, mse_interp_node_t **root)
 {
     *root = NULL;
 
@@ -256,15 +362,7 @@ int parse_input_string(const char* input_string, mse_interp_node_t **root)
     pthread_mutex_unlock(&parser_lock);
 
     // Cleanup
-    if (ret.tmp_buffer != NULL) {
-        free(ret.tmp_buffer);
-    }
-    if (ret.argument_buffer != NULL) {
-        free(ret.argument_buffer);
-    }
-    if (ret.op_name_buffer != NULL) {
-        free(ret.op_name_buffer);
-    }
+    __mse_free_parser_status(&ret);
 
     *root = ret.root;
     ASSERT(root != NULL);

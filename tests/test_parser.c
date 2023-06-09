@@ -29,7 +29,7 @@ static int __test_next_query(FILE *f)
 
     lprintf(TEST_INFO, "Testing parse of '%s'\n", buffer);
     mse_interp_node_t *ret = NULL;
-    ASSERT(parse_input_string(buffer, &ret));
+    ASSERT(mse_parse_input_string(buffer, &ret));
     mse_free_interp_node(ret);
 
     lprintf(TEST_PASS, "Passed\n");
