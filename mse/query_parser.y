@@ -207,9 +207,8 @@ word: WORD {
     }
 
 op_name: word {
-       ASSERT(ret->op_name_buffer = strdup(ret->tmp_buffer));
-       free(ret->tmp_buffer);
-       ret->tmp_buffer = NULL;
+       COPY_TO_TMP_BUFFER
+       PARSE_ASSERT(mse_gen_type(ret->tmp_buffer, &ret->parser_gen_type));
        }
 
 string: STRING {

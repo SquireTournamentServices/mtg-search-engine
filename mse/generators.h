@@ -65,3 +65,6 @@ int mse_generate_set(mse_set_generator_t *gen,
                      mse_search_intermediate_t *res,
                      mse_all_printings_cards_t *cards,
                      mse_thread_pool_t *pool);
+
+/// String to generator type
+int mse_gen_type(char *str, mse_set_generator_type_t *ret);
