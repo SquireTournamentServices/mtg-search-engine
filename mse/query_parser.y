@@ -76,15 +76,11 @@ static int __mse_handle_set_generator(mse_parser_status_t *ret, int negate)
 /// Calls the handler for a set generator then cleans the internal state
 static int mse_handle_set_generator(int negate, mse_parser_status_t *ret)
 {
-    
     ASSERT(ret->argument_buffer = strdup(ret->tmp_buffer));
     free(ret->tmp_buffer);
     ret->tmp_buffer = NULL;
 
     int r = __mse_handle_set_generator(ret, negate);
-
-    free(ret->op_name_buffer);
-    ret->op_name_buffer = NULL;
 
     free(ret->argument_buffer);
     ret->argument_buffer = NULL;
@@ -229,8 +225,16 @@ set_generator: op_name op_operator op_argument {
              | STMT_NEGATE op_name op_operator op_argument {
                  PARSE_ASSERT(mse_handle_set_generator(1, ret)); 
              }
-             | word { PARSE_ASSERT(mse_handle_set_generator(0, ret)); }
-             | string { PARSE_ASSERT(mse_handle_set_generator(0, ret)); }
+             | word {
+                 ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
+                 ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
+                 PARSE_ASSERT(mse_handle_set_generator(0, ret));
+             }
+             | string {
+                 ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
+                 ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
+                 PARSE_ASSERT(mse_handle_set_generator(0, ret));
+             }
              ;
 
 operator : AND {
@@ -330,9 +334,6 @@ static void __mse_free_parser_status(mse_parser_status_t *status)
     }
     if (status->argument_buffer != NULL) {
         free(status->argument_buffer);
-    }
-    if (status->op_name_buffer != NULL) {
-        free(status->op_name_buffer);
     }
 
     if (status->stack_roots != NULL) {

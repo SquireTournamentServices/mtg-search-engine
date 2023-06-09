@@ -90,7 +90,6 @@ static int __mse_insert_avl(mse_avl_tree_node_t **root, mse_avl_tree_node_t *nod
 
     int r = mse_insert_node(root, node_copy);
     if (!r) {
-        lprintf(LOG_WARNING, "Card already in output trie\n");
         mse_free_tree(node_copy);
     }
 
