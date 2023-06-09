@@ -123,8 +123,9 @@ static int __mse_parser_status_pop(mse_parser_status_t *state)
         free(state->stack_roots);
     } else {
         ASSERT(state->stack_roots = realloc(state->stack_roots,
-                                            --state->stack_roots_len));
+                                            state->stack_roots_len));
     }
+    state->stack_roots_len--;
 
     if (tmp == NULL) {
         tmp = state->root;
