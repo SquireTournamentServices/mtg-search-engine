@@ -207,7 +207,6 @@ word: WORD {
     }
 
 op_name: word {
-       COPY_TO_TMP_BUFFER
        PARSE_ASSERT(mse_gen_type(ret->tmp_buffer, &ret->parser_gen_type));
        }
 
@@ -225,10 +224,10 @@ op_argument: string { COPY_TO_TMP_BUFFER }
            ;
 
 set_generator: op_name op_operator op_argument {
-             PARSE_ASSERT(mse_handle_set_generator(0, ret)); 
+                 PARSE_ASSERT(mse_handle_set_generator(0, ret)); 
              }
              | STMT_NEGATE op_name op_operator op_argument {
-             PARSE_ASSERT(mse_handle_set_generator(1, ret)); 
+                 PARSE_ASSERT(mse_handle_set_generator(1, ret)); 
              }
              | word { PARSE_ASSERT(mse_handle_set_generator(0, ret)); }
              | string { PARSE_ASSERT(mse_handle_set_generator(0, ret)); }

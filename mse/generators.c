@@ -99,8 +99,7 @@ int mse_generate_set(mse_set_generator_t *gen,
 
 static int __mse_gen_type_1_char(char c, mse_set_generator_type_t *ret)
 {
-  c = tolower(c);
-  switch (c) {
+  switch (tolower(c)) {
     case 'c': *ret = MSE_SET_GENERATOR_COLOUR; break;
     case 'i': *ret = MSE_SET_GENERATOR_COLOUR_IDENTITY; break;
     case 'p': *ret = MSE_SET_GENERATOR_POWER; break;
@@ -113,8 +112,8 @@ static int __mse_gen_type_1_char(char c, mse_set_generator_type_t *ret)
   return 1;
 }
 
-#define __MSE_GEN_TYPE_CMP(str, type) \
-if (strcmp(tmp, str) == 0) *ret = type, found = 1
+#define __MSE_GEN_TYPE_CMP(s, type) \
+if (strcmp(tmp, s) == 0) *ret = type, found = 1
 
 int mse_gen_type(char *str, mse_set_generator_type_t *ret)
 {
