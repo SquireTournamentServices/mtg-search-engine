@@ -107,6 +107,32 @@ static int __mse_insert_node(mse_parser_status_t *state, mse_interp_node_t *node
     return 1;
 }
 
+static int __mse_parser_status_push(mse_parser_status_t *state)
+{
+    ASSERT(state->stack_roots = realloc(state->stack_roots,
+                                        ++state->stack_roots_len));
+    state->stack_roots[state->stack_roots_len - 1] = state->node;
+    return 1;
+}
+
+static int __mse_parser_status_pop(mse_parser_status_t *state)
+{
+    ASSERT(state->stack_roots_len > 0);
+    mse_interp_node_t *tmp = state->stack_roots[state->stack_roots_len - 1];
+    if (state->stack_roots_len - 1 == 0) {
+        free(state->stack_roots);
+    } else {
+        ASSERT(state->stack_roots = realloc(state->stack_roots,
+                                            --state->stack_roots_len));
+    }
+
+    if (tmp == NULL) {
+        tmp = state->root;
+    }
+    state->node = tmp;
+    return 1;
+}
+
 static int __mse_negate(mse_parser_status_t *state)
 {
     mse_set_consumer_t consumer;
@@ -125,8 +151,8 @@ static int __mse_negate(mse_parser_status_t *state)
         } else {
             // I can promise that this is not as sketchy as it looks
             state->node->l->l = node;
-            state->node = node;
         }
+        state->node = node;
     }
     return 1;
 }
@@ -189,53 +215,68 @@ operator : AND {
 
 query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
      | set_generator WHITESPACE operator WHITESPACE {
-     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
-     PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
-     ret->op_node = NULL;
-     ret->set_generator_node = NULL;
+         PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+         PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+         ret->op_node = NULL;
+         ret->set_generator_node = NULL;
      } query
+
      | set_generator WHITESPACE { 
-     // Create a AND node and insert it
-     PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
-     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
-     PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
-     ret->op_node = NULL;
-     ret->set_generator_node = NULL;
+         // Create a AND node and insert it
+         PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+         PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+         PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+         ret->op_node = NULL;
+         ret->set_generator_node = NULL;
      } query
+
      | set_generator { 
-     PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
-     ret->set_generator_node = NULL;
+         PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
+         ret->set_generator_node = NULL;
      }
+
      | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE {
-     // Create a AND node and insert it
-     PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
-     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
-     ret->op_node = NULL;
+         // Create a AND node and insert it
+         PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+         PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+         ret->op_node = NULL;
      } query
-     | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
-     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
-     ret->op_node = NULL;
+
+     | OPEN_BRACKET {
+         PARSE_ASSERT(__mse_parser_status_push(ret));
+     } query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
+         PARSE_ASSERT(__mse_parser_status_pop(ret));
+         PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+         ret->op_node = NULL;
      } query
-     | OPEN_BRACKET query CLOSE_BRACKET { }
-     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
-     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
-     ret->op_node = NULL;
-     } query
-     | STMT_NEGATE {
-     ret->tmp = ret->node;
-     PARSE_ASSERT(__mse_negate(ret));
-     } OPEN_BRACKET query CLOSE_BRACKET WHITESPACE {
-     ret->node = ret->tmp;
-     if (ret->node->r != NULL) {
-         ret->node = ret->node->l;
+
+     | OPEN_BRACKET  {
+         PARSE_ASSERT(__mse_parser_status_push(ret));
+     } query CLOSE_BRACKET { 
+         PARSE_ASSERT(__mse_parser_status_pop(ret));
      }
-     // Create a AND node and insert it
-     PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
-     PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
-     ret->op_node = NULL;
+
+     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
+         PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+         ret->op_node = NULL;
      } query
+
      | STMT_NEGATE {
-     PARSE_ASSERT(__mse_negate(ret));
+         PARSE_ASSERT(__mse_parser_status_push(ret));
+         PARSE_ASSERT(__mse_negate(ret));
+     } OPEN_BRACKET query CLOSE_BRACKET WHITESPACE {
+         PARSE_ASSERT(__mse_parser_status_pop(ret));
+         if (ret->node->r != NULL) {
+            ret->node = ret->node->l;
+         }
+         // Create a AND node and insert it
+         PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+         PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
+         ret->op_node = NULL;
+     } query
+
+     | STMT_NEGATE {
+         PARSE_ASSERT(__mse_negate(ret));
      } OPEN_BRACKET query CLOSE_BRACKET
      ;
 %%
