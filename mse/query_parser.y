@@ -346,7 +346,7 @@ static void __mse_free_parser_status(mse_parser_status_t *status)
     }
 }
 
-int parse_input_string(const char* input_string, mse_interp_node_t **root)
+int mse_parse_input_string(const char* input_string, mse_interp_node_t **root)
 {
     *root = NULL;
 
