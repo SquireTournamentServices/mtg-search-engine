@@ -76,7 +76,6 @@ static int __mse_handle_set_generator(mse_parser_status_t *ret, int negate)
 /// Calls the handler for a set generator then cleans the internal state
 static int mse_handle_set_generator(int negate, mse_parser_status_t *ret)
 {
-    
     ASSERT(ret->argument_buffer = strdup(ret->tmp_buffer));
     free(ret->tmp_buffer);
     ret->tmp_buffer = NULL;
