@@ -7,6 +7,7 @@
 #include "../testing_h/testing.h"
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 int mse_init_set_generator(mse_set_generator_t *ret,
                            mse_set_generator_type_t gen_type,
@@ -94,4 +95,55 @@ int mse_generate_set(mse_set_generator_t *gen,
         return mse_generate_set_cmc(gen, res, cards);
     }
     return 1;
+}
+
+static int __mse_gen_type_1_char(char c, mse_set_generator_type_t *ret)
+{
+  c = tolower(c);
+  switch (c) {
+    case 'c': *ret = MSE_SET_GENERATOR_COLOUR; break;
+    case 'i': *ret = MSE_SET_GENERATOR_COLOUR_IDENTITY; break;
+    case 'p': *ret = MSE_SET_GENERATOR_POWER; break;
+    case 't': *ret = MSE_SET_GENERATOR_TOUGHNESS; break;
+    case 'n': *ret = MSE_SET_GENERATOR_NAME; break;
+    case 'o': *ret = MSE_SET_GENERATOR_ORACLE_TEXT; break;
+    case 's': *ret = MSE_SET_GENERATOR_SET; break;
+    default: return 0;
+  }
+  return 1;
+}
+
+#define __MSE_GEN_TYPE_CMP(str, type) \
+if (strcmp(tmp, str) == 0) *ret = type, found = 1
+
+int mse_gen_type(char *str, mse_set_generator_type_t *ret)
+{
+    size_t len = strlen(str);
+    if (len == 1) {
+        return __mse_gen_type_1_char(str[0], ret);
+    }
+
+    char *tmp = strdup(str);
+    ASSERT(tmp != NULL);
+    for (size_t i = 0; i < len; i++) {
+      tmp[i] = tolower(tmp[i]);
+    }
+
+    int found = 0;
+    // Sorry code highlighter
+    __MSE_GEN_TYPE_CMP("identity", MSE_SET_GENERATOR_COLOUR_IDENTITY);
+    else __MSE_GEN_TYPE_CMP("commander", MSE_SET_GENERATOR_COLOUR_IDENTITY);
+    else __MSE_GEN_TYPE_CMP("color", MSE_SET_GENERATOR_COLOUR);
+    else __MSE_GEN_TYPE_CMP("colour", MSE_SET_GENERATOR_COLOUR);
+    else __MSE_GEN_TYPE_CMP("power", MSE_SET_GENERATOR_POWER);
+    else __MSE_GEN_TYPE_CMP("toughness", MSE_SET_GENERATOR_TOUGHNESS);
+    else __MSE_GEN_TYPE_CMP("set", MSE_SET_GENERATOR_SET);
+    else __MSE_GEN_TYPE_CMP("cmc", MSE_SET_GENERATOR_CMC);
+    else __MSE_GEN_TYPE_CMP("cmc", MSE_SET_GENERATOR_CMC);
+    else __MSE_GEN_TYPE_CMP("manacost", MSE_SET_GENERATOR_CMC);
+    else __MSE_GEN_TYPE_CMP("name", MSE_SET_GENERATOR_NAME);
+    else __MSE_GEN_TYPE_CMP("oracle", MSE_SET_GENERATOR_ORACLE_TEXT);
+
+    free(tmp);
+    return found;
 }
