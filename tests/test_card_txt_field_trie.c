@@ -28,6 +28,11 @@ static int test_filter_str()
 
     char *empty_str = mse_filter_text(EMPTY_TEXT);
     ASSERT(empty_str == NULL);
+
+    char *opt_str = mse_filter_text("opt");
+    ASSERT(opt_str != NULL);
+    ASSERT(strcmp("pt", opt_str) == 0);
+    free(opt_str);
     return 1;
 }
 
