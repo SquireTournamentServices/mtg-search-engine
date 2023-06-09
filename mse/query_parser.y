@@ -149,6 +149,7 @@ static int __mse_parser_status_pop(mse_parser_status_t *state)
     mse_interp_node_t *tmp = state->stack_roots[state->stack_roots_len - 1];
     if (state->stack_roots_len - 1 == 0) {
         free(state->stack_roots);
+        state->stack_roots = NULL;
     } else {
         ASSERT(state->stack_roots = realloc(state->stack_roots,
                                             state->stack_roots_len));
