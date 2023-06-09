@@ -240,6 +240,19 @@ query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
      ;
 %%
 
+static void __mse_free_parser_status(mse_parser_status_t *status)
+{
+    if (status->tmp_buffer != NULL) {
+        free(status->tmp_buffer);
+    }
+    if (status->argument_buffer != NULL) {
+        free(status->argument_buffer);
+    }
+    if (status->op_name_buffer != NULL) {
+        free(status->op_name_buffer);
+    }
+}
+
 int parse_input_string(const char* input_string, mse_interp_node_t **root)
 {
     *root = NULL;
@@ -256,15 +269,7 @@ int parse_input_string(const char* input_string, mse_interp_node_t **root)
     pthread_mutex_unlock(&parser_lock);
 
     // Cleanup
-    if (ret.tmp_buffer != NULL) {
-        free(ret.tmp_buffer);
-    }
-    if (ret.argument_buffer != NULL) {
-        free(ret.argument_buffer);
-    }
-    if (ret.op_name_buffer != NULL) {
-        free(ret.op_name_buffer);
-    }
+    __mse_free_parser_status(&ret);
 
     *root = ret.root;
     ASSERT(root != NULL);
