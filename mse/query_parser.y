@@ -235,13 +235,18 @@ query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
          ret->set_generator_node = NULL;
      }
 
-     | OPEN_BRACKET query CLOSE_BRACKET WHITESPACE {
+     // Special case where operation needs to be handled first
+     | OPEN_BRACKET {
+         PARSE_ASSERT(__mse_parser_status_push(ret));
+     } query CLOSE_BRACKET WHITESPACE {
+         PARSE_ASSERT(__mse_parser_status_pop(ret));
          // Create a AND node and insert it
          PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
          PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
          ret->op_node = NULL;
      } query
 
+     // Special case where operation needs to be handled first
      | OPEN_BRACKET {
          PARSE_ASSERT(__mse_parser_status_push(ret));
      } query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
@@ -256,11 +261,20 @@ query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
          PARSE_ASSERT(__mse_parser_status_pop(ret));
      }
 
-     | STMT_NEGATE OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
+     // Special case where operation needs to be handled first
+     | STMT_NEGATE {
+         PARSE_ASSERT(__mse_parser_status_push(ret));
+         PARSE_ASSERT(__mse_negate(ret));
+     } OPEN_BRACKET query CLOSE_BRACKET WHITESPACE operator WHITESPACE {
+         PARSE_ASSERT(__mse_parser_status_pop(ret));
+         if (ret->node->r != NULL) {
+            ret->node = ret->node->l;
+         }
          PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
          ret->op_node = NULL;
      } query
 
+     // Special case where operation needs to be handled first
      | STMT_NEGATE {
          PARSE_ASSERT(__mse_parser_status_push(ret));
          PARSE_ASSERT(__mse_negate(ret));
