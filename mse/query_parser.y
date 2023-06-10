@@ -198,24 +198,18 @@ op_operator : LT_INC { ret->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }
             | EQUALS { ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS; }
             ;
 
-word: WORD {
-    COPY_TO_TMP_BUFFER
-    }
+word: WORD { COPY_TO_TMP_BUFFER }
 
 op_name: word {
-       PARSE_ASSERT(mse_gen_type(ret->tmp_buffer, &ret->parser_gen_type));
+           PARSE_ASSERT(mse_gen_type(ret->tmp_buffer, &ret->parser_gen_type));
        }
 
-string: STRING {
-      COPY_TO_TMP_BUFFER
-      }
+string: STRING { COPY_TO_TMP_BUFFER }
 
-regex_string: REGEX_STRING {
-            COPY_TO_TMP_BUFFER
-            }
+regex_string: REGEX_STRING { COPY_TO_TMP_BUFFER }
 
 op_argument: string { }
-           | regex_string { COPY_TO_TMP_BUFFER }
+           | regex_string { }
            | word { }
            ;
 
@@ -231,6 +225,11 @@ set_generator: op_name op_operator op_argument {
                  PARSE_ASSERT(mse_handle_set_generator(0, ret));
              }
              | string {
+                 ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
+                 ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
+                 PARSE_ASSERT(mse_handle_set_generator(0, ret));
+             }
+             | regex_string {
                  ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
                  ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
                  PARSE_ASSERT(mse_handle_set_generator(0, ret));
