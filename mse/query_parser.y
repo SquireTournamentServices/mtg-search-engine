@@ -213,11 +213,12 @@ op_argument: string { }
            | word { }
            ;
 
-set_generator: op_name op_operator op_argument {
-                 PARSE_ASSERT(mse_handle_set_generator(0, ret)); 
-             }
-             | STMT_NEGATE op_name op_operator op_argument {
+set_generator:
+             STMT_NEGATE op_name op_operator op_argument {
                  PARSE_ASSERT(mse_handle_set_generator(1, ret)); 
+             }
+             |op_name op_operator op_argument {
+                 PARSE_ASSERT(mse_handle_set_generator(0, ret)); 
              }
              | word {
                  ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
