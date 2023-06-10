@@ -53,10 +53,6 @@ static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, mse_avl
 
     long c_index = mse_char_map_get_index(str[i]);
 
-    // Sanity checks
-    ASSERT(c_index >= 0);
-    ASSERT(c_index < (long) (sizeof(root->children) / sizeof(*root->children)));
-
     // Fails to find
     if (root->children[c_index] == NULL) {
         return 1;
@@ -119,10 +115,6 @@ static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t *root, char *str, m
     }
 
     long c_index = mse_char_map_get_index(str[i]);
-
-    // Sanity checks
-    ASSERT(c_index >= 0);
-    ASSERT(c_index < (long) (sizeof(root->children) / sizeof(*root->children)));
 
     // Fails to find
     if (root->children[c_index] == NULL) {
@@ -266,7 +258,8 @@ static int __mse_is_vowel(char c)
 static int __mse_split_card_name(char *name, mse_card_name_parts_t *ret)
 {
     char *tmp = name;
-    for (size_t i = 0; name[i] != 0; i++) {
+    size_t len = strlen(name);
+    for (size_t i = 0; i <= len; i++) {
         if (__mse_filter_char(name[i]) != MSE_FILTER_NO_CHAR || __mse_is_vowel(name[i])) {
             continue;
         }

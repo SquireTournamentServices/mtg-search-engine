@@ -28,6 +28,11 @@ static int test_filter_str()
 
     char *empty_str = mse_filter_text(EMPTY_TEXT);
     ASSERT(empty_str == NULL);
+
+    char *opt_str = mse_filter_text("opt");
+    ASSERT(opt_str != NULL);
+    ASSERT(strcmp("pt", opt_str) == 0);
+    free(opt_str);
     return 1;
 }
 
@@ -167,10 +172,33 @@ static int test_card_name_split()
     return 1;
 }
 
+static int test_card_name_split_2()
+{
+    mse_card_name_parts_t ret;
+    ASSERT(mse_split_card_name("opt", &ret));
+    ASSERT(ret.parts != NULL);
+    ASSERT(ret.len == 1);
+
+    for (size_t i = 0; i < ret.len; i++) {
+        ASSERT(ret.parts[i] != NULL);
+        ASSERT(strlen(ret.parts[i]) > 0);
+
+        char *fname = mse_filter_text(ret.parts[i]);
+        ASSERT(strcmp(fname, ret.parts[i]) == 0);
+        free(fname);
+    }
+
+    ASSERT(strcmp(ret.parts[0], "pt") == 0);
+
+    mse_free_card_parts(&ret);
+    return 1;
+}
+
 SUB_TEST(test_card_txt_field_trie, {&test_filter_str, "Test filter string"},
 {&test_trie_init_free, "Test trie init and free"},
 {&test_trie_init_free_children, "Test trie init and free with a child"},
 {&test_card_insert, "Test trie card insert"},
 {&test_card_lookup, "Test trie card lookup"},
 {&test_card_lookup_aprox, "Test trie card lookup aprox"},
-{&test_card_name_split, "Test card name split"})
+{&test_card_name_split, "Test card name split"},
+{&test_card_name_split_2, "Test card name split 2"})
