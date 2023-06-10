@@ -43,6 +43,9 @@ int mse_read_size_t(FILE *f, size_t *i)
 
 int mse_write_str(FILE *f, char *str)
 {
+    if (str == NULL) {
+        return mse_write_size_t(f, 0);
+    }
     size_t len = strlen(str);
     ASSERT(mse_write_size_t(f, len));
 
@@ -54,7 +57,10 @@ int mse_read_str(FILE *f, char **str)
 {
     size_t len;
     ASSERT(mse_read_size_t(f, &len));
-    ASSERT(len > 0);
+    if (len == 0) {
+        *str = NULL;
+        return 1;
+    }
 
     *str = malloc(sizeof(*str) * (len + 1));
     ASSERT(*str != NULL);

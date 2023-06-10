@@ -64,6 +64,29 @@ static int test_str_read_write()
     return 1;
 }
 
+static int test_str_read_write_null()
+{
+    int fid[2];
+    ASSERT(pipe(fid) == 0);
+
+    FILE *r = fdopen(fid[0], "rb");
+    ASSERT(r != NULL);
+
+    FILE *w = fdopen(fid[1], "wb");
+    ASSERT(w != NULL);
+
+    ASSERT(mse_write_str(w, NULL));
+    fclose(w);
+
+    char *val_2;
+    ASSERT(mse_read_str(r, &val_2));
+
+    ASSERT(val_2 == NULL);
+    fclose(r);
+    free(val_2);
+    return 1;
+}
+
 static int test_mse_to_double()
 {
     double ret = 0;
@@ -91,5 +114,6 @@ SUB_TEST(test_io_utils, {&test_double_read_write, "Test double read and, write"}
 {&test_size_t_read_write, "Test size_t read and, write"},
 {&test_tm_read_write, "Test struct tm read and, write"},
 {&test_str_read_write, "Test string read and, write"},
+{&test_str_read_write_null, "Test string read and, write (null)"},
 {&test_mse_to_double, "Test strtod wrapper"},
 {&test_mse_to_lower, "Test mse_to_lower"})
