@@ -153,10 +153,11 @@ int mse_gen_type(char *str, mse_set_generator_type_t *ret)
     else __MSE_GEN_TYPE_CMP("toughness", MSE_SET_GENERATOR_TOUGHNESS);
     else __MSE_GEN_TYPE_CMP("set", MSE_SET_GENERATOR_SET);
     else __MSE_GEN_TYPE_CMP("cmc", MSE_SET_GENERATOR_CMC);
-    else __MSE_GEN_TYPE_CMP("cmc", MSE_SET_GENERATOR_CMC);
     else __MSE_GEN_TYPE_CMP("manacost", MSE_SET_GENERATOR_CMC);
     else __MSE_GEN_TYPE_CMP("name", MSE_SET_GENERATOR_NAME);
     else __MSE_GEN_TYPE_CMP("oracle", MSE_SET_GENERATOR_ORACLE_TEXT);
+
+    lprintf(LOG_ERROR, "%s in not a valid op_name\n", tmp);
 
     free(tmp);
     return found;
