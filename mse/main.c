@@ -32,7 +32,6 @@ cleanup:
 int __get_and_save_cards(mse_all_printings_cards_t *cards,
                          mse_thread_pool_t *pool)
 {
-    lprintf(LOG_INFO, "Downloading cards\n");
     if (!mse_get_all_printings_cards(cards, pool)) {
         lprintf(LOG_ERROR, "Cannot get cards\n");
         return 1;
