@@ -5,6 +5,7 @@
 #include "./interpretor.h"
 #include "./mtg_json.h"
 #include "./thread_pool.h"
+#include "./save.h"
 #include "../testing_h/testing.h"
 
 static int __run_query(mse_all_printings_cards_t *cards,
@@ -28,6 +29,29 @@ cleanup:
     return r;
 }
 
+int __get_and_save_cards(mse_all_printings_cards_t *cards,
+                         mse_thread_pool_t *pool)
+{
+    lprintf(LOG_INFO, "Downloading cards\n");
+    if (!mse_get_all_printings_cards(cards, pool)) {
+        lprintf(LOG_ERROR, "Cannot get cards\n");
+        return 1;
+    }
+
+    lprintf(LOG_INFO, "Saving cards...\n");
+    FILE *f = fopen(MSE_CARDS_FILE_NAME, "wb");
+    if (f == NULL) {
+        lprintf(LOG_ERROR, "Cannot open file\n");
+        return 1;
+    }
+
+    if (!mse_write_cards(f, cards)) {
+        lprintf(LOG_ERROR, "Cannot save cards\n");
+    }
+    fclose(f);
+    return 1;
+}
+
 int main()
 {
     tzset();
@@ -43,10 +67,10 @@ int main()
     mse_all_printings_cards_t cards;
     memset(&cards, 0, sizeof(cards));
 
-    if (!mse_get_all_printings_cards(&cards, &pool)) {
-        lprintf(LOG_ERROR, "Cannot get cards\n");
-        return 1;
+    if (!mse_get_cards_from_file(&cards, &pool)) {
+        __get_and_save_cards(&cards, &pool);
     }
+
     lprintf(LOG_INFO, "Done in %d seconds\n", time(NULL) - t);
 
     char buffer[1024];

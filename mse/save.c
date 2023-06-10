@@ -79,6 +79,7 @@ static int __mse_read_cards_sets(FILE *f, mse_all_printings_cards_t *cards)
 
         mse_avl_tree_node_t *node = mse_init_avl_tree_node(&__free_save_cards_set, &mse_avl_cmp_set, set);
         ASSERT(mse_insert_node(&cards->set_tree, node));
+        cards->set_count++;
     }
     return 1;
 }
@@ -111,5 +112,30 @@ int mse_read_cards(FILE *f, mse_all_printings_cards_t *cards)
     ASSERT(bin_version == MSE_BINARY_VERSION);
     ASSERT(__mse_read_cards_sets(f, cards));
     ASSERT(__mse_read_cards_cards(f, cards));
+    return 1;
+}
+
+int __mse_get_cards_from_file(FILE *f, mse_all_printings_cards_t *cards, mse_thread_pool_t *pool)
+{
+    ASSERT(mse_read_cards(f, cards));
+    lprintf(LOG_INFO, "Found %lu sets and, %lu cards\n", cards->set_count, cards->card_count);
+
+    lprintf(LOG_INFO, "Generating card indexes\n");
+    ASSERT(__mse_generate_indexes(cards, pool));
+
+    lprintf(LOG_INFO, "Cards and, indexes are now complete\n");
+    return 1;
+}
+
+int mse_get_cards_from_file(mse_all_printings_cards_t *cards, mse_thread_pool_t *pool)
+{
+    lprintf(LOG_INFO, "Reading cards from %s\n", MSE_CARDS_FILE_NAME);
+
+    FILE *f = fopen(MSE_CARDS_FILE_NAME, "rb");
+    ASSERT(f != NULL);
+
+    int r = __mse_get_cards_from_file(f, cards, pool);
+    fclose(f);
+    ASSERT(r);
     return 1;
 }
