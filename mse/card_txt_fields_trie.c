@@ -53,10 +53,6 @@ static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, mse_avl
 
     long c_index = mse_char_map_get_index(str[i]);
 
-    // Sanity checks
-    ASSERT(c_index >= 0);
-    ASSERT(c_index < (long) (sizeof(root->children) / sizeof(*root->children)));
-
     // Fails to find
     if (root->children[c_index] == NULL) {
         return 1;
@@ -119,10 +115,6 @@ static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t *root, char *str, m
     }
 
     long c_index = mse_char_map_get_index(str[i]);
-
-    // Sanity checks
-    ASSERT(c_index >= 0);
-    ASSERT(c_index < (long) (sizeof(root->children) / sizeof(*root->children)));
 
     // Fails to find
     if (root->children[c_index] == NULL) {
