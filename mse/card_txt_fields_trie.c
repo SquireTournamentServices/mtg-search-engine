@@ -258,7 +258,8 @@ static int __mse_is_vowel(char c)
 static int __mse_split_card_name(char *name, mse_card_name_parts_t *ret)
 {
     char *tmp = name;
-    for (size_t i = 0; name[i] != 0; i++) {
+    size_t len = strlen(name);
+    for (size_t i = 0; i <= len; i++) {
         if (__mse_filter_char(name[i]) != MSE_FILTER_NO_CHAR || __mse_is_vowel(name[i])) {
             continue;
         }
