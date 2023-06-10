@@ -131,6 +131,8 @@ set(SRC
     ./mse/interpretor.c
     ./mse/consumer.h
     ./mse/consumer.c
+    ./mse/save.h
+    ./mse/save.c
     ${PARSER_SRC}
     ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES})
