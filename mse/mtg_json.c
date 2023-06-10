@@ -113,6 +113,7 @@ int __mse_handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
     json_array_foreach(cards, index, value) {
         ASSERT(json_is_object(value));
         mse_card_t *card = malloc(sizeof(*card));
+        ASSERT(card != NULL);
         node = mse_init_avl_tree_node(&__free_all_printings_cards_card, &mse_avl_cmp_card, card);
 
         ASSERT(mse_parse_card_json(value, card));
