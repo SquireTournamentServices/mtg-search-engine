@@ -214,9 +214,9 @@ regex_string: REGEX_STRING {
             COPY_TO_TMP_BUFFER
             }
 
-op_argument: string { COPY_TO_TMP_BUFFER }
+op_argument: string { }
            | regex_string { COPY_TO_TMP_BUFFER }
-           | word { COPY_TO_TMP_BUFFER }
+           | word { }
            ;
 
 set_generator: op_name op_operator op_argument {
