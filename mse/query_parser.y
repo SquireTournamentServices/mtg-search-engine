@@ -223,19 +223,23 @@ set_generator:
              STMT_NEGATE op_name op_operator op_argument {
                  PARSE_ASSERT(mse_handle_set_generator(1, ret)); 
              }
-             |op_name op_operator op_argument {
+
+             | op_name op_operator op_argument {
                  PARSE_ASSERT(mse_handle_set_generator(0, ret)); 
              }
+
              | word {
                  ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
                  ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
                  PARSE_ASSERT(mse_handle_set_generator(0, ret));
              }
+
              | string {
                  ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
                  ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
                  PARSE_ASSERT(mse_handle_set_generator(0, ret));
              }
+
              | regex_string {
                  ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
                  ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
