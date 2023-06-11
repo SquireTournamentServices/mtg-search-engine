@@ -199,12 +199,15 @@ op_operator : LT_INC { ret->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }
             ;
 
 word: WORD { COPY_TO_TMP_BUFFER }
+    ;
 
 op_name: word {
            PARSE_ASSERT(mse_gen_type(ret->tmp_buffer, &ret->parser_gen_type));
        }
+       ;
 
 string: STRING { COPY_TO_TMP_BUFFER }
+      ;
 
 regex_string: REGEX_STRING { COPY_TO_TMP_BUFFER }
 
@@ -238,10 +241,10 @@ set_generator:
              ;
 
 operator : AND {
-         PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+             PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
          }
          | OR {
-         PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_UNION));
+             PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_UNION));
          }
          ;
 
