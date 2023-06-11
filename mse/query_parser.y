@@ -251,8 +251,7 @@ operator : AND {
          }
          ;
 
-query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
-     | set_generator WHITESPACE operator WHITESPACE {
+query: set_generator WHITESPACE operator WHITESPACE {
          PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
          PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
          ret->op_node = NULL;
