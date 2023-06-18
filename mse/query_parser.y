@@ -56,9 +56,15 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 %{
 #define COPY_TO_TMP_BUFFER \
     ret->tmp_buffer = (char*) malloc(sizeof(char) * (yyleng + 1)); \
-    ASSERT(ret->tmp_buffer != NULL); \
+    PARSE_ASSERT(ret->tmp_buffer != NULL); \
     strncpy(ret->tmp_buffer, yytext, yyleng); \
     ret->tmp_buffer[yyleng] = '\0'; \
+
+#define COPY_TO_ARG_BUFFER \
+    PARSE_ASSERT(ret->tmp_buffer != NULL) \
+    PARSE_ASSERT(ret->argument_buffer = strdup(ret->tmp_buffer)); \
+    free(ret->tmp_buffer); \
+    ret->tmp_buffer = NULL;
 
 static int __mse_handle_set_generator(mse_parser_status_t *ret, int negate)
 {
@@ -76,10 +82,7 @@ static int __mse_handle_set_generator(mse_parser_status_t *ret, int negate)
 /// Calls the handler for a set generator then cleans the internal state
 static int mse_handle_set_generator(int negate, mse_parser_status_t *ret)
 {
-    ASSERT(ret->argument_buffer = strdup(ret->tmp_buffer));
-    free(ret->tmp_buffer);
-    ret->tmp_buffer = NULL;
-
+    ASSERT(ret->argument_buffer != NULL);
     int r = __mse_handle_set_generator(ret, negate);
 
     free(ret->argument_buffer);
@@ -125,7 +128,10 @@ static int __mse_insert_node(mse_parser_status_t *state, mse_interp_node_t *node
 
     if (state->node->l == NULL) {
         state->node->l = node;
-    return 1;
+        return 1;
+    } else if (state->node->r == NULL) {
+        state->node->r = node;
+        return 1;
     } else {
         return __mse_insert_node_special(state, node);
     }
@@ -148,7 +154,7 @@ static int __mse_parser_status_pop(mse_parser_status_t *state)
         state->stack_roots = NULL;
     } else {
         ASSERT(state->stack_roots = realloc(state->stack_roots,
-                                            state->stack_roots_len));
+                                            state->stack_roots_len - 1));
     }
     state->stack_roots_len--;
 
@@ -199,38 +205,49 @@ op_operator : LT_INC { ret->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }
             ;
 
 word: WORD { COPY_TO_TMP_BUFFER }
+    ;
+
+string: STRING { COPY_TO_TMP_BUFFER }
+      ;
+
+regex_string: REGEX_STRING { COPY_TO_TMP_BUFFER }
+            ;
 
 op_name: word {
            PARSE_ASSERT(mse_gen_type(ret->tmp_buffer, &ret->parser_gen_type));
        }
+       ;
 
-string: STRING { COPY_TO_TMP_BUFFER }
-
-regex_string: REGEX_STRING { COPY_TO_TMP_BUFFER }
-
-op_argument: string { }
-           | regex_string { }
-           | word { }
+op_argument: string { COPY_TO_ARG_BUFFER }
+           | regex_string { COPY_TO_ARG_BUFFER }
+           | word { COPY_TO_ARG_BUFFER }
            ;
 
 set_generator:
              STMT_NEGATE op_name op_operator op_argument {
                  PARSE_ASSERT(mse_handle_set_generator(1, ret)); 
              }
-             |op_name op_operator op_argument {
+
+             | op_name op_operator op_argument {
                  PARSE_ASSERT(mse_handle_set_generator(0, ret)); 
              }
+
              | word {
+                 COPY_TO_ARG_BUFFER
                  ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
                  ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
                  PARSE_ASSERT(mse_handle_set_generator(0, ret));
              }
+
              | string {
+                 COPY_TO_ARG_BUFFER
                  ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
                  ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
                  PARSE_ASSERT(mse_handle_set_generator(0, ret));
              }
+
              | regex_string {
+                 COPY_TO_ARG_BUFFER
                  ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
                  ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
                  PARSE_ASSERT(mse_handle_set_generator(0, ret));
@@ -238,15 +255,14 @@ set_generator:
              ;
 
 operator : AND {
-         PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+             PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
          }
          | OR {
-         PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_UNION));
+             PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_UNION));
          }
          ;
 
-query: %empty { lprintf(LOG_WARNING, "Empty query\n"); }
-     | set_generator WHITESPACE operator WHITESPACE {
+query: set_generator WHITESPACE operator WHITESPACE {
          PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
          PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
          ret->op_node = NULL;
