@@ -254,31 +254,31 @@ operator : AND {
          }
          ;
 
-query: set_generator
+query: set_generator %dprec 5
      
      | query WHITESPACE operator WHITESPACE {
          PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
          ret->op_node = NULL;
-     } set_generator
+     } set_generator %dprec 1
 
      | query WHITESPACE {
          PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
          PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
          ret->op_node = NULL;
-     } set_generator
+     } set_generator %dprec 2
 
      | {
          PARSE_ASSERT(__mse_parser_status_push(ret));
      } OPEN_BRACKET query CLOSE_BRACKET { 
          PARSE_ASSERT(__mse_parser_status_pop(ret));
-     }
+     } %dprec 3
 
      | STMT_NEGATE {
          PARSE_ASSERT(__mse_negate(ret));
          PARSE_ASSERT(__mse_parser_status_push(ret));
      } OPEN_BRACKET query CLOSE_BRACKET {
          PARSE_ASSERT(__mse_parser_status_pop(ret));
-     }
+     } %dprec 4
      ;
 %%
 
