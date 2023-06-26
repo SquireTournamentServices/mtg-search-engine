@@ -9,6 +9,7 @@
 [oO][rR] { return OR; }
 
 [\t ]+ { return WHITESPACE; }
+[\t ]* { return OPT_WHITESPACE; }
 
 "<" { return LT; }
 "<=" { return LT_INC; }

@@ -38,7 +38,7 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 %left LT LT_INC GT GT_INC INCLUDES EQUALS
 %left AND OR
 %left WORD STRING REGEX_STRING
-%left WHITESPACE OPEN_BRACKET CLOSE_BRACKET STMT_NEGATE
+%left WHITESPACE OPEN_BRACKET CLOSE_BRACKET STMT_NEGATE OPT_WHITESPACE
 
 %{
 #define COPY_TO_TMP_BUFFER \
@@ -180,7 +180,7 @@ static int __mse_negate(mse_parser_status_t *state)
 
 // Token match definitions
 %%
-input: query
+input: OPT_WHITESPACE query OPT_WHITESPACE
      | %empty
      ;
 
