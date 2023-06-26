@@ -32,7 +32,7 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 }
 %parse-param {mse_parser_status_t *ret}
 
-%verbose
+%error-verbose
 %define parse.trace
 
 %left LT LT_INC GT GT_INC INCLUDES EQUALS
