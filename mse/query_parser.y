@@ -243,7 +243,20 @@ sg_dummy: STMT_NEGATE op_name op_operator op_argument {
 set_generator : sg_dummy {
                    PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
                    ret->set_generator_node = NULL;
-              }
+              } %dprec 3
+
+              | {
+                  PARSE_ASSERT(__mse_parser_status_push(ret));
+              } OPEN_BRACKET query CLOSE_BRACKET { 
+                  PARSE_ASSERT(__mse_parser_status_pop(ret));
+              } %dprec 2
+
+              | STMT_NEGATE {
+                  PARSE_ASSERT(__mse_negate(ret));
+                  PARSE_ASSERT(__mse_parser_status_push(ret));
+              } OPEN_BRACKET query CLOSE_BRACKET {
+                  PARSE_ASSERT(__mse_parser_status_pop(ret));
+              } %dprec 1
               ;
 
 operator : AND {
@@ -266,19 +279,6 @@ query: set_generator %dprec 5
          PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
          ret->op_node = NULL;
      } set_generator %dprec 2
-
-     | {
-         PARSE_ASSERT(__mse_parser_status_push(ret));
-     } OPEN_BRACKET query CLOSE_BRACKET { 
-         PARSE_ASSERT(__mse_parser_status_pop(ret));
-     } %dprec 3
-
-     | STMT_NEGATE {
-         PARSE_ASSERT(__mse_negate(ret));
-         PARSE_ASSERT(__mse_parser_status_push(ret));
-     } OPEN_BRACKET query CLOSE_BRACKET {
-         PARSE_ASSERT(__mse_parser_status_pop(ret));
-     } %dprec 4
      ;
 %%
 
