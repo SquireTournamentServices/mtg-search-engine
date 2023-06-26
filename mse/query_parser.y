@@ -32,7 +32,6 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 }
 %parse-param {mse_parser_status_t *ret}
 %define parse.error verbose
-%glr-parser
 
 %left LT LT_INC GT GT_INC INCLUDES EQUALS
 %left AND OR
@@ -255,24 +254,16 @@ operator : AND {
          }
          ;
 
-query: {
-         PARSE_ASSERT(__mse_parser_status_push(ret));
-     } set_generator WHITESPACE operator WHITESPACE {
-         PARSE_ASSERT(__mse_parser_status_pop(ret));
+query: query WHITESPACE operator WHITESPACE {
          PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
          ret->op_node = NULL;
-     } query
+     } set_generator
 
-     | {
-         PARSE_ASSERT(__mse_parser_status_push(ret));
-     } set_generator WHITESPACE {
-         PARSE_ASSERT(__mse_parser_status_pop(ret));
+     | query WHITESPACE {
          PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
          PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
          ret->op_node = NULL;
-     } query
-
-     | set_generator
+     } set_generator
 
      | {
          PARSE_ASSERT(__mse_parser_status_push(ret));
@@ -286,6 +277,8 @@ query: {
      } OPEN_BRACKET query CLOSE_BRACKET {
          PARSE_ASSERT(__mse_parser_status_pop(ret));
      }
+
+     | set_generator
      ;
 %%
 
