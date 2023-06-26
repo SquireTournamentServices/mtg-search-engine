@@ -287,7 +287,6 @@ query: {
      } OPEN_BRACKET query CLOSE_BRACKET {
          PARSE_ASSERT(__mse_parser_status_pop(ret));
      }
-
      ;
 %%
 
