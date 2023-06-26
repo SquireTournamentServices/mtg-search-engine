@@ -31,9 +31,8 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
     #include "mse/query_parser.h"
 }
 %parse-param {mse_parser_status_t *ret}
-
-%error-verbose
-%define parse.trace
+%define parse.error verbose
+%glr-parser
 
 %left LT LT_INC GT GT_INC INCLUDES EQUALS
 %left AND OR
