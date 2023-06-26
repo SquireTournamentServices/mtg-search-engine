@@ -31,12 +31,13 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
     #include "mse/query_parser.h"
 }
 %parse-param {mse_parser_status_t *ret}
+%glr-parser
 %define parse.error verbose
 
-%left LT LT_INC GT GT_INC INCLUDES EQUALS
-%left AND OR
-%left WORD STRING REGEX_STRING
-%left WHITESPACE OPEN_BRACKET CLOSE_BRACKET STMT_NEGATE
+%right LT LT_INC GT GT_INC INCLUDES EQUALS
+%right AND OR
+%right WORD STRING REGEX_STRING
+%right WHITESPACE OPEN_BRACKET CLOSE_BRACKET STMT_NEGATE
 
 %{
 #define COPY_TO_TMP_BUFFER \
@@ -209,38 +210,37 @@ op_argument: string { COPY_TO_ARG_BUFFER }
            | word { COPY_TO_ARG_BUFFER }
            ;
 
-set_generator_dummy:
-             STMT_NEGATE op_name op_operator op_argument {
-                 PARSE_ASSERT(mse_handle_set_generator(1, ret)); 
-             }
+sg_dummy: STMT_NEGATE op_name op_operator op_argument {
+            PARSE_ASSERT(mse_handle_set_generator(1, ret)); 
+        }
 
-             | op_name op_operator op_argument {
-                 PARSE_ASSERT(mse_handle_set_generator(0, ret)); 
-             }
+        | op_name op_operator op_argument {
+            PARSE_ASSERT(mse_handle_set_generator(0, ret)); 
+        }
 
-             | word {
-                 COPY_TO_ARG_BUFFER
-                 ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
-                 ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
-                 PARSE_ASSERT(mse_handle_set_generator(0, ret));
-             }
+        | word {
+            COPY_TO_ARG_BUFFER
+            ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
+            ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
+            PARSE_ASSERT(mse_handle_set_generator(0, ret));
+        }
 
-             | string {
-                 COPY_TO_ARG_BUFFER
-                 ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
-                 ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
-                 PARSE_ASSERT(mse_handle_set_generator(0, ret));
-             }
+        | string {
+            COPY_TO_ARG_BUFFER
+            ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
+            ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
+            PARSE_ASSERT(mse_handle_set_generator(0, ret));
+        }
 
-             | regex_string {
-                 COPY_TO_ARG_BUFFER
-                 ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
-                 ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
-                 PARSE_ASSERT(mse_handle_set_generator(0, ret));
-             }
-             ;
+        | regex_string {
+            COPY_TO_ARG_BUFFER
+            ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
+            ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
+            PARSE_ASSERT(mse_handle_set_generator(0, ret));
+        }
+        ;
 
-set_generator : set_generator_dummy {
+set_generator : sg_dummy {
                    PARSE_ASSERT(__mse_insert_node(ret, ret->set_generator_node));
                    ret->set_generator_node = NULL;
               }
@@ -254,7 +254,9 @@ operator : AND {
          }
          ;
 
-query: query WHITESPACE operator WHITESPACE {
+query: set_generator
+     
+     | query WHITESPACE operator WHITESPACE {
          PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
          ret->op_node = NULL;
      } set_generator
@@ -277,8 +279,6 @@ query: query WHITESPACE operator WHITESPACE {
      } OPEN_BRACKET query CLOSE_BRACKET {
          PARSE_ASSERT(__mse_parser_status_pop(ret));
      }
-
-     | set_generator
      ;
 %%
 
