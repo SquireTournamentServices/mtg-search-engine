@@ -1,12 +1,12 @@
-%option noyywrap noinput nounput
+%option noyywrap noinput nounput case-insensitive
 
 %{
 #include "mse_query_parser.h"
 %}
 
 %%
-[aA][nN][dD] { return AND; }
-[oO][rR] { return OR; }
+"and" { return AND; }
+"or" { return OR; }
 
 \s+ { return WHITESPACE; }
 
@@ -20,7 +20,7 @@
 ")" { return CLOSE_BRACKET; }
 "-" { return STMT_NEGATE; }
 
-[a-zA-Z0-9_]+ { return WORD; }
+[a-z0-9_]+ { return WORD; }
 \"([^"]|(\\\"))+\" { return STRING; }
 \/([^/]|(\\\/))+\/ { return REGEX_STRING; }
 %%
