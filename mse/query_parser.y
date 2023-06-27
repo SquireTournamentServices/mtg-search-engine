@@ -180,6 +180,9 @@ static int __mse_negate(mse_parser_status_t *state)
 // Token match definitions
 %%
 input: query
+     | WHITESPACE query
+     | query WHITESPACE
+     | WHITESPACE query WHITESPACE
      | %empty
      ;
 

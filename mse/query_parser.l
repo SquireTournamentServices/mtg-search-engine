@@ -8,7 +8,7 @@
 "and" { return AND; }
 "or" { return OR; }
 
-\s+ { return WHITESPACE; }
+" " { return WHITESPACE; }
 
 "<" { return LT; }
 "<=" { return LT_INC; }
