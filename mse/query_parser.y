@@ -124,7 +124,8 @@ static int __mse_negate(mse_parser_status_t *state)
 static int __mse_parser_status_push(mse_parser_status_t *state)
 {
     ASSERT(state->stack_roots = realloc(state->stack_roots,
-                                        ++state->stack_roots_len));
+                                        ++state->stack_roots_len 
+                                        * sizeof(state->node)));
     state->stack_roots[state->stack_roots_len - 1] = state->node;
     return 1;
 }
