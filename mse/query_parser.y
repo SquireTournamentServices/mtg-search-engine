@@ -116,7 +116,7 @@ static int __mse_insert_node(mse_parser_status_t *state, mse_interp_node_t *node
         state->node->l = node;
         return 1;
     } else if (state->node->r == NULL) {
-        state->node->r = node;
+        state->node = state->node->r = node;
         return 1;
     } else {
         return __mse_insert_node_special(state, node);
