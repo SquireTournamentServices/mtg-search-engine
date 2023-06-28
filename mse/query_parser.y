@@ -76,34 +76,6 @@ static int mse_handle_set_generator(int negate, mse_parser_status_t *ret)
     return r;
 }
 
-static int __mse_insert_node_special(mse_parser_status_t *state, 
-                                     mse_interp_node_t *node)
-{
-    if (state->node->r == NULL) {
-        state->node->r = node;
-        state->node = node;
-        return 1;
-    }
-
-    // Rotates the tree
-    //   snode
-    // l       r
-    // To
-    //           node
-    //     snode       r
-    // l
-    mse_interp_node_t tmp = *state->node;
-    *state->node = *node;
-    state->node->l = node;
-    state->node->r = tmp.r;
-
-    *node = tmp;
-    node->r = NULL;
-    
-    state->node = node;
-    return 1;
-}
-
 static int __mse_insert_node(mse_parser_status_t *state, mse_interp_node_t *node)
 {
     ASSERT(node != NULL);
@@ -119,7 +91,10 @@ static int __mse_insert_node(mse_parser_status_t *state, mse_interp_node_t *node
         state->node->r = node;
         return 1;
     } else {
-        return __mse_insert_node_special(state, node);
+        mse_interp_node_t *tmp = state->node->r;
+        state->node = state->node->r = node;
+        node->l = tmp;
+        return 1;
     }
 }
 
