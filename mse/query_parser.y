@@ -76,34 +76,6 @@ static int mse_handle_set_generator(int negate, mse_parser_status_t *ret)
     return r;
 }
 
-static int __mse_insert_node_special(mse_parser_status_t *state, 
-                                     mse_interp_node_t *node)
-{
-    if (state->node->r == NULL) {
-        state->node->r = node;
-        state->node = node;
-        return 1;
-    }
-
-    // Rotates the tree
-    //   snode
-    // l       r
-    // To
-    //           node
-    //     snode       r
-    // l
-    mse_interp_node_t tmp = *state->node;
-    *state->node = *node;
-    state->node->l = node;
-    state->node->r = tmp.r;
-
-    *node = tmp;
-    node->r = NULL;
-    
-    state->node = node;
-    return 1;
-}
-
 static int __mse_insert_node(mse_parser_status_t *state, mse_interp_node_t *node)
 {
     ASSERT(node != NULL);
@@ -112,15 +84,41 @@ static int __mse_insert_node(mse_parser_status_t *state, mse_interp_node_t *node
         return 1;
     }
 
+    if (state->node != NULL) {
+        if (state->node->type == MSE_INTERP_NODE_SET_GENERATOR &&
+            node->type == MSE_INTERP_NODE_SET_OPERATOR) {
+            mse_interp_node_t tmp = *node;
+            *node = *state->node;
+            *state->node = tmp;
+        } else if (state->node->type == MSE_INTERP_NODE_SET_CONSUMER &&
+                   state->node->l != NULL) {
+            state->node = state->node->l;
+        }
+    }
+
     if (state->node->l == NULL) {
         state->node->l = node;
         return 1;
-    } else if (state->node->r == NULL) {
-        state->node->r = node;
-        return 1;
     } else {
-        return __mse_insert_node_special(state, node);
+        ASSERT(state->node->r == NULL);
+        state->node->r = node;
+        state->node = node;
+        return 1;
     }
+}
+
+static int __mse_negate(mse_parser_status_t *state)
+{
+    mse_set_consumer_t consumer;
+    ASSERT(mse_init_set_consumer(&consumer,
+                                 MSE_SET_CONSUMER_NEGATE,
+                                 "",
+                                 0));
+
+    mse_interp_node_t *node = NULL;
+    ASSERT(node = mse_init_interp_node_consumer(consumer));
+    ASSERT(__mse_insert_node(state, node));
+    return 1;
 }
 
 static int __mse_parser_status_push(mse_parser_status_t *state)
@@ -148,30 +146,6 @@ static int __mse_parser_status_pop(mse_parser_status_t *state)
         tmp = state->root;
     }
     state->node = tmp;
-    return 1;
-}
-
-static int __mse_negate(mse_parser_status_t *state)
-{
-    mse_set_consumer_t consumer;
-    ASSERT(mse_init_set_consumer(&consumer,
-                                 MSE_SET_CONSUMER_NEGATE,
-                                 "",
-                                 0));
-
-    mse_interp_node_t *node = NULL;
-    ASSERT(node = mse_init_interp_node_consumer(consumer));
-    if (state->root == NULL) {
-        state->root = state->node = node;
-    } else {
-        if (state->node->l == NULL) {
-             state->node->l = node;
-        } else {
-            // I can promise that this is not as sketchy as it looks
-            state->node->l->l = node;
-        }
-        state->node = node;
-    }
     return 1;
 }
 
