@@ -116,6 +116,7 @@ void mse_free_interp_node(mse_interp_node_t *node)
         break;
     case MSE_INTERP_NODE_SET_CONSUMER:
         mse_free_set_consumer(&node->consumer);
+        break;
     }
 
     mse_free_interp_node(node->l);

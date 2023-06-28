@@ -76,31 +76,80 @@ static int mse_handle_set_generator(int negate, mse_parser_status_t *ret)
     return r;
 }
 
-static int __mse_insert_node_special(mse_parser_status_t *state, 
-                                     mse_interp_node_t *node)
+#define MSE_INSERT_END_EARLY 2
+
+/*
+/// Smelly dead code, I will leave this here just incase something needs debugging
+static void print_tree(mse_interp_node_t *node, int h) {
+    if (node == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < h; i++) {
+        putchar('\t');
+    }
+    putchar('>');
+
+    switch (node->type) {
+    case MSE_INTERP_NODE_SET_GENERATOR:
+        printf("generator | arg %s | op %d | operator %d",
+               node->generator.argument,
+               node->generator.generator_op,
+               node->generator.generator_type);
+        break;
+    case MSE_INTERP_NODE_SET_CONSUMER:
+        printf("consumer | probably negate");
+        break;
+    case MSE_INTERP_NODE_SET_OPERATOR:
+        printf("operator | ");
+        switch (node->op_type) {
+        case MSE_SET_INTERSECTION:
+            printf("AND");
+            break;
+        case MSE_SET_UNION:
+            printf("OR");
+            break;
+        }
+        break;
+    }
+    puts("");
+    print_tree(node->l, h+1);
+    print_tree(node->r, h+1);
+}
+*/
+
+/// if the parent is a generator, then the parent should
+/// become a child of node and, node should become the parent.
+static int __mse_insert_swap_parent(mse_parser_status_t *state,  mse_interp_node_t *node)
 {
-    if (state->node->r == NULL) {
-        state->node->r = node;
-        state->node = node;
+    if (node->type == MSE_INTERP_NODE_SET_OPERATOR) {
+        // The parent should be swapped with the operator
+        mse_interp_node_t tmp = *state->node;
+        *state->node = *node;
+
+        *node = tmp;
+        state->node->l = node;
+        return MSE_INSERT_END_EARLY;
+    }
+    return 1;
+}
+
+/// Handles the special cases
+static int __mse_insert_node_special(mse_parser_status_t *state, mse_interp_node_t *node)
+{
+    if (state->node == NULL) {
         return 1;
     }
 
-    // Rotates the tree
-    //   snode
-    // l       r
-    // To
-    //           node
-    //     snode       r
-    // l
-    mse_interp_node_t tmp = *state->node;
-    *state->node = *node;
-    state->node->l = node;
-    state->node->r = tmp.r;
-
-    *node = tmp;
-    node->r = NULL;
-    
-    state->node = node;
+    if (state->node->type == MSE_INTERP_NODE_SET_GENERATOR) {
+        return __mse_insert_swap_parent(state, node);
+    } else if (state->node->type == MSE_INTERP_NODE_SET_CONSUMER 
+        && state->node->l != NULL) {
+        // if the parent is a consumer node then there should only be one child
+        // for it, so if left is set then left should become the parent
+        state->node = state->node->l;
+        return __mse_insert_swap_parent(state, node);
+    }
     return 1;
 }
 
@@ -112,21 +161,41 @@ static int __mse_insert_node(mse_parser_status_t *state, mse_interp_node_t *node
         return 1;
     }
 
+    int r = __mse_insert_node_special(state, node);
+    if (r == MSE_INSERT_END_EARLY) {
+        return 1;
+    }
+    ASSERT(r);
+
     if (state->node->l == NULL) {
         state->node->l = node;
-        return 1;
     } else if (state->node->r == NULL) {
-        state->node->r = node;
-        return 1;
+        state->node = state->node->r = node;
     } else {
-        return __mse_insert_node_special(state, node);
+        return __mse_insert_swap_parent(state, node);
     }
+    return 1;
+}
+
+static int __mse_negate(mse_parser_status_t *state)
+{
+    mse_set_consumer_t consumer;
+    ASSERT(mse_init_set_consumer(&consumer,
+                                 MSE_SET_CONSUMER_NEGATE,
+                                 "",
+                                 0));
+
+    mse_interp_node_t *node = NULL;
+    ASSERT(node = mse_init_interp_node_consumer(consumer));
+    ASSERT(__mse_insert_node(state, node));
+    return 1;
 }
 
 static int __mse_parser_status_push(mse_parser_status_t *state)
 {
     ASSERT(state->stack_roots = realloc(state->stack_roots,
-                                        ++state->stack_roots_len));
+                                        ++state->stack_roots_len 
+                                        * sizeof(state->node)));
     state->stack_roots[state->stack_roots_len - 1] = state->node;
     return 1;
 }
@@ -151,36 +220,12 @@ static int __mse_parser_status_pop(mse_parser_status_t *state)
     return 1;
 }
 
-static int __mse_negate(mse_parser_status_t *state)
-{
-    mse_set_consumer_t consumer;
-    ASSERT(mse_init_set_consumer(&consumer,
-                                 MSE_SET_CONSUMER_NEGATE,
-                                 "",
-                                 0));
-
-    mse_interp_node_t *node = NULL;
-    ASSERT(node = mse_init_interp_node_consumer(consumer));
-    if (state->root == NULL) {
-        state->root = state->node = node;
-    } else {
-        if (state->node->l == NULL) {
-             state->node->l = node;
-        } else {
-            // I can promise that this is not as sketchy as it looks
-            state->node->l->l = node;
-        }
-        state->node = node;
-    }
-    return 1;
-}
-
 %}
 
 // Token match definitions
 %%
 input: query
-     | WHITESPACE query
+     | WHITESPACE query 
      | query WHITESPACE
      | WHITESPACE query WHITESPACE
      | %empty
@@ -255,8 +300,8 @@ set_generator : sg_dummy {
               } %dprec 2
 
               | STMT_NEGATE {
-                  PARSE_ASSERT(__mse_negate(ret));
                   PARSE_ASSERT(__mse_parser_status_push(ret));
+                  PARSE_ASSERT(__mse_negate(ret));
               } OPEN_BRACKET query CLOSE_BRACKET {
                   PARSE_ASSERT(__mse_parser_status_pop(ret));
               } %dprec 1
@@ -278,6 +323,7 @@ query: set_generator %dprec 5
      } set_generator %dprec 1
 
      | query WHITESPACE {
+         lprintf(LOG_WARNING, "Implied operator in query\n");
          PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
          PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
          ret->op_node = NULL;
