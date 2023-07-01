@@ -32,9 +32,7 @@ static void __mse_free_card_trie_node(mse_card_trie_node_t *node)
 
 void mse_free_card_trie_node(mse_card_trie_node_t *node)
 {
-    lprintf(LOG_INFO, "Freeing trie, this make take some time\n");
     __mse_free_card_trie_node(node);
-    lprintf(LOG_INFO, "Done, thanks for waiting\n");
 }
 
 static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, mse_avl_tree_node_t **ret, int i)
