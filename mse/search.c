@@ -145,9 +145,9 @@ static int __mse_finalise_search_insert(mse_search_result_t *search_final_res,
         return 0;
     }
 
-    insert_index += __mse_finalise_search_insert(search_final_res, node->l, insert_index);
+    insert_index = __mse_finalise_search_insert(search_final_res, node->l, insert_index);
     search_final_res->cards[insert_index++] = (mse_card_t *) node->payload;
-    insert_index += __mse_finalise_search_insert(search_final_res, node->r, insert_index);
+    insert_index = __mse_finalise_search_insert(search_final_res, node->r, insert_index);
     return insert_index;
 }
 
@@ -162,7 +162,7 @@ int mse_finalise_search(mse_search_result_t *search_final_res, mse_search_interm
     mse_free_search_intermediate(search_int_res);
 
     // Sanity check the length
-    ASSERT(cards_real_length == search_final_res->cards_length);
+    ASSERT(cards_real_length - 1 == search_final_res->cards_length);
     return 1;
 }
 
