@@ -171,7 +171,9 @@ set(TESTS
     ./tests/test_parser.h
     ./tests/test_parser.c
     ./tests/test_mse_langs.h
-    ./tests/test_mse_langs.c)
+    ./tests/test_mse_langs.c
+    ./tests/test_save.h
+    ./tests/test_save.c)
 
 # Setup docs
 find_package(Doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)

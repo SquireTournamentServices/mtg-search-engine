@@ -15,6 +15,7 @@
 #include "./test_generators.h"
 #include "./test_interpretor.h"
 #include "./test_parser.h"
+#include "./test_save.h"
 
 static int sanity_test()
 {
@@ -35,6 +36,7 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 {&test_search, "Test search"},
 /* Data source (very important) */
 {&test_mse_json, "Test mtg json"},
+{&test_save, "Test saving (and reading) MTG json"},
 /* Tests that require the data source */
 {&test_card_str_match, "Test card string match"},
 {&test_generators, "Test generators"},
