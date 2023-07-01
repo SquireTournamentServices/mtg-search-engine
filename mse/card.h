@@ -55,11 +55,12 @@ typedef struct mse_card_t {
 int mse_parse_card_json(json_t *json, mse_card_t *card);
 int mse_write_card(FILE *f, mse_card_t card);
 int mse_read_card(FILE *f, mse_card_t *card);
-int mse_avl_cmp_card(void *a, void *b);
 
 void mse_free_card(mse_card_t *card);
 
 // Indexes comparison functions
+int mse_avl_cmp_card(void *a, void *b);
+int mse_avl_cmp_card_name(void *a, void *b);
 int mse_avl_cmp_card_power(void *a, void *b);
 int mse_avl_cmp_card_toughness(void *a, void *b);
 int mse_avl_cmp_card_cmc(void *a, void *b);

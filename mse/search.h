@@ -1,6 +1,7 @@
 #pragma once
 #include "./avl_tree.h"
 #include "./mtg_json.h"
+#include "./card.h"
 
 /// A wrapper for the types of data that set operations are defined on
 typedef struct mse_search_intermediate_t {
@@ -43,6 +44,7 @@ int mse_set_negate(mse_search_intermediate_t *ret,
 /// Frees a search intermediate that has been initialised, call even on init fail.
 void mse_free_search_intermediate(mse_search_intermediate_t *inter);
 
+/// All supported sort types for a card in the card results
 typedef enum mse_search_sort_type_t {
     MSE_SORT_CARD_NAME,
     MSE_SORT_CMC,
@@ -51,8 +53,22 @@ typedef enum mse_search_sort_type_t {
     MSE_SORT_TOUGHNESS
 } mse_search_sort_type_t;
 
+#define MSE_SORT_DEFAULT MSE_SORT_UUID
+
+/// Stores the search results of the cards as an array and the current sort type
 typedef struct mse_search_result_t {
-    mse_avl_tree_node_t *cards;
-    size_t cards_count;
+    size_t cards_length;
+    /// An array of card pointers, the card pointers are references to the master card tree
+    mse_card_t **cards;
     mse_search_sort_type_t current_sort;
 } mse_search_result_t;
+
+/// Turns the search intermediate into an array with the MSE_SORT_DEFAULT sort type
+/// The search intermediate is then freed and invalid.
+int mse_finalise_search(mse_search_result_t *search_final_res, mse_search_intermediate_t *search_int_res);
+
+/// Takes a search result and resorts it if the sort type has changed
+void mes_sort_search_results(mse_search_result_t *search_res, mse_search_sort_type_t sort_type);
+
+/// Frees the search result
+void mse_free_search_results(mse_search_result_t *search_res);

@@ -141,6 +141,8 @@ static int test_set_negation()
     return 1;
 }
 
+// The finalise search and the search results are tested in the interpretor where there is a lot of test data
+
 SUB_TEST(test_search, {&test_union_tree, "Test set union on trees"},
 {&test_intersection_tree, "Test set intersection on trees"},
 {&test_set_negation, "Test set negation"})

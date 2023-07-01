@@ -135,3 +135,75 @@ void mse_free_search_intermediate(mse_search_intermediate_t *inter)
     }
     memset(inter, 0, sizeof(*inter));
 }
+
+/// In order insert of the cards tree into the output array
+static int __mse_finalise_search_insert(mse_search_result_t *search_final_res,
+                                        mse_avl_tree_node_t *node,
+                                        size_t insert_index)
+{
+    if (node == NULL) {
+        return 0;
+    }
+
+    insert_index += __mse_finalise_search_insert(search_final_res, node->l, insert_index);
+    search_final_res->cards[insert_index++] = (mse_card_t *) node->payload;
+    insert_index += __mse_finalise_search_insert(search_final_res, node->r, insert_index);
+    return insert_index;
+}
+
+int mse_finalise_search(mse_search_result_t *search_final_res, mse_search_intermediate_t *search_int_res)
+{
+    memset(search_final_res, 0, sizeof(*search_final_res));
+    search_final_res->current_sort = MSE_SORT_DEFAULT;
+    search_final_res->cards_length = mse_tree_size(search_int_res->node);
+    ASSERT(search_final_res->cards = malloc(sizeof(*search_final_res->cards) * search_final_res->cards_length));
+
+    size_t cards_real_length = __mse_finalise_search_insert(search_final_res, search_int_res->node, 0);
+    mse_free_search_intermediate(search_int_res);
+
+    // Sanity check the length
+    ASSERT(cards_real_length == search_final_res->cards_length);
+    return 1;
+}
+
+void mes_sort_search_results(mse_search_result_t *search_res, mse_search_sort_type_t sort_type)
+{
+    // Already sorted this way, no need to recompute
+    if (search_res->current_sort == sort_type) {
+        return;
+    }
+
+    search_res->current_sort = sort_type;
+
+    int (*sort_fn)(void *, void *) = NULL;
+    switch(search_res->current_sort) {
+    case MSE_SORT_CARD_NAME:
+        sort_fn = &mse_avl_cmp_card_name;
+        break;
+    case MSE_SORT_CMC:
+        sort_fn = &mse_avl_cmp_card_cmc;
+        break;
+    case MSE_SORT_UUID:
+        sort_fn = &mse_avl_cmp_card;
+        break;
+    case MSE_SORT_POWER:
+        sort_fn = &mse_avl_cmp_card_power;
+        break;
+    case MSE_SORT_TOUGHNESS:
+        sort_fn = &mse_avl_cmp_card_toughness;
+        break;
+    }
+    qsort(search_res->cards,
+          search_res->cards_length,
+          sizeof(*search_res->cards),
+          // Sketchy looking cast lmao
+          (int (*)(const void *, const void *)) sort_fn);
+}
+
+void mse_free_search_results(mse_search_result_t *search_res)
+{
+    if (search_res->cards != NULL) {
+        free(search_res->cards);
+    }
+    memset(search_res, 0, sizeof(*search_res));
+}

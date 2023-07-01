@@ -298,6 +298,50 @@ static int test_consumer_tree()
     return 1;
 }
 
+static int test_search_result()
+{
+    mse_set_consumer_t consumer;
+    ASSERT(mse_init_set_consumer(&consumer,
+                                 MSE_SET_CONSUMER_NEGATE,
+                                 "",
+                                 0));
+
+    mse_interp_node_t *root;
+    ASSERT(root = mse_init_interp_node_consumer(consumer));
+
+    mse_set_generator_t generator;
+    ASSERT(mse_init_set_generator(&generator,
+                                  MSE_SET_GENERATOR_ORACLE_TEXT,
+                                  MSE_SET_GENERATOR_OP_EQUALS,
+                                  REGEX_1,
+                                  strlen(REGEX_1)));
+    ASSERT(root->l = mse_init_interp_node_generator(generator));
+
+    mse_search_intermediate_t ret;
+    ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 0, &test_cards));
+    ASSERT(ret.node != NULL);
+    ASSERT(mse_tree_size(ret.node) >= 21118);
+    mse_free_search_intermediate(&ret);
+
+    ret.node = NULL;
+    ASSERT(mse_resolve_interp_tree(root, &ret, &pool, 1, &test_cards));
+    ASSERT(ret.node == NULL);
+
+    mse_search_result_t search_res;
+    ASSERT(mse_finalise_search(&search_res, &ret));
+
+    mes_sort_search_results(&search_res, MSE_SORT_DEFAULT);
+    mes_sort_search_results(&search_res, MSE_SORT_UUID);
+    mes_sort_search_results(&search_res, MSE_SORT_CARD_NAME);
+    mes_sort_search_results(&search_res, MSE_SORT_CMC);
+    mes_sort_search_results(&search_res, MSE_SORT_POWER);
+    mes_sort_search_results(&search_res, MSE_SORT_TOUGHNESS);
+
+    // Cleanup
+    mse_free_search_results(&search_res);
+    return 1;
+}
+
 SUB_TEST(test_interpretor, {&test_init_free_operator, "Test init free for operator node"},
 {&test_init_free_generator, "Test init free for generator node"},
 {&test_recursive_free, "Test recursive free"},
@@ -307,4 +351,5 @@ SUB_TEST(test_interpretor, {&test_init_free_operator, "Test init free for operat
 {&test_resolve_tree_2, "Test resolve tree 2"},
 {&test_resolve_tree_3, "Test resolve tree 3"},
 {&test_consumer_tree, "Test resolve consumer tree"},
+{&test_search_result, "Test search result"},
 {&free_test_card, "Free test cards"})

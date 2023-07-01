@@ -310,7 +310,14 @@ int mse_avl_cmp_card(void *a, void *b)
     return mse_uuid_cmp(ca->id, cb->id);
 }
 
-#define MSE_CARD_DOUBLE_CMP(a, b, field) \
+int mse_avl_cmp_card_name(void *a, void *b)
+{
+    mse_card_t *ca = (mse_card_t *) a;
+    mse_card_t *cb = (mse_card_t *) b;
+    return strcmp(ca->name, cb->name);
+}
+
+#define MSE_CARD_DOUBLE_AVL_CMP(a, b, field) \
     mse_card_t *ca = (mse_card_t *) a; \
     mse_card_t *cb = (mse_card_t *) b; \
     if ((int) ca->field == (int) cb->field) { \
@@ -325,15 +332,15 @@ int mse_avl_cmp_card(void *a, void *b)
 
 int mse_avl_cmp_card_power(void *a, void *b)
 {
-    MSE_CARD_DOUBLE_CMP(a, b, power)
+    MSE_CARD_DOUBLE_AVL_CMP(a, b, power)
 }
 
 int mse_avl_cmp_card_toughness(void *a, void *b)
 {
-    MSE_CARD_DOUBLE_CMP(a, b, toughness)
+    MSE_CARD_DOUBLE_AVL_CMP(a, b, toughness)
 }
 
 int mse_avl_cmp_card_cmc(void *a, void *b)
 {
-    MSE_CARD_DOUBLE_CMP(a, b, cmc)
+    MSE_CARD_DOUBLE_AVL_CMP(a, b, cmc)
 }
