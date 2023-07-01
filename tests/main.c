@@ -16,6 +16,7 @@
 #include "./test_interpretor.h"
 #include "./test_parser.h"
 #include "./test_save.h"
+#include "./system_test.h"
 
 static int sanity_test()
 {
@@ -41,7 +42,8 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 {&test_card_str_match, "Test card string match"},
 {&test_generators, "Test generators"},
 {&test_interpretor, "Test interpretor"},
-{&test_parser, "Test parser"})
+{&test_parser, "Test parser"},
+{&test_system, "System Test"})
 
 int main(int argc, char** argv)
 {
