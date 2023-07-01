@@ -94,9 +94,3 @@ int __mse_generate_indexes(mse_all_printings_cards_t *ret, mse_thread_pool_t *po
 
 /// Frees atomic cards
 void mse_free_all_printings_cards(mse_all_printings_cards_t *cards);
-
-/// This will store all cards  and, their indexes
-typedef struct mse_indexed_cards_t {
-    mse_all_printings_cards_t all_printings_cards;
-
-} mse_indexed_cards_t;
