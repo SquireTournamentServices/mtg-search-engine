@@ -341,10 +341,7 @@ static void __mse_free_parser_status(mse_parser_status_t *status)
     }
 
     if (status->stack_roots != NULL) {
-        for (size_t i = 0; i < status->stack_roots_len; i++) {
-            lprintf(LOG_WARNING, "Unused nodes on the stack\n");
-            mse_free_interp_node(status->stack_roots[i]);
-        }
+        lprintf(LOG_WARNING, "Unused %lu nodes on the stack\n", status->stack_roots_len);
         free(status->stack_roots);
     }
 }

@@ -220,13 +220,15 @@ if(UNIX)
   # Copy test data
   set(TEST_CARD_JSON ${CMAKE_CURRENT_BINARY_DIR}/test_card.json)
   set(TEST_VALID_QUERIES ${CMAKE_CURRENT_BINARY_DIR}/valid_queries.txt)
+  set(TEST_INVALID_QUERIES ${CMAKE_CURRENT_BINARY_DIR}/invalid_queries.txt)
 
   set(MEM_TESTS_SH ${CMAKE_CURRENT_BINARY_DIR}/mem_tests.sh)
   set(MEM_TESTS_PY ${CMAKE_CURRENT_BINARY_DIR}/mem_tests.py)
   set(TESTING_SCRIPTS ${MEM_TESTS_PY} ${MEM_TESTS_SH})
 
-  set(TEST_DATA_FILES ${TEST_CARD_JSON} ${TESTING_SCRIPTS}
-                      ${TEST_VALID_QUERIES} ${ALL_PRINTINGS})
+  set(TEST_DATA_FILES
+      ${TEST_CARD_JSON} ${TESTING_SCRIPTS} ${TEST_VALID_QUERIES}
+      ${TEST_INVALID_QUERIES} ${ALL_PRINTINGS})
   add_custom_command(
     OUTPUT ${TEST_DATA_FILES}
     COMMAND ${CMAKE_COMMAND} -E copy
@@ -237,7 +239,11 @@ if(UNIX)
             ${MEM_TESTS_PY}
     COMMAND
       ${CMAKE_COMMAND} -E copy
-      ${CMAKE_CURRENT_SOURCE_DIR}/tests/valid_queries.txt ${TEST_VALID_QUERIES})
+      ${CMAKE_CURRENT_SOURCE_DIR}/tests/valid_queries.txt ${TEST_VALID_QUERIES}
+    COMMAND
+      ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/tests/invalid_queries.txt
+      ${TEST_INVALID_QUERIES})
   add_custom_target(TEST_DATA DEPENDS ${TEST_DATA_FILES})
   add_dependencies(mtg-search-engine-tests TEST_DATA)
 

@@ -150,7 +150,56 @@ static int test_parse_and_exec()
     return s;
 }
 
+static int __test_next_query_fail_case(FILE *f)
+{
+    char buffer[1024];
+    char *r = fgets(buffer, sizeof(buffer), f);
+
+    // EOF
+    if (r == NULL) {
+        return EOF;
+    }
+    // Empty string is also EOF
+    if (buffer[0] == 0) {
+        return EOF;
+    }
+
+    // Strip the last char (\n)
+    ASSERT(strlen(buffer) > 2);
+    size_t last = strlen(buffer) - 1;
+    if (buffer[last] == '\n') {
+        buffer[last] = 0;
+    }
+
+    lprintf(TEST_INFO, "Testing parse of '%s' fails\n", buffer);
+    mse_interp_node_t *ret = NULL;
+    ASSERT(!mse_parse_input_string(buffer, &ret));
+    mse_free_interp_node(ret);
+
+    lprintf(TEST_PASS, "Passed\n");
+    return 1;
+}
+
+static int test_parse_invalid_queries()
+{
+    FILE *f = fopen("./invalid_queries.txt", "r");
+    ASSERT(f != NULL);
+
+    int s = 1;
+    int flag = 1;
+    do {
+        flag = __test_next_query_fail_case(f);
+        if (!flag) {
+            s = 0;
+        }
+    } while (flag != EOF);
+
+    fclose(f);
+    return s;
+}
+
 SUB_TEST(test_parser, {&init_parser_tests, "Init parser tests"},
 {&__test_parser, "Run parser tests"},
 {&test_parse_and_exec, "Parse then execute"},
+{&test_parse_invalid_queries, "Run parser fail case tests"},
 {&free_parser_tests, "Free parser tests"})
