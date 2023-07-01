@@ -109,8 +109,6 @@ SUB_TEST(__test_atomic_card_props_save, {&test_all_printings_cards_sets_found, "
 {&test_all_printings_cards_found, "Test atomic cards found cards"},
 {&test_indexes, "Test card indexes"})
 
-// The same logic will be within mse.h when I get around to it, however by checking
-// the saving with known good things here I can sanity check it.
 static int test_get_and_save_cards()
 {
     mse_thread_pool_t pool;
