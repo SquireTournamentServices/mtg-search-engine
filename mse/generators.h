@@ -49,22 +49,22 @@ typedef struct mse_set_generator_t {
 
 /// Runs validation that the operation is defined for the given type
 /// Also copies the argument string, len is the string length of the argument
-int mse_init_set_generator(mse_set_generator_t *ret,
-                           mse_set_generator_type_t gen_type,
-                           mse_set_generator_operator_t op_type,
-                           char *argument,
-                           size_t len);
+extern int mse_init_set_generator(mse_set_generator_t *ret,
+                                  mse_set_generator_type_t gen_type,
+                                  mse_set_generator_operator_t op_type,
+                                  char *argument,
+                                  size_t len);
 
-void mse_free_set_generator(mse_set_generator_t *gen);
+extern void mse_free_set_generator(mse_set_generator_t *gen);
 
 /// Helper function used in init to check that that the set can be generated
-int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
-                                      mse_set_generator_operator_t op_type);
+extern int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
+        mse_set_generator_operator_t op_type);
 
-int mse_generate_set(mse_set_generator_t *gen,
-                     mse_search_intermediate_t *res,
-                     mse_all_printings_cards_t *cards,
-                     mse_thread_pool_t *pool);
+extern int mse_generate_set(mse_set_generator_t *gen,
+                            mse_search_intermediate_t *res,
+                            mse_all_printings_cards_t *cards,
+                            mse_thread_pool_t *pool);
 
 /// String to generator type
-int mse_gen_type(char *str, mse_set_generator_type_t *ret);
+extern int mse_gen_type(char *str, mse_set_generator_type_t *ret);

@@ -30,16 +30,16 @@ typedef struct mse_interp_node_t {
 } mse_interp_node_t;
 
 /// Inits an operation node with operation
-mse_interp_node_t *mse_init_interp_node_operation(mse_set_operator_type_t operation);
+extern mse_interp_node_t *mse_init_interp_node_operation(mse_set_operator_type_t operation);
 
 /// Inits a set generator node with generator (this object is now owned by the tree)
-mse_interp_node_t *mse_init_interp_node_generator(mse_set_generator_t generator);
+extern mse_interp_node_t *mse_init_interp_node_generator(mse_set_generator_t generator);
 
 /// Inits a set consumer node with consumer (this object is now owned by the tree)
-mse_interp_node_t *mse_init_interp_node_consumer(mse_set_consumer_t consumer);
+extern mse_interp_node_t *mse_init_interp_node_consumer(mse_set_consumer_t consumer);
 
 /// Recursively frees the tree
-void mse_free_interp_node(mse_interp_node_t *node);
+extern void mse_free_interp_node(mse_interp_node_t *node);
 
 /// Resolves a tree
 /// if the dry_run flag is true
@@ -47,8 +47,8 @@ void mse_free_interp_node(mse_interp_node_t *node);
 ///   this is used to check parser output for validity and during tests
 /// otherwise
 ///   this function will recurse over the tree to generate one output (ret)
-int mse_resolve_interp_tree(mse_interp_node_t *root,
-                            mse_search_intermediate_t *ret,
-                            mse_thread_pool_t *pool,
-                            int dry_run,
-                            mse_all_printings_cards_t *cards);
+extern int mse_resolve_interp_tree(mse_interp_node_t *root,
+                                   mse_search_intermediate_t *ret,
+                                   mse_thread_pool_t *pool,
+                                   int dry_run,
+                                   mse_all_printings_cards_t *cards);

@@ -13,6 +13,6 @@ typedef struct mse_index_generator_state_t {
     int ret;
 } mse_index_generator_state_t;
 
-void mse_free_index_generator_state(mse_index_generator_state_t *state);
+extern void mse_free_index_generator_state(mse_index_generator_state_t *state);
 
 // __mse_generate_indexes is defined in the mse_json.h header, but declared in this unit

@@ -3,10 +3,10 @@
 #include "./avl_tree.h"
 #include "./generators.h"
 
-int mse_generate_set_colours(mse_set_generator_t *gen,
-                             mse_search_intermediate_t *res,
-                             mse_all_printings_cards_t *cards);
+extern int mse_generate_set_colours(mse_set_generator_t *gen,
+                                    mse_search_intermediate_t *res,
+                                    mse_all_printings_cards_t *cards);
 
-int mse_generate_set_colour_identity(mse_set_generator_t *gen,
-                                     mse_search_intermediate_t *res,
-                                     mse_all_printings_cards_t *cards);
+extern int mse_generate_set_colour_identity(mse_set_generator_t *gen,
+        mse_search_intermediate_t *res,
+        mse_all_printings_cards_t *cards);

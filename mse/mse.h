@@ -13,10 +13,10 @@ typedef struct mse_t {
 
 /// Init he state of the mse library, WARNING: this will execute tzset
 /// This includes: setting up the thread pool, downloading / reading the cards, and generating the indexes
-int mse_init(mse_t *state);
+extern int mse_init(mse_t *state);
 
 /// Perform a search and save the result into res
-int mse_search(mse_t *state, mse_search_result_t *res, const char *query);
+extern int mse_search(mse_t *state, mse_search_result_t *res, const char *query);
 
 /// Free the state of the mse library
-void mse_free(mse_t *state);
+extern void mse_free(mse_t *state);
