@@ -180,7 +180,7 @@ set(TESTS
     ./tests/system_test.c)
 
 # Setup docs
-find_package(Doxygen)
+find_package(doxygen)
 if (DOXYGEN_FOUND)
     find_package(doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
     doxygen_add_docs(mse-docs ${SRC} ${TESTS}
