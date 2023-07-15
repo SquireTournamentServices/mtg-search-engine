@@ -210,16 +210,13 @@ endif()
 set(LIBS jansson CURL::libcurl pthread m c)
 
 # Add library and cli execs
-add_library(mtg-search-engine ${SRC})
+add_library(mtg-search-engine OBJECT ${SRC})
 target_link_libraries(mtg-search-engine PRIVATE ${LIBS})
 target_include_directories(mtg-search-engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
                                                     ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(mtg-search-engine-cli mse/main.c)
 target_link_libraries(mtg-search-engine-cli ${LIBS} mtg-search-engine)
-target_include_directories(
-  mtg-search-engine-cli PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
-                               ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Setup unit tests
 if(UNIX)
