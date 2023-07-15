@@ -1,4 +1,8 @@
 #pragma once
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "./mtg_json.h"
 #include "./thread_pool.h"
 #include "./search.h"
@@ -20,3 +24,7 @@ int mse_search(mse_t *state, mse_search_result_t *res, const char *query);
 
 /// Free the state of the mse library
 void mse_free(mse_t *state);
+
+#ifdef __cplusplus
+}
+#endif
