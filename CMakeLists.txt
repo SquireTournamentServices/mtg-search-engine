@@ -180,26 +180,32 @@ set(TESTS
     ./tests/system_test.c)
 
 # Setup docs
-find_package(Doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
-doxygen_add_docs(mse-docs ${SRC} ${TESTS}
-                 "Generate documentation pages for ${REPO_URL}")
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+    find_package(doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
+    doxygen_add_docs(mse-docs ${SRC} ${TESTS}
+                     "Generate documentation pages for ${REPO_URL}")
+endif()
 
 # Setup gcovr
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
-include(CodeCoverage)
 
-set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
+if (UNIX)
+    include(CodeCoverage)
 
-append_coverage_compiler_flags()
-setup_target_for_coverage_gcovr_xml(
-  NAME
-  mse-coverage
-  EXECUTABLE
-  mtg-search-engine-tests
-  test
-  EXCLUDE
-  ${GCOVR_EXCLUDE})
+    set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
+
+    append_coverage_compiler_flags()
+    setup_target_for_coverage_gcovr_xml(
+      NAME
+      mse-coverage
+      EXECUTABLE
+      mtg-search-engine-tests
+      test
+      EXCLUDE
+      ${GCOVR_EXCLUDE})
+endif()
 
 set(LIBS jansson CURL::libcurl pthread m c)
 
