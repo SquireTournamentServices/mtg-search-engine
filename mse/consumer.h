@@ -23,15 +23,15 @@ typedef struct mse_set_consumer_t {
 
 /// Runs validation that the operation is defined for the given type
 /// Also copies the argument string, len is the string length of the argument
-extern int mse_init_set_consumer(mse_set_consumer_t *ret,
-                                 mse_set_consumer_type_t gen_type,
-                                 char *argument,
-                                 size_t len);
+int mse_init_set_consumer(mse_set_consumer_t *ret,
+                          mse_set_consumer_type_t gen_type,
+                          char *argument,
+                          size_t len);
 
-extern void mse_free_set_consumer(mse_set_consumer_t *gen);
+void mse_free_set_consumer(mse_set_consumer_t *gen);
 
-extern int mse_consume_set(mse_set_consumer_t *gen,
-                           mse_search_intermediate_t *res,
-                           mse_all_printings_cards_t *cards,
-                           mse_search_intermediate_t *child,
-                           mse_thread_pool_t *pool);
+int mse_consume_set(mse_set_consumer_t *gen,
+                    mse_search_intermediate_t *res,
+                    mse_all_printings_cards_t *cards,
+                    mse_search_intermediate_t *child,
+                    mse_thread_pool_t *pool);

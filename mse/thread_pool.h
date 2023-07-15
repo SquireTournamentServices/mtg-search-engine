@@ -33,30 +33,30 @@ typedef struct mse_task_queue_t {
 
 /// Inits a queue
 /// There is no free as that is done by the pool to make sure that consumers are killed
-extern int mse_init_queue(mse_task_queue_t *queue);
+int mse_init_queue(mse_task_queue_t *queue);
 
 /// Takes the front of the queue and removes it, places it into ret.
 /// 0 on failure
 ///
 /// This is a blocking call. The caller will wait until the semaphore is non-zero
 /// then it will lock the mutex and, grab the first task as described.
-extern int mse_task_queue_front(mse_task_queue_t *queue, mse_task_t *ret);
+int mse_task_queue_front(mse_task_queue_t *queue, mse_task_t *ret);
 
 /// This will try to get the front of the queue, this method is the same as mse_task_queue_front, except
 /// 1. it is non-blocking
 /// 2. it returns an error if the queue is empty
-extern int mse_task_queue_try_front(mse_task_queue_t *queue, mse_task_t *ret);
+int mse_task_queue_try_front(mse_task_queue_t *queue, mse_task_t *ret);
 
 /// Inserts task into the queue
 /// 0 on failure
 ///
 /// This is a blocking call. The caller will be locked whilst the queue is locked.
 /// This will wake up any waiting threads.
-extern int mse_task_queue_enqueue(mse_task_queue_t *queue, mse_task_t task);
+int mse_task_queue_enqueue(mse_task_queue_t *queue, mse_task_t task);
 
 /// This will reset the task queue, it is used for freeing the pool safely by cancelling
 /// all pending tasks
-extern void mse_reset_pool(mse_task_queue_t *queue);
+void mse_reset_pool(mse_task_queue_t *queue);
 
 typedef struct mse_thread_pool_t {
     size_t threads_count;
@@ -66,12 +66,12 @@ typedef struct mse_thread_pool_t {
 } mse_thread_pool_t;
 
 /// Starts some consumer thrads and, inits an empty pool
-extern int mse_init_pool(mse_thread_pool_t *p);
+int mse_init_pool(mse_thread_pool_t *p);
 
 /// Frees the pool and, kills all consumer threads
-extern int mse_free_pool(mse_thread_pool_t *p);
+int mse_free_pool(mse_thread_pool_t *p);
 
 /// This is a method that a thread should call whilst it is waiting for other things in the thread pool,
 /// it should be polled such that the logic is similar to this:
 /// while (waiting_for_task()) pool_consume();
-extern void mse_pool_try_consume(mse_thread_pool_t *p);
+void mse_pool_try_consume(mse_thread_pool_t *p);

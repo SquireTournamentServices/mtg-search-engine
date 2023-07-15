@@ -16,4 +16,4 @@ typedef struct mse_parser_status_t {
     size_t stack_roots_len;
 } mse_parser_status_t;
 
-extern int mse_parse_input_string(const char* input_string, mse_interp_node_t **root);
+int mse_parse_input_string(const char* input_string, mse_interp_node_t **root);
