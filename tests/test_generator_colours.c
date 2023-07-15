@@ -46,12 +46,12 @@ static int test_generator_colours_##op_l() \
     return 1; \
 }
 
-COLOUR_GEN_TEST(lt, LT, lt);
-COLOUR_GEN_TEST(lt_inc, LT_INC, lt_inc);
-COLOUR_GEN_TEST(gt, GT, gt);
-COLOUR_GEN_TEST(gt_inc, GT_INC, gt_inc);
-COLOUR_GEN_TEST(eq, EQUALS, eq);
-COLOUR_GEN_TEST(inc, INCLUDES, eq);
+COLOUR_GEN_TEST(lt, LT, lt)
+COLOUR_GEN_TEST(lt_inc, LT_INC, lt_inc)
+COLOUR_GEN_TEST(gt, GT, gt)
+COLOUR_GEN_TEST(gt_inc, GT_INC, gt_inc)
+COLOUR_GEN_TEST(eq, EQUALS, eq)
+COLOUR_GEN_TEST(inc, INCLUDES, eq)
 
 #define COLOUR_IDENTITY_GEN_TEST(op_l, op_u, op) \
 static int test_tree_ci_##op_l(mse_avl_tree_node_t *node, int negate) \
@@ -90,12 +90,12 @@ static int test_generator_colour_identity_##op_l() \
     return 1; \
 }
 
-COLOUR_IDENTITY_GEN_TEST(lt, LT, lt);
-COLOUR_IDENTITY_GEN_TEST(lt_inc, LT_INC, lt_inc);
-COLOUR_IDENTITY_GEN_TEST(gt, GT, gt);
-COLOUR_IDENTITY_GEN_TEST(gt_inc, GT_INC, gt_inc);
-COLOUR_IDENTITY_GEN_TEST(eq, EQUALS, eq);
-COLOUR_IDENTITY_GEN_TEST(inc, INCLUDES, eq);
+COLOUR_IDENTITY_GEN_TEST(lt, LT, lt)
+COLOUR_IDENTITY_GEN_TEST(lt_inc, LT_INC, lt_inc)
+COLOUR_IDENTITY_GEN_TEST(gt, GT, gt)
+COLOUR_IDENTITY_GEN_TEST(gt_inc, GT_INC, gt_inc)
+COLOUR_IDENTITY_GEN_TEST(eq, EQUALS, eq)
+COLOUR_IDENTITY_GEN_TEST(inc, INCLUDES, eq)
 
 SUB_TEST(test_generator_colours, {&test_generator_colours_lt, "Colours generator <="},
 {&test_generator_colours_lt_inc, "Colours generator <="},

@@ -34,8 +34,8 @@ mse_colour_index_t index_base_name##_eq;
 
 /// Holds all of the colour indexes
 typedef struct mse_cards_colours_indexes_t {
-    MSE_COLOUR_INDEX_GENERATOR(colours);
-    MSE_COLOUR_INDEX_GENERATOR(colour_identity);
+    MSE_COLOUR_INDEX_GENERATOR(colours)
+    MSE_COLOUR_INDEX_GENERATOR(colour_identity)
 } mse_cards_colours_indexes_t;
 
 /// Contains all of the card indexes, each index will have a payload that is a pointer to a card,

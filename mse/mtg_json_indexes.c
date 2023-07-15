@@ -200,9 +200,9 @@ static void MSE_INDEX_FIELD_NAME(fname)(void *__state, mse_thread_pool_t *pool) 
     sem_post(&(state->semaphore)); \
 }
 
-MSE_INDEX_FOR_FIELD(power);
-MSE_INDEX_FOR_FIELD(toughness);
-MSE_INDEX_FOR_FIELD(cmc);
+MSE_INDEX_FOR_FIELD(power)
+MSE_INDEX_FOR_FIELD(toughness)
+MSE_INDEX_FOR_FIELD(cmc)
 
 static int __add_cards_to_card_name_trie(mse_avl_tree_node_t *node, mse_card_trie_node_t *card_name_trie)
 {

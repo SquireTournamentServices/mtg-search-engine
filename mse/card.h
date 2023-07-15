@@ -19,7 +19,7 @@ typedef enum mse_colour_enum_t {
     MSE_GREEN  = 1 << 4
 } mse_colour_enum_t;
 
-#define MSE_WUBRG 0b11111
+#define MSE_WUBRG 0x05
 
 mse_colour_enum_t mse_parse_colour(char colour);
 
