@@ -169,7 +169,7 @@ int mse_finalise_search(mse_search_result_t *search_final_res, mse_search_interm
     return 1;
 }
 
-void mes_sort_search_results(mse_search_result_t *search_res, mse_search_sort_type_t sort_type)
+void mse_sort_search_results(mse_search_result_t *search_res, mse_search_sort_type_t sort_type)
 {
     // Already sorted this way, no need to recompute
     if (search_res->current_sort == sort_type) {

@@ -68,7 +68,7 @@ typedef struct mse_search_result_t {
 int mse_finalise_search(mse_search_result_t *search_final_res, mse_search_intermediate_t *search_int_res);
 
 /// Takes a search result and resorts it if the sort type has changed
-void mes_sort_search_results(mse_search_result_t *search_res, mse_search_sort_type_t sort_type);
+void mse_sort_search_results(mse_search_result_t *search_res, mse_search_sort_type_t sort_type);
 
 /// Frees the search result
 void mse_free_search_results(mse_search_result_t *search_res);

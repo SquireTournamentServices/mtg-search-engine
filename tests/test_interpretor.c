@@ -330,12 +330,12 @@ static int test_search_result()
     mse_search_result_t search_res;
     ASSERT(mse_finalise_search(&search_res, &ret));
 
-    mes_sort_search_results(&search_res, MSE_SORT_DEFAULT);
-    mes_sort_search_results(&search_res, MSE_SORT_UUID);
-    mes_sort_search_results(&search_res, MSE_SORT_CARD_NAME);
-    mes_sort_search_results(&search_res, MSE_SORT_CMC);
-    mes_sort_search_results(&search_res, MSE_SORT_POWER);
-    mes_sort_search_results(&search_res, MSE_SORT_TOUGHNESS);
+    mse_sort_search_results(&search_res, MSE_SORT_DEFAULT);
+    mse_sort_search_results(&search_res, MSE_SORT_UUID);
+    mse_sort_search_results(&search_res, MSE_SORT_CARD_NAME);
+    mse_sort_search_results(&search_res, MSE_SORT_CMC);
+    mse_sort_search_results(&search_res, MSE_SORT_POWER);
+    mse_sort_search_results(&search_res, MSE_SORT_TOUGHNESS);
 
     // Cleanup
     mse_free_search_results(&search_res);
