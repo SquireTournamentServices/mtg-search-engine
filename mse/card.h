@@ -5,12 +5,6 @@
 #include <jansson.h>
 #include "./uuid.h"
 
-// Evil macros
-#ifdef british
-#define color colour
-#define colors colours
-#endif
-
 typedef enum mse_colour_enum_t {
     MSE_WHITE  = 1 << 0,
     MSE_BLUE   = 1 << 1,
@@ -19,7 +13,7 @@ typedef enum mse_colour_enum_t {
     MSE_GREEN  = 1 << 4
 } mse_colour_enum_t;
 
-#define MSE_WUBRG 0x05
+#define MSE_WUBRG 0x1F
 
 mse_colour_enum_t mse_parse_colour(char colour);
 
