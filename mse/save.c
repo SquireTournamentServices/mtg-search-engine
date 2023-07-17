@@ -72,12 +72,17 @@ static int __mse_read_cards_sets(FILE *f, mse_all_printings_cards_t *cards)
     size_t len;
     ASSERT(mse_read_size_t(f, &len));
 
+    mse_avl_tree_node_t *parent = NULL;
     for (size_t i = 0; i < len; i++) {
         mse_set_t *set = malloc(sizeof(*set));
         ASSERT(set != NULL);
         ASSERT(mse_read_set(f, set));
 
-        mse_avl_tree_node_t *node = mse_init_avl_tree_node(&__free_save_cards_set, &mse_avl_cmp_set, set);
+        mse_avl_tree_node_t *node = mse_init_avl_tree_node(&__free_save_cards_set, &mse_avl_cmp_set, set, parent);
+        if (node->region_ptr == NULL && node->region_length == 1) {
+            parent = node;
+        }
+
         ASSERT(mse_insert_node(&cards->set_tree, node));
         cards->set_count++;
     }
@@ -89,10 +94,14 @@ static int __mse_read_cards_cards(FILE *f, mse_all_printings_cards_t *cards)
     size_t len;
     ASSERT(mse_read_size_t(f, &len));
 
+    mse_avl_tree_node_t *parent = NULL;
     for (size_t i = 0; i < len; i++) {
         mse_card_t *card = malloc(sizeof(*card));
         ASSERT(card != NULL);
-        mse_avl_tree_node_t *node = mse_init_avl_tree_node(&__free_save_cards_card, &mse_avl_cmp_card, card);
+        mse_avl_tree_node_t *node = mse_init_avl_tree_node(&__free_save_cards_card, &mse_avl_cmp_card, card, parent);
+        if (node->region_ptr == NULL && node->region_length == 1) {
+            parent = node;
+        }
 
         ASSERT(mse_read_card(f, card));
         if (mse_insert_node(&cards->card_tree, node)) {

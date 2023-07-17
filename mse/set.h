@@ -12,6 +12,8 @@ typedef struct mse_set_t {
     struct tm release;
     /// The payload is a pointer to a card, the card is allocated by the cards, therefore there is no free function set.
     mse_avl_tree_node_t *set_cards_tree;
+    /// Region allocator parent
+    mse_avl_tree_node_t *parent;
 } mse_set_t;
 
 int mse_parse_set_json(json_t *set_node, mse_set_t *ret, const char *code);

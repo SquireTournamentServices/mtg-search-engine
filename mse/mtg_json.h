@@ -79,7 +79,9 @@ typedef struct mse_all_printings_cards_t {
 /// This function will handle a set node and add the set and, cards
 int __mse_handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
         const char *set_code,
-        json_t *set_node);
+        json_t *set_node,
+        mse_avl_tree_node_t **card_parent,
+        mse_avl_tree_node_t **set_parent);
 
 /// Exposed internal method for use within internal testing
 /// This method will parse the json cards all of the indexes

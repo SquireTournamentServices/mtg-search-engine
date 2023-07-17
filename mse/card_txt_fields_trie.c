@@ -133,11 +133,15 @@ int mse_card_trie_lookup_aprox(mse_card_trie_node_t *trie, char *str, mse_avl_tr
     return 1;
 }
 
-static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mse_card_t *card)
+static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mse_card_t *card, mse_avl_tree_node_t **parent)
 {
     mse_avl_tree_node_t *node = mse_init_avl_tree_node(MSE_CARD_DEFAULT_FREE_FUNCTION,
                                 MSE_CARD_DEFAULT_COMPARE_FUNCTION,
-                                (void *) card);
+                                (void *) card,
+                                *parent);
+    if (node->region_ptr == NULL && node->region_length == 1) {
+        *parent = node;
+    }
     ASSERT(node != NULL);
     if (!mse_insert_node(&root->cards, node)) {
         mse_free_tree(node);
@@ -145,10 +149,14 @@ static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mse_card_t *car
     return 1;
 }
 
-static int __mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t *card, char *str, int index)
+static int __mse_card_trie_insert(mse_card_trie_node_t *root,
+                                  mse_card_t *card,
+                                  char *str,
+                                  int index,
+                                  mse_avl_tree_node_t **parent)
 {
     if (str[index] == 0) {
-        return __mse_card_trie_do_insert(root, card);
+        return __mse_card_trie_do_insert(root, card, parent);
     }
 
     long c_index = mse_char_map_get_index(str[index]);
@@ -161,7 +169,7 @@ static int __mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t *card, 
     if (root->children[c_index] == NULL) {
         ASSERT(mse_init_card_trie_node(&root->children[c_index]));
     }
-    return __mse_card_trie_insert(root->children[c_index], card, str, index + 1);
+    return __mse_card_trie_insert(root->children[c_index], card, str, index + 1, parent);
 }
 
 int mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t *card, char *str)
@@ -169,7 +177,7 @@ int mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t *card, char *str
     char *str_f = mse_filter_text(str);
     ASSERT(str_f != NULL);
 
-    int r = __mse_card_trie_insert(root, card, str_f, 0);
+    int r = __mse_card_trie_insert(root, card, str_f, 0, &root->parent);
     free(str_f);
 
     ASSERT(r);

@@ -24,7 +24,22 @@ void mse_free_tree(mse_avl_tree_node_t *tree)
     if (tree->free_payload != NULL) {
         tree->free_payload(tree->payload);
     }
-    free(tree);
+
+    if (tree->region_ptr == NULL) {
+        memset(tree, 0, sizeof(*tree));
+        return;
+    }
+
+    mse_avl_tree_node_t *parent = (mse_avl_tree_node_t *) tree->region_ptr;
+    pthread_mutex_lock(&parent->region_lock);
+    void *ptr = parent->region_ptr;
+    int has_alloc = --parent->region_length == 0;
+    pthread_mutex_unlock(&parent->region_lock);
+    memset(tree, 0, sizeof(*tree));
+
+    if (has_alloc) {
+        free(ptr);
+    }
 }
 
 int mse_tree_balance(mse_avl_tree_node_t *node)
@@ -39,14 +54,35 @@ int mse_tree_balance(mse_avl_tree_node_t *node)
     return lh - rh;
 }
 
+/// TODO: Change this number lmao
+#define MSE_AVL_TREE_REGION_DEFAULT_SIZE (sizeof(mse_avl_tree_node_t) * 100)
+
 mse_avl_tree_node_t *mse_init_avl_tree_node(void (*free_payload)(void *payload),
         int (*cmp_payload)(void *a, void *b),
-        void *payload)
+        void *payload,
+        mse_avl_tree_node_t *parent)
 {
-    ASSERT(cmp_payload != NULL);
+    mse_avl_tree_node_t *tree = NULL;
+    if (parent == NULL) {
+        ASSERT(cmp_payload != NULL);
 
-    mse_avl_tree_node_t *tree = malloc(sizeof * tree);
-    ASSERT(tree != NULL);
+        size_t len = MSE_AVL_TREE_REGION_DEFAULT_SIZE;
+        tree  = malloc(sizeof * tree * len);
+        ASSERT(tree != NULL);
+
+        tree->region_ptr = tree;
+        tree->region_length = 1;
+        pthread_mutex_t tmp = PTHREAD_MUTEX_INITIALIZER;
+        tree->region_lock = tmp;
+    } else {
+        pthread_mutex_lock(&parent->region_lock);
+        if (parent->region_length == MSE_AVL_TREE_REGION_DEFAULT_SIZE) {
+            pthread_mutex_unlock(&parent->region_lock);
+            return mse_init_avl_tree_node(free_payload, cmp_payload, payload, NULL);
+        }
+        tree = &((mse_avl_tree_node_t *) parent->region_ptr)[parent->region_length++];
+        pthread_mutex_unlock(&parent->region_lock);
+    }
 
     tree->payload = payload;
     tree->cmp_payload = cmp_payload;
@@ -230,7 +266,9 @@ mse_avl_tree_node_t *mse_shallow_copy_tree_node(mse_avl_tree_node_t *node)
         return NULL;
     }
 
-    return mse_init_avl_tree_node(node->free_payload, node->cmp_payload, node->payload);
+    // TODO: Not forget about this
+    // TODO: Change this to take a parent from the node
+    return mse_init_avl_tree_node(node->free_payload, node->cmp_payload, node->payload, NULL);
 }
 
 static int __add_node_to_lookup(mse_avl_tree_node_t **res, mse_avl_tree_node_t *__node)

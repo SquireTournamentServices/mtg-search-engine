@@ -6,6 +6,7 @@
 typedef struct mse_card_trie_node_t {
     struct mse_card_trie_node_t *children[MSE_ALPHABET_LENGTH];
     mse_avl_tree_node_t *cards;
+    mse_avl_tree_node_t *parent;
 } mse_card_trie_node_t;
 
 int mse_init_card_trie_node(mse_card_trie_node_t **node);

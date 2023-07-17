@@ -26,7 +26,8 @@ typedef struct mse_colour_index_generator_state_t {
 static int MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type) \
     (mse_avl_tree_node_t *cards, \
     mse_avl_tree_node_t **tree, \
-    mse_colour_enum_t colours) \
+    mse_colour_enum_t colours, \
+    mse_avl_tree_node_t **parent) \
 { \
     if (cards == NULL) { \
         return 1; \
@@ -34,18 +35,22 @@ static int MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type) \
  \
     mse_card_t *card = (mse_card_t *) cards->payload; \
     if (mse_colour_##cmp_type(card->colour_field, colours)) { \
-        mse_avl_tree_node_t *node = mse_init_avl_tree_node(NULL, &mse_avl_cmp_card, cards->payload); \
+        mse_avl_tree_node_t *node = mse_init_avl_tree_node(NULL, &mse_avl_cmp_card, cards->payload, *parent); \
+        if (node->region_ptr == NULL && node->region_length == 1) { \
+            *parent = node; \
+        } \
         ASSERT(mse_insert_node(tree, node)); \
     } \
  \
-    ASSERT(MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type)(cards->l, tree, colours)); \
-    ASSERT(MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type)(cards->r, tree, colours)); \
+    ASSERT(MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type)(cards->l, tree, colours, parent)); \
+    ASSERT(MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type)(cards->r, tree, colours, parent)); \
     return 1; \
 } \
 static void MSE_INDEX_COLOUR_NAME_IMPL(colour_field, cmp_type)(void *__state, mse_thread_pool_t *pool) \
 { \
     mse_colour_index_generator_state_t *gstate = (mse_colour_index_generator_state_t *) __state; \
-    if (!MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type)(gstate->cards, gstate->tree, gstate->colours)) { \
+    mse_avl_tree_node_t *parent = NULL; \
+    if (!MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type)(gstate->cards, gstate->tree, gstate->colours, &parent)) { \
          *gstate->err = 0; \
     } \
     sem_post(gstate->semaphore); \
@@ -173,28 +178,33 @@ static int __insert_node(mse_avl_tree_node_t **root, mse_avl_tree_node_t *node)
 
 #define MSE_INDEX_FIELD_NAME(fname) __mse_generate_card_##fname##_index_task
 #define MSE_INDEX_FOR_FIELD(fname) \
-static int __add_cards_to_##fname##_tree(mse_avl_tree_node_t *cards, mse_avl_tree_node_t **card_##fname##_tree) \
+static int __add_cards_to_##fname##_tree(mse_avl_tree_node_t *cards, mse_avl_tree_node_t **card_##fname##_tree, mse_avl_tree_node_t **parent) \
 { \
     if (cards == NULL) { \
         return 1; \
     } \
  \
-    mse_avl_tree_node_t *node = mse_init_avl_tree_node(NULL, &mse_avl_cmp_card_##fname, cards->payload); \
+    mse_avl_tree_node_t *node = mse_init_avl_tree_node(NULL, &mse_avl_cmp_card_##fname, cards->payload, *parent); \
+    if (node->region_ptr == NULL && node->region_length == 1) { \
+        *parent = node; \
+    } \
     int r = __insert_node(card_##fname##_tree, node); \
     if (!r) { \
         lprintf(LOG_ERROR, "Cannot insert a card into the " #fname " tree\n"); \
         mse_free_tree(node); \
         return 0; \
     } \
-    ASSERT(__add_cards_to_##fname##_tree(cards->l, card_##fname##_tree)); \
-    ASSERT(__add_cards_to_##fname##_tree(cards->r, card_##fname##_tree)); \
+    ASSERT(__add_cards_to_##fname##_tree(cards->l, card_##fname##_tree, parent)); \
+    ASSERT(__add_cards_to_##fname##_tree(cards->r, card_##fname##_tree, parent)); \
     return 1; \
 } \
 static void MSE_INDEX_FIELD_NAME(fname)(void *__state, mse_thread_pool_t *pool) \
 { \
+    mse_avl_tree_node_t *parent = NULL; \
     mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state; \
     if (!__add_cards_to_##fname##_tree(state->cards->card_tree,  \
-                                      &state->cards->indexes.card_##fname##_tree)) { \
+                                      &state->cards->indexes.card_##fname##_tree, \
+                                      &parent)) { \
         state->ret = 0; \
     } \
     sem_post(&(state->semaphore)); \

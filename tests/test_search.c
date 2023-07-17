@@ -17,7 +17,7 @@ static mse_avl_tree_node_t *get_tree(int min, int max)
         memset(ptr, 0, sizeof(*ptr));
         memset(ptr->id.bytes, i, sizeof(*ptr->id.bytes));
 
-        mse_avl_tree_node_t *node = mse_init_avl_tree_node(&free, &mse_avl_cmp_card, (void *) ptr);
+        mse_avl_tree_node_t *node = mse_init_avl_tree_node(&free, &mse_avl_cmp_card, (void *) ptr, NULL);
         ASSERT(node != NULL);
         ASSERT(mse_insert_node(&tree, node));
     }
@@ -98,11 +98,11 @@ static int test_set_negation()
     memset(&card_b.id.bytes, 2, sizeof(card_b.id.bytes));
 
     // Insert the cards
-    mse_avl_tree_node_t *node = mse_init_avl_tree_node(NULL, &mse_avl_cmp_card, &card_a);
+    mse_avl_tree_node_t *node = mse_init_avl_tree_node(NULL, &mse_avl_cmp_card, &card_a, NULL);
     ASSERT(node);
     ASSERT(mse_insert_node(&cards.card_tree, node));
 
-    node = mse_init_avl_tree_node(NULL, &mse_avl_cmp_card, &card_b);
+    node = mse_init_avl_tree_node(NULL, &mse_avl_cmp_card, &card_b, NULL);
     ASSERT(node);
     ASSERT(mse_insert_node(&cards.card_tree, node));
     ASSERT(mse_tree_size(cards.card_tree) == 2);
@@ -125,7 +125,7 @@ static int test_set_negation()
     a.node = NULL;
 
     // Negation of a set with one item should return a set with the other
-    node = mse_init_avl_tree_node(NULL, &mse_avl_cmp_card, &card_a);
+    node = mse_init_avl_tree_node(NULL, &mse_avl_cmp_card, &card_a, NULL);
     ASSERT(node);
     a.node = node;
 

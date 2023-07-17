@@ -93,7 +93,9 @@ static void __free_all_printings_cards_set(void *set)
 
 int __mse_handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
         const char *set_code,
-        json_t *set_node)
+        json_t *set_node,
+        mse_avl_tree_node_t **card_parent,
+        mse_avl_tree_node_t **set_parent)
 {
     ASSERT(json_is_object(set_node));
 
@@ -101,8 +103,12 @@ int __mse_handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
     ASSERT(set != NULL);
     ASSERT(mse_parse_set_json(set_node, set, set_code));
 
-    mse_avl_tree_node_t *node = mse_init_avl_tree_node(&__free_all_printings_cards_set, &mse_avl_cmp_set, set);
+    mse_avl_tree_node_t *node = mse_init_avl_tree_node(&__free_all_printings_cards_set, &mse_avl_cmp_set, set, *set_parent);
+    ASSERT(node);
     ASSERT(mse_insert_node(&ret->set_tree, node));
+    if (node->region_ptr == NULL && node->region_length == 1) {
+        *set_parent = node;
+    }
 
     json_t *cards = json_object_get(set_node, "cards");
     ASSERT(cards != NULL);
@@ -114,7 +120,10 @@ int __mse_handle_all_printings_cards_set(mse_all_printings_cards_t *ret,
         ASSERT(json_is_object(value));
         mse_card_t *card = malloc(sizeof(*card));
         ASSERT(card != NULL);
-        node = mse_init_avl_tree_node(&__free_all_printings_cards_card, &mse_avl_cmp_card, card);
+        node = mse_init_avl_tree_node(&__free_all_printings_cards_card, &mse_avl_cmp_card, card, *card_parent);
+        if (node->region_ptr == NULL && node->region_length == 1) {
+            *card_parent = node;
+        }
 
         ASSERT(mse_parse_card_json(value, card));
         if (mse_insert_node(&ret->card_tree, node)) {
@@ -152,8 +161,10 @@ int __mse_parse_all_printings_cards(mse_all_printings_cards_t *ret, json_t *card
     const char *key;
     json_t *value;
     size_t count = 0;
+    mse_avl_tree_node_t *set_parent = NULL;
+    mse_avl_tree_node_t *card_parent = NULL;
     json_object_foreach(data, key, value) {
-        __mse_handle_all_printings_cards_set(ret, key, value);
+        __mse_handle_all_printings_cards_set(ret, key, value, &card_parent, &set_parent);
         count++;
     }
 

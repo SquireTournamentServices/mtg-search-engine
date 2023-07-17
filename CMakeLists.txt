@@ -181,33 +181,37 @@ set(TESTS
 
 # Setup docs
 find_package(doxygen)
-if (DOXYGEN_FOUND)
-    find_package(doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
-    doxygen_add_docs(mse-docs ${SRC} ${TESTS}
-                     "Generate documentation pages for ${REPO_URL}")
+if(DOXYGEN_FOUND)
+  find_package(doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
+  doxygen_add_docs(mse-docs ${SRC} ${TESTS}
+                   "Generate documentation pages for ${REPO_URL}")
 endif()
 
 # Setup gcovr
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 
-if (UNIX)
-    include(CodeCoverage)
+if(UNIX)
+  include(CodeCoverage)
 
-    set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
+  set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
 
-    append_coverage_compiler_flags()
-    setup_target_for_coverage_gcovr_xml(
-      NAME
-      mse-coverage
-      EXECUTABLE
-      mtg-search-engine-tests
-      test
-      EXCLUDE
-      ${GCOVR_EXCLUDE})
+  append_coverage_compiler_flags()
+  setup_target_for_coverage_gcovr_xml(
+    NAME
+    mse-coverage
+    EXECUTABLE
+    mtg-search-engine-tests
+    test
+    EXCLUDE
+    ${GCOVR_EXCLUDE})
 endif()
 
+option(USE_JEMALLOC OFF)
 set(LIBS jansson CURL::libcurl pthread m c)
+if(USE_JEMALLOC)
+  set(LIBS ${LIBS} jemalloc)
+endif()
 
 # Add library and cli execs
 add_library(mtg-search-engine OBJECT ${SRC})
