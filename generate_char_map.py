@@ -102,8 +102,8 @@ def gen_unit() -> None:
     }
 }"""
 
-    with open(OUTPUT_FILE_U, "w") as f:
-        f.write(output_unit)
+    with open(OUTPUT_FILE_U, "wb") as f:
+        print(output_unit, f)
 
 
 def main() -> None:
