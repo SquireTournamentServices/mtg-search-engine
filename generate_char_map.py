@@ -103,7 +103,7 @@ def gen_unit() -> None:
 }"""
 
     with open(OUTPUT_FILE_U, "wb") as f:
-        print(output_unit, f)
+        f.write(output_unit.encode('utf-8'))
 
 
 def main() -> None:
