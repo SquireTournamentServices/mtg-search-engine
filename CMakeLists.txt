@@ -207,7 +207,6 @@ if(UNIX)
     ${GCOVR_EXCLUDE})
 endif()
 
-set(LIBS jansson CURL::libcurl pthread m c)
 option(USE_JEMALLOC OFF)
 set(LIBS jansson CURL::libcurl pthread m c)
 if(USE_JEMALLOC)
