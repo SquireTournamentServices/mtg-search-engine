@@ -1,9 +1,10 @@
 #include "./avl_tree.h"
 #include "../testing_h/testing.h"
-#include <sys/param.h> // MAX
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define MAX(a, b) (a > b ? a : b)
 
 static size_t __tree_height(mse_avl_tree_node_t *node)
 {
