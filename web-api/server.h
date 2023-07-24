@@ -4,7 +4,6 @@
 
 typedef struct mse_web_server_t {
     mse_t mse;
-    char *bind_addr;
 } mse_web_server_t;
 
-void mse_serve(mse_web_server_t *server);
+void mse_serve(mse_t *mse_in);

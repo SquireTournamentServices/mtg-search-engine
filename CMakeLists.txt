@@ -178,8 +178,14 @@ set(TESTS
     ./tests/test_save.c
     ./tests/system_test.h
     ./tests/system_test.c)
-set(WEB_API ./web-api/main.c ./web-api/server.c ./web-api/server.h
-            ./mongoose/mongoose.c ./mongoose/mongoose.h)
+set(WEB_API
+    ./web-api/main.c
+    ./web-api/server.c
+    ./web-api/server.h
+    ./web-api/async_query.h
+    ./web-api/async_query.c
+    ./mongoose/mongoose.c
+    ./mongoose/mongoose.h)
 
 # Setup docs
 find_package(doxygen)
