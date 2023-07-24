@@ -4,7 +4,12 @@
 #include <string.h>
 #include <sys/param.h>
 
+// Server state, this is global as there is only every one server
 static mse_t *mse = NULL;
+static size_t requests = 0;
+static size_t good_requests = 0;
+static size_t internal_error_requests = 0;
+static size_t user_error_requests = 0;
 
 static int __mse_get_page_number(struct mg_http_message *hm)
 {
@@ -30,6 +35,7 @@ static void __mse_serve(struct mg_connection *c,
 {
     if (event == MG_EV_ACCEPT) {
         c->fn_data = NULL;
+        requests++;
     } else if (event == MG_EV_HTTP_MSG) {
         struct mg_http_message *hm = (struct mg_http_message *) ev_data;
         if(mg_http_match_uri(hm, "/")) {
@@ -40,6 +46,7 @@ static void __mse_serve(struct mg_connection *c,
                           "<a href='/github'>%s %s</a>",
                           MSE_PROJECT_NAME,
                           MSE_PROJECT_VERSION);
+            good_requests++;
         } else if (mg_http_match_uri(hm, "/github")) {
             mg_http_reply(c, 301, "",
                           "<meta http-equiv=\"refresh\" content=\"0; URL=%s\" />",
@@ -47,6 +54,7 @@ static void __mse_serve(struct mg_connection *c,
         } else if (mg_http_match_uri(hm, "/api")) {
             if (hm->body.len == 0) {
                 mg_http_reply(c, 400, "", "400 - Empty request body");
+                user_error_requests++;
                 return;
             }
 
@@ -54,6 +62,7 @@ static void __mse_serve(struct mg_connection *c,
             if (query == NULL) {
                 lprintf(LOG_ERROR, "Cannot alloc query string\n");
                 mg_http_reply(c, 500, "", "500 - Internal server error");
+                internal_error_requests++;
                 return;
             }
 
@@ -65,9 +74,18 @@ static void __mse_serve(struct mg_connection *c,
             if (!(c->fn_data = mse_start_async_query(query, page_number, mse))) {
                 lprintf(LOG_ERROR, "Cannot start async query\n");
                 mg_http_reply(c, 500, "", "500 - Internal server error");
+                internal_error_requests++;
             }
+        } else if (mg_http_match_uri(hm, "/metrics")) {
+            mg_http_reply(c, 200, "", "mse_requests %lu\nmse_good_requests %lu\nmse_interal_error_requests %lu\nmse_user_error_requests %lu",
+                          requests,
+                          good_requests,
+                          internal_error_requests,
+                          user_error_requests);
+            good_requests++;
         } else {
             mg_http_reply(c, 404, "", "404 - Page not found");
+            user_error_requests++;
         }
     } else if (event == MG_EV_POLL && c->is_accepted && c->fn_data != NULL) {
         mse_async_query_t *query = (mse_async_query_t *) c->fn_data;
@@ -78,8 +96,10 @@ static void __mse_serve(struct mg_connection *c,
         if (query->err || query->resp == NULL) {
             lprintf(LOG_ERROR, "Cannot get the response err=%d, resp=%s\n", query->err, query->resp);
             mg_http_reply(c, 500, "", "500 - Internal server error");
+            internal_error_requests++;
         }
         mg_http_reply(c, 200, "", "%s", query->resp);
+        good_requests++;
         mse_async_query_decref(query);
         c->fn_data = NULL;
     } else if ((event == MG_EV_CLOSE || event == MG_EV_ERROR) && c->is_accepted && c->fn_data != NULL) {
