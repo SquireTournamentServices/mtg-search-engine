@@ -10,3 +10,6 @@
 [submodule "strptime"]
 	path = strptime
 	url = https://github.com/djpiper28/strptime
+[submodule "mongoose"]
+	path = mongoose
+	url = https://github.com/cesanta/mongoose
