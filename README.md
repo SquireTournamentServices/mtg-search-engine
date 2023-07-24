@@ -25,6 +25,7 @@ and sets. It has a syntax that is similar to Scryfall but it can be embedded any
  - cmake-formatter
  - ctest
  - valgrind
+ - libmedtls *(web-api)*
 
 ## Building and Testing
 This project is written in C and, targets all platforms. 
@@ -35,7 +36,7 @@ mkdir -p build
 cd build
 
 # ./build/
-cmake .. # -DCMAKE_BUILD_TYPE=DEBUG # Debug mode ??
+cmake .. # You can use -DMSE_WEB_API=ON to build the web api
 cmake --build . -j
 
 # ctest -V -j # Run tests ??
