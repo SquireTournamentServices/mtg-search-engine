@@ -1,7 +1,10 @@
 #include "./server.h"
 #include "../testing_h/testing.h"
 #include <string.h>
+#include <sys/param.h>
 #include <jansson.h>
+
+#define MSE_PAGE_SIZE 50
 
 static int __mse_jsonify_card(json_t *json, mse_card_t *card)
 {
@@ -65,14 +68,17 @@ static int __mse_jsonify_card(json_t *json, mse_card_t *card)
     return 1;
 }
 
-static int __mse_jsonify_search_res_impl(mse_search_result_t res, struct mg_connection *c, json_t *json)
+static int __mse_jsonify_search_res_impl(mse_search_result_t res,
+        struct mg_connection *c,
+        json_t *json,
+        int page_number)
 {
     // Encode the response
     json_t *arr = json_array();
     ASSERT(arr);
     ASSERT(json_object_set(json, "cards", arr) == 0);
 
-    for (size_t i = 0; i < res.cards_length; i++) {
+    for (size_t i = page_number * MSE_PAGE_SIZE; i < res.cards_length && i < (page_number + 1) * MSE_PAGE_SIZE; i++) {
         json_t *card = json_object();
         ASSERT(card != NULL);
         if (!__mse_jsonify_card(card, res.cards[i])) {
@@ -88,6 +94,13 @@ static int __mse_jsonify_search_res_impl(mse_search_result_t res, struct mg_conn
         }
     }
 
+    json_t *tmp = NULL;
+    ASSERT(tmp = json_integer(MSE_PAGE_SIZE));
+    ASSERT(json_object_set(json, "page_size", tmp) == 0);
+
+    ASSERT(tmp = json_integer(page_number));
+    ASSERT(json_object_set(json, "page", tmp) == 0);
+
     // Send the response
     char *buf = json_dumps(json, 0);
     ASSERT(buf != NULL);
@@ -96,16 +109,16 @@ static int __mse_jsonify_search_res_impl(mse_search_result_t res, struct mg_conn
     return 1;
 }
 
-static int __mse_jsonify_search_res(mse_search_result_t res, struct mg_connection *c)
+static int __mse_jsonify_search_res(mse_search_result_t res, struct mg_connection *c, int page_number)
 {
     json_t *json = json_object();
     ASSERT(json != NULL);
-    ASSERT(__mse_jsonify_search_res_impl(res, c, json));
+    ASSERT(__mse_jsonify_search_res_impl(res, c, json, page_number));
     json_decref(json);
     return 1;
 }
 
-static void __mse_serve_query(struct mg_connection *c, char *query, mse_web_server_t *server)
+static void __mse_serve_query(struct mg_connection *c, char *query, mse_web_server_t *server, int page_number)
 {
     lprintf(LOG_INFO, "Executing query %s\n", query);
 
@@ -116,10 +129,27 @@ static void __mse_serve_query(struct mg_connection *c, char *query, mse_web_serv
         return;
     }
 
-    if (!__mse_jsonify_search_res(res, c)) {
+    if (!__mse_jsonify_search_res(res, c, page_number)) {
         mg_http_reply(c, 500, "", "500 - Cannot encode output");
     }
     mse_free_search_results(&res);
+}
+
+static int __mse_get_page_number(struct mg_http_message *hm)
+{
+    int res = 0;
+    struct mg_str *header = mg_http_get_header(hm, "page");
+    if (header == NULL) {
+        return 0;
+    }
+
+    char buffer[10];
+    memset(buffer, 0, sizeof(buffer));
+    strncpy(buffer, header->ptr, MIN(sizeof(buffer), header->len));
+
+    res = atoi(buffer);
+    ASSERT(res >= 0);
+    return res;
 }
 
 static void __mse_serve(struct mg_connection *c,
@@ -135,7 +165,7 @@ static void __mse_serve(struct mg_connection *c,
             mg_http_reply(c,
                           200,
                           "",
-                          "<h1>To use this API POST to ./api where the body is the query.</h1><p>%s %s</p>",
+                          "<h1>To use this API POST to ./api where the body is the query. Set the 'page' header to the page of output you want.</h1><p>%s %s</p>",
                           MSE_PROJECT_NAME,
                           MSE_PROJECT_VERSION);
         } else if (mg_http_match_uri(hm, "/github")) {
@@ -158,7 +188,8 @@ static void __mse_serve(struct mg_connection *c,
             strncpy(query, hm->body.ptr, hm->body.len);
             query[hm->body.len] = 0;
 
-            __mse_serve_query(c, query, server);
+            int page_number = __mse_get_page_number(hm);
+            __mse_serve_query(c, query, server, page_number);
             free(query);
         } else {
             mg_http_reply(c, 404, "", "404 - Page not found");
