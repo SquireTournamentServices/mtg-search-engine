@@ -9,7 +9,7 @@ export default async function SearchResultPage({ params }) {
   const data = await resp.json();
 
   return (
-    <div className="md:flex md:flex-row md:flex-wrap grid auto-rows-max gap-3 justify-start">
+    <div className="flex flex-row flex-wrap gap-3 justify-start">
       {data.cards.map((item) => (
         <Card data={item} />
       ))}
