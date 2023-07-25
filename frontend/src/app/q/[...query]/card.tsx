@@ -4,7 +4,7 @@ import Oracle from "./oracle.tsx";
 
 export default function Card(props) {
   return (
-    <div className="flex flex-col rounded-xl bg-slate-100 w-72 min-h-[300px] p-5">
+    <div className="flex flex-col rounded-xl bg-slate-100 w-72 min-h-[300px] p-5 drop-shadow">
       <div className="flex flex-row flex-wrap gap-3 justify-between">
         <h2 className="font-bold">{props.data.name}</h2>
         <div className="flex flex-row flex-wrap w-max">
