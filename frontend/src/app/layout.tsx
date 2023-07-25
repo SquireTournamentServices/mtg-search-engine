@@ -4,7 +4,8 @@ import "./globals.css";
 import SearchBar from "./searchBar";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGithub } from "@fortawesome/free-solid-svg-icons";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { faHome } from "@fortawesome/free-solid-svg-icons";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,19 +22,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className + " min-h-screen"}>
-        <div className="py-5 px-5 flex flex-row justify-between sticky top-0 bg-slate-900">
-          <div className="flex flex-row">
-            <h1 className="text-white px-3 py-1 grow">
-              <Link href="/">Home</Link>
-            </h1>
-          </div>
+        <div className="p-5 flex flex-row justify-between sticky top-0 bg-slate-900">
+          <Link href="/" className="w-8 text-white">
+            <FontAwesomeIcon icon={faHome} />
+          </Link>
           <SearchBar />
-          <div className="flex flex-row text-white">
-            <Link href="https://github.com/MonarchDevelopment/mtg-search-engine">
-              <FontAwesomeIcon icon={faGithub} />
-              Github
-            </Link>
-          </div>
+          <Link
+            href="https://github.com/MonarchDevelopment/mtg-search-engine"
+            className="w-8 text-white"
+          >
+            <FontAwesomeIcon icon={faGithub} />
+          </Link>
         </div>
         <div className="p-5 justify-center">{children}</div>
       </body>
