@@ -105,6 +105,9 @@ static void __mse_serve(struct mg_connection *c,
     } else if ((event == MG_EV_CLOSE || event == MG_EV_ERROR) && c->is_accepted && c->fn_data != NULL) {
         mse_async_query_t *query = (mse_async_query_t *) c->fn_data;
         mse_async_query_decref(query);
+        if (event == MG_EV_ERROR) {
+            internal_error_requests++;
+        }
     }
 }
 
