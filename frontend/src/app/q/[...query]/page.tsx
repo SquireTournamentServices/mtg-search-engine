@@ -9,7 +9,7 @@ export default async function SearchResultPage({ params }) {
   const data = await resp.json();
 
   return (
-    <div class="w-full mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="w-full mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       {data.cards.map((item) => (
         <Card data={item} />
       ))}

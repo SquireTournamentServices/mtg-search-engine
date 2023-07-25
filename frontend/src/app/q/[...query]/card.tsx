@@ -1,7 +1,7 @@
 import { isPropertySignature } from "typescript";
-import Manamoji from "./manamoji.tsx";
-import Oracle from "./oracle.tsx";
-import Colour from "./colour.tsx";
+import Manamoji from "./manamoji";
+import Oracle from "./oracle";
+import Colour from "./colour";
 
 export default function Card(props) {
   const colours = [];
