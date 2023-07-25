@@ -35,9 +35,7 @@ export default function RootLayout({
             </Link>
           </div>
         </div>
-        <div className="p-5 justify-center">
-          {children}
-        </div>
+        <div className="p-5 justify-center">{children}</div>
       </body>
     </html>
   );

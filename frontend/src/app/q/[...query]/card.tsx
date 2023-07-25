@@ -1,5 +1,6 @@
 import { isPropertySignature } from "typescript";
 import Manamoji from "./manamoji.tsx";
+import Oracle from "./oracle.tsx";
 
 export default function Card(props) {
   return (
@@ -18,7 +19,7 @@ export default function Card(props) {
         <p className="text-m"> {props.data.types.join(" ")} </p>
       )}
       {props.data.oracle_text && (
-        <p className="text-sm">{props.data.oracle_text}</p>
+        <Oracle oracle_text={props.data.oracle_text} />
       )}
       <div className="grow" />
       <p className="text-right">
