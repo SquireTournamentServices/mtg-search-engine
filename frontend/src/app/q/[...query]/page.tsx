@@ -1,4 +1,3 @@
-import SearchBar from "../../searchBar";
 import Card from "./card";
 
 export default async function SearchResultPage({ params }) {
@@ -11,7 +10,6 @@ export default async function SearchResultPage({ params }) {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24 gap-6">
-      <SearchBar query={query} />
       <div className="md:flex md:flex-row md:flex-wrap grid grid-rows-5 gap-3 justify-center">
         {data.cards.map((item) => (
           <Card data={item} />
