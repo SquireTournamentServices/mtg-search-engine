@@ -130,6 +130,6 @@ void mse_serve(mse_t *mse_in)
     }
 
     lprintf(LOG_INFO, "Listening on %s, mongoose version %s\n", bind_addr, MG_VERSION);
-    while(1) mg_mgr_poll(&mgr, 10);
+    while(1) mg_mgr_poll(&mgr, 1);
     mg_mgr_free(&mgr);
 }
