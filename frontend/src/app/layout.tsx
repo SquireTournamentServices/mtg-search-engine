@@ -23,13 +23,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className + " min-h-screen"}>
         <div className="p-5 flex flex-row justify-between sticky top-0 bg-slate-900">
-          <Link href="/" className="w-8 text-white">
+          <Link href="/" className="w-8 text-white hover:scale-125">
             <FontAwesomeIcon icon={faHome} />
           </Link>
           <SearchBar />
           <Link
             href="https://github.com/MonarchDevelopment/mtg-search-engine"
-            className="w-8 text-white"
+            className="w-8 text-white hover:scale-125"
           >
             <FontAwesomeIcon icon={faGithub} />
           </Link>

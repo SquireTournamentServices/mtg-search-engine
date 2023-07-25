@@ -22,7 +22,7 @@ export default function SearchBar(props) {
             onChange={(e) => setName(e.target.value)}
             className="bg-slate-100 hover:bg-slate-200 rounded-xl w-full px-1"
           />
-          <button type="submit" className="hover:bg-slate-200 rounded-xl">
+          <button type="submit" className="hover:bg-slate-200 rounded-xl hover:scale-125">
             🔍
           </button>
         </form>
