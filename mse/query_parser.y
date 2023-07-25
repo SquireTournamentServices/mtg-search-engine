@@ -323,7 +323,6 @@ query: set_generator %dprec 5
      } set_generator %dprec 1
 
      | query WHITESPACE {
-         lprintf(LOG_WARNING, "Implied operator in query\n");
          PARSE_ASSERT(ret->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
          PARSE_ASSERT(__mse_insert_node(ret, ret->op_node));
          ret->op_node = NULL;
