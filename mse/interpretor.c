@@ -254,6 +254,7 @@ int mse_resolve_interp_tree(mse_interp_node_t *root,
                             int dry_run,
                             mse_all_printings_cards_t *cards)
 {
+    ASSERT(root != NULL);
     switch(root->type) {
     case MSE_INTERP_NODE_SET_GENERATOR:
         ASSERT(__mse_resolve_interp_leaf_generator(root, ret, pool, dry_run, cards));
