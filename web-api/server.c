@@ -51,6 +51,7 @@ static void __mse_serve(struct mg_connection *c,
             mg_http_reply(c, 301, "",
                           "<meta http-equiv=\"refresh\" content=\"0; URL=%s\" />",
                           MSE_REPO_URL);
+            good_requests++;
         } else if (mg_http_match_uri(hm, "/api")) {
             if (hm->body.len == 0) {
                 mg_http_reply(c, 400, "", "400 - Empty request body");
