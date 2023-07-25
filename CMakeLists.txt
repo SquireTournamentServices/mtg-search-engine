@@ -178,6 +178,14 @@ set(TESTS
     ./tests/test_save.c
     ./tests/system_test.h
     ./tests/system_test.c)
+set(WEB_API
+    ./web-api/main.c
+    ./web-api/server.c
+    ./web-api/server.h
+    ./web-api/async_query.h
+    ./web-api/async_query.c
+    ./mongoose/mongoose.c
+    ./mongoose/mongoose.h)
 
 # Setup docs
 find_package(doxygen)
@@ -219,8 +227,21 @@ target_link_libraries(mtg-search-engine PRIVATE ${LIBS})
 target_include_directories(mtg-search-engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
                                                     ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(mtg-search-engine-cli mse/main.c)
-target_link_libraries(mtg-search-engine-cli ${LIBS} mtg-search-engine)
+option(MSE_WEB_API OFF)
+if(MSE_WEB_API)
+  add_executable(mtg-search-engine-cli mse/main.c)
+  target_link_libraries(mtg-search-engine-cli ${LIBS} mtg-search-engine)
+endif()
+
+add_executable(mtg-search-engine-web-api ${WEB_API})
+target_link_libraries(
+  mtg-search-engine-web-api
+  ${LIBS}
+  crypto
+  mbedtls
+  mbedcrypto
+  mbedx509
+  mtg-search-engine)
 
 # Setup unit tests
 if(UNIX)

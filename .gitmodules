@@ -10,3 +10,9 @@
 [submodule "strptime"]
 	path = strptime
 	url = https://github.com/djpiper28/strptime
+[submodule "mongoose"]
+	path = mongoose
+	url = https://github.com/cesanta/mongoose
+[submodule "frontend/public/manamoji"]
+	path = frontend/public/manamoji
+	url = https://github.com/scryfall/manamoji-discord.git
