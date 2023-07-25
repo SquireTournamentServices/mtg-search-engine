@@ -6,7 +6,7 @@ export default function SearchBar(props) {
 
   return (
     <div className="flex flex-row w-full justify-center">
-      <div className="flex flex-row bg-slate-100 rounded-xl px-3 py-1 w-1/3">
+      <div className="flex flex-row bg-slate-100 rounded-xl px-3 py-1 w-64 lg:w-1/3">
         <form
           className="flex flex-row w-full justify-between gap-3"
           onSubmit={(e) => {
