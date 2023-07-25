@@ -15,7 +15,9 @@ export default function RandomQuery() {
 
   return (
     <div className="flex flex-row">
-      <h2 className="text-l px-3">Powerful search engine, search for anything:</h2>
+      <h2 className="text-l px-3">
+        Powerful search engine, search for anything:
+      </h2>
       <p>🔍 {query}</p>
     </div>
   );
