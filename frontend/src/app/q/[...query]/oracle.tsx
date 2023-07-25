@@ -1,7 +1,7 @@
 import Manamoji from "./manamoji.tsx";
 
 export default function Oracle(props) {
-  const oracle = props.oracle_text.split("{").slice(1);
+  const oracle = props.oracle_text.split("{");
   return (
     <span className="text-sm">
       {oracle.map((part) => {
