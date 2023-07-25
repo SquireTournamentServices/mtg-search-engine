@@ -1,4 +1,4 @@
-import SearchBar from "../searchBar";
+import SearchBar from "../../searchBar";
 import Card from "./card";
 
 export default async function SearchResultPage({ params }) {
