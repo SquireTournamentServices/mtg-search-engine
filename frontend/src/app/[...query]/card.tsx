@@ -15,8 +15,9 @@ export default function Card(props) {
           <p className="text-sm">{props.data.oracle_text}</p>
         )}
         <p className="justify-self-end align-self-end">
-          {props.data.power && props.data.power}
-          {props.data.toughness && "/" + props.data.toughness}
+          {props.data.power && props.data.toughness
+            ? props.data.power + "/" + props.data.toughness
+            : ""}
         </p>
       </div>
     </div>
