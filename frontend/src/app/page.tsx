@@ -2,7 +2,7 @@ import RandomQuery from "./randomQuery";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center p-24">
+    <main className="flex flex-col items-center">
       <div className="flex flex-col w-full h-full justify-center p-24 gap-3">
         <h1 className="text-center text-2xl font-bold">
           A FOSS Search Engine For MTG.
