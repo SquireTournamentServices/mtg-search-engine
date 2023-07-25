@@ -1,4 +1,4 @@
-import Manamoji from "./manamoji.tsx";
+import Manamoji from "./manamoji";
 
 export default function Oracle(props) {
   const oracle = props.oracle_text.split("{");
