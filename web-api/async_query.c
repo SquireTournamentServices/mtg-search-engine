@@ -100,6 +100,9 @@ static int __mse_jsonify_search_res_impl(mse_search_result_t *res,
     ASSERT(tmp = json_integer(query->page_number));
     ASSERT(json_object_set(json, "page", tmp) == 0);
 
+    ASSERT(tmp = json_integer(res->cards_length));
+    ASSERT(json_object_set(json, "cards_total", tmp) == 0);
+
     ASSERT(query->resp = json_dumps(json, 0));
     return 1;
 }
