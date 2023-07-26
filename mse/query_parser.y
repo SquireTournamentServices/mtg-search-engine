@@ -358,5 +358,6 @@ int mse_parse_input_string(const char* input_string, mse_interp_node_t **root)
 
     *root = ret.root;
     ASSERT(root != NULL);
-    return result == 0;
+    ASSERT(result == 0);
+    return 1;
 }
