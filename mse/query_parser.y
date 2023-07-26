@@ -279,13 +279,6 @@ sg_dummy: STMT_NEGATE op_name op_operator op_argument {
             ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
             PARSE_ASSERT(mse_handle_set_generator(0, ret));
         }
-
-        | regex_string {
-            COPY_TO_ARG_BUFFER
-            ret->parser_gen_type = MSE_SET_GENERATOR_NAME;
-            ret->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
-            PARSE_ASSERT(mse_handle_set_generator(0, ret));
-        }
         ;
 
 set_generator : sg_dummy {
