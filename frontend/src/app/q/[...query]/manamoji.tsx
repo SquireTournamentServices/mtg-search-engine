@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function Manamoji(props) {
+export default function Manamoji(props: { mana_cost: string }) {
   const img =
     "/manamoji/emojis/mana" +
     props.mana_cost.toLowerCase().replace("/", "") +

@@ -3,7 +3,18 @@ import Manamoji from "./manamoji";
 import Oracle from "./oracle";
 import Colour from "./colour";
 
-export default function Card(props) {
+export default function Card(props: {
+  data: {
+    name: string;
+    mana_cost: string;
+    colours: number;
+    colour_identity: number;
+    oracle_text: string;
+    power: string;
+    toughness: string;
+    types: string[];
+  };
+}) {
   const colours = [];
   for (var i = 1; i < 1 << 5; i <<= 1) {
     const c = props.data.colour_identity & i;
@@ -21,7 +32,9 @@ export default function Card(props) {
             props.data.mana_cost
               .split("{")
               .slice(1)
-              .map((mana) => <Manamoji mana_cost={mana.replace("}", "")} />)}
+              .map((mana) => (
+                <Manamoji mana_cost={mana.replace("}", "")} key={mana} />
+              ))}
         </div>
       </div>
       {props.data.types && (
@@ -34,7 +47,7 @@ export default function Card(props) {
       <div className="flex flex-row justify-between">
         <span>
           {colours.map((c) => (
-            <Colour colour={c} />
+            <Colour colour={c} key={c} />
           ))}
         </span>
         <p className="text-right">

@@ -1,6 +1,6 @@
 import Manamoji from "./manamoji";
 
-export default function Oracle(props) {
+export default function Oracle(props: { oracle_text: string }) {
   const oracle = props.oracle_text.split("{");
   return (
     <span className="text-sm">

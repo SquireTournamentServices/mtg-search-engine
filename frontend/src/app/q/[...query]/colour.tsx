@@ -1,4 +1,4 @@
-export default function Colour(props) {
+export default function Colour(props: { colour: number }) {
   var colour = "text-";
   switch (props.colour) {
     case 1 << 0:
