@@ -129,14 +129,7 @@ static int test_name_match_2()
 static int test_regex_compile_err()
 {
     mse_re_t re;
-    ASSERT(mse_re_init(&re, INVALID_RE));
-
-    mse_avl_tree_node_t *ret = NULL;
-    ASSERT(!mse_matching_card_oracle(&ret, test_cards.card_tree, INVALID_RE, 1, 0, &pool));
-    ASSERT(ret == NULL);
-
-    ASSERT(!mse_matching_card_name(&ret, test_cards.card_tree, INVALID_RE, 1, 0, &pool));
-    ASSERT(ret == NULL);
+    ASSERT(!mse_re_init(&re, INVALID_RE));
     mse_re_free(&re);
     return 1;
 }

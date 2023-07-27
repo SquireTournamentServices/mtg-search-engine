@@ -6,6 +6,7 @@
 #include <regex.h>
 
 #define REGEX_ARG "/.*god of (the )?.*/"
+#define REGEX2_ARG "/.*drAw.*/"
 #define ARG "hAstE"
 #define ARG_LOWER "haste"
 
@@ -16,7 +17,7 @@ static int test_tree_oracle_re(mse_avl_tree_node_t *node)
     }
 
     mse_re_t re;
-    char *re_str = mse_escape_regex(REGEX_ARG);
+    char *re_str = mse_escape_regex(REGEX2_ARG);
     ASSERT(re_str != NULL);
     ASSERT(mse_re_init(&re, re_str));
     free(re_str);
@@ -54,10 +55,10 @@ static int test_tree_oracle_re_negate(mse_avl_tree_node_t *node)
 static int test_generator_oracle_regex()
 {
     mse_set_generator_type_t gen_type = MSE_SET_GENERATOR_ORACLE_TEXT;
-    size_t len = strlen(REGEX_ARG);
+    size_t len = strlen(REGEX2_ARG);
 
     mse_set_generator_t ret;
-    ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_EQUALS, REGEX_ARG, len));
+    ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_EQUALS, REGEX2_ARG, len));
 
     mse_search_intermediate_t inter;
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
