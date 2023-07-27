@@ -3,10 +3,14 @@
 #include "./thread_pool.h"
 #include "../testing_h/testing.h"
 #include <stdio.h>
-#include <unistd.h>
 #include <string.h>
 #include <curl/curl.h>
 #include <jansson.h>
+#ifdef __WINDOWS
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
 
 size_t __mse_json_write_callback(char *ptr,
                                  size_t size,

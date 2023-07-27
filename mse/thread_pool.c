@@ -5,8 +5,8 @@
 #include "./thread_pool.h"
 #include "../testing_h/testing.h"
 
-#ifdef __WIN32
-#include <win32.h>
+#ifdef __WINDOWS
+#include <windows.h>
 #endif
 
 #ifdef __unix
@@ -153,7 +153,7 @@ void mse_reset_pool(mse_task_queue_t *queue)
 
 int mse_init_pool(mse_thread_pool_t *p)
 {
-#ifdef __WIN32
+#ifdef __WINDOWS
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
     int cpus = sysinfo.dwNumberOfProcessors;

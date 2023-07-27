@@ -2,7 +2,8 @@
 #include "./async_query.h"
 #include "../testing_h/testing.h"
 #include <string.h>
-#include <sys/param.h>
+
+#define MIN(a, b) (a < b ? a : b)
 
 // Server state, this is global as there is only every one server
 static mse_t *mse = NULL;

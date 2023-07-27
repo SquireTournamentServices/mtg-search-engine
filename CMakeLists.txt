@@ -109,6 +109,7 @@ endif()
 
 if(WIN32)
   set(ADDITIONAL_FLEX_FLAGS "--wincompat")
+  set(LIBS ${LIBS} win32)
 else()
   set(ADDITIONAL_FLEX_FLAGS "")
 endif()
