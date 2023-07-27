@@ -227,19 +227,19 @@ set(WEB_API
     ./mongoose/mongoose.c
     ./mongoose/mongoose.h)
 
-# Setup docs
-find_package(doxygen)
-if(DOXYGEN_FOUND)
-  find_package(doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
-  doxygen_add_docs(mse-docs ${SRC} ${TESTS}
-                   "Generate documentation pages for ${REPO_URL}")
-endif()
-
 # Setup gcovr
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 
 if(UNIX)
+  # Setup docs
+  find_package(doxygen)
+  if(DOXYGEN_FOUND)
+    find_package(doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
+    doxygen_add_docs(mse-docs ${SRC} ${TESTS}
+                     "Generate documentation pages for ${REPO_URL}")
+  endif()
+
   include(CodeCoverage)
 
   set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
