@@ -1,10 +1,8 @@
 #pragma once
-#include <regex.h>
 #include "./avl_tree.h"
 #include "./card.h"
 #include "./thread_pool.h"
-
-#define MSE_RE_FLAGS (REG_EXTENDED | REG_ICASE)
+#include "./re2_wrapper.h"
 
 /// A fast method to find if a string matches another
 int mse_str_match(char *str, char *substr);
@@ -14,13 +12,13 @@ int mse_str_match(char *str, char *substr);
 int mse_is_regex_str(char *str);
 
 /// Helper to use the correct flags for the regex, use regfree on your regex afterwards
-int mse_compile_regex(char *regex, regex_t *re);
+int mse_compile_regex(char *regex, mse_re_t *re);
 
 /// Returns 1 if there are one or matches in the oracle for the regex
-int mse_card_oracle_matches(mse_card_t *card, regex_t *re);
+int mse_card_oracle_matches(mse_card_t *card, mse_re_t *re);
 
 /// Returns 1 if there are one or matches in the name for the regex
-int mse_card_name_matches(mse_card_t *card, regex_t *re);
+int mse_card_name_matches(mse_card_t *card, mse_re_t *re);
 
 /// Returns a set of matching cards for an oracle regex
 int mse_matching_card_oracle(mse_avl_tree_node_t **ret,

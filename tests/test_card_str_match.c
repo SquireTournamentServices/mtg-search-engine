@@ -54,8 +54,8 @@ static int free_test_card()
 
 static int test_card_matches()
 {
-    regex_t re;
-    ASSERT(mse_compile_regex(ORACLE_TEST_REGEX_1, &re));
+    mse_re_t re;
+    ASSERT(mse_re_init(&re, ORACLE_TEST_REGEX_1));
 
     mse_card_t card;
     card.name = "Testing name 123";
@@ -65,7 +65,7 @@ static int test_card_matches()
         ASSERT(mse_card_oracle_matches(&card, &re));
         ASSERT(!mse_card_name_matches(&card, &re));
     }
-    regfree(&re);
+    mse_re_free(&re);
     return 1;
 }
 
@@ -128,8 +128,8 @@ static int test_name_match_2()
 
 static int test_regex_compile_err()
 {
-    regex_t re;
-    ASSERT(mse_compile_regex(INVALID_RE, &re) == 0);
+    mse_re_t re;
+    ASSERT(mse_re_init(&re, INVALID_RE));
 
     mse_avl_tree_node_t *ret = NULL;
     ASSERT(!mse_matching_card_oracle(&ret, test_cards.card_tree, INVALID_RE, 1, 0, &pool));
@@ -137,6 +137,7 @@ static int test_regex_compile_err()
 
     ASSERT(!mse_matching_card_name(&ret, test_cards.card_tree, INVALID_RE, 1, 0, &pool));
     ASSERT(ret == NULL);
+    mse_re_free(&re);
     return 1;
 }
 

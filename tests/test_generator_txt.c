@@ -15,16 +15,16 @@ static int test_tree_oracle_re(mse_avl_tree_node_t *node)
         return 1;
     }
 
-    regex_t re;
+    mse_re_t re;
     char *re_str = mse_escape_regex(REGEX_ARG);
     ASSERT(re_str != NULL);
-    ASSERT(mse_compile_regex(re_str, &re));
+    ASSERT(mse_re_init(&re, re_str));
     free(re_str);
 
     mse_card_t *card = (mse_card_t *) node->payload;
     ASSERT(mse_card_oracle_matches(card, &re));
 
-    regfree(&re);
+    mse_re_free(&re);
     ASSERT(test_tree_oracle_re(node->l));
     ASSERT(test_tree_oracle_re(node->r));
     return 1;
@@ -36,16 +36,16 @@ static int test_tree_oracle_re_negate(mse_avl_tree_node_t *node)
         return 1;
     }
 
-    regex_t re;
+    mse_re_t re;
     char *re_str = mse_escape_regex(REGEX_ARG);
     ASSERT(re_str != NULL);
-    ASSERT(mse_compile_regex(re_str, &re));
+    ASSERT(mse_re_init(&re, re_str));
     free(re_str);
 
     mse_card_t *card = (mse_card_t *) node->payload;
     ASSERT(!mse_card_oracle_matches(card, &re));
 
-    regfree(&re);
+    mse_re_free(&re);
     ASSERT(test_tree_oracle_re_negate(node->l));
     ASSERT(test_tree_oracle_re_negate(node->r));
     return 1;
@@ -131,16 +131,16 @@ static int test_tree_name_re(mse_avl_tree_node_t *node)
         return 1;
     }
 
-    regex_t re;
+    mse_re_t re;
     char *re_str = mse_escape_regex(REGEX_ARG);
     ASSERT(re_str != NULL);
-    ASSERT(mse_compile_regex(re_str, &re));
+    ASSERT(mse_re_init(&re, re_str));
     free(re_str);
 
     mse_card_t *card = (mse_card_t *) node->payload;
     ASSERT(mse_card_name_matches(card, &re));
 
-    regfree(&re);
+    mse_re_free(&re);
     ASSERT(test_tree_name_re(node->l));
     ASSERT(test_tree_name_re(node->r));
     return 1;
