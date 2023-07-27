@@ -10,13 +10,15 @@ and sets. It has a syntax that is similar to Scryfall but it can be embedded any
 [![codecov](https://codecov.io/gh/MonarchDevelopment/mtg-search-engine/branch/main/graph/badge.svg?token=FK7LTBC9AC)](https://codecov.io/gh/MonarchDevelopment/mtg-search-engine)
 
 ## Requirements
- - openssl
  - cmake
+ - openssl
  - cURL
  - jansson
  - c compiler *(i.e: gcc)*
+ - c++ compiler *(i.e: g++)*
  - <!--nerf-->bison
  - flex
+ - pthread *(see win32 pthread)*
  - python3
   - `pip install -r requirements.txt`
 

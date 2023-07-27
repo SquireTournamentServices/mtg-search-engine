@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.9)
 project(
   mtg-search-engine
   VERSION 1.0
-  LANGUAGES C)
+  LANGUAGES C CXX)
 
 set(REPO_URL "https://github.com/djpiper28/mtg-search-engine")
 
@@ -40,9 +40,6 @@ add_definitions("-DMSE_PROJECT_VERSION=\"${CMAKE_PROJECT_VERSION}\"")
 add_definitions("-DMSE_PROJECT_NAME=\"${CMAKE_PROJECT_NAME}\"")
 add_definitions("-DMSE_BINARY_VERSION=1")
 
-# Packages
-find_package(CURL)
-
 # __FILENAME__
 string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
 add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
@@ -65,9 +62,48 @@ add_custom_command(
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
+# Packages
+find_package(CURL)
+
+# Jansson find_package is broken On non-unix systems you need to provide your
+# own pthreads implementation Have a look at win32 pthreads for example
+
+# These set statements are magical and from
+# https://github.com/google/re2/issues/436
+set(ABSL_PROPAGATE_CXX_STD ON)
+set(ABSL_ENABLE_INSTALL ON)
+add_subdirectory(./abseil-cpp)
+set(ABSL_LIBS
+    absl::base
+    absl::core_headers
+    absl::fixed_array
+    absl::flags
+    absl::flat_hash_map
+    absl::flat_hash_set
+    absl::inlined_vector
+    absl::optional
+    absl::span
+    absl::str_format
+    absl::strings)
+
+add_subdirectory(./re2)
+
 # Parser generators
 find_package(BISON)
 find_package(FLEX)
+
+option(USE_JEMALLOC OFF)
+set(LIBS
+    jansson
+    CURL::libcurl
+    pthread
+    m
+    c
+    ${ABSL_LIBS}
+    re2)
+if(USE_JEMALLOC)
+  set(LIBS ${LIBS} jemalloc)
+endif()
 
 if(WIN32)
   set(ADDITIONAL_FLEX_FLAGS "--wincompat")
@@ -213,12 +249,6 @@ if(UNIX)
     test
     EXCLUDE
     ${GCOVR_EXCLUDE})
-endif()
-
-option(USE_JEMALLOC OFF)
-set(LIBS jansson CURL::libcurl pthread m c)
-if(USE_JEMALLOC)
-  set(LIBS ${LIBS} jemalloc)
 endif()
 
 # Add library and cli execs
