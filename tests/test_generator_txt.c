@@ -68,7 +68,7 @@ static int test_generator_oracle_regex()
     mse_free_set_generator(&ret);
 
     // Test includes
-    ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_INCLUDES, REGEX_ARG, len));
+    ASSERT(mse_init_set_generator(&ret, gen_type, MSE_SET_GENERATOR_OP_INCLUDES, REGEX2_ARG, len));
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
     size_t size_1;
     ASSERT(size_1 = mse_tree_size(inter.node));
