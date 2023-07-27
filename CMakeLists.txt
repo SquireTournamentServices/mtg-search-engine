@@ -45,7 +45,9 @@ string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
 add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
-set(CMAKE_C_FLAGS "-Wpedantic -Werror -Wno-unused-parameter -g -Og")
+if (NOT WIN32)
+  set(CMAKE_C_FLAGS "-Wpedantic -Werror -Wno-unused-parameter -g -Og")
+endif()
 
 # Generated sources
 set(LANG_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.h
