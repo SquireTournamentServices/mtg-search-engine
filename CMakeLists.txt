@@ -174,6 +174,8 @@ set(SRC
     ./mse/mse.c
     ./mse/re2_wrapper.h
     ./mse/re2_wrapper.cpp
+    ./strptime/strptime.h
+    ./strptime/strptime.c
     ${PARSER_SRC}
     ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES})
