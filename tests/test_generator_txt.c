@@ -38,7 +38,7 @@ static int test_tree_oracle_re_negate(mse_avl_tree_node_t *node)
     }
 
     mse_re_t re;
-    char *re_str = mse_escape_regex(REGEX_ARG);
+    char *re_str = mse_escape_regex(REGEX2_ARG);
     ASSERT(re_str != NULL);
     ASSERT(mse_re_init(&re, re_str));
     free(re_str);
