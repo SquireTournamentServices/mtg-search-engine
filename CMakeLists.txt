@@ -99,7 +99,6 @@ set(LIBS
     jansson
     CURL::libcurl
     pthread
-    c
     ${ABSL_LIBS}
     re2)
 if(USE_JEMALLOC)
