@@ -6,7 +6,7 @@ int mse_re_init(mse_re_t *re, char *str)
 {
     std::string restr = std::string(str);
     RE2::Options options;
-    options.set_case_sensitive(true);
+    options.set_case_sensitive(false);
 
     re->__re = new RE2(restr, options);
     if (!re->__re->ok()) {
