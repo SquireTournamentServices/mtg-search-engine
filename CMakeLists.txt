@@ -171,6 +171,8 @@ set(SRC
     ./mse/save.c
     ./mse/mse.h
     ./mse/mse.c
+    ./mse/re2_wrapper.h
+    ./mse/re2_wrapper.cpp
     ${PARSER_SRC}
     ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES})
