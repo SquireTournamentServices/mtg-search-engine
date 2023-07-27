@@ -13,12 +13,21 @@ export default async function SearchResultPage({
     body: query,
   });
   const data = await resp.json();
+  const results = data.cards_total;
+  const page = data.page + 1;
+  const page_size = data.page_size;
+  const pages = Math.ceil(results / page_size);
 
   return (
-    <div className="w-full mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {data.cards.map((item: any) => (
-        <Card data={item} key={item} />
-      ))}
+    <div>
+      <div className="w-full mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {data.cards.map((item: any) => (
+          <Card data={item} key={item} />
+        ))}
+      </div>
+      <p className="text-center">
+        {results} Results | Page {page} / {page_size}
+      </p>
     </div>
   );
 }
