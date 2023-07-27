@@ -16,6 +16,7 @@
 #include "./test_interpretor.h"
 #include "./test_parser.h"
 #include "./test_save.h"
+#include "./test_re2.h"
 #include "./system_test.h"
 
 static int sanity_test()
@@ -24,7 +25,8 @@ static int sanity_test()
 }
 
 SUB_TEST(tests, {&sanity_test, "Sanity Test"},
-         /* Test common funcs and types */
+{&test_re2, "Test re2 wrapper"},
+/* Test common funcs and types */
 {&test_uuid, "Test UUID"},
 {&test_io_utils, "Test IO utils"},
 {&test_avl_tree, "Test AVL tree"},

@@ -214,6 +214,8 @@ set(TESTS
     ./tests/test_mse_langs.c
     ./tests/test_save.h
     ./tests/test_save.c
+    ./tests/test_re2.h
+    ./tests/test_re2.c
     ./tests/system_test.h
     ./tests/system_test.c)
 set(WEB_API

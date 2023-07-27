@@ -11,6 +11,14 @@ typedef struct mse_re_t {
 #endif
 } mse_re_t;
 
-extern int mse_re_init(mse_re_t *re, char *str);
-extern int mse_re_matches(mse_re_t *re, char *str);
-extern void mse_re_free(mse_re_t *re);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int mse_re_init(mse_re_t *re, char *str);
+int mse_re_matches(mse_re_t *re, char *str);
+void mse_re_free(mse_re_t *re);
+
+#ifdef __cplusplus
+};
+#endif
