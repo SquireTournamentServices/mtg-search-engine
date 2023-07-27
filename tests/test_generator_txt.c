@@ -80,11 +80,12 @@ static int test_generator_oracle_regex()
     ASSERT(mse_generate_set(&ret, &inter, &gen_cards, &gen_thread_pool));
     size_t size_2;
     ASSERT(size_2 = mse_tree_size(inter.node));
+    ASSERT(size_1 + size_2 == mse_tree_size(gen_cards.card_tree));
+
     ASSERT(test_tree_oracle_re_negate(inter.node));
     mse_free_search_intermediate(&inter);
     mse_free_set_generator(&ret);
 
-    ASSERT(size_1 + size_2 == mse_tree_size(gen_cards.card_tree));
     return 1;
 }
 
