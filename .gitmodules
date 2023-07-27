@@ -16,3 +16,6 @@
 [submodule "frontend/public/manamoji"]
 	path = frontend/public/manamoji
 	url = https://github.com/scryfall/manamoji-discord.git
+[submodule "re2"]
+	path = re2
+	url = https://github.com/google/re2
