@@ -99,7 +99,6 @@ set(LIBS
     jansson
     CURL::libcurl
     pthread
-    m
     c
     ${ABSL_LIBS}
     re2)
@@ -112,6 +111,7 @@ if(WIN32)
   set(LIBS ${LIBS} win32)
 else()
   set(ADDITIONAL_FLEX_FLAGS "")
+  set(LIBS ${LIBS} m)
 endif()
 
 flex_target(
