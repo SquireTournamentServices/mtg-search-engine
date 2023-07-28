@@ -6,8 +6,12 @@
 #include <string.h>
 #include <curl/curl.h>
 #include <jansson.h>
-#ifdef __WINDOWS
+#ifdef _WINDOWS
+#include <fcntl.h>
+#include <process.h>
 #include <io.h>
+// Imagine if the twats at microshit had documentation
+#define pipe(x) _pipe(x, 4096, O_BINARY)
 #else
 #include <unistd.h>
 #endif
