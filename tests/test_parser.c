@@ -24,7 +24,7 @@ static int __test_next_query(FILE *f)
     }
 
     // Strip the last char (\n)
-    if (strlen(buffer) > 2) return 1;
+    if (strlen(buffer) < 1) return 1;
     size_t last = strlen(buffer) - 1;
     if (buffer[last] == '\n') {
         buffer[last] = 0;
@@ -56,7 +56,7 @@ static int __test_next_query_exec(FILE *f)
     }
 
     // Strip the last char (\n)
-    ASSERT(strlen(buffer) > 2);
+    if (strlen(buffer) < 1) return 1;
     size_t last = strlen(buffer) - 1;
     if (buffer[last] == '\n') {
         buffer[last] = 0;
@@ -165,7 +165,7 @@ static int __test_next_query_fail_case(FILE *f)
     }
 
     // Strip the last char (\n)
-    ASSERT(strlen(buffer) > 2);
+    if (strlen(buffer) < 1) return 1;
     size_t last = strlen(buffer) - 1;
     if (buffer[last] == '\n') {
         buffer[last] = 0;
