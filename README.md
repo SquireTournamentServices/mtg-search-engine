@@ -10,10 +10,11 @@ and sets. It has a syntax that is similar to Scryfall but it can be embedded any
 [![codecov](https://codecov.io/gh/MonarchDevelopment/mtg-search-engine/branch/main/graph/badge.svg?token=FK7LTBC9AC)](https://codecov.io/gh/MonarchDevelopment/mtg-search-engine)
 
 ## Requirements
- - cmake
- - openssl
- - cURL
- - jansson
+ - cmake+
+ - openssl+
+ - cURL+
+ - jansson+
+ - abseil+
  - c compiler *(i.e: gcc)*
  - c++ compiler *(i.e: g++)*
  - <!--nerf-->bison
@@ -21,6 +22,8 @@ and sets. It has a syntax that is similar to Scryfall but it can be embedded any
  - pthread *(see win32 pthread)*
  - python3
   - `pip install -r requirements.txt`
+
+> + these can be included via submodules, see the SquireDesktop repo for an example
 
 ### Optional Requirements
  - astyle

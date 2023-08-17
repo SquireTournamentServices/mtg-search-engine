@@ -67,14 +67,12 @@ add_custom_command(
 # Packages
 find_package(CURL)
 
-# Jansson find_package is broken On non-unix systems you need to provide your
-# own pthreads implementation Have a look at win32 pthreads for example
+# Jansson find_package is broken On non-unix systems.
+# find_package(jansson)
 
-# These set statements are magical and from
-# https://github.com/google/re2/issues/436
-set(ABSL_PROPAGATE_CXX_STD ON)
-set(ABSL_ENABLE_INSTALL ON)
-add_subdirectory(./abseil-cpp)
+# you need to provide your own pthreads implementation Have a look at win32 pthreads for example
+
+find_package(absl)
 set(ABSL_LIBS
     absl::base
     absl::core_headers
