@@ -32,6 +32,8 @@ jobs:
         id: build_frontend 
         shell: bash
         run: |
-          cd ./frontend/
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends npm
+          cd frontend/
           npm i
           npm run build
