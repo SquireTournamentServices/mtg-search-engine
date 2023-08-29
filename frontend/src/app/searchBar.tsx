@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export default function SearchBar(props: { query?: string }) {
   const [name, setName] = useState(props.query || "");
