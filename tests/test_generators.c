@@ -12,6 +12,7 @@ mse_all_printings_cards_t gen_cards;
 static json_t *get_all_printings_cards_from_file()
 {
     FILE *f = fopen("./AllPrintings.json", "rb");
+    ASSERT(f != NULL);
     json_error_t error;
     json_t *ret = json_loadf(f, 0, &error);
 
