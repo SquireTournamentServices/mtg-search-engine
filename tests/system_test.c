@@ -96,7 +96,11 @@ int test_system()
     fclose(f);
 
     ASSERT(mse_init(&state));
+
+    lprintf(LOG_INFO, "Testing valid queries\n");
     ASSERT(test_valid_queries(&state));
+
+    lprintf(LOG_INFO, "Testing invalid queries\n");
     ASSERT(test_invalid_queries(&state));
     mse_free(&state);
     return 1;
