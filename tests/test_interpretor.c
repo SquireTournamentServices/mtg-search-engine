@@ -339,6 +339,7 @@ static int test_search_result()
 
     // Cleanup
     mse_free_search_results(&search_res);
+    mse_free_interp_node(&root);
     return 1;
 }
 

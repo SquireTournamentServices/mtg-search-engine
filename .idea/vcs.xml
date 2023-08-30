@@ -2,6 +2,10 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/abseil-cpp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/frontend/public/manamoji" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/mongoose" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/re2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/strptime" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/testing_h" vcs="Git" />
   </component>
