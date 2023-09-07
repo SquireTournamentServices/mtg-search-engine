@@ -1,6 +1,5 @@
 import Card from "./card";
 import PageChanger from "./pageChanger";
-import { useRouter } from "next/navigation";
 
 export default async function SearchResultPage({
   params,
@@ -10,13 +9,12 @@ export default async function SearchResultPage({
     page_number?: number;
   };
 }) {
-  const router = useRouter();
   const query = decodeURIComponent(params.query);
   const resp = await fetch("http://127.0.0.1:4365/api", {
     method: "POST",
     body: query,
     headers: {
-      page: router.query["page"] || 0
+      page: params.page_number?.toString() || '',
     }
   });
   const data = await resp.json();
