@@ -54,6 +54,11 @@ int mse_task_queue_try_front(mse_task_queue_t *queue, mse_task_t *ret);
 /// This will wake up any waiting threads.
 int mse_task_queue_enqueue(mse_task_queue_t *queue, mse_task_t task);
 
+/// A greedy implementation of mse_task_queue_enqueue that adds the task to the
+/// start of the queue, this is intended for use within tasks spawned by a query.
+/// This means that queries are resolved faster.
+int mse_task_queue_greedy_enqueue(mse_task_queue_t *queue, mse_task_t task);
+
 /// This will reset the task queue, it is used for freeing the pool safely by cancelling
 /// all pending tasks
 void mse_reset_pool(mse_task_queue_t *queue);

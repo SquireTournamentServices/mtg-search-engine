@@ -56,7 +56,7 @@ static int __mse_queue_interp_tree_worker(sem_t *sem,
     data->cards = cards;
 
     mse_task_t task = {(void *) data, &__mse_resolve_interp_tree_worker};
-    if (!mse_task_queue_enqueue(&pool->queue, task)) {
+    if (!mse_task_queue_greedy_enqueue(&pool->queue, task)) {
         lprintf(LOG_ERROR, "Cannot enqueue resolve task\n");
         free(data);
         return 0;

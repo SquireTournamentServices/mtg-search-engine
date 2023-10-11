@@ -44,6 +44,21 @@ static int test_pool_enqueue()
     return 1;
 }
 
+static int test_pool_greedy_enqueue()
+{
+    mse_thread_pool_t pool;
+    ASSERT(mse_init_pool(&pool));
+
+    for (size_t i = 0; i < 100 * pool.threads_count; i++) {
+        mse_task_t task = {(void *) 5L, &basic_calc};
+        ASSERT(mse_task_queue_greedy_enqueue(&pool.queue, task));
+    }
+
+    ASSERT(mse_free_pool(&pool));
+    return 1;
+}
+
 SUB_TEST(test_thread_pool, {&test_pool_init_free, "Thread pool init free"},
-{&test_pool_enqueue, "Thread pool enqueue"})
+{&test_pool_enqueue, "Thread pool enqueue"},
+{&test_pool_greedy_enqueue, "Thread pool greedy enqueue"})
 

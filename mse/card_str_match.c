@@ -104,7 +104,9 @@ typedef struct mse_card_match_worker_data_t {
     mse_avl_tree_node_t *root;
 } mse_card_match_worker_data_t;
 
-static void __mse_match_card_do_match(mse_avl_tree_node_t *node, mse_card_match_t *match_data, mse_card_match_cmp_data_t data)
+static void __mse_match_card_do_match(mse_avl_tree_node_t *node,
+                                      mse_card_match_t *match_data,
+                                      mse_card_match_cmp_data_t data)
 {
     int matches = 0;
     switch(match_data->type) {
@@ -157,7 +159,9 @@ static void __mse_match_card_do_match(mse_avl_tree_node_t *node, mse_card_match_
     }
 }
 
-static void __mse_match_card_node(mse_avl_tree_node_t *node, mse_card_match_t *match_data, mse_card_match_cmp_data_t cmp_data)
+static void __mse_match_card_node(mse_avl_tree_node_t *node,
+                                  mse_card_match_t *match_data,
+                                  mse_card_match_cmp_data_t cmp_data)
 {
     if (node == NULL) {
         return;
@@ -225,7 +229,7 @@ static int __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
         data->root = node;
 
         mse_task_t task = {data, &__mse_match_card_worker};
-        if (mse_task_queue_enqueue(&pool->queue, task)) {
+        if (mse_task_queue_greedy_enqueue(&pool->queue, task)) {
             sum++;
         } else {
             lprintf(LOG_ERROR, "Cannot enqueue regex match\n");

@@ -45,7 +45,7 @@ string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
 add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
-if (NOT WIN32)
+if(NOT WIN32)
   set(CMAKE_C_FLAGS "-Wpedantic -Werror -Wno-unused-parameter -g -Og")
 endif()
 
@@ -67,10 +67,10 @@ add_custom_command(
 # Packages
 find_package(CURL)
 
-# Jansson find_package is broken On non-unix systems.
-# find_package(jansson)
+# Jansson find_package is broken On non-unix systems. find_package(jansson)
 
-# you need to provide your own pthreads implementation Have a look at win32 pthreads for example
+# you need to provide your own pthreads implementation Have a look at win32
+# pthreads for example
 
 find_package(absl)
 set(ABSL_LIBS
@@ -93,12 +93,7 @@ find_package(BISON)
 find_package(FLEX)
 
 option(USE_JEMALLOC OFF)
-set(LIBS
-    jansson
-    CURL::libcurl
-    pthread
-    ${ABSL_LIBS}
-    re2)
+set(LIBS jansson CURL::libcurl pthread ${ABSL_LIBS} re2)
 if(USE_JEMALLOC)
   set(LIBS ${LIBS} jemalloc)
 endif()

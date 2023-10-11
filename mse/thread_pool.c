@@ -90,6 +90,30 @@ int mse_task_queue_enqueue(mse_task_queue_t *queue, mse_task_t task)
     return 1;
 }
 
+int mse_task_queue_greedy_enqueue(mse_task_queue_t *queue, mse_task_t task)
+{
+    // Create new task node
+    mse_task_node_t *node = malloc(sizeof * node);
+    ASSERT(node != NULL);
+    node->next = NULL;
+    node->payload = task;
+
+    // Lock the queue
+    pthread_mutex_lock(&queue->lock);
+
+    // Add to the start of the queue
+    if (queue->head == NULL) {
+        queue->head = queue->tail = node;
+    } else {
+        node->next = queue->head;
+        queue->head = node;
+    }
+
+    sem_post(&queue->semaphore);
+    pthread_mutex_unlock(&queue->lock);
+    return 1;
+}
+
 void mse_pool_try_consume(mse_thread_pool_t *pool)
 {
     mse_task_t task;
