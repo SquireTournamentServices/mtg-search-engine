@@ -44,8 +44,6 @@ mse_avl_tree_node_t *mse_init_avl_tree_node(void (*free_payload)(void *payload),
         int (*cmp_payload)(void *a, void *b),
         void *payload)
 {
-    ASSERT(cmp_payload != NULL);
-
     mse_avl_tree_node_t *tree = malloc(sizeof * tree);
     ASSERT(tree != NULL);
 
@@ -191,8 +189,7 @@ int mse_insert_node(mse_avl_tree_node_t **root, mse_avl_tree_node_t *node)
         *root = node;
         return 1;
     }
-    ASSERT(root != NULL);
-    ASSERT(node != NULL);
+
     if (mse_find_payload(*root, node->payload)) {
         return 0;
     }

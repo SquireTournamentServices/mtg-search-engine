@@ -46,7 +46,7 @@ add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
 if(NOT WIN32)
-  set(CMAKE_C_FLAGS "-Wpedantic -Werror -Wno-unused-parameter -g -Og")
+  set(CMAKE_C_FLAGS "-Wpedantic -Werror -Wno-unused-parameter -g -Ofast")
 endif()
 
 # Generated sources
