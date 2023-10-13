@@ -64,6 +64,8 @@ static int __mse_search(mse_t *state, mse_search_intermediate_t *ret, const char
 int mse_search(mse_t *state, mse_search_result_t *res, const char *query)
 {
     mse_search_intermediate_t tmp;
+    // assert safe free
+    memset(&tmp, 0, sizeof(tmp));
     ASSERT(__mse_search(state, &tmp, query));
     ASSERT(mse_finalise_search(res, &tmp));
     return 1;
