@@ -14,7 +14,7 @@ export default async function SearchResultPage({
     method: "POST",
     body: query,
     headers: {
-      page: params.page.toString(),
+      page: (params.page - 1).toString(),
     },
   });
   const data = await resp.json();
