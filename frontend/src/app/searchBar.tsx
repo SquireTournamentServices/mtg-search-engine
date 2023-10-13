@@ -12,7 +12,7 @@ export default function SearchBar(props: { query?: string }) {
         <form
           className="flex flex-row w-full justify-between gap-3"
           onSubmit={(e) => {
-            router.push("/q/" + encodeURIComponent(name));
+            router.push("/q/" + encodeURIComponent(name) + "/1");
             e.preventDefault();
           }}
         >

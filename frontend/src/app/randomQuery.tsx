@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function RandomQuery() {
   const [query, setQuery] = useState("set:m18 or set:m19");
@@ -13,10 +13,13 @@ export default function RandomQuery() {
     "-name:goblin c:r oracle:goblin",
     "-set:m20 set:m21",
     "(i:r -c:r) or i>rgb",
+    'set:m19 and type:goblin and name:"motivator"',
   ];
-  setInterval(() => {
-    setQuery(queries[Math.floor(Math.random() * queries.length)]);
-  }, 1000);
+  useEffect(() => {
+    setInterval(() => {
+      setQuery(queries[Math.floor(Math.random() * queries.length)]);
+    }, 1000);
+  }, []);
 
   return (
     <div className="flex flex-row">
