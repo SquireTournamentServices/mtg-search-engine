@@ -31,3 +31,6 @@ cmc:5 and -(name:jeff or name:bill) opt
 (name:test) c:r
 (opt)
 toughness:0 -o:"+1/+1" -o:"equal to" -o:modular
+name:"motivator" type:"goblin"
+name:"motivator" type:"creature goblin"
+name:"motivator" types:"creature goblin"

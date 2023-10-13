@@ -2,6 +2,7 @@
 #include "./io_utils.h"
 #include "./thread_pool.h"
 #include "../testing_h/testing.h"
+#include "card_txt_fields_trie.h"
 #include <stdio.h>
 #include <string.h>
 #include <curl/curl.h>
@@ -267,6 +268,10 @@ static void __free_all_printings_cards_indexes(mse_all_printings_cards_t *cards)
 
     if (cards->indexes.card_name_parts_trie != NULL) {
         mse_free_card_trie_node(cards->indexes.card_name_parts_trie);
+    }
+
+    if (cards->indexes.card_type_trie != NULL) {
+        mse_free_card_trie_node(cards->indexes.card_type_trie);
     }
 
     __free_all_printings_cards_colour_indexes(cards);

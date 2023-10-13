@@ -157,6 +157,8 @@ set(SRC
     ./mse/generator_colour.c
     ./mse/generator_name.h
     ./mse/generator_name.c
+    ./mse/generator_type.h
+    ./mse/generator_type.c
     ./mse/interpretor.h
     ./mse/interpretor.c
     ./mse/consumer.h
@@ -201,6 +203,7 @@ set(TESTS
     ./tests/test_generator_set.c
     ./tests/test_generator_txt.c
     ./tests/test_generator_colours.c
+    ./tests/test_generator_type.c
     ./tests/test_consumer.c
     ./tests/test_interpretor.h
     ./tests/test_interpretor.c

@@ -52,6 +52,8 @@ typedef struct mse_cards_indexes_t {
     mse_card_trie_node_t *card_name_trie;
     /// Card names parts trie where the full filtered name is used
     mse_card_trie_node_t *card_name_parts_trie;
+    /// Card type trie where each filtered type is used
+    mse_card_trie_node_t *card_type_trie;
 
     /// Colours index, this is a long list of stuff
     mse_cards_colours_indexes_t colour_index;

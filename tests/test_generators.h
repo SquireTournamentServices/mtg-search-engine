@@ -9,6 +9,7 @@ int test_set_generators_double_fields();
 int test_generator_set();
 int test_generator_txt();
 int test_generator_colours();
+int test_generator_type();
 int test_consumer();
 
 extern mse_thread_pool_t gen_thread_pool;

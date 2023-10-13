@@ -5,6 +5,7 @@
 #include "./generator_name.h"
 #include "./generator_colour.h"
 #include "../testing_h/testing.h"
+#include "generator_type.h"
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -61,10 +62,9 @@ int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
     case MSE_SET_GENERATOR_TOUGHNESS:
         return 1;
     case MSE_SET_GENERATOR_NAME:
-        return __mse_is_op_set_includes(op_type);
     case MSE_SET_GENERATOR_ORACLE_TEXT:
-        return __mse_is_op_set_includes(op_type);
     case MSE_SET_GENERATOR_SET:
+    case MSE_SET_GENERATOR_TYPE:
         return __mse_is_op_set_includes(op_type);
     }
     return 0;
@@ -93,6 +93,8 @@ int mse_generate_set(mse_set_generator_t *gen,
         return mse_generate_set_toughness(gen, res, cards);
     case MSE_SET_GENERATOR_CMC:
         return mse_generate_set_cmc(gen, res, cards);
+    case MSE_SET_GENERATOR_TYPE:
+        return mse_generate_set_type(gen, res, cards);
     }
     return 1;
 }
@@ -156,6 +158,8 @@ int mse_gen_type(char *str, mse_set_generator_type_t *ret)
     else __MSE_GEN_TYPE_CMP("manacost", MSE_SET_GENERATOR_CMC);
     else __MSE_GEN_TYPE_CMP("name", MSE_SET_GENERATOR_NAME);
     else __MSE_GEN_TYPE_CMP("oracle", MSE_SET_GENERATOR_ORACLE_TEXT);
+    else __MSE_GEN_TYPE_CMP("type", MSE_SET_GENERATOR_TYPE);
+    else __MSE_GEN_TYPE_CMP("types", MSE_SET_GENERATOR_TYPE);
 
     if (!found) {
         lprintf(LOG_ERROR, "'%s' in not a valid op_name\n", tmp);

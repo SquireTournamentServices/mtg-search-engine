@@ -75,5 +75,6 @@ SUB_TEST(test_generators, {&init_generator_tests, "Init generator tests"},
 {&test_generator_set, "Test set generators"},
 {&test_generator_txt, "Test txt generators (name & oracle)"},
 {&test_generator_colours, "Test colours generators"},
+{&test_generator_type, "Test type generator"},
 {&test_consumer, "Test consumers"},
 {&free_generator_tests, "Free generator tests"})

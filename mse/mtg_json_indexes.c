@@ -1,5 +1,8 @@
 #include "./mtg_json_indexes.h"
 #include "../testing_h/testing.h"
+#include "avl_tree.h"
+#include "card_txt_fields_trie.h"
+#include "thread_pool.h"
 #include <string.h>
 
 #define MSE_INDEX_COLOUR_NAME(colour_field, cmp_type) \
@@ -227,6 +230,31 @@ static void __mse_generate_card_name_trie_task(void *__state, mse_thread_pool_t 
     sem_post(&(state->semaphore));
 }
 
+static int __add_cards_to_card_type_trie(mse_avl_tree_node_t *node, mse_card_trie_node_t *card_type_trie)
+{
+    if (node == NULL) {
+        return 1;
+    }
+
+    mse_card_t *card = (mse_card_t *) node->payload;
+    for (size_t i = 0; i < card->types_count; i++) {
+        ASSERT(mse_card_trie_insert(card_type_trie, card, card->types[i]));
+    }
+
+    ASSERT(__add_cards_to_card_type_trie(node->l, card_type_trie));
+    ASSERT(__add_cards_to_card_type_trie(node->r, card_type_trie));
+    return 1;
+}
+
+static void __mse_generate_card_type_trie_task(void *__state, mse_thread_pool_t *pool)
+{
+    mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
+    if (!__add_cards_to_card_type_trie(state->cards->card_tree, state->cards->indexes.card_type_trie)) {
+        state->ret = 0;
+    }
+    sem_post(&(state->semaphore));
+}
+
 static int __add_cards_to_card_name_parts_trie(mse_avl_tree_node_t *node,
         mse_card_trie_node_t *card_name_parts_trie)
 {
@@ -271,10 +299,12 @@ int __mse_generate_indexes(mse_all_printings_cards_t *ret, mse_thread_pool_t *po
     ASSERT(ret != NULL);
     ASSERT(mse_init_card_trie_node(&ret->indexes.card_name_trie));
     ASSERT(mse_init_card_trie_node(&ret->indexes.card_name_parts_trie));
+    ASSERT(mse_init_card_trie_node(&ret->indexes.card_type_trie));
 
     void (*tasks[])(void *, struct mse_thread_pool_t *) = {&__mse_generate_set_cards_index_task,
                                                            &__mse_generate_card_name_trie_task,
                                                            &__mse_generate_card_name_parts_trie_task,
+                                                           &__mse_generate_card_type_trie_task,
                                                            &MSE_INDEX_FIELD_NAME(power),
                                                            &MSE_INDEX_FIELD_NAME(toughness),
                                                            &MSE_INDEX_FIELD_NAME(cmc),
