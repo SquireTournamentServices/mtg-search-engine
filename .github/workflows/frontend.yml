@@ -52,12 +52,15 @@ jobs:
       fail-fast: false
       
     steps:
-      - name: build_frontend 
-        id: build_frontend 
+      - name: install_deps
         shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends npm
+          
+      - name: build_frontend 
+        shell: bash
+        run: |
           cd frontend
           npm i
           npm run build
