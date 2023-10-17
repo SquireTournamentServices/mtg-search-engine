@@ -15,7 +15,14 @@ jobs:
       tag: ${{steps.configure.outputs.tag}}
       sha: ${{steps.configure.outputs.sha}}
       upload_url: ${{steps.create_release.outputs.upload_url}}
+      
+  build-linux:
+    needs: configure
+    runs-on: ubuntu-22.04
 
+    strategy:
+      fail-fast: false
+      
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.12.0
