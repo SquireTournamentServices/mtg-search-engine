@@ -39,7 +39,6 @@ jobs:
           echo "::set-output name=sha::$sha"
 
       - name: Checkout
-        if: steps.configure.outputs.tag != null
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
