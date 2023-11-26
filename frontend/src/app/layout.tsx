@@ -34,7 +34,7 @@ export default function RootLayout({
             <FontAwesomeIcon icon={faGithub} />
           </Link>
         </div>
-        <div className='bg-slate-100'>
+        <div className="bg-slate-100">
           <div className="p-5 justify-center">{children}</div>
         </div>
       </body>

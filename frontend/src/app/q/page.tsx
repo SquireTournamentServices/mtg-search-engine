@@ -2,19 +2,19 @@ import Card from "./card";
 import PageChanger from "./pageChanger";
 
 export default async function SearchResultPage({
-  params,
+  searchParams,
 }: {
-  params: {
+  searchParams: {
     query: string;
-    page: number;
+    page?: string;
   };
 }) {
-  const query = decodeURIComponent(params.query);
+  const query = decodeURIComponent(searchParams.query);
   const resp = await fetch("http://127.0.0.1:4365/api", {
     method: "POST",
     body: query,
     headers: {
-      page: (params.page - 1).toString(),
+      page: (parseInt(searchParams.page ?? "1") - 1).toString(),
     },
   });
   const data = await resp.json();
@@ -38,7 +38,12 @@ export default async function SearchResultPage({
           .fill(0)
           .slice(Math.max(0, page - 5), page + 1 + 50)
           .map((_, i) => (
-            <PageChanger base_url={"/q/" + params.query} page={i + 1} key={i} />
+            <PageChanger
+              base_url={"/q/?query=" + searchParams.query}
+              page={i + 1}
+              key={i}
+              currentPage={(i + 1).toString() == searchParams.page}
+            />
           ))}
       </div>
     </div>

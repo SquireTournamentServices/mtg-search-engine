@@ -28,14 +28,19 @@ export default function Home() {
             <h3 className="text-xl font-bold">Query Composition</h3>
             <p>The syntax is designed to mimic that of Scryfall.</p>
             <p>You can use brackets as normal with negation.</p>
-            <p>The below query gets all mutally exclusive cards in m20 and m19.</p>
+            <p>
+              The below query gets all mutally exclusive cards in m20 and m19.
+            </p>
             <blockquote>
-            (set:m19 or set:m20) and !(set:m20 and set:m19)
+              (set:m19 or set:m20) and !(set:m20 and set:m19)
             </blockquote>
           </div>
           <div>
             <h3 className="text-xl font-bold">Operations</h3>
-            <p>Used in this form <blockquote>{'<query> <operator> <query>'}</blockquote></p>
+            <p>
+              Used in this form{" "}
+              <blockquote>{"<query> <operator> <query>"}</blockquote>
+            </p>
             <ul>
               <li>and</li>
               <li>or</li>

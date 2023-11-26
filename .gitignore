@@ -10,3 +10,5 @@ mse_langs.c
 
 mse_langs.h
 /cmake-build-debug/
+
+frontend/pnpm-lock.yaml

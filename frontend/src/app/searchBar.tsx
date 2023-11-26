@@ -1,9 +1,12 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
-export default function SearchBar(props: { query?: string }) {
-  const [name, setName] = useState(props.query || "");
+export default function SearchBar() {
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
+  const [name, setName] = useState(query);
   const router = useRouter();
 
   return (
@@ -12,7 +15,7 @@ export default function SearchBar(props: { query?: string }) {
         <form
           className="flex flex-row w-full justify-between gap-3"
           onSubmit={(e) => {
-            router.push("/q/" + encodeURIComponent(name) + "/1");
+            router.push("/q/?query=" + encodeURIComponent(name) + "&page=1");
             e.preventDefault();
           }}
         >
