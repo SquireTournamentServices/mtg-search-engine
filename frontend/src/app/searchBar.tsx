@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 
 export default function SearchBar() {
   const searchParams = useSearchParams();
-  const query = searchParams.get("query");
+  const query = searchParams.get("query") ?? "";
   const [name, setName] = useState(query);
   const router = useRouter();
 

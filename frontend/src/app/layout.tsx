@@ -21,7 +21,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className + " min-h-screen"}>
+      <body
+        className={inter.className + " min-h-screen flex flex-col bg-slate-100"}
+      >
         <div className="p-5 flex flex-row justify-between sticky top-0 bg-slate-900 z-50">
           <Link href="/" className="w-8 text-white hover:scale-125">
             <FontAwesomeIcon icon={faHome} />
@@ -34,9 +36,7 @@ export default function RootLayout({
             <FontAwesomeIcon icon={faGithub} />
           </Link>
         </div>
-        <div className="bg-slate-100">
-          <div className="p-5 justify-center">{children}</div>
-        </div>
+        <div className="flex p-5 justify-center">{children}</div>
       </body>
     </html>
   );
