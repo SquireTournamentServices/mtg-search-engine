@@ -6,7 +6,7 @@
 
 #define MAX(a, b) (a > b ? a : b)
 
-static size_t __tree_height(mse_avl_tree_node_t *node)
+static size_t __tree_height(mse_avl_tree_node_t * restrict node)
 {
     if (node == NULL) {
         return 0;
@@ -14,7 +14,7 @@ static size_t __tree_height(mse_avl_tree_node_t *node)
     return node->height;
 }
 
-void mse_free_tree(mse_avl_tree_node_t *tree)
+void mse_free_tree(mse_avl_tree_node_t * restrict tree)
 {
     if (tree == NULL) {
         return;
@@ -28,7 +28,7 @@ void mse_free_tree(mse_avl_tree_node_t *tree)
     free(tree);
 }
 
-int mse_tree_balance(mse_avl_tree_node_t *node)
+int mse_tree_balance(mse_avl_tree_node_t * restrict node)
 {
     if (node == NULL) {
         return 0;
@@ -55,7 +55,7 @@ mse_avl_tree_node_t *mse_init_avl_tree_node(void (*free_payload)(void *payload),
     return tree;
 }
 
-static void __print_tree(mse_avl_tree_node_t *tree, int h)
+static void __print_tree(mse_avl_tree_node_t * restrict tree, int h)
 {
     for (int i = 0; i < h; i++) {
         printf("  |");
@@ -75,12 +75,12 @@ static void __print_tree(mse_avl_tree_node_t *tree, int h)
     }
 }
 
-void mse_print_tree(mse_avl_tree_node_t *root)
+void mse_print_tree(mse_avl_tree_node_t * restrict root)
 {
     __print_tree(root, 0);
 }
 
-static void __rotate_update_heights(mse_avl_tree_node_t *root)
+static void __rotate_update_heights(mse_avl_tree_node_t * restrict root)
 {
     if (root->r != NULL) {
         root->r->height = MAX(__tree_height(root->r->l),
@@ -95,7 +95,7 @@ static void __rotate_update_heights(mse_avl_tree_node_t *root)
                        __tree_height(root->r)) + 1;
 }
 
-static mse_avl_tree_node_t *__rotate_r(mse_avl_tree_node_t *y)
+static mse_avl_tree_node_t *__rotate_r(mse_avl_tree_node_t * restrict y)
 {
     /* Rotation (right):
     *      x          y
@@ -131,7 +131,7 @@ static mse_avl_tree_node_t *__rotate_l(mse_avl_tree_node_t *x)
     return y;
 }
 
-static int __cmp_payload(mse_avl_tree_node_t *a, mse_avl_tree_node_t *b)
+static int __cmp_payload(mse_avl_tree_node_t * restrict a, mse_avl_tree_node_t * restrict b)
 {
     if (a == NULL || b == NULL) {
         return 0;
@@ -140,7 +140,7 @@ static int __cmp_payload(mse_avl_tree_node_t *a, mse_avl_tree_node_t *b)
     }
 }
 
-static mse_avl_tree_node_t *__do_insert_node(mse_avl_tree_node_t *root, mse_avl_tree_node_t *node)
+static mse_avl_tree_node_t *__do_insert_node(mse_avl_tree_node_t * restrict root, mse_avl_tree_node_t * restrict node)
 {
     // Base case
     if (root == NULL) {
@@ -197,7 +197,7 @@ int mse_insert_node(mse_avl_tree_node_t **root, mse_avl_tree_node_t *node)
     return 1;
 }
 
-mse_avl_tree_node_t *mse_find_payload(mse_avl_tree_node_t *node, void *payload)
+mse_avl_tree_node_t *mse_find_payload(mse_avl_tree_node_t * restrict node, void * restrict payload)
 {
     if (node == NULL) {
         return NULL;
@@ -213,7 +213,7 @@ mse_avl_tree_node_t *mse_find_payload(mse_avl_tree_node_t *node, void *payload)
     }
 }
 
-size_t mse_tree_size(mse_avl_tree_node_t *node)
+size_t mse_tree_size(mse_avl_tree_node_t * restrict node)
 {
     if (node == NULL) {
         return 0;
@@ -222,7 +222,7 @@ size_t mse_tree_size(mse_avl_tree_node_t *node)
     return 1 + mse_tree_size(node->l) + mse_tree_size(node->r);
 }
 
-mse_avl_tree_node_t *mse_shallow_copy_tree_node(mse_avl_tree_node_t *node)
+mse_avl_tree_node_t *mse_shallow_copy_tree_node(mse_avl_tree_node_t * restrict node)
 {
     if (node == NULL) {
         return NULL;
@@ -231,7 +231,7 @@ mse_avl_tree_node_t *mse_shallow_copy_tree_node(mse_avl_tree_node_t *node)
     return mse_init_avl_tree_node(node->free_payload, node->cmp_payload, node->payload);
 }
 
-static int __add_node_to_lookup(mse_avl_tree_node_t **res, mse_avl_tree_node_t *__node)
+static int __add_node_to_lookup(mse_avl_tree_node_t **res, mse_avl_tree_node_t * restrict __node)
 {
     mse_avl_tree_node_t *node = mse_shallow_copy_tree_node(__node);
     ASSERT(node != NULL);
@@ -240,7 +240,7 @@ static int __add_node_to_lookup(mse_avl_tree_node_t **res, mse_avl_tree_node_t *
     return 1;
 }
 
-static int __tree_lookup(mse_avl_tree_node_t *node, mse_avl_tree_node_t **res, int less_than, void *cmp_payload)
+static int __tree_lookup(mse_avl_tree_node_t * restrict node, mse_avl_tree_node_t **res, int less_than, void *cmp_payload)
 {
     if (node == NULL) {
         return 1;
@@ -263,13 +263,13 @@ static int __tree_lookup(mse_avl_tree_node_t *node, mse_avl_tree_node_t **res, i
     return 1;
 }
 
-int mse_tree_lookup(mse_avl_tree_node_t *root, mse_avl_tree_node_t **res, int less_than, void *cmp_payload)
+int mse_tree_lookup(mse_avl_tree_node_t * restrict root, mse_avl_tree_node_t **res, int less_than, void *cmp_payload)
 {
     *res = NULL;
     return __tree_lookup(root, res, less_than, cmp_payload);
 }
 
-static int __tree_lookup_2(mse_avl_tree_node_t *node, mse_avl_tree_node_t **res, void *lower, void *upper)
+static int __tree_lookup_2(mse_avl_tree_node_t * restrict node, mse_avl_tree_node_t **res, void *lower, void *upper)
 {
     if (node == NULL) {
         return 1;
@@ -293,7 +293,7 @@ static int __tree_lookup_2(mse_avl_tree_node_t *node, mse_avl_tree_node_t **res,
     return 1;
 }
 
-int mse_tree_lookup_2(mse_avl_tree_node_t *root, mse_avl_tree_node_t **res, void *lower, void *upper)
+int mse_tree_lookup_2(mse_avl_tree_node_t * restrict root, mse_avl_tree_node_t **res, void * restrict lower, void * restrict upper)
 {
     *res = NULL;
     if (root != NULL) {
