@@ -27,7 +27,7 @@ typedef struct mse_colour_index_generator_state_t {
 
 #define MSE_INDEX_FOR_COLOUR(colour_field, cmp_type) \
 static int MSE_INDEX_COLOUR_NAME_IMPL_RECURSIVE(colour_field, cmp_type) \
-    (mse_avl_tree_node_t *cards, \
+    (mse_avl_tree_node_t * restrict cards, \
     mse_avl_tree_node_t **tree, \
     mse_colour_enum_t colours) \
 { \
@@ -55,7 +55,7 @@ static void MSE_INDEX_COLOUR_NAME_IMPL(colour_field, cmp_type)(void *__state, ms
     free(gstate); \
 } \
 static int MSE_INDEX_COLOUR_NAME_IMPL_THREAD(colour_field, cmp_type) \
-    (mse_colour_index_generator_state_t gen_state, mse_index_generator_state_t *state) \
+    (mse_colour_index_generator_state_t gen_state, mse_index_generator_state_t * state) \
 { \
    mse_colour_index_generator_state_t *gstate = malloc(sizeof(*gstate)); \
    ASSERT(gstate != NULL); \
@@ -120,7 +120,7 @@ MSE_INDEX_FOR_COLOUR_FIELD(colour_identity)
 &MSE_INDEX_COLOUR_NAME(colour_field, eq)
 
 // Set cards index
-static int __mse_add_card_to_set(mse_card_t *card, mse_avl_tree_node_t *sets)
+static int __mse_add_card_to_set(mse_card_t * restrict card, mse_avl_tree_node_t * restrict sets)
 {
     for (size_t i = 0; i < card->set_codes_count; i++) {
         // Create a proxy element for the tree search as the tree will be comparing mse_set_t objects
@@ -143,7 +143,7 @@ static int __mse_add_card_to_set(mse_card_t *card, mse_avl_tree_node_t *sets)
     return 1;
 }
 
-static int __add_cards_to_set(mse_avl_tree_node_t *cards, mse_avl_tree_node_t *sets)
+static int __add_cards_to_set(mse_avl_tree_node_t * restrict cards, mse_avl_tree_node_t * restrict sets)
 {
     if (cards == NULL) {
         return 1;
@@ -164,7 +164,7 @@ static void __mse_generate_set_cards_index_task(void *__state, mse_thread_pool_t
     sem_post(&(state->semaphore));
 }
 
-static int __insert_node(mse_avl_tree_node_t **root, mse_avl_tree_node_t *node)
+static int __insert_node(mse_avl_tree_node_t **root, mse_avl_tree_node_t * restrict node)
 {
     if (*root == NULL) {
         *root = node;
@@ -176,7 +176,7 @@ static int __insert_node(mse_avl_tree_node_t **root, mse_avl_tree_node_t *node)
 
 #define MSE_INDEX_FIELD_NAME(fname) __mse_generate_card_##fname##_index_task
 #define MSE_INDEX_FOR_FIELD(fname) \
-static int __add_cards_to_##fname##_tree(mse_avl_tree_node_t *cards, mse_avl_tree_node_t **card_##fname##_tree) \
+static int __add_cards_to_##fname##_tree(mse_avl_tree_node_t *restrict cards, mse_avl_tree_node_t **card_##fname##_tree) \
 { \
     if (cards == NULL) { \
         return 1; \
@@ -207,7 +207,7 @@ MSE_INDEX_FOR_FIELD(power)
 MSE_INDEX_FOR_FIELD(toughness)
 MSE_INDEX_FOR_FIELD(cmc)
 
-static int __add_cards_to_card_name_trie(mse_avl_tree_node_t *node, mse_card_trie_node_t *card_name_trie)
+static int __add_cards_to_card_name_trie(mse_avl_tree_node_t *restrict node, mse_card_trie_node_t * restrict card_name_trie)
 {
     if (node == NULL) {
         return 1;
@@ -230,7 +230,7 @@ static void __mse_generate_card_name_trie_task(void *__state, mse_thread_pool_t 
     sem_post(&(state->semaphore));
 }
 
-static int __add_cards_to_card_type_trie(mse_avl_tree_node_t *node, mse_card_trie_node_t *card_type_trie)
+static int __add_cards_to_card_type_trie(mse_avl_tree_node_t * restrict node, mse_card_trie_node_t * restrict card_type_trie)
 {
     if (node == NULL) {
         return 1;
@@ -255,8 +255,8 @@ static void __mse_generate_card_type_trie_task(void *__state, mse_thread_pool_t 
     sem_post(&(state->semaphore));
 }
 
-static int __add_cards_to_card_name_parts_trie(mse_avl_tree_node_t *node,
-        mse_card_trie_node_t *card_name_parts_trie)
+static int __add_cards_to_card_name_parts_trie(mse_avl_tree_node_t * restrict node,
+        mse_card_trie_node_t * restrict card_name_parts_trie)
 {
     if (node == NULL) {
         return 1;
@@ -293,7 +293,7 @@ static void __mse_generate_card_name_parts_trie_task(void *__state, mse_thread_p
 
 #define TASK_COUNT(T) (sizeof(T) / sizeof(*T))
 
-int __mse_generate_indexes(mse_all_printings_cards_t *ret, mse_thread_pool_t *pool)
+int __mse_generate_indexes(mse_all_printings_cards_t * restrict ret, mse_thread_pool_t *pool)
 {
     ASSERT(pool != NULL);
     ASSERT(ret != NULL);

@@ -14,7 +14,7 @@ int mse_init_card_trie_node(mse_card_trie_node_t **node)
     return 1;
 }
 
-static void __mse_free_card_trie_node(mse_card_trie_node_t *node)
+static void __mse_free_card_trie_node(mse_card_trie_node_t * restrict node)
 {
     if (node == NULL) {
         return;
@@ -30,12 +30,12 @@ static void __mse_free_card_trie_node(mse_card_trie_node_t *node)
     free(node);
 }
 
-void mse_free_card_trie_node(mse_card_trie_node_t *node)
+void mse_free_card_trie_node(mse_card_trie_node_t * restrict node)
 {
     __mse_free_card_trie_node(node);
 }
 
-static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, mse_avl_tree_node_t **ret, int i)
+static int __mse_card_trie_lookup(mse_card_trie_node_t * restrict root, char * restrict str, mse_avl_tree_node_t **ret, int i)
 {
     if (str[i] == 0) {
         // Copy the tree
@@ -58,7 +58,7 @@ static int __mse_card_trie_lookup(mse_card_trie_node_t *root, char *str, mse_avl
     return __mse_card_trie_lookup(root->children[c_index], str, ret, i + 1);
 }
 
-int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, mse_avl_tree_node_t **ret)
+int mse_card_trie_lookup(mse_card_trie_node_t * restrict trie, char * restrict str, mse_avl_tree_node_t **ret)
 {
     *ret = NULL;
     char *str_f = mse_filter_text(str);
@@ -70,7 +70,7 @@ int mse_card_trie_lookup(mse_card_trie_node_t *trie, char *str, mse_avl_tree_nod
     return 1;
 }
 
-static int __mse_insert_avl(mse_avl_tree_node_t **root, mse_avl_tree_node_t *node)
+static int __mse_insert_avl(mse_avl_tree_node_t **root, mse_avl_tree_node_t * restrict node)
 {
     if (node == NULL) {
         return 1;
@@ -92,7 +92,7 @@ static int __mse_insert_avl(mse_avl_tree_node_t **root, mse_avl_tree_node_t *nod
     return 1;
 }
 
-static int __mse_insert_trie_children(mse_card_trie_node_t *node, mse_avl_tree_node_t **ret)
+static int __mse_insert_trie_children(mse_card_trie_node_t * restrict node, mse_avl_tree_node_t **ret)
 {
     if (node == NULL) {
         return 1;
@@ -105,7 +105,7 @@ static int __mse_insert_trie_children(mse_card_trie_node_t *node, mse_avl_tree_n
     return 1;
 }
 
-static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t *root, char *str, mse_avl_tree_node_t **ret, int i)
+static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t * restrict root, char * restrict str, mse_avl_tree_node_t **ret, int i)
 {
     if (str[i] == 0) {
         ASSERT(__mse_insert_trie_children(root, ret));
@@ -121,7 +121,7 @@ static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t *root, char *str, m
     return __mse_card_trie_lookup_aprox(root->children[c_index], str, ret, i + 1);
 }
 
-int mse_card_trie_lookup_aprox(mse_card_trie_node_t *trie, char *str, mse_avl_tree_node_t **ret)
+int mse_card_trie_lookup_aprox(mse_card_trie_node_t * restrict trie, char * restrict str, mse_avl_tree_node_t **ret)
 {
     *ret = NULL;
     char *str_f = mse_filter_text(str);
@@ -133,7 +133,7 @@ int mse_card_trie_lookup_aprox(mse_card_trie_node_t *trie, char *str, mse_avl_tr
     return 1;
 }
 
-static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mse_card_t *card)
+static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mse_card_t * restrict card)
 {
     mse_avl_tree_node_t *node = mse_init_avl_tree_node(MSE_CARD_DEFAULT_FREE_FUNCTION,
                                 MSE_CARD_DEFAULT_COMPARE_FUNCTION,
@@ -145,7 +145,7 @@ static int __mse_card_trie_do_insert(mse_card_trie_node_t *root, mse_card_t *car
     return 1;
 }
 
-static int __mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t *card, char *str, int index)
+static int __mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t * restrict card, char * restrict str, int index)
 {
     if (str[index] == 0) {
         return __mse_card_trie_do_insert(root, card);
@@ -164,7 +164,7 @@ static int __mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t *card, 
     return __mse_card_trie_insert(root->children[c_index], card, str, index + 1);
 }
 
-int mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t *card, char *str)
+int mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t * restrict card, char * restrict str)
 {
     char *str_f = mse_filter_text(str);
     ASSERT(str_f != NULL);
@@ -185,7 +185,7 @@ char __mse_filter_char(char c)
     return mse_filter_char_map[i];
 }
 
-static int __is_duplicate(char *str, int i, char c)
+static int __is_duplicate(char * restrict str, int i, char c)
 {
     if (i > 0) {
         return str[i - 1] == c;
@@ -193,7 +193,7 @@ static int __is_duplicate(char *str, int i, char c)
     return 0;
 }
 
-char *mse_filter_text(char *str)
+char *mse_filter_text(char * restrict str)
 {
     size_t len = strlen(str);
     char *ret = malloc(len + 1);
@@ -223,7 +223,7 @@ char *mse_filter_text(char *str)
     return ret;
 }
 
-static int __mse_insert_to_name_parts(mse_card_name_parts_t *ret, char *fname)
+static int __mse_insert_to_name_parts(mse_card_name_parts_t *ret, char * restrict fname)
 {
     char **tmp = realloc(ret->parts, sizeof(*ret->parts) * (ret->len + 1));
     if (tmp == NULL) {
@@ -253,7 +253,7 @@ static int __mse_is_vowel(char c)
     }
 }
 
-static int __mse_split_card_name(char *name, mse_card_name_parts_t *ret)
+static int __mse_split_card_name(char * restrict name, mse_card_name_parts_t * restrict ret)
 {
     char *tmp = name;
     size_t len = strlen(name);
@@ -285,7 +285,7 @@ static int __mse_split_card_name(char *name, mse_card_name_parts_t *ret)
     return 1;
 }
 
-void mse_free_card_parts(mse_card_name_parts_t *ret)
+void mse_free_card_parts(mse_card_name_parts_t * restrict ret)
 {
     if (ret->parts != NULL) {
         for (size_t i = 0; i < ret->len; i++) {
@@ -298,7 +298,7 @@ void mse_free_card_parts(mse_card_name_parts_t *ret)
     memset(ret, 0, sizeof(*ret));
 }
 
-int mse_split_card_name(char *name, mse_card_name_parts_t *ret)
+int mse_split_card_name(char * restrict name, mse_card_name_parts_t * restrict ret)
 {
     memset(ret, 0, sizeof(*ret));
 

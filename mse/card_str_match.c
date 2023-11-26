@@ -28,7 +28,7 @@ static int __mse_re_match(char *str, mse_re_t *re)
 
 #define __MSE_HASH_DEFAULT 0
 
-int mse_str_match(char *str, char *substr)
+int mse_str_match(char * restrict str, char * restrict substr)
 {
     if (str == NULL) {
         return 0;
@@ -59,7 +59,7 @@ int mse_str_match(char *str, char *substr)
     return 0;
 }
 
-int mse_card_oracle_matches(mse_card_t *card, mse_re_t *re)
+int mse_card_oracle_matches(mse_card_t * restrict card, mse_re_t *re)
 {
     if (card->oracle_text == NULL) {
         return 0;
@@ -67,7 +67,7 @@ int mse_card_oracle_matches(mse_card_t *card, mse_re_t *re)
     return __mse_re_match(card->oracle_text, re);
 }
 
-int mse_card_name_matches(mse_card_t *card, mse_re_t *re)
+int mse_card_name_matches(mse_card_t * restrict card, mse_re_t *re)
 {
     if (card->name == NULL) {
         return 0;
@@ -104,7 +104,7 @@ typedef struct mse_card_match_worker_data_t {
     mse_avl_tree_node_t *root;
 } mse_card_match_worker_data_t;
 
-static void __mse_match_card_do_match(mse_avl_tree_node_t *node,
+static void __mse_match_card_do_match(mse_avl_tree_node_t * restrict node,
                                       mse_card_match_t *match_data,
                                       mse_card_match_cmp_data_t data)
 {
@@ -159,7 +159,7 @@ static void __mse_match_card_do_match(mse_avl_tree_node_t *node,
     }
 }
 
-static void __mse_match_card_node(mse_avl_tree_node_t *node,
+static void __mse_match_card_node(mse_avl_tree_node_t * restrict node,
                                   mse_card_match_t *match_data,
                                   mse_card_match_cmp_data_t cmp_data)
 {
@@ -200,7 +200,7 @@ cleanup:
 
 static int __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
         mse_thread_pool_t *pool,
-        mse_avl_tree_node_t *node,
+        mse_avl_tree_node_t * restrict node,
         int h,
         mse_card_match_cmp_data_t data)
 {
@@ -248,7 +248,7 @@ static int __mse_match_card_worker_enqueue(mse_card_match_t *match_data,
 }
 
 static int __mse_match_cards(mse_avl_tree_node_t **ret,
-                             mse_avl_tree_node_t *cards_tree,
+                             mse_avl_tree_node_t * restrict cards_tree,
                              char *str,
                              int is_regex,
                              int negate,
@@ -323,7 +323,7 @@ int mse_matching_card_name(mse_avl_tree_node_t **ret,
     return __mse_match_cards(ret, cards_tree, str, is_regex, negate, pool, MSE_MATCH_NAME);
 }
 
-char *mse_escape_regex(char *regex)
+char *mse_escape_regex(char * restrict regex)
 {
     size_t len = strlen(regex);
     ASSERT(len > 1);
