@@ -119,7 +119,7 @@ void mse_serve(mse_t *mse_in)
     struct mg_connection *c;
     mse = mse_in;
 
-    char *bind_addr = "http://127.0.0.1:4365";
+    char *bind_addr = "http://0.0.0.0:4365";
     mg_mgr_init(&mgr);
     c = mg_http_listen(&mgr,
                        bind_addr,
