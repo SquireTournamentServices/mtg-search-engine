@@ -25,9 +25,6 @@ export default function Colour(props: { colour: number }) {
   return (
     <span className={"font-bold text-xl " + colour}>
       ⏺
-      {
-        <div className="text-yellow-300 text-blue-700 text-purple-900 text-red-700 text-lime-700 text-black inline" />
-      }
     </span>
   );
 }
