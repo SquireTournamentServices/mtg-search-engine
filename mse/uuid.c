@@ -105,14 +105,7 @@ int mse_read_set_code(FILE *f, mse_set_code_t *code)
 
 int mse_uuid_cmp(mse_uuid_t a, mse_uuid_t b)
 {
-    for (int i = sizeof(a.bytes) - 1; i >= 0; i--) {
-        if (a.bytes[i] < b.bytes[i]) {
-            return -1;
-        } else if (a.bytes[i] > b.bytes[i]) {
-            return 1;
-        }
-    }
-    return 0;
+    return memcmp(&a, &b, sizeof(a));
 }
 
 mse_uuid_t mse_max_uuid()
