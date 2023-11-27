@@ -17,7 +17,13 @@ export default async function SearchResultPage({
       page: (parseInt(searchParams.page ?? "1") - 1).toString(),
     },
   });
-  const data = await resp.json();
+
+  let data: any;
+  if (resp.ok) {
+    data = await resp.json();
+  } else {
+    return <p>Error</p>;
+  }
   const results = data.cards_total;
   const page = data.page;
   const page_size = data.page_size;
