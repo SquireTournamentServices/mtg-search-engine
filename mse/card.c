@@ -310,7 +310,7 @@ int mse_avl_cmp_card(void * restrict a, void * restrict b)
     return mse_uuid_cmp(ca->id, cb->id);
 }
 
-int mse_avl_cmp_card_name(void *a, void *b)
+int mse_avl_cmp_card_name(void * restrict a, void * restrict b)
 {
     mse_card_t *ca = (mse_card_t *) a;
     mse_card_t *cb = (mse_card_t *) b;

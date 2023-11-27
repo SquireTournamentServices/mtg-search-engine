@@ -2,7 +2,7 @@
 #include <pthread.h>
 #include <mse/mse.h>
 
-#define MSE_PAGE_SIZE 50
+#define MSE_PAGE_SIZE 52
 
 typedef struct mse_async_query_t {
     int ref_count;
