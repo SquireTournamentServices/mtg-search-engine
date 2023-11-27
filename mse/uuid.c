@@ -103,11 +103,6 @@ int mse_read_set_code(FILE *f, mse_set_code_t *code)
     return 1;
 }
 
-int mse_uuid_cmp(mse_uuid_t a, mse_uuid_t b)
-{
-    return memcmp(&a, &b, sizeof(a));
-}
-
 mse_uuid_t mse_max_uuid()
 {
     mse_uuid_t ret;

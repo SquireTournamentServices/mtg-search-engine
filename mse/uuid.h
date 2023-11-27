@@ -1,4 +1,5 @@
 #pragma once
+#include <string.h>
 #include <stdio.h>
 
 typedef struct mse_uuid_t {
@@ -27,7 +28,7 @@ int mse_write_set_code(FILE *f, mse_set_code_t code);
 int mse_read_set_code(FILE *f, mse_set_code_t *code);
 
 /// Return code is similar to that of memcmp, maybe because it uses memcmp...
-int mse_uuid_cmp(mse_uuid_t a, mse_uuid_t b);
+#define mse_uuid_cmp(a, b) memcmp(&a, &b, sizeof(a))
 
 /// Returns the maximum possible UUID, this can be used when doing an lookup in an AVL tree for an element where
 /// the UUID makes up part of a composite key. In card.h the power and, toughness trees use a composite key of
