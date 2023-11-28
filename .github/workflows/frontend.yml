@@ -42,15 +42,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
-  build-linux:
-    needs: configure
-    runs-on: ubuntu-22.04
 
-    strategy:
-      fail-fast: false
-      
-    steps:
       - name: install_deps
         shell: bash
         run: |
