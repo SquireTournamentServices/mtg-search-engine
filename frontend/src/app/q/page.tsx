@@ -30,7 +30,7 @@ export default async function SearchResultPage({
   const pages = Math.ceil(results / page_size);
 
   return (
-    <div className="flex flex-col gap-5 pb-5 pt-5 justify-between">
+    <div className="flex flex-col gap-5 pb-5 pt-5 justify-between w-full">
       <div className="w-full mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {data.cards.map((item: any) => (
           <Card data={item} key={item} />
@@ -43,7 +43,6 @@ export default async function SearchResultPage({
         <div className="flex flex-row gap-3 w-full overflow-x-auto py-5">
           {Array(pages)
             .fill(0)
-            .slice(Math.max(0, page - 5), page + 1 + 50)
             .map((_, i) => (
               <PageChanger
                 base_url={"/q/?query=" + searchParams.query}
