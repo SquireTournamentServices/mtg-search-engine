@@ -55,6 +55,7 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 static int __mse_handle_set_generator(mse_parser_status_t *ret, int negate)
 {
     mse_set_generator_t tmp;
+    ASSERT(ret->set_generator_node == NULL);
     ASSERT(mse_init_set_generator(&tmp,
                                   ret->parser_gen_type,
                                   ret->parser_op_type,
@@ -335,6 +336,10 @@ static void __mse_free_parser_status(mse_parser_status_t *status)
     if (status->stack_roots != NULL) {
         lprintf(LOG_WARNING, "Unused %lu nodes on the stack\n", status->stack_roots_len);
         free(status->stack_roots);
+    }
+
+    if (status->set_generator_node != NULL) {
+        mse_free_interp_node(status->set_generator_node);
     }
 }
 
