@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 
 project(
   mtg-search-engine
-  VERSION 1.0
+  VERSION 1.2
   LANGUAGES C CXX)
 
 set(REPO_URL "https://github.com/djpiper28/mtg-search-engine")
