@@ -41,7 +41,7 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 
 %{
 #define COPY_TO_TMP_BUFFER \
-    if (ret-.tmp_buffer != NULL) free(ret->tmp_buffer); \
+    if (ret->tmp_buffer != NULL) free(ret->tmp_buffer); \
     ret->tmp_buffer = (char*) malloc(sizeof(char) * (yyleng + 1)); \
     PARSE_ASSERT(ret->tmp_buffer != NULL); \
     strncpy(ret->tmp_buffer, yytext, yyleng); \
