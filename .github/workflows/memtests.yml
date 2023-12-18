@@ -38,7 +38,7 @@ jobs:
           cmake gcovr valgrind python3 bison libabsl-dev \
           libcurl4-openssl-dev libjansson-dev doxygen graphviz libmbedtls-dev
 
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: '3.9'
         cache: 'pip' # caching pip dependencies
