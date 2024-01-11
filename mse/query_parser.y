@@ -1,12 +1,12 @@
 %{
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
 #include "testing_h/testing.h"
 #include "mse/interpretor.h"
 #include "mse/query_parser.h"
 #include "mse_query_lexer.h"
 #include "mse_query_parser.h"
+
 #undef lprintf
 #define lprintf fprintf(LOG_STREAM, "(" ANSI_YELLOW "%s" ANSI_RESET \
                         ":" ANSI_YELLOW "%d" ANSI_RESET ") \t", __FILE__, __LINE__ ),\
@@ -19,8 +19,6 @@
   YYABORT; \
 }
 
-static pthread_mutex_t parser_lock = PTHREAD_MUTEX_INITIALIZER;
-
 static void yyerror(mse_parser_status_t *__ret, const char *s)
 {
     lprintf(LOG_ERROR, "Parse error: %s\n", s);
@@ -31,13 +29,23 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
     #include "mse/query_parser.h"
 }
 %parse-param {mse_parser_status_t *ret}
+%lex-param {mse_parser_status_t *ret}
 %glr-parser
+%locations
 %define parse.error verbose
 
 %right LT LT_INC GT GT_INC INCLUDES EQUALS
 %right AND OR
 %right WORD STRING REGEX_STRING
 %right WHITESPACE OPEN_BRACKET CLOSE_BRACKET STMT_NEGATE
+
+%union {
+  int intval;
+  float floatval;
+  char *strval;
+  // ... other possible types used in your rules
+  struct mse_parser_status_t *mseval;
+}
 
 %{
 #define COPY_TO_TMP_BUFFER \
@@ -350,13 +358,16 @@ int mse_parse_input_string(const char* input_string, mse_interp_node_t **root)
     mse_parser_status_t ret;
     memset(&ret, 0, sizeof(ret));
 
-    pthread_mutex_lock(&parser_lock);
+    yyscan_t scanner;
+    memset(&scanner, 0, sizeof(scanner));
 
-    YY_BUFFER_STATE input_buffer = yy_scan_string(input_string);
+    // Start parse
+    ASSERT(yylex_init_extra(*root, &ret.scanner) == 0);
+    YY_BUFFER_STATE input_buffer = yy_scan_string(input_string, &scanner);
+
     int result = yyparse(&ret);
     yy_delete_buffer(input_buffer);
-
-    pthread_mutex_unlock(&parser_lock);
+    yylex_destroy(scanner);
 
     // Cleanup
     __mse_free_parser_status(&ret);
