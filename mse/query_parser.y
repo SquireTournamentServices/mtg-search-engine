@@ -4,8 +4,8 @@
 #include "testing_h/testing.h"
 #include "mse/interpretor.h"
 #include "mse/query_parser.h"
-#include "mse_query_lexer.h"
 #include "mse_query_parser.h"
+#include "mse_query_lexer.h"
 
 #undef lprintf
 #define lprintf fprintf(LOG_STREAM, "(" ANSI_YELLOW "%s" ANSI_RESET \
@@ -19,7 +19,7 @@
   YYABORT; \
 }
 
-static void yyerror(mse_parser_status_t *__ret, const char *s)
+static void yyerror(YYLTYPE* loc, mse_parser_status_t *__ret, const char *s)
 {
     lprintf(LOG_ERROR, "Parse error: %s\n", s);
 }
@@ -33,21 +33,17 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 %glr-parser
 %locations
 %define parse.error verbose
+%define api.pure true 
+%define api.location.type YYLTYPE
 
 %right LT LT_INC GT GT_INC INCLUDES EQUALS
 %right AND OR
 %right WORD STRING REGEX_STRING
 %right WHITESPACE OPEN_BRACKET CLOSE_BRACKET STMT_NEGATE
 
-%union {
-  int intval;
-  float floatval;
-  char *strval;
-  // ... other possible types used in your rules
-  struct mse_parser_status_t *mseval;
-}
-
 %{
+#define YYLTYPE_LENGTH sizeof(YYLTYPE)
+
 #define COPY_TO_TMP_BUFFER \
     if (ret->tmp_buffer != NULL) free(ret->tmp_buffer); \
     ret->tmp_buffer = (char*) malloc(sizeof(char) * (yyleng + 1)); \

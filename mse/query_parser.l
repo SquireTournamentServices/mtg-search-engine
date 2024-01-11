@@ -3,8 +3,8 @@
 
 %{
 #include "mse/query_parser.h"
-#include "mse_query_lexer.h"
 #include "mse_query_parser.h"
+#include "mse_query_lexer.h"
 
 void yyerror(YYLTYPE* loc, mse_parser_status_t *data, const char *msg);
 
