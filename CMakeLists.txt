@@ -232,8 +232,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 
 if(UNIX)
   # Setup docs
-  find_package(doxygen)
-  if(DOXYGEN_FOUND)
+  option(MSE_DOXYGEN OFF)
+  if(MSE_DOXYGEN)
     find_package(doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
     doxygen_add_docs(mse-docs ${SRC} ${TESTS}
                      "Generate documentation pages for ${REPO_URL}")

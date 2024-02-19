@@ -47,7 +47,9 @@ cd build
 # ./build/
 # You can use -DMSE_WEB_API=ON to build the web api
 # You can use -DUSE_JEMALLOC=ON to build with Jemalloc (recommended)
+# You can use -DMSE_DOXYGEN=ON to generate documentation
 cmake .. 
+# cmake -DMSE_WEB_API=ON -DUSE_JEMALLOC=ON ..
 cmake --build . -j
 
 ctest -V -j # Runs all the tests
