@@ -1,4 +1,5 @@
 %{
+#pragma once
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
@@ -7,6 +8,12 @@
 #include "mse/query_parser.h"
 #include "mse_query_lexer.h"
 #include "mse_query_parser.h"
+
+#define MSE_PASER_FILE_NAME "mse/query_parser.y" 
+
+#undef ___FNANE
+#define ___FNANE MSE_PASER_FILE_NAME
+
 #undef lprintf
 #define lprintf fprintf(LOG_STREAM, "(" ANSI_YELLOW "%s" ANSI_RESET \
                         ":" ANSI_YELLOW "%d" ANSI_RESET ") \t", __FILE__, __LINE__ ),\
@@ -14,8 +21,9 @@
 #define PARSE_ASSERT(x) if (!(x)) \
 { \
   lprintf(LOG_ERROR, "Parse Error: Assertion failure, line " \
-      ANSI_RED "%d" ANSI_RESET " in " ANSI_RED "%s" ANSI_RESET "\n", \
-      __LINE__, ___FNANE); \
+      ANSI_RED "%d" ANSI_RESET " in " ANSI_RED \
+      MSE_PASER_FILE_NAME ANSI_RESET "\n", \
+      __LINE__); \
   YYABORT; \
 }
 
@@ -25,14 +33,15 @@ static void yyerror(mse_parser_status_t *__ret, const char *s)
 {
     lprintf(LOG_ERROR, "Parse error: %s\n", s);
 }
+
+extern int yywrap();
+
+#define YY_DO_BEFORE_ACTION
+#define YY_NEW_FILE
 %}
 
-%code requires {
-    #include "mse/query_parser.h"
-}
 %parse-param {mse_parser_status_t *ret}
 %glr-parser
-%define parse.error verbose
 
 %right LT LT_INC GT GT_INC INCLUDES EQUALS
 %right AND OR
@@ -229,7 +238,6 @@ input: query
      | WHITESPACE query 
      | query WHITESPACE
      | WHITESPACE query WHITESPACE
-     | %empty
      ;
 
 op_operator : LT_INC { ret->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }

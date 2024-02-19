@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <signal.h>
 #include "./thread_pool.h"
 #include "../testing_h/testing.h"
 
@@ -9,7 +8,7 @@
 #include <windows.h>
 #endif
 
-#ifdef __unix
+#ifdef __UNIX
 #include <unistd.h>
 #endif
 
@@ -183,7 +182,7 @@ int mse_init_pool(mse_thread_pool_t *p)
     int cpus = sysinfo.dwNumberOfProcessors;
 #endif
 
-#ifdef __unix
+#ifdef __UNIX
     int cpus = sysconf(_SC_NPROCESSORS_ONLN);
 #endif
 

@@ -40,13 +40,30 @@ add_definitions("-DMSE_PROJECT_VERSION=\"${CMAKE_PROJECT_VERSION}\"")
 add_definitions("-DMSE_PROJECT_NAME=\"${CMAKE_PROJECT_NAME}\"")
 add_definitions("-DMSE_BINARY_VERSION=1")
 
-# __FILENAME__
-string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
-add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
-add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
+# Platform stuff
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(MACOSX TRUE)
+endif()
 
-if(NOT WIN32)
-  set(CMAKE_C_FLAGS "-Wpedantic -Werror -Wno-unused-parameter -g -Ofast")
+set(MAC_FLAGS "")
+if(MACOSX)
+  add_definitions("-D__FILENAME__=__FILE__")
+  set(MAC_FLAGS "-Wno-strict-prototypes -Wno-deprecated-declarations -Wno-newline-eof -Wno-logical-not-parentheses")
+else()
+  string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
+  add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
+  add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
+endif()
+
+set(LIBS)
+if(WIN32)
+  set(ADDITIONAL_FLEX_FLAGS "--wincompat")
+else()
+  set(ADDITIONAL_FLEX_FLAGS "")
+  set(LIBS ${LIBS} m)
+  set(CMAKE_C_FLAGS
+      "-Wpedantic -Werror -Wno-unused-parameter -Wno-unused-value ${MAC_FLAGS} -g -Ofast"
+  )
 endif()
 
 # Generated sources
@@ -88,22 +105,15 @@ set(ABSL_LIBS
 
 add_subdirectory(./re2)
 
-# Parser generators
-find_package(BISON)
-find_package(FLEX)
-
 option(USE_JEMALLOC OFF)
-set(LIBS jansson CURL::libcurl pthread ${ABSL_LIBS} re2)
+set(LIBS ${LIBS} CURL::libcurl jansson pthread ${ABSL_LIBS} re2)
 if(USE_JEMALLOC)
   set(LIBS ${LIBS} jemalloc)
 endif()
 
-if(WIN32)
-  set(ADDITIONAL_FLEX_FLAGS "--wincompat")
-else()
-  set(ADDITIONAL_FLEX_FLAGS "")
-  set(LIBS ${LIBS} m)
-endif()
+# Parser generators
+find_package(BISON)
+find_package(FLEX)
 
 flex_target(
   query_lexer mse/query_parser.l ${CMAKE_CURRENT_BINARY_DIR}/mse_query_lexer.c
@@ -231,6 +241,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 
 if(UNIX)
+  add_definitions(-D__UNIX)
+
   # Setup docs
   option(MSE_DOXYGEN OFF)
   if(MSE_DOXYGEN)
@@ -239,6 +251,7 @@ if(UNIX)
                      "Generate documentation pages for ${REPO_URL}")
   endif()
 
+  # Setup code coverage
   include(CodeCoverage)
 
   set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
