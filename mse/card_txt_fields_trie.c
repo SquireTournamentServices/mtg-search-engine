@@ -167,7 +167,10 @@ static int __mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t * restr
 int mse_card_trie_insert(mse_card_trie_node_t *root, mse_card_t * restrict card, char * restrict str)
 {
     char *str_f = mse_filter_text(str);
-    ASSERT(str_f != NULL);
+    if (str_f == NULL) {
+        lprintf(LOG_WARNING, "Cannot add card with name %s to the trie\n", str); 
+        return 1;
+    }
 
     int r = __mse_card_trie_insert(root, card, str_f, 0);
     free(str_f);
