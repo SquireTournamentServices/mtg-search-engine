@@ -45,6 +45,9 @@ USER nextjs
 EXPOSE 3000
 
 ENV PORT 3000
+# In k8s you need an endpoint called mse-backend that points to the actual backend
+# In docker compose call your backend mse-backend
+ENV BACKEND_URL mse-backend
 
 CMD ["pnpm", "start"]
 

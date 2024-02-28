@@ -10,7 +10,7 @@ export default async function SearchResultPage({
   };
 }) {
   const query = decodeURIComponent(searchParams.query);
-  const resp = await fetch("http://127.0.0.1:4365/api", {
+  const resp = await fetch(process.env.BACKEND_URL ?? "http://127.0.0.1:4365/api", {
     method: "POST",
     body: query,
     headers: {
