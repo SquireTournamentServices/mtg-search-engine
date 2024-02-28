@@ -1,7 +1,7 @@
 pipeline {
     agent any    
 
-    triggers { cron('5 8 * * 0') }
+    triggers { cron('0 0 * * 0') }
 
     stages {
         stage('Update submodules') {
