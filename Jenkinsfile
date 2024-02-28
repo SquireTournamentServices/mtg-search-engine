@@ -13,8 +13,8 @@ pipeline {
 
         stage('Build Frontend') {
             steps {
-              sh 'docker build -t mse-frontend .'
-              sh 'docker tag mse-frontend localhost:5000/mse-frontend'
+              sh 'cd frontend && docker build -t mse-frontend .'
+              sh 'cd frontend && docker tag mse-frontend localhost:5000/mse-frontend'
             }
         }
 
