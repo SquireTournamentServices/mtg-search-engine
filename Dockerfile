@@ -1,20 +1,30 @@
 FROM ubuntu:latest as base
+ARG DEBIAN_FRONTEND=noninteractive
 
+ENV TZ=Europe/London
 RUN apt-get update
-RUN apt-get install -y libjansson-dev libjemalloc-dev libabsl-dev libmbedtls-dev build-essential cmake gcovr valgrind python3 python3-pip bison libcurl4-openssl-dev
+RUN apt-get install -y libjansson-dev libjemalloc-dev libabsl-dev libmbedtls-dev libssl-dev build-essential cmake gcovr valgrind python3 python3-pip bison flex libcurl4-openssl-dev
 
 FROM base as build
+RUN useradd app
+
+RUN mkdir /app
+RUN chown -R app /app
+RUN chgrp -R app /app
+
+USER app
 WORKDIR /app
 
 COPY . .
-RUN python3 -m venv . 
-RUN . ./bin/activate && pip3 install -r requirements.txt
+USER root
+RUN pip3 install -r requirements.txt
+USER app
 
 RUN mkdir build
 WORKDIR /app/build
 
 RUN cmake -DMSE_WEB_API=ON -DUSE_JEMALLOC=ON ..
-RUN . ../bin/activate && cmake --build . -j
+RUN cmake --build . -j
 
 FROM base as app
 WORKDIR /app
