@@ -10,7 +10,4 @@ mse_langs.c
 
 mse_langs.h
 /cmake-build-debug/
-
-frontend/pnpm-lock.yaml
-
 charts/mse-frontend/templates/NOTES.txt
