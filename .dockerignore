@@ -1,0 +1,7 @@
+.git
+.github
+.idea
+build
+frontend
+*.orig
+*.md
