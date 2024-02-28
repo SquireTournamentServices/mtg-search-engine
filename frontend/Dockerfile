@@ -27,7 +27,7 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-ENV BACKEND_URL http://mse-backend.default.svc.cluster.local:4365
+ENV BACKEND_URL http://mse-backend.default.svc.cluster.local:4365/api
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
@@ -64,7 +64,7 @@ EXPOSE 3000
 ENV PORT 3000
 # set hostname to localhost
 ENV HOSTNAME "0.0.0.0"
-ENV BACKEND_URL http://mse-backend.default.svc.cluster.local:4365
+ENV BACKEND_URL http://mse-backend.default.svc.cluster.local:4365/api
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
