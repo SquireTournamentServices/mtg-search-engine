@@ -29,7 +29,7 @@ RUN cmake --build . -j
 FROM base as app
 WORKDIR /app
 COPY --from=build /app/build/mtg-search-engine-web-api .
-COPY --from=build /app/build/*.json .
+COPY --from=build /app/build/AllPrintings.json .
 
 # Force loading of bundled JSON file
 ENV MSE_TEST 1
