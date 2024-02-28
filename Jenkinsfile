@@ -4,6 +4,13 @@ pipeline {
     triggers { cron('5 8 * * 0') }
 
     stages {
+        stage('Update submodules') {
+            steps {
+              sh 'git submodule init'
+              sh 'git submodule update'
+            }
+        }
+
         stage('Build Frontend') {
             steps {
               sh 'docker build -t mse-frontend .'
