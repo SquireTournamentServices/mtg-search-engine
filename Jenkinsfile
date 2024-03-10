@@ -34,7 +34,7 @@ pipeline {
 
         stage('Package Frontend') {
           steps {
-            sh '/var/lib/jenkins/go/bin/helmVersioner mse-frontend/Chart.yaml'
+            sh '/var/lib/jenkins/go/bin/helmVersioner charts/mse-frontend/Chart.yaml'
             sh 'helm install mse-frontend charts/mse-frontend || true'
             sh 'helm upgrade mse-frontend charts/mse-frontend'
           }
@@ -42,7 +42,7 @@ pipeline {
 
         stage('Package Backend') {
           steps {
-            sh '/var/lib/jenkins/go/bin/helmVersioner mse-backend/Chart.yaml'
+            sh '/var/lib/jenkins/go/bin/helmVersioner charts/mse-backend/Chart.yaml'
             sh 'helm install mse-backend charts/mse-backend || true'
             sh 'helm upgrade mse-backend charts/mse-backend'
           }
