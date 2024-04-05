@@ -9,6 +9,7 @@ FROM base as build
 RUN useradd app
 
 RUN mkdir /app
+RUN chmod -R 755 /app
 RUN chown -R app /app
 RUN chgrp -R app /app
 
@@ -29,6 +30,8 @@ RUN cmake --build . -j
 FROM base as app
 WORKDIR /app
 COPY --from=build /app/build/mtg-search-engine-web-api .
+# Bundle tests, to allow for sanity checking the image
+COPY --from=build /app/build/mtg-search-engine-tests .
 
 EXPOSE 4365
 CMD ./mtg-search-engine-web-api
