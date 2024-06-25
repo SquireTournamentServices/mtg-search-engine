@@ -2,10 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-
-export function searchUrlFor(query: string, page: number): string {
-  return "/q/?query=" + encodeURIComponent(query) + "&page=" + page.toString();
-}
+import searchUrlFor from './searchUrl.ts';
 
 export default function SearchBar() {
   const searchParams = useSearchParams();

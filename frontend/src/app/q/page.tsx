@@ -1,6 +1,6 @@
-import { searchUrlFor } from "../searchBar";
 import Card from "./card";
 import PageChanger from "./pageChanger";
+import searchUrlFor from '../searchUrl.ts';
 
 export default async function SearchResultPage({
   searchParams,
