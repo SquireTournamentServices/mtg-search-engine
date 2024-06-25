@@ -3,6 +3,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 
+export function searchUrlFor(query: string, page: number): string {
+  return "/q/?query=" + encodeURIComponent(query) + "&page=" + page.toString();
+}
+
 export default function SearchBar() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") ?? "";
@@ -15,7 +19,7 @@ export default function SearchBar() {
         <form
           className="flex flex-row w-full justify-between gap-3"
           onSubmit={(e) => {
-            router.push("/q/?query=" + encodeURIComponent(name) + "&page=1");
+            router.push(searchUrlFor(query, 1));
             e.preventDefault();
           }}
         >
