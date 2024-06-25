@@ -9,8 +9,8 @@ export function searchUrlFor(query: string, page: number): string {
 
 export default function SearchBar() {
   const searchParams = useSearchParams();
-  const query = searchParams.get("query") ?? "";
-  const [name, setName] = useState(query);
+  const initialQuery = searchParams.get("query") ?? "";
+  const [query, setQuery] = useState(initialQuery);
   const router = useRouter();
 
   return (
@@ -27,8 +27,8 @@ export default function SearchBar() {
             type="text"
             required
             placeholder="Search"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             className="bg-slate-100 hover:bg-slate-200 rounded-xl w-full px-1"
           />
           <button
