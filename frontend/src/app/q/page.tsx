@@ -45,7 +45,7 @@ export default async function SearchResultPage({
             .fill(0)
             .map((_, i) => (
               <PageChanger
-                base_url={"/q/?query=" + searchParams.query}
+                base_url={"/q/?query=" + encodeURIComponent(searchParams.query)}
                 page={i + 1}
                 key={i}
                 currentPage={(i + 1).toString() == searchParams.page}
