@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import searchUrlFor from './searchUrl.ts';
+import searchUrlFor from './searchUrl';
 
 export default function SearchBar() {
   const searchParams = useSearchParams();

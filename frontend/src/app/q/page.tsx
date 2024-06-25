@@ -1,6 +1,6 @@
 import Card from "./card";
 import PageChanger from "./pageChanger";
-import searchUrlFor from '../searchUrl.ts';
+import searchUrlFor from '../searchUrl';
 
 export default async function SearchResultPage({
   searchParams,
