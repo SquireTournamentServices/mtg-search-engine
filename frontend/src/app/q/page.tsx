@@ -1,3 +1,5 @@
+"use client";
+import { useRouter } from "next/router";
 import { searchUrlFor } from "../searchBar";
 import Card from "./card";
 import PageChanger from "./pageChanger";
@@ -11,13 +13,16 @@ export default async function SearchResultPage({
   };
 }) {
   const query = decodeURIComponent(searchParams.query);
-  const resp = await fetch(process.env.BACKEND_URL ?? "http://127.0.0.1:4365/api", {
-    method: "POST",
-    body: query,
-    headers: {
-      page: (parseInt(searchParams.page ?? "1") - 1).toString(),
+  const resp = await fetch(
+    process.env.BACKEND_URL ?? "http://127.0.0.1:4365/api",
+    {
+      method: "POST",
+      body: query,
+      headers: {
+        page: (parseInt(searchParams.page ?? "1") - 1).toString(),
+      },
     },
-  });
+  );
 
   let data: any;
   if (resp.ok) {
@@ -29,6 +34,8 @@ export default async function SearchResultPage({
   const page = data.page;
   const page_size = data.page_size;
   const pages = Math.ceil(results / page_size);
+  const router = useRouter();
+  router.prefetch(searchUrlFor(searchParams.query, page + 1));
 
   return (
     <div className="flex flex-col gap-5 pb-5 pt-5 justify-between w-full">
