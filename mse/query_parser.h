@@ -15,6 +15,10 @@ typedef struct mse_parser_status_t {
     /// Length of the stack for the nested statements
     size_t stack_roots_len;
     int error;
+    // Input that is read from here
+    size_t input_buffer_ptr;
+    size_t input_buffer_len;
+    const char *input_buffer;
 } mse_parser_status_t;
 
 int mse_parse_input_string(const char* input_string, mse_interp_node_t **root);

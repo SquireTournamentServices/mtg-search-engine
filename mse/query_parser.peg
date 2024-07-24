@@ -1,14 +1,18 @@
 %prefix "mse"
 %value "mse_parser_status_t"
+%auxil "mse_parser_status_t *"
 
-%source {
+%header{
 #include <stdlib.h>
 #include <string.h>
-#include "testing_h/testing.h"
 #include "mse/interpretor.h"
 #include "mse/query_parser.h"
 #include "mse_query_lexer.h"
 #include "mse_query_parser.h"
+}
+
+%earlyheader{
+#include "testing_h/testing.h"
 #undef lprintf
 #define lprintf fprintf(LOG_STREAM, "(" ANSI_YELLOW "%s" ANSI_RESET \
                         ":" ANSI_YELLOW "%d" ANSI_RESET ") \t", __FILE__, __LINE__ ),\
@@ -20,8 +24,39 @@
       __LINE__, ___FNANE); \
   PCC_ERROR(); \
 }
-#define PCC_ERROR(auxil) mse_pcc_error(auxil)
+}
 
+%source{
+#define PCC_ERROR(auxil) mse_pcc_error(auxil)
+#define PCC_GETCHAR(auxiL) mse_get_char(auxil)
+#define COPY_TO_TMP_BUFFER \
+    if ($$->tmp_buffer != NULL) free($$->tmp_buffer); \
+    $$->tmp_buffer = (char*) malloc(sizeof(char) * (strlen(str) + 1)); \
+    PARSE_ASSERT($$->tmp_buffer != NULL); \
+    strcpy($$->tmp_buffer, str); \
+    $$->tmp_buffer[yyleng] = '\0'; \
+
+#define COPY_TO_ARG_BUFFER \
+    PARSE_ASSERT($$->tmp_buffer != NULL) \
+    PARSE_ASSERT($$->argument_buffer = $$->tmp_buffer); \
+    $$->tmp_buffer = NULL;
+
+static void mse_pcc_error(mse_parser_status_t *res, mse_parser_status_t *auxil) {
+    res->error = 1;
+    lprintf(LOG_ERROR, "Parse error\n");
+}
+{
+    res->error = 1;
+    lprintf(LOG_ERROR, "Parse error\n");
+}
+
+static int mse_get_char(mse_parser_status_t *res, mse_parser_status_t *auxil) {
+  if (res->input_buffer_ptr >= res->input_buffer_len) {
+    return 0;
+  }
+
+  return res->input_buffer[res->input_buffer_ptr++];
+}
 }
 
 statement <- query
@@ -133,33 +168,16 @@ REGEX_STRING_GROUP <- REGEX_STRING_GROUP_A
 REGEX_STRING <- '/' < REGEX_STRING_GROUP+ > '/'
 
 %%
-#define COPY_TO_TMP_BUFFER \
-    if ($$->tmp_buffer != NULL) free($$->tmp_buffer); \
-    $$->tmp_buffer = (char*) malloc(sizeof(char) * (strlen(str) + 1)); \
-    PARSE_ASSERT($$->tmp_buffer != NULL); \
-    strcpy($$->tmp_buffer, str); \
-    $$->tmp_buffer[yyleng] = '\0'; \
-
-#define COPY_TO_ARG_BUFFER \
-    PARSE_ASSERT($$->tmp_buffer != NULL) \
-    PARSE_ASSERT($$->argument_buffer = $$->tmp_buffer); \
-    $$->tmp_buffer = NULL;
-
-static void mse_pcc_error(mse_parser_status_t *res)
-{
-    res->error = 1;
-    lprintf(LOG_ERROR, "Parse error\n");
-}
-
-// TODO: Update the parse function
 int mse_parse_input_string(const char* input_string, mse_interp_node_t **root)
 {
     *root = NULL;
 
     mse_parser_status_t ret;
     memset(&ret, 0, sizeof(ret));
+    ret.input_buffer = input_string;
+    ret.input_buffer_len = strlen(input_string);
 
-    mse_context_t *ctx = mse_create(NULL);
+    mse_context_t *ctx = mse_create(&ret);
     while (mse_parse(ctx, &ret));
     mse_destroy(ctx);
 
