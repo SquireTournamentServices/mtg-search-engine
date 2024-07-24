@@ -47,7 +47,7 @@ add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
 if(NOT WIN32)
   set(CMAKE_C_FLAGS
-      "-Wpedantic -Werror -Wno-unused-parameter -g -O3 -march=native -ffast-math"
+    "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -g -O3 -march=native -ffast-math"
   )
 endif()
 
@@ -65,6 +65,18 @@ add_custom_command(
   OUTPUT ${FILTER_SOURCE_FILES}
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+# Pack CC executable
+add_executable(packcc packcc/src/packcc.c)
+
+set(EXAMPLE_PEG_PREFIX calc)
+set(EXAMPLE_PEG_FILE ${EXAMPLE_PEG_PREFIX}.c)
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_PEG_FILE}
+  COMMAND packcc -o ${EXAMPLE_PEG_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/mse/calc.peg
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+set(EXAMPLE_GRAMMER ${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_PEG_FILE})
 
 # Packages
 find_package(CURL)
@@ -100,6 +112,7 @@ if(USE_JEMALLOC)
   set(LIBS ${LIBS} jemalloc)
 endif()
 
+# (Legacy) parser
 if(WIN32)
   set(ADDITIONAL_FLEX_FLAGS "--wincompat")
 else()
@@ -175,7 +188,8 @@ set(SRC
     ./strptime/strptime.c
     ${PARSER_SRC}
     ${FILTER_SOURCE_FILES}
-    ${LANG_SOURCE_FILES})
+    ${LANG_SOURCE_FILES}
+    ${EXAMPLE_GRAMMER})
 set(TESTS
     ./tests/main.c
     ./tests/test_thread_pool.h
