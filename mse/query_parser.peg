@@ -64,11 +64,11 @@ op_operator <- LT_INC { auxil->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }
             / INCLUDES { auxil->parser_op_type = MSE_SET_GENERATOR_OP_INCLUDES; }
             / EQUALS { auxil->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS; }
 
-word <- RAW_WORD { COPY_TO_TMP_BUFFER(auxil, $0) }
+word <- RAW_WORD { COPY_TO_TMP_BUFFER(auxil, $0) } ~{ lprintf(LOG_ERROR, "Cannot parse word '%s'\n", $0); }
 
-string <- RAW_STRING { COPY_TO_TMP_BUFFER(auxil, $0) }
+string <- RAW_STRING { COPY_TO_TMP_BUFFER(auxil, $0) } ~{ lprintf(LOG_ERROR, "Cannot parse string '%s'\n", $0); }
 
-regex_string <- REGEX_STRING { COPY_TO_TMP_BUFFER(auxil, $0) }
+regex_string <- REGEX_STRING { COPY_TO_TMP_BUFFER(auxil, $0) } ~{ lprintf(LOG_ERROR, "Cannot parse regex string '%s'\n", $0); }
 
 op_name <- word {
            PARSE_ASSERT(auxil, mse_gen_type(auxil->tmp_buffer, &auxil->parser_gen_type));
@@ -81,9 +81,9 @@ op_argument <- string { COPY_TO_ARG_BUFFER(auxil) }
 sg_dummy <- STMT_NEGATE op_name op_operator op_argument {
             PARSE_ASSERT(auxil, mse_handle_set_generator(1, auxil)); 
         }
-        / op_name op_operator op_argument {
+        / ( op_name op_operator op_argument {
             PARSE_ASSERT(auxil, mse_handle_set_generator(0, auxil)); 
-        }
+        } ) ~{ lprintf(LOG_ERROR, "Cannot parse operation:argument style query '%s'\n", $0); }
         / word {
             COPY_TO_ARG_BUFFER(auxil)
             auxil->parser_gen_type = MSE_SET_GENERATOR_NAME;
