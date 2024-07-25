@@ -177,14 +177,16 @@ void mse_reset_pool(mse_task_queue_t *queue)
 
 int mse_init_pool(mse_thread_pool_t *p)
 {
+    // Default count for unsupported platforms
+    int cpus = 10;
 #ifdef __WINDOWS
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
-    int cpus = sysinfo.dwNumberOfProcessors;
+    cpus = sysinfo.dwNumberOfProcessors;
 #endif
 
 #ifdef __unix
-    int cpus = sysconf(_SC_NPROCESSORS_ONLN);
+    cpus = sysconf(_SC_NPROCESSORS_ONLN);
 #endif
 
     lprintf(LOG_INFO, "Created a thread pool with %d workers\n", cpus);

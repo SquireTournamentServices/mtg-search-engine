@@ -47,8 +47,9 @@ add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
 if(NOT WIN32)
   set(CMAKE_C_FLAGS
-    "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -Wno-deprecated-declarations -g -O3 -march=native -ffast-math"
+    "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -g -O3 -march=native -ffast-math"
   )
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof")
 endif()
 
 # Generated sources
@@ -79,8 +80,8 @@ set(PEG_PREFIX mse_query_parser)
 set(PARSER_SRC 
   ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.c 
   ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.h 
-  ./mse/query_parser.h 
-  ./mse/query_parser_internals.c)
+  ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.h 
+  ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser_internals.c)
 add_custom_command(
   COMMAND packcc -o ${PEG_PREFIX} --lines ${PEG_DEBUG} ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.peg
   OUTPUT ${PARSER_SRC}
