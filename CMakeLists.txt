@@ -79,9 +79,7 @@ endif()
 set(PEG_PREFIX mse_query_parser)
 set(PARSER_SRC 
   ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.c 
-  ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.h 
-  ./mse/query_parser.h 
-  ./mse/query_parser_internals.c)
+  ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.h) 
 add_custom_command(
   COMMAND packcc -o ${PEG_PREFIX} --lines ${PEG_DEBUG} ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.peg
   OUTPUT ${PARSER_SRC}
@@ -174,6 +172,8 @@ set(SRC
     ./mse/mse.c
     ./mse/re2_wrapper.h
     ./mse/re2_wrapper.cpp
+    ./mse/query_parser.h 
+    ./mse/query_parser_internals.c
     ./strptime/strptime.h
     ./strptime/strptime.c
     ${PARSER_SRC}
