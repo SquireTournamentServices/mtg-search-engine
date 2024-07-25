@@ -80,8 +80,8 @@ set(PEG_PREFIX mse_query_parser)
 set(PARSER_SRC 
   ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.c 
   ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.h 
-  ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.h 
-  ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser_internals.c)
+  ./mse/query_parser.h 
+  ./mse/query_parser_internals.c)
 add_custom_command(
   COMMAND packcc -o ${PEG_PREFIX} --lines ${PEG_DEBUG} ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.peg
   OUTPUT ${PARSER_SRC}
