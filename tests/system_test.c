@@ -72,7 +72,7 @@ static int test_invalid_queries(mse_t *state)
 
         mse_search_result_t res;
         int parse_res = mse_search(state, &res, buffer);
-        if (!parse_res) {
+        if (parse_res) {
            lprintf(LOG_ERROR, "Expected parse of %s to fail\n", buffer);
         }
         ASSERT(!parse_res);
