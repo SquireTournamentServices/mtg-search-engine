@@ -171,7 +171,7 @@ int mse_parse_input_string(const char* input_string, mse_interp_node_t **root)
     ret.input_buffer_len = strlen(input_string);
 
     mse_context_t *ctx = mse_create(&ret);
-    while (mse_parse(ctx, NULL));
+    while (ret.error == 0 && mse_parse(ctx, NULL));
     mse_destroy(ctx);
 
     // Cleanup
