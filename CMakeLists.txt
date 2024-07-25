@@ -47,8 +47,9 @@ add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
 if(NOT WIN32)
   set(CMAKE_C_FLAGS
-      "-Wpedantic -Werror -Wno-unused-parameter -g -O3 -march=native -ffast-math"
+    "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -g -O3 -march=native -ffast-math"
   )
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof")
 endif()
 
 # Generated sources
@@ -64,6 +65,26 @@ set(FILTER_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_char_map.h
 add_custom_command(
   OUTPUT ${FILTER_SOURCE_FILES}
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+# Pack CC executable
+add_executable(packcc packcc/src/packcc.c)
+
+if(DEBUG)
+  set(PEG_DEBUG "--debug")
+else()
+  set(PEG_DEBUG "")
+endif()
+
+set(PEG_PREFIX mse_query_parser)
+set(PARSER_SRC 
+  ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.c 
+  ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.h 
+  ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.h 
+  ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser_internals.c)
+add_custom_command(
+  COMMAND packcc -o ${PEG_PREFIX} --lines ${PEG_DEBUG} ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.peg
+  OUTPUT ${PARSER_SRC}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 # Packages
@@ -99,24 +120,6 @@ set(LIBS jansson CURL::libcurl pthread ${ABSL_LIBS} re2)
 if(USE_JEMALLOC)
   set(LIBS ${LIBS} jemalloc)
 endif()
-
-if(WIN32)
-  set(ADDITIONAL_FLEX_FLAGS "--wincompat")
-else()
-  set(ADDITIONAL_FLEX_FLAGS "")
-  set(LIBS ${LIBS} m)
-endif()
-
-flex_target(
-  query_lexer mse/query_parser.l ${CMAKE_CURRENT_BINARY_DIR}/mse_query_lexer.c
-  DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/mse_query_lexer.h
-  COMPILE_FLAGS ${ADDITIONAL_FLEX_FLAGS})
-bison_target(query_parser mse/query_parser.y
-             ${CMAKE_CURRENT_BINARY_DIR}/mse_query_parser.c)
-add_flex_bison_dependency(query_lexer query_parser)
-
-set(PARSER_SRC mse/query_parser.h ${BISON_query_parser_OUTPUTS}
-               ${FLEX_query_lexer_OUTPUTS})
 
 # Define the sources
 set(SRC

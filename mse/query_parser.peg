@@ -1,0 +1,177 @@
+%prefix "mse"
+%auxil "mse_parser_status_t *"
+
+%header{
+#include <stdlib.h>
+#include <string.h>
+#include "mse/interpretor.h"
+#include "mse/query_parser.h"
+#include "mse_query_parser.h"
+}
+
+%source{
+#include "testing_h/testing.h"
+#undef lprintf
+#define lprintf fprintf(LOG_STREAM, "(" ANSI_YELLOW "%s" ANSI_RESET \
+                        ":" ANSI_YELLOW "%d" ANSI_RESET ") \t", __FILE__, __LINE__ ),\
+                        __lprintf
+#define PARSE_ASSERT(result, x) if (!(x)) \
+{ \
+  lprintf(LOG_ERROR, "Parse Error: Assertion failure, line " \
+      ANSI_RED "%d" ANSI_RESET " in " ANSI_RED "%s" ANSI_RESET "\n", \
+      __LINE__, ___FNANE); \
+  PCC_ERROR(result); \
+}
+
+#define PCC_ERROR(auxil) mse_pcc_error(auxil)
+
+#define PCC_GETCHAR(auxil) mse_get_char(auxil)
+
+#define COPY_TO_TMP_BUFFER(result, token_str) \
+    if (result->tmp_buffer != NULL) free(result->tmp_buffer); \
+    result->tmp_buffer = (char*) malloc(sizeof(char) * (strlen(token_str) + 1)); \
+    PARSE_ASSERT(result, result->tmp_buffer != NULL); \
+    strcpy(result->tmp_buffer, token_str);
+
+#define COPY_TO_ARG_BUFFER(result) \
+    PARSE_ASSERT(result, result->tmp_buffer != NULL) \
+    PARSE_ASSERT(result, result->argument_buffer = result->tmp_buffer); \
+    result->tmp_buffer = NULL;
+
+static void mse_pcc_error(mse_parser_status_t *res) {
+    res->error = 1;
+    lprintf(LOG_ERROR, "Parse error around %lu\n", res->input_buffer_ptr);
+}
+
+static int mse_get_char(mse_parser_status_t *res) {
+  if (res->input_buffer_ptr >= res->input_buffer_len) {
+    return EOF;
+  }
+
+  return res->input_buffer[res->input_buffer_ptr++];
+}
+}
+
+statement <- WHITESPACE? < query > WHITESPACE?
+
+op_operator <- LT_INC { auxil->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }
+            / GT_INC { auxil->parser_op_type = MSE_SET_GENERATOR_OP_GT_INC; }
+            / LT { auxil->parser_op_type = MSE_SET_GENERATOR_OP_LT; }
+            / GT { auxil->parser_op_type = MSE_SET_GENERATOR_OP_GT; }
+            / INCLUDES { auxil->parser_op_type = MSE_SET_GENERATOR_OP_INCLUDES; }
+            / EQUALS { auxil->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS; }
+
+word <- RAW_WORD { COPY_TO_TMP_BUFFER(auxil, $0) } ~{ lprintf(LOG_ERROR, "Cannot parse word '%s'\n", $0); }
+
+string <- RAW_STRING { COPY_TO_TMP_BUFFER(auxil, $0) } ~{ lprintf(LOG_ERROR, "Cannot parse string '%s'\n", $0); }
+
+regex_string <- REGEX_STRING { COPY_TO_TMP_BUFFER(auxil, $0) } ~{ lprintf(LOG_ERROR, "Cannot parse regex string '%s'\n", $0); }
+
+op_name <- word {
+           PARSE_ASSERT(auxil, mse_gen_type(auxil->tmp_buffer, &auxil->parser_gen_type));
+       }
+
+op_argument <- string { COPY_TO_ARG_BUFFER(auxil) }
+           / regex_string { COPY_TO_ARG_BUFFER(auxil) }
+           / word { COPY_TO_ARG_BUFFER(auxil) }
+
+sg_dummy <- STMT_NEGATE op_name op_operator op_argument {
+            PARSE_ASSERT(auxil, mse_handle_set_generator(1, auxil)); 
+        }
+        / op_name op_operator op_argument {
+            PARSE_ASSERT(auxil, mse_handle_set_generator(0, auxil)); 
+        } ~{ lprintf(LOG_ERROR, "Cannot parse operation:argument style query '%s'\n", $0); }
+        / word {
+            COPY_TO_ARG_BUFFER(auxil)
+            auxil->parser_gen_type = MSE_SET_GENERATOR_NAME;
+            auxil->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
+            PARSE_ASSERT(auxil, mse_handle_set_generator(0, auxil));
+        }
+        / string {
+            COPY_TO_ARG_BUFFER(auxil)
+            auxil->parser_gen_type = MSE_SET_GENERATOR_NAME;
+            auxil->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
+            PARSE_ASSERT(auxil, mse_handle_set_generator(0, auxil));
+        }
+
+set_generator <- (sg_dummy {
+                   PARSE_ASSERT(auxil, __mse_insert_node(auxil, auxil->set_generator_node));
+                   auxil->set_generator_node = NULL;
+              }
+              / {
+                  PARSE_ASSERT(auxil, __mse_parser_status_push(auxil));
+              } OPEN_BRACKET query CLOSE_BRACKET { 
+                  PARSE_ASSERT(auxil, __mse_parser_status_pop(auxil));
+              }
+              / STMT_NEGATE {
+                  PARSE_ASSERT(auxil, __mse_parser_status_push(auxil));
+                  PARSE_ASSERT(auxil, __mse_negate(auxil));
+              } OPEN_BRACKET query CLOSE_BRACKET {
+                  PARSE_ASSERT(auxil, __mse_parser_status_pop(auxil));
+              }) ~{ lprintf(LOG_ERROR, "Cannot parse statement '%s'\n", $0); }
+
+operator <- AND {
+             PARSE_ASSERT(auxil, auxil->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+         }
+         / OR {
+             PARSE_ASSERT(auxil, auxil->op_node = mse_init_interp_node_operation(MSE_SET_UNION));
+         }
+
+query <- query WHITESPACE operator WHITESPACE {
+         PARSE_ASSERT(auxil, __mse_insert_node(auxil, auxil->op_node));
+         auxil->op_node = NULL;
+     } set_generator
+     / query WHITESPACE {
+         PARSE_ASSERT(auxil, auxil->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+         PARSE_ASSERT(auxil, __mse_insert_node(auxil, auxil->op_node));
+         auxil->op_node = NULL;
+     } set_generator
+     / set_generator
+
+AND <- "and" / "AND"
+OR <- "or" / "OR"
+
+WHITESPACE <- [ \t]+
+
+LT <- "<"
+LT_INC <- "<="
+GT <- ">"
+GT_INC <- ">="
+INCLUDES <- ":"
+EQUALS <- "="
+OPEN_BRACKET <- "("
+CLOSE_BRACKET <- ")"
+STMT_NEGATE <- "-"
+
+RAW_WORD <- [a-zA-Z0-9_]+
+
+RAW_STRING <- '"' [^"]+ '"'
+
+REGEX_STRING <- '/' ( '\/' / [^/] )+ '/'
+
+%%
+int mse_parse_input_string(const char* input_string, mse_interp_node_t **root)
+{
+    *root = NULL;
+
+    mse_parser_status_t ret;
+    memset(&ret, 0, sizeof(ret));
+    ret.input_buffer = input_string;
+    ret.input_buffer_len = strlen(input_string);
+
+    mse_context_t *ctx = mse_create(&ret);
+    while (ret.error == 0 && mse_parse(ctx, NULL));
+    mse_destroy(ctx);
+
+    // Cleanup
+    __mse_free_parser_status(&ret);
+
+    if (ret.error) {
+      lprintf(LOG_ERROR, "Cannot parse '%s'\n", input_string);
+    }
+
+    *root = ret.root;
+    ASSERT(root != NULL);
+    ASSERT(ret.error == 0);
+    return 1;
+}

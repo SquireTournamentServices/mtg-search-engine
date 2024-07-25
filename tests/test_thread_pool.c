@@ -21,7 +21,7 @@ static void basic_calc(void *data, mse_thread_pool_t *pool)
         num = 1000;
     }
     for (int i = 0; i < 1000000; i++) {
-        pow(num, num);
+        (void) pow(num, num);
     }
 
     if (pool == NULL) {
