@@ -47,7 +47,7 @@ add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
 if(NOT WIN32)
   set(CMAKE_C_FLAGS
-    "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -g -O3 -march=native -ffast-math"
+    "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -Wno-deprecated-declarations -g -O3 -march=native -ffast-math"
   )
 endif()
 
@@ -75,7 +75,7 @@ else()
   set(PEG_DEBUG "")
 endif()
 
-set(PEG_PREFIX query_parser)
+set(PEG_PREFIX mse_query_parser)
 set(PARSER_SRC 
   ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.c 
   ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.h 
