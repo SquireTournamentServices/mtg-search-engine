@@ -1,5 +1,4 @@
 %prefix "mse"
-%value "mse_parser_status_t *"
 %auxil "mse_parser_status_t *"
 
 %header{
@@ -58,78 +57,78 @@ statement <- query
           / query WHITESPACE
           / WHITESPACE query WHITESPACE
 
-op_operator <- LT_INC { $$->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }
-            / LT { $$->parser_op_type = MSE_SET_GENERATOR_OP_LT; }
-            / GT { $$->parser_op_type = MSE_SET_GENERATOR_OP_GT; }
-            / GT_INC { $$->parser_op_type = MSE_SET_GENERATOR_OP_GT_INC; }
-            / INCLUDES { $$->parser_op_type = MSE_SET_GENERATOR_OP_INCLUDES; }
-            / EQUALS { $$->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS; }
+op_operator <- LT_INC { auxil->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }
+            / LT { auxil->parser_op_type = MSE_SET_GENERATOR_OP_LT; }
+            / GT { auxil->parser_op_type = MSE_SET_GENERATOR_OP_GT; }
+            / GT_INC { auxil->parser_op_type = MSE_SET_GENERATOR_OP_GT_INC; }
+            / INCLUDES { auxil->parser_op_type = MSE_SET_GENERATOR_OP_INCLUDES; }
+            / EQUALS { auxil->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS; }
 
-word <- input_string:RAW_WORD { COPY_TO_TMP_BUFFER($$, input_string) }
+word <- RAW_WORD { COPY_TO_TMP_BUFFER(auxil, $0) }
 
-string <- input_string:RAW_STRING { COPY_TO_TMP_BUFFER($$, input_string) }
+string <- RAW_STRING { COPY_TO_TMP_BUFFER(auxil, $0) }
 
-regex_string <- input_string:REGEX_STRING { COPY_TO_TMP_BUFFER($$, input_string) }
+regex_string <- REGEX_STRING { COPY_TO_TMP_BUFFER(auxil, $0) }
 
 op_name <- word {
-           PARSE_ASSERT($$, mse_gen_type($$->tmp_buffer, &$$->parser_gen_type));
+           PARSE_ASSERT(auxil, mse_gen_type(auxil->tmp_buffer, &auxil->parser_gen_type));
        }
 
-op_argument <- string { COPY_TO_ARG_BUFFER($$) }
-           / regex_string { COPY_TO_ARG_BUFFER($$) }
-           / word { COPY_TO_ARG_BUFFER($$) }
+op_argument <- string { COPY_TO_ARG_BUFFER(auxil) }
+           / regex_string { COPY_TO_ARG_BUFFER(auxil) }
+           / word { COPY_TO_ARG_BUFFER(auxil) }
 
 sg_dummy <- STMT_NEGATE op_name op_operator op_argument {
-            PARSE_ASSERT($$, mse_handle_set_generator(1, $$)); 
+            PARSE_ASSERT(auxil, mse_handle_set_generator(1, auxil)); 
         }
         / op_name op_operator op_argument {
-            PARSE_ASSERT($$, mse_handle_set_generator(0, $$)); 
+            PARSE_ASSERT(auxil, mse_handle_set_generator(0, auxil)); 
         }
         / word {
-            COPY_TO_ARG_BUFFER($$)
-            $$->parser_gen_type = MSE_SET_GENERATOR_NAME;
-            $$->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
-            PARSE_ASSERT($$, mse_handle_set_generator(0, $$));
+            COPY_TO_ARG_BUFFER(auxil)
+            auxil->parser_gen_type = MSE_SET_GENERATOR_NAME;
+            auxil->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
+            PARSE_ASSERT(auxil, mse_handle_set_generator(0, auxil));
         }
         / string {
-            COPY_TO_ARG_BUFFER($$)
-            $$->parser_gen_type = MSE_SET_GENERATOR_NAME;
-            $$->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
-            PARSE_ASSERT($$, mse_handle_set_generator(0, $$));
+            COPY_TO_ARG_BUFFER(auxil)
+            auxil->parser_gen_type = MSE_SET_GENERATOR_NAME;
+            auxil->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
+            PARSE_ASSERT(auxil, mse_handle_set_generator(0, auxil));
         }
 
 set_generator <- sg_dummy {
-                   PARSE_ASSERT($$, __mse_insert_node($$, $$->set_generator_node));
-                   $$->set_generator_node = NULL;
+                   PARSE_ASSERT(auxil, __mse_insert_node(auxil, auxil->set_generator_node));
+                   auxil->set_generator_node = NULL;
               }
               / {
-                  PARSE_ASSERT($$, __mse_parser_status_push($$));
+                  PARSE_ASSERT(auxil, __mse_parser_status_push(auxil));
               } OPEN_BRACKET query CLOSE_BRACKET { 
-                  PARSE_ASSERT($$, __mse_parser_status_pop($$));
+                  PARSE_ASSERT(auxil, __mse_parser_status_pop(auxil));
               }
               / STMT_NEGATE {
-                  PARSE_ASSERT($$, __mse_parser_status_push($$));
-                  PARSE_ASSERT($$, __mse_negate($$));
+                  PARSE_ASSERT(auxil, __mse_parser_status_push(auxil));
+                  PARSE_ASSERT(auxil, __mse_negate(auxil));
               } OPEN_BRACKET query CLOSE_BRACKET {
-                  PARSE_ASSERT($$, __mse_parser_status_pop($$));
+                  PARSE_ASSERT(auxil, __mse_parser_status_pop(auxil));
               }
 
 operator <- AND {
-             PARSE_ASSERT($$, $$->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+             PARSE_ASSERT(auxil, auxil->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
          }
          / OR {
-             PARSE_ASSERT($$, $$->op_node = mse_init_interp_node_operation(MSE_SET_UNION));
+             PARSE_ASSERT(auxil, auxil->op_node = mse_init_interp_node_operation(MSE_SET_UNION));
          }
 
 query <- set_generator     
      / query WHITESPACE operator WHITESPACE {
-         PARSE_ASSERT($$, __mse_insert_node($$, $$->op_node));
-         $$->op_node = NULL;
+         PARSE_ASSERT(auxil, __mse_insert_node(auxil, auxil->op_node));
+         auxil->op_node = NULL;
      } set_generator
      / query WHITESPACE {
-         PARSE_ASSERT($$, $$->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
-         PARSE_ASSERT($$, __mse_insert_node($$, $$->op_node));
-         $$->op_node = NULL;
+         PARSE_ASSERT(auxil, auxil->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+         PARSE_ASSERT(auxil, __mse_insert_node(auxil, auxil->op_node));
+         auxil->op_node = NULL;
      } set_generator
 
 AND <- "and"
@@ -171,9 +170,8 @@ int mse_parse_input_string(const char* input_string, mse_interp_node_t **root)
     ret.input_buffer = input_string;
     ret.input_buffer_len = strlen(input_string);
 
-    mse_parser_status_t *value_ptr = &ret;
     mse_context_t *ctx = mse_create(&ret);
-    while (mse_parse(ctx, &value_ptr));
+    while (mse_parse(ctx, NULL));
     mse_destroy(ctx);
 
     // Cleanup
