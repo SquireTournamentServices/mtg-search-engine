@@ -97,10 +97,10 @@ sg_dummy <- STMT_NEGATE op_name op_operator op_argument {
             PARSE_ASSERT(auxil, mse_handle_set_generator(0, auxil));
         }
 
-set_generator <- sg_dummy {
+set_generator <- (sg_dummy {
                    PARSE_ASSERT(auxil, __mse_insert_node(auxil, auxil->set_generator_node));
                    auxil->set_generator_node = NULL;
-              } ~{ lprintf(LOG_ERROR, "Cannot parse statement: %s\n", $0); }
+              }
               / {
                   PARSE_ASSERT(auxil, __mse_parser_status_push(auxil));
               } OPEN_BRACKET query CLOSE_BRACKET { 
@@ -111,7 +111,7 @@ set_generator <- sg_dummy {
                   PARSE_ASSERT(auxil, __mse_negate(auxil));
               } OPEN_BRACKET query CLOSE_BRACKET {
                   PARSE_ASSERT(auxil, __mse_parser_status_pop(auxil));
-              }
+              }) ~{ lprintf(LOG_ERROR, "Cannot parse statement '%s'\n", $0); }
 
 operator <- AND {
              PARSE_ASSERT(auxil, auxil->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
