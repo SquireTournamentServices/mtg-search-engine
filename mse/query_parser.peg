@@ -100,7 +100,7 @@ sg_dummy <- STMT_NEGATE op_name op_operator op_argument {
 set_generator <- sg_dummy {
                    PARSE_ASSERT(auxil, __mse_insert_node(auxil, auxil->set_generator_node));
                    auxil->set_generator_node = NULL;
-              }
+              } ~{ lprintf(LOG_ERROR, "Cannot parse statement: %s\n", $0); }
               / {
                   PARSE_ASSERT(auxil, __mse_parser_status_push(auxil));
               } OPEN_BRACKET query CLOSE_BRACKET { 
@@ -120,7 +120,7 @@ operator <- AND {
              PARSE_ASSERT(auxil, auxil->op_node = mse_init_interp_node_operation(MSE_SET_UNION));
          }
 
-query <- set_generator     
+query <- set_generator
      / query WHITESPACE operator WHITESPACE {
          PARSE_ASSERT(auxil, __mse_insert_node(auxil, auxil->op_node));
          auxil->op_node = NULL;
@@ -131,8 +131,8 @@ query <- set_generator
          auxil->op_node = NULL;
      } set_generator
 
-AND <- "and"
-OR <- "or"
+AND <- "and" / "AND"
+OR <- "or" / "OR"
 
 WHITESPACE <- [ \t]+
 
