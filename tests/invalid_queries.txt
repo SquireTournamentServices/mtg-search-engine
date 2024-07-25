@@ -1,5 +1,4 @@
 ((opt)
-opt or
 c:
 c>
 c=
