@@ -145,7 +145,7 @@ STMT_NEGATE <- "-"
 
 RAW_WORD <- [a-zA-Z0-9_]+
 
-RAW_STRING <- '"' ( '\"'+ / [^"] )+ '"'
+RAW_STRING <- '"' [^"]+ '"'
 
 REGEX_STRING <- '/' ( '\/' / [^/] )+ '/'
 
