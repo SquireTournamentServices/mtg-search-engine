@@ -117,8 +117,7 @@ operator <- AND {
              PARSE_ASSERT(auxil, auxil->op_node = mse_init_interp_node_operation(MSE_SET_UNION));
          }
 
-query <- set_generator
-     / query WHITESPACE operator WHITESPACE {
+query <- query WHITESPACE operator WHITESPACE {
          PARSE_ASSERT(auxil, __mse_insert_node(auxil, auxil->op_node));
          auxil->op_node = NULL;
      } set_generator
@@ -127,6 +126,7 @@ query <- set_generator
          PARSE_ASSERT(auxil, __mse_insert_node(auxil, auxil->op_node));
          auxil->op_node = NULL;
      } set_generator
+     / set_generator
 
 AND <- "and" / "AND"
 OR <- "or" / "OR"
