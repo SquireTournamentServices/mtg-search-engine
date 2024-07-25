@@ -1,6 +1,4 @@
 ((opt)
-or
-and
 opt or
 c:
 c>
