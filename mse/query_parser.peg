@@ -40,7 +40,7 @@
 
 static void mse_pcc_error(mse_parser_status_t *res) {
     res->error = 1;
-    lprintf(LOG_ERROR, "Parse error\n");
+    lprintf(LOG_ERROR, "Parse error around %ul\n", res->input_buffer_ptr);
 }
 
 static int mse_get_char(mse_parser_status_t *res) {
