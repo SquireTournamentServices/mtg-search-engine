@@ -55,9 +55,9 @@ static int mse_get_char(mse_parser_status_t *res) {
 statement <- WHITESPACE? < query > WHITESPACE?
 
 op_operator <- LT_INC { auxil->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }
+            / GT_INC { auxil->parser_op_type = MSE_SET_GENERATOR_OP_GT_INC; }
             / LT { auxil->parser_op_type = MSE_SET_GENERATOR_OP_LT; }
             / GT { auxil->parser_op_type = MSE_SET_GENERATOR_OP_GT; }
-            / GT_INC { auxil->parser_op_type = MSE_SET_GENERATOR_OP_GT_INC; }
             / INCLUDES { auxil->parser_op_type = MSE_SET_GENERATOR_OP_INCLUDES; }
             / EQUALS { auxil->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS; }
 
