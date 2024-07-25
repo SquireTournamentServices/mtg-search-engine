@@ -52,10 +52,7 @@ static int mse_get_char(mse_parser_status_t *res) {
 }
 }
 
-statement <- query
-          / WHITESPACE query 
-          / query WHITESPACE
-          / WHITESPACE query WHITESPACE
+statement <- WHITESPACE? < query > WHITESPACE?
 
 op_operator <- LT_INC { auxil->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }
             / LT { auxil->parser_op_type = MSE_SET_GENERATOR_OP_LT; }
@@ -148,10 +145,6 @@ STMT_NEGATE <- "-"
 
 RAW_WORD <- [a-zA-Z0-9_]+
 
-STRING_INNER_GROUP_A <- [^"]
-STRING_INNER_GROUP_B <- '\"'
-STRING_INNER_GROUP <- STRING_INNER_GROUP_A
-                   / STRING_INNER_GROUP_B
 RAW_STRING <- '"' ( '\"'+ / [^"] )+ '"'
 
 REGEX_STRING <- '/' ( '\/' / [^/] )+ '/'
