@@ -1,5 +1,5 @@
 %prefix "mse"
-%value "mse_parser_status_t"
+%value "mse_parser_status_t *"
 %auxil "mse_parser_status_t *"
 
 %header{
@@ -7,52 +7,46 @@
 #include <string.h>
 #include "mse/interpretor.h"
 #include "mse/query_parser.h"
-#include "mse_query_lexer.h"
 #include "mse_query_parser.h"
 }
 
-%earlyheader{
+%source{
 #include "testing_h/testing.h"
 #undef lprintf
 #define lprintf fprintf(LOG_STREAM, "(" ANSI_YELLOW "%s" ANSI_RESET \
                         ":" ANSI_YELLOW "%d" ANSI_RESET ") \t", __FILE__, __LINE__ ),\
                         __lprintf
-#define PARSE_ASSERT(x) if (!(x)) \
+#define PARSE_ASSERT(result, x) if (!(x)) \
 { \
   lprintf(LOG_ERROR, "Parse Error: Assertion failure, line " \
       ANSI_RED "%d" ANSI_RESET " in " ANSI_RED "%s" ANSI_RESET "\n", \
       __LINE__, ___FNANE); \
-  PCC_ERROR(); \
-}
+  PCC_ERROR(result); \
 }
 
-%source{
 #define PCC_ERROR(auxil) mse_pcc_error(auxil)
+
 #define PCC_GETCHAR(auxiL) mse_get_char(auxil)
-#define COPY_TO_TMP_BUFFER \
-    if ($$->tmp_buffer != NULL) free($$->tmp_buffer); \
-    $$->tmp_buffer = (char*) malloc(sizeof(char) * (strlen(str) + 1)); \
-    PARSE_ASSERT($$->tmp_buffer != NULL); \
-    strcpy($$->tmp_buffer, str); \
-    $$->tmp_buffer[yyleng] = '\0'; \
 
-#define COPY_TO_ARG_BUFFER \
-    PARSE_ASSERT($$->tmp_buffer != NULL) \
-    PARSE_ASSERT($$->argument_buffer = $$->tmp_buffer); \
-    $$->tmp_buffer = NULL;
+#define COPY_TO_TMP_BUFFER(result, token_str) \
+    if (result->tmp_buffer != NULL) free(result->tmp_buffer); \
+    result->tmp_buffer = (char*) malloc(sizeof(char) * (strlen(token_str) + 1)); \
+    PARSE_ASSERT(result, result->tmp_buffer != NULL); \
+    strcpy(result->tmp_buffer, token_str); \
 
-static void mse_pcc_error(mse_parser_status_t *res, mse_parser_status_t *auxil) {
-    res->error = 1;
-    lprintf(LOG_ERROR, "Parse error\n");
-}
-{
+#define COPY_TO_ARG_BUFFER(result) \
+    PARSE_ASSERT(result, result->tmp_buffer != NULL) \
+    PARSE_ASSERT(result, result->argument_buffer = result->tmp_buffer); \
+    result->tmp_buffer = NULL;
+
+static void mse_pcc_error(mse_parser_status_t *res) {
     res->error = 1;
     lprintf(LOG_ERROR, "Parse error\n");
 }
 
-static int mse_get_char(mse_parser_status_t *res, mse_parser_status_t *auxil) {
+static int mse_get_char(mse_parser_status_t *res) {
   if (res->input_buffer_ptr >= res->input_buffer_len) {
-    return 0;
+    return EOF;
   }
 
   return res->input_buffer[res->input_buffer_ptr++];
@@ -71,70 +65,70 @@ op_operator <- LT_INC { $$->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }
             / INCLUDES { $$->parser_op_type = MSE_SET_GENERATOR_OP_INCLUDES; }
             / EQUALS { $$->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS; }
 
-word <- str:RAW_WORD { COPY_TO_TMP_BUFFER }
+word <- str:RAW_WORD { COPY_TO_TMP_BUFFER($$, str) }
 
-string <- str:RAW_STRING { COPY_TO_TMP_BUFFER }
+string <- str:RAW_STRING { COPY_TO_TMP_BUFFER($$, str) }
 
-regex_string <- str:REGEX_STRING { COPY_TO_TMP_BUFFER }
+regex_string <- str:REGEX_STRING { COPY_TO_TMP_BUFFER($$, str) }
 
 op_name <- word {
-           PARSE_ASSERT(mse_gen_type($$->tmp_buffer, &$$->parser_gen_type));
+           PARSE_ASSERT($$, mse_gen_type($$->tmp_buffer, &$$->parser_gen_type));
        }
 
-op_argument <- string { COPY_TO_ARG_BUFFER }
-           / regex_string { COPY_TO_ARG_BUFFER }
-           / word { COPY_TO_ARG_BUFFER }
+op_argument <- string { COPY_TO_ARG_BUFFER($$) }
+           / regex_string { COPY_TO_ARG_BUFFER($$) }
+           / word { COPY_TO_ARG_BUFFER($$) }
 
 sg_dummy <- STMT_NEGATE op_name op_operator op_argument {
-            PARSE_ASSERT(mse_handle_set_generator(1, $$)); 
+            PARSE_ASSERT($$, mse_handle_set_generator(1, $$)); 
         }
         / op_name op_operator op_argument {
-            PARSE_ASSERT(mse_handle_set_generator(0, $$)); 
+            PARSE_ASSERT($$, mse_handle_set_generator(0, $$)); 
         }
         / word {
-            COPY_TO_ARG_BUFFER
+            COPY_TO_ARG_BUFFER($$)
             $$->parser_gen_type = MSE_SET_GENERATOR_NAME;
             $$->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
-            PARSE_ASSERT(mse_handle_set_generator(0, $$));
+            PARSE_ASSERT($$, mse_handle_set_generator(0, $$));
         }
         / string {
-            COPY_TO_ARG_BUFFER
+            COPY_TO_ARG_BUFFER($$)
             $$->parser_gen_type = MSE_SET_GENERATOR_NAME;
             $$->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS;
-            PARSE_ASSERT(mse_handle_set_generator(0, $$));
+            PARSE_ASSERT($$, mse_handle_set_generator(0, $$));
         }
 
 set_generator <- sg_dummy {
-                   PARSE_ASSERT(__mse_insert_node($$, $$->set_generator_node));
+                   PARSE_ASSERT($$, __mse_insert_node($$, $$->set_generator_node));
                    $$->set_generator_node = NULL;
               }
               / {
-                  PARSE_ASSERT(__mse_parser_status_push($$));
+                  PARSE_ASSERT($$, __mse_parser_status_push($$));
               } OPEN_BRACKET query CLOSE_BRACKET { 
-                  PARSE_ASSERT(__mse_parser_status_pop($$));
+                  PARSE_ASSERT($$, __mse_parser_status_pop($$));
               }
               / STMT_NEGATE {
-                  PARSE_ASSERT(__mse_parser_status_push($$));
-                  PARSE_ASSERT(__mse_negate($$));
+                  PARSE_ASSERT($$, __mse_parser_status_push($$));
+                  PARSE_ASSERT($$, __mse_negate($$));
               } OPEN_BRACKET query CLOSE_BRACKET {
-                  PARSE_ASSERT(__mse_parser_status_pop($$));
+                  PARSE_ASSERT($$, __mse_parser_status_pop($$));
               }
 
 operator <- AND {
-             PARSE_ASSERT($$->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+             PARSE_ASSERT($$, $$->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
          }
          / OR {
-             PARSE_ASSERT($$->op_node = mse_init_interp_node_operation(MSE_SET_UNION));
+             PARSE_ASSERT($$, $$->op_node = mse_init_interp_node_operation(MSE_SET_UNION));
          }
 
 query <- set_generator     
      / query WHITESPACE operator WHITESPACE {
-         PARSE_ASSERT(__mse_insert_node($$, $$->op_node));
+         PARSE_ASSERT($$, __mse_insert_node($$, $$->op_node));
          $$->op_node = NULL;
      } set_generator
      / query WHITESPACE {
-         PARSE_ASSERT($$->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
-         PARSE_ASSERT(__mse_insert_node($$, $$->op_node));
+         PARSE_ASSERT($$, $$->op_node = mse_init_interp_node_operation(MSE_SET_INTERSECTION));
+         PARSE_ASSERT($$, __mse_insert_node($$, $$->op_node));
          $$->op_node = NULL;
      } set_generator
 
