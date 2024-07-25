@@ -31,8 +31,7 @@
     if (result->tmp_buffer != NULL) free(result->tmp_buffer); \
     result->tmp_buffer = (char*) malloc(sizeof(char) * (strlen(token_str) + 1)); \
     PARSE_ASSERT(result, result->tmp_buffer != NULL); \
-    strcpy(result->tmp_buffer, token_str); \
-    lprintf(LOG_INFO, "Read '%s' into tmp buffer\n", token_str);
+    strcpy(result->tmp_buffer, token_str);
 
 #define COPY_TO_ARG_BUFFER(result) \
     PARSE_ASSERT(result, result->tmp_buffer != NULL) \
