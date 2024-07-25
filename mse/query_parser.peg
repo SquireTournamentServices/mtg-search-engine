@@ -166,6 +166,10 @@ int mse_parse_input_string(const char* input_string, mse_interp_node_t **root)
     // Cleanup
     __mse_free_parser_status(&ret);
 
+    if (ret.error) {
+      lprintf(LOG_ERROR, "Cannot parse '%s'\n", input_string);
+    }
+
     *root = ret.root;
     ASSERT(root != NULL);
     ASSERT(ret.error == 0);
