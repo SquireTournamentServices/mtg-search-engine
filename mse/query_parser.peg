@@ -26,7 +26,7 @@
 
 #define PCC_ERROR(auxil) mse_pcc_error(auxil)
 
-#define PCC_GETCHAR(auxiL) mse_get_char(auxil)
+#define PCC_GETCHAR(auxil) mse_get_char(auxil)
 
 #define COPY_TO_TMP_BUFFER(result, token_str) \
     if (result->tmp_buffer != NULL) free(result->tmp_buffer); \
