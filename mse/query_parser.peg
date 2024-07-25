@@ -65,11 +65,11 @@ op_operator <- LT_INC { $$->parser_op_type = MSE_SET_GENERATOR_OP_LT_INC; }
             / INCLUDES { $$->parser_op_type = MSE_SET_GENERATOR_OP_INCLUDES; }
             / EQUALS { $$->parser_op_type = MSE_SET_GENERATOR_OP_EQUALS; }
 
-word <- str:RAW_WORD { COPY_TO_TMP_BUFFER($$, str) }
+word <- input_string:RAW_WORD { COPY_TO_TMP_BUFFER($$, input_string) }
 
-string <- str:RAW_STRING { COPY_TO_TMP_BUFFER($$, str) }
+string <- input_string:RAW_STRING { COPY_TO_TMP_BUFFER($$, input_string) }
 
-regex_string <- str:REGEX_STRING { COPY_TO_TMP_BUFFER($$, str) }
+regex_string <- input_string:REGEX_STRING { COPY_TO_TMP_BUFFER($$, input_string) }
 
 op_name <- word {
            PARSE_ASSERT($$, mse_gen_type($$->tmp_buffer, &$$->parser_gen_type));
@@ -171,8 +171,9 @@ int mse_parse_input_string(const char* input_string, mse_interp_node_t **root)
     ret.input_buffer = input_string;
     ret.input_buffer_len = strlen(input_string);
 
+    mse_parser_status_t *value_ptr = &ret;
     mse_context_t *ctx = mse_create(&ret);
-    while (mse_parse(ctx, &ret));
+    while (mse_parse(ctx, &value_ptr));
     mse_destroy(ctx);
 
     // Cleanup
