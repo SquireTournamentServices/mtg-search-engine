@@ -40,7 +40,7 @@
 
 static void mse_pcc_error(mse_parser_status_t *res) {
     res->error = 1;
-    lprintf(LOG_ERROR, "Parse error around %ul\n", res->input_buffer_ptr);
+    lprintf(LOG_ERROR, "Parse error around %lu\n", res->input_buffer_ptr);
 }
 
 static int mse_get_char(mse_parser_status_t *res) {
@@ -146,7 +146,7 @@ OPEN_BRACKET <- "("
 CLOSE_BRACKET <- ")"
 STMT_NEGATE <- "-"
 
-RAW_WORD <- [a-zA-Z0-9_-]+
+RAW_WORD <- [a-zA-Z0-9_]+
 
 STRING_INNER_GROUP_A <- [^"]
 STRING_INNER_GROUP_B <- '\"'
