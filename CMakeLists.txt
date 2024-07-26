@@ -47,7 +47,7 @@ add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
 if(NOT WIN32)
   set(CMAKE_C_FLAGS
-    "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -g -O3 -march=native -ffast-math"
+    "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -g -Ofast -march=native"
   )
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof")
 endif()
