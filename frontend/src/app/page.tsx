@@ -37,14 +37,15 @@ export default function Home() {
           </div>
           <div>
             <h3 className="text-xl font-bold">Operations</h3>
-            <p>
-              Used in this form{" "}
-              <blockquote>{"<query> <operator> <query>"}</blockquote>
-            </p>
             <ul>
               <li>and</li>
               <li>or</li>
             </ul>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold">Set Generators</h3>
+            Queries are in the format {"<property><operator><value>"}, i.e:
+            "set:m20".
           </div>
           <div>
             <h3 className="text-xl font-bold">Operators</h3>
