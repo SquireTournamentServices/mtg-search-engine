@@ -196,6 +196,11 @@ void mse_sort_search_results(mse_search_result_t *search_res, mse_search_sort_ty
         sort_fn = &mse_avl_cmp_card_toughness;
         break;
     }
+
+    if (sort_fn == NULL) {
+        return;
+    }
+
     qsort(search_res->cards,
           search_res->cards_length,
           sizeof(*search_res->cards),
