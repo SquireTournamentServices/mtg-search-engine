@@ -69,6 +69,7 @@ int mse_search(mse_t *state, mse_search_result_t *res, const char *query)
     memset(res, 0, sizeof(*res));
     ASSERT(__mse_search(state, &tmp, query));
     ASSERT(mse_finalise_search(res, &tmp));
+    mse_sort_search_results(res, MSE_SORT_CARD_NAME);
     return 1;
 }
 

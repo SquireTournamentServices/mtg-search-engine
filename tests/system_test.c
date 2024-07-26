@@ -35,7 +35,7 @@ static int test_valid_queries(mse_t *state)
 
         mse_search_result_t res;
         ASSERT(mse_search(state, &res, buffer));
-        mse_sort_search_results(&res, MSE_SORT_CARD_NAME);
+        mse_sort_search_results(&res, MSE_SORT_POWER);
         mse_free_search_results(&res);
     }
 
