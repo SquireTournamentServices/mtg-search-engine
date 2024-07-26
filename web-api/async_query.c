@@ -115,6 +115,7 @@ static int __mse_jsonify_search(mse_async_query_t *query)
     json_t *json = json_object();
     ASSERT(json != NULL);
     ASSERT(__mse_jsonify_search_res_impl(&res, json, query));
+    mse_sort_search_results(&res, MSE_SORT_CARD_NAME);
     json_decref(json);
     return 1;
 }
