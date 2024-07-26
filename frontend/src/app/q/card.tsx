@@ -44,11 +44,11 @@ export default function Card(props: {
       )}
       <div className="grow" />
       <div className="flex flex-row justify-between">
-        <span>
+        <div className="flex flex-row gap-1">
           {colours.map((c) => (
             <Colour colour={c} key={c} />
           ))}
-        </span>
+        </div>
         <p className="text-right">
           {props.data.power && props.data.toughness
             ? props.data.power + "/" + props.data.toughness
