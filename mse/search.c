@@ -169,6 +169,50 @@ int mse_finalise_search(mse_search_result_t *search_final_res, mse_search_interm
     return 1;
 }
 
+void swap(mse_card_t ** a, mse_card_t ** b)
+{
+    mse_card_t *temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int partition(mse_card_t **arr, int low, int high, int (*sort_fn)(void *, void *))
+{
+    mse_card_t *pivot = arr[low];
+    int i = low;
+    int j = high;
+
+    while (i < j) {
+
+        // condition 1: find the first element greater than
+        // the pivot (from starting)
+        while (sort_fn(arr[i], pivot) <= 0 && i <= high - 1) {
+            i++;
+        }
+
+        // condition 2: find the first element smaller than
+        // the pivot (from last)
+        while (sort_fn(arr[j], pivot) > 0 && j >= low + 1) {
+            j--;
+        }
+        if (i < j) {
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[low], &arr[j]);
+    return j;
+}
+
+void quick_sort(mse_card_t **arr, int low, int high, int (*sort_fn)(void *, void *))
+{
+    if (low < high) {
+        int partitionIndex = partition(arr, low, high, sort_fn);
+
+        quick_sort(arr, low, partitionIndex - 1, sort_fn);
+        quick_sort(arr, partitionIndex + 1, high, sort_fn);
+    }
+}
+
 void mse_sort_search_results(mse_search_result_t *search_res, mse_search_sort_type_t sort_type)
 {
     // Already sorted this way, no need to recompute
@@ -201,11 +245,10 @@ void mse_sort_search_results(mse_search_result_t *search_res, mse_search_sort_ty
         return;
     }
 
-    qsort(search_res->cards,
-          search_res->cards_length,
-          sizeof(*search_res->cards),
-          // Sketchy looking cast lmao
-          (int (*)(const void *, const void *)) sort_fn);
+    quick_sort(search_res->cards,
+               0,
+               search_res->cards_length - 1,
+               sort_fn);
 }
 
 void mse_free_search_results(mse_search_result_t *search_res)
