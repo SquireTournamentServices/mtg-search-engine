@@ -44,7 +44,6 @@ export default function Home() {
             <ul>
               <li>and</li>
               <li>or</li>
-              <li>! (negate)</li>
             </ul>
           </div>
           <div>
@@ -56,6 +55,7 @@ export default function Home() {
               <li>{"<="} (less than or equal)</li>
               <li>{">"} (greater than)</li>
               <li>{">="} (greater than or equal)</li>
+              <li>!= (not equal)</li>
             </ul>
           </div>
           <div>
