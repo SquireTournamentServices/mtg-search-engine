@@ -117,6 +117,8 @@ static int __mse_jsonify_search(mse_async_query_t *query)
     ASSERT(json != NULL);
     ASSERT(__mse_jsonify_search_res_impl(&res, json, query));
     json_decref(json);
+
+    mse_free_search_results(&res);
     return 1;
 }
 
