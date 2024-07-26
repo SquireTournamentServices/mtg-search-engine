@@ -1,6 +1,6 @@
 import Card from "./card";
 import PageChanger from "./pageChanger";
-import searchUrlFor from '../searchUrl';
+import searchUrlFor from "../searchUrl";
 
 export default async function SearchResultPage({
   searchParams,
@@ -11,13 +11,16 @@ export default async function SearchResultPage({
   };
 }) {
   const query = decodeURIComponent(searchParams.query);
-  const resp = await fetch(process.env.BACKEND_URL ?? "http://127.0.0.1:4365/api", {
-    method: "POST",
-    body: query,
-    headers: {
-      page: (parseInt(searchParams.page ?? "1") - 1).toString(),
+  const resp = await fetch(
+    process.env.BACKEND_URL ?? "http://127.0.0.1:4365/api",
+    {
+      method: "POST",
+      body: query,
+      headers: {
+        page: (parseInt(searchParams.page ?? "1") - 1).toString(),
+      },
     },
-  });
+  );
 
   let data: any;
   if (resp.ok) {
@@ -26,7 +29,7 @@ export default async function SearchResultPage({
     return <p>Error</p>;
   }
   const results = data.cards_total;
-  const page = data.page;
+  const page = data.page ?? parseInt(searchParams.page, 10) ?? -1;
   const page_size = data.page_size;
   const pages = Math.ceil(results / page_size);
 
