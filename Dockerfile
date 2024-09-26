@@ -33,5 +33,9 @@ COPY --from=build /app/build/mtg-search-engine-web-api .
 # Bundle tests, to allow for sanity checking the image
 COPY --from=build /app/build/mtg-search-engine-tests .
 
+# Force caching via test flag
+ENV MSE_TEST=true
+COPY --from=build /app/build/AllPrintings.json .
+
 EXPOSE 4365
 CMD ./mtg-search-engine-web-api
