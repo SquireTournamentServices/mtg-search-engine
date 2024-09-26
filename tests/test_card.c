@@ -103,6 +103,25 @@ static int test_card_parse_json()
     return 1;
 }
 
+static int test_card_parse_json_no_original_text()
+{
+    FILE *f = fopen("./test_card_no_originalText.json", "r");
+    ASSERT(f != NULL);
+    json_error_t error;
+    json_t *json = json_loadf(f, 0, &error);
+    fclose(f);
+    ASSERT(json != NULL);
+
+    mse_card_t card;
+    ASSERT(mse_parse_card_json(json, &card));
+    ASSERT(__test_card_props(card));
+
+    mse_free_card(&card);
+
+    json_decref(json);
+    return 1;
+}
+
 static int test_card_write_read()
 {
     FILE *f = fopen("./test_card.json", "r");
@@ -241,6 +260,7 @@ static int test_colour_cmp_eq()
 }
 
 SUB_TEST(test_card, {&test_card_parse_json, "Test parse card from JSON"},
+{&test_card_parse_json_no_original_text, "Test parse card from JSON (no original text)"},
 {&test_card_write_read, "Test card read and, write"},
 {&test_avl_cmp_card, "Test card avl cmp function"},
 {&test_card_field_cmp, "Test card field cmp"},

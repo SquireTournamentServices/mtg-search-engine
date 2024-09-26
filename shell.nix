@@ -24,6 +24,7 @@
       jemalloc
       mbedtls
       openssl
+      jansson
 
       # Frontend
       nodejs_22

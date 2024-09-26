@@ -47,9 +47,11 @@ add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
 if(NOT WIN32)
   set(CMAKE_C_FLAGS
-    "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -g -Ofast -march=native"
+      "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -g -Ofast -march=native"
   )
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof")
+  set(CMAKE_C_FLAGS
+      "${CMAKE_C_FLAGS} -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof"
+  )
 endif()
 
 # Generated sources
@@ -77,11 +79,11 @@ else()
 endif()
 
 set(PEG_PREFIX mse_query_parser)
-set(PARSER_SRC 
-  ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.c 
-  ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.h) 
+set(PARSER_SRC ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.c
+               ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.h)
 add_custom_command(
-  COMMAND packcc -o ${PEG_PREFIX} --lines ${PEG_DEBUG} ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.peg
+  COMMAND packcc -o ${PEG_PREFIX} --lines ${PEG_DEBUG}
+          ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.peg
   OUTPUT ${PARSER_SRC}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -168,7 +170,7 @@ set(SRC
     ./mse/mse.c
     ./mse/re2_wrapper.h
     ./mse/re2_wrapper.cpp
-    ./mse/query_parser.h 
+    ./mse/query_parser.h
     ./mse/query_parser_internals.c
     ./strptime/strptime.h
     ./strptime/strptime.c
@@ -285,6 +287,8 @@ if(UNIX)
 
   # Copy test data
   set(TEST_CARD_JSON ${CMAKE_CURRENT_BINARY_DIR}/test_card.json)
+  set(TEST_CARD_JSON_NO_ORIGINAL_TEXT
+      ${CMAKE_CURRENT_BINARY_DIR}/test_card_no_originalText.json)
   set(TEST_VALID_QUERIES ${CMAKE_CURRENT_BINARY_DIR}/valid_queries.txt)
   set(TEST_INVALID_QUERIES ${CMAKE_CURRENT_BINARY_DIR}/invalid_queries.txt)
 
@@ -293,12 +297,16 @@ if(UNIX)
   set(TESTING_SCRIPTS ${MEM_TESTS_PY} ${MEM_TESTS_SH})
 
   set(TEST_DATA_FILES
-      ${TEST_CARD_JSON} ${TESTING_SCRIPTS} ${TEST_VALID_QUERIES}
-      ${TEST_INVALID_QUERIES} ${ALL_PRINTINGS})
+      ${TEST_CARD_JSON} ${TEST_CARD_JSON_NO_ORIGINAL_TEXT} ${TESTING_SCRIPTS}
+      ${TEST_VALID_QUERIES} ${TEST_INVALID_QUERIES} ${ALL_PRINTINGS})
   add_custom_command(
     OUTPUT ${TEST_DATA_FILES}
     COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_card.json ${TEST_CARD_JSON}
+    COMMAND
+      ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_card_no_originalText.json
+      ${TEST_CARD_JSON_NO_ORIGINAL_TEXT}
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/mem_tests.sh
             ${MEM_TESTS_SH}
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/mem_tests.py

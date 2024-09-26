@@ -69,6 +69,13 @@ int mse_parse_card_json(json_t *json, mse_card_t *card)
         ASSERT(json_is_string(oracle_o));
         ASSERT(card->oracle_text = strdup(json_string_value(oracle_o)));
         ASSERT(card->oracle_text_lower = mse_to_lower(card->oracle_text));
+    } else {
+        oracle_o = json_object_get(json, "text");
+        if (oracle_o != NULL) {
+            ASSERT(json_is_string(oracle_o));
+            ASSERT(card->oracle_text = strdup(json_string_value(oracle_o)));
+            ASSERT(card->oracle_text_lower = mse_to_lower(card->oracle_text));
+        }
     }
 
     // Read mana cost
