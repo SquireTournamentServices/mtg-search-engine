@@ -15,6 +15,7 @@
       # Test
       valgrind
       gcovr
+      gdb
 
       # Compiler
       gcc
