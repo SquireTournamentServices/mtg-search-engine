@@ -109,10 +109,6 @@ set(ABSL_LIBS
 
 add_subdirectory(./re2)
 
-# Parser generators
-find_package(BISON)
-find_package(FLEX)
-
 option(USE_JEMALLOC OFF)
 set(LIBS jansson CURL::libcurl pthread ${ABSL_LIBS} re2)
 if(USE_JEMALLOC)
