@@ -18,8 +18,6 @@ and sets. It has a syntax that is similar to Scryfall but it can be embedded any
  - abseil+
  - c compiler *(i.e: gcc)*
  - c++ compiler *(i.e: g++)*
- - <!--nerf-->bison
- - flex
  - pthread *(see win32 pthread)*
  - python3
   - `pip install -r requirements.txt`
@@ -40,6 +38,16 @@ This project is written in C and, targets all platforms. There is an optional fr
 ### Backend / Library / CLI
 
 ```sh
+# You might want to use a Nix shell to install things for you
+# nix-shell shell.nix
+
+# You should be in a python virtual environment
+python -m venv .
+# If you are on windows or use fish, you must change this line
+source bin/activate
+
+pip install -r requirements.txt
+
 # .
 mkdir -p build
 cd build
