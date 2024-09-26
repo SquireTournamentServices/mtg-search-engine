@@ -1,0 +1,162 @@
+{
+    "artist": "Pete Venters",
+    "availability": [
+        "mtgo",
+        "paper"
+    ],
+    "boosterTypes": [
+        "draft"
+    ],
+    "borderColor": "black",
+    "colorIdentity": [
+        "W"
+    ],
+    "colors": [
+        "W"
+    ],
+    "convertedManaCost": 7.0,
+    "edhrecRank": 18977,
+    "edhrecSaltiness": 0.27,
+    "finishes": [
+        "nonfoil"
+    ],
+    "foreignData": [
+        {
+            "flavorText": "„Es ist der Wille aller, und meine Hand, die ihn ausführt.\"",
+            "language": "German",
+            "multiverseId": 148411,
+            "name": "Ausgewählter der Ahnfrau",
+            "text": "Erstschlag (Diese Kreatur fügt Kampfschaden vor Kreaturen ohne Erstschlag zu.)\nWenn der Ausgewählte der Ahnfrau ins Spiel kommt, erhältst du 1 Lebenspunkt für jede Karte in deinem Friedhof dazu.",
+            "type": "Kreatur — Mensch, Kleriker"
+        },
+        {
+            "flavorText": "\"La voluntad de todos, realizada por mi mano.\"",
+            "language": "Spanish",
+            "multiverseId": 150317,
+            "name": "Elegido de la Antepasada",
+            "text": "Daña primero. (Esta criatura hace daño de combate antes que las criaturas sin la habilidad de dañar primero.)\nCuando el Elegido de la Antepasada entre en juego, ganas 1 vida por cada carta en tu cementerio.",
+            "type": "Criatura — Clérigo humano"
+        },
+        {
+            "flavorText": "« La volonté de tous passe par ma main. »",
+            "language": "French",
+            "multiverseId": 149934,
+            "name": "Élu de l'Ancêtre",
+            "text": "Initiative (Cette créature inflige des blessures de combat avant les créatures sans l'initiative.)\nQuand l'Élu de l'Ancêtre arrive en jeu, vous gagnez 1 point de vie pour chaque carte dans votre cimetière.",
+            "type": "Créature : humain et clerc"
+        },
+        {
+            "flavorText": "\"La volontà di tutti, eseguita per mano mia.\"",
+            "language": "Italian",
+            "multiverseId": 148794,
+            "name": "Prescelto dell'Antenata",
+            "text": "Attacco improvviso (Questa creatura infligge danno da combattimento prima delle creature senza attacco improvviso.)\nQuando il Prescelto dell'Antenata entra in gioco, guadagni 1 punto vita per ogni carta nel tuo cimitero.",
+            "type": "Creatura — Chierico Umano"
+        },
+        {
+            "flavorText": "すべての意思を、この手で成そう。",
+            "language": "Japanese",
+            "multiverseId": 148028,
+            "name": "祖神に選ばれし者",
+            "text": "先制攻撃 （このクリーチャーは先制攻撃を持たないクリーチャーよりも先に戦闘ダメージを与える。）\n祖神に選ばれし者が場に出たとき、あなたはあなたの墓地にあるカード１枚につき１点のライフを得る。",
+            "type": "クリーチャー — 人間・クレリック"
+        },
+        {
+            "flavorText": "\"A vontade de todos pelas minhas mãos realizada.\"",
+            "language": "Portuguese (Brazil)",
+            "multiverseId": 149551,
+            "name": "Eleito da Ancestral",
+            "text": "Iniciativa (Esta criatura causa dano de combate antes de criaturas sem a habilidade de iniciativa.)\nQuando Eleito da Ancestral entra em jogo, você ganha 1 ponto de vida para cada card em seu cemitério.",
+            "type": "Criatura — Humano Clérigo"
+        },
+        {
+            "flavorText": "\"Общая воля моей рукой вершится\".",
+            "language": "Russian",
+            "multiverseId": 149168,
+            "name": "Избранник Прародителя",
+            "text": "Первый удар (Это существо наносит боевые повреждения раньше существ без Первого удара.)\nКогда Избранник Прародителя входит в игру, вы получаете 1 жизнь за каждую карту на вашем кладбище.",
+            "type": "Существо — Человек Священник"
+        },
+        {
+            "flavorText": "「众生所愿，吾手所圆。」",
+            "language": "Chinese Simplified",
+            "multiverseId": 147645,
+            "name": "祖灵的爱民",
+            "text": "先攻（此生物会比不具先攻异能的生物提前造成战斗伤害。）\n当祖灵的爱民进场时，你坟墓场中每有一张牌，你便获得1点生命。",
+            "type": "生物～人类／僧侣"
+        }
+    ],
+    "frameVersion": "2003",
+    "hasFoil": false,
+    "hasNonFoil": true,
+    "identifiers": {
+        "cardKingdomId": "122719",
+        "cardsphereId": "20",
+        "mcmId": "16165",
+        "mcmMetaId": "156",
+        "mtgjsonFoilVersionId": "b7c19924-b4bf-56fc-aa73-f586e940bd42",
+        "mtgjsonV4Id": "ad41be73-582f-58ed-abd4-a88c1f616ac3",
+        "mtgoFoilId": "27501",
+        "mtgoId": "27500",
+        "multiverseId": "130550",
+        "scryfallId": "7a5cd03c-4227-4551-aa4b-7d119f0468b5",
+        "scryfallIllustrationId": "be2f7173-c8b7-4172-a388-9b2c6b3c16e5",
+        "scryfallOracleId": "fc2ccab7-cab1-4463-b73d-898070136d74",
+        "tcgplayerProductId": "15032"
+    },
+    "isReprint": true,
+    "keywords": [
+        "First strike"
+    ],
+    "language": "English",
+    "layout": "normal",
+    "legalities": {
+        "commander": "Legal",
+        "duel": "Legal",
+        "legacy": "Legal",
+        "modern": "Legal",
+        "paupercommander": "Restricted",
+        "penny": "Legal",
+        "predh": "Legal",
+        "premodern": "Legal",
+        "vintage": "Legal"
+    },
+    "manaCost": "{5}{W}{W}",
+    "manaValue": 7.0,
+    "name": "Ancestor's Chosen",
+    "number": "1",
+    "originalType": "Creature - Human Cleric",
+    "power": "4",
+    "printings": [
+        "10E",
+        "JUD",
+        "UMA"
+    ],
+    "purchaseUrls": {
+        "cardKingdom": "https://mtgjson.com/links/9fb51af0ad6f0736",
+        "cardmarket": "https://mtgjson.com/links/ace8861194ee0b6a",
+        "tcgplayer": "https://mtgjson.com/links/4843cea124a0d515"
+    },
+    "rarity": "uncommon",
+    "rulings": [
+
+    ],
+    "setCode": "10E",
+    "subtypes": [
+        "Human",
+        "Cleric"
+    ],
+    "supertypes": [
+
+    ],
+    "text": "First strike (This creature deals combat damage before creatures without first strike.)\nWhen Ancestor's Chosen comes into play, you gain 1 life for each card in your graveyard.",
+    "toughness": "4",
+    "type": "Creature — Human Cleric",
+    "types": [
+        "Creature"
+    ],
+    "uuid": "5f8287b1-5bb6-5f4c-ad17-316a40d5bb0c",
+    "variations": [
+        "b7c19924-b4bf-56fc-aa73-f586e940bd42"
+    ]
+}
