@@ -27,7 +27,7 @@ static int test_valid_queries(mse_t *state)
         }
 
         // Strip the last char (\n)
-        if (strlen(buffer) > 2) return 1;
+        if (strlen(buffer) > 2) break;
         size_t last = strlen(buffer) - 1;
         if (buffer[last] == '\n') {
             buffer[last] = 0;
