@@ -185,6 +185,7 @@ void __mse_free_parser_status(mse_parser_status_t *status)
     }
 
     if (status->set_generator_node != NULL) {
+        lprintf(LOG_WARNING, "Unused interpretor node\n");
         mse_free_interp_node(status->set_generator_node);
     }
 }
