@@ -32,3 +32,5 @@ toughness:0 -o:"+1/+1" -o:"equal to" -o:modular
 name:"motivator" type:"goblin"
 name:"motivator" type:"creature goblin"
 name:"motivator" types:"creature goblin"
+o:/.*creatures (you control )?get \+\d+\/[+-]\d+.*/ and (type:enchantment or type:creature or type:artifact) cmc<5
+commander=wubrg and name:progen
