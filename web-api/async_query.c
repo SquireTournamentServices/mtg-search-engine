@@ -26,7 +26,7 @@ static int __mse_jsonify_card(json_t *json, mse_card_t *card)
     for (size_t i = 0; i < card->types_count; i++) {
         json_t *type_json = json_string(card->types[i]);
         ASSERT(type_json != NULL);
-        if (!json_array_append(tmp, type_json) == 0) {
+        if (json_array_append(tmp, type_json) != 0) {
             lprintf(LOG_ERROR, "Cannot append to type array\n");
             json_decref(type_json);
             return 0;
@@ -57,7 +57,7 @@ static int __mse_jsonify_card(json_t *json, mse_card_t *card)
 
         json_t *type_json = json_string(buffer);
         ASSERT(type_json != NULL);
-        if (!json_array_append(tmp, type_json) == 0) {
+        if (json_array_append(tmp, type_json) != 0) {
             lprintf(LOG_ERROR, "Cannot append to set code array\n");
             json_decref(type_json);
             return 0;

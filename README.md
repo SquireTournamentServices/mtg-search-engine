@@ -16,8 +16,8 @@ and sets. It has a syntax that is similar to Scryfall but it can be embedded any
  - cURL+
  - jansson+
  - abseil+
- - c compiler *(i.e: gcc)*
- - c++ compiler *(i.e: g++)*
+ - c compiler *(i.e: gcc, msvc, clang)*
+ - c++ compiler *(i.e: g++, msvc, clang)*
  - pthread *(see win32 pthread)*
  - python3
   - `pip install -r requirements.txt`
@@ -39,7 +39,10 @@ This project is written in C and, targets all platforms. There is an optional fr
 
 ```sh
 # You might want to use a Nix shell to install things for you
-# nix-shell shell.nix
+nix-shell shell.nix
+
+# Or on mac
+# nix-shell shell_mac.nix
 
 # You should be in a python virtual environment
 python -m venv .
@@ -53,10 +56,8 @@ mkdir -p build
 cd build
 
 # ./build/
-# You can use -DMSE_WEB_API=ON to build the web api
-# You can use -DUSE_JEMALLOC=ON to build with Jemalloc (recommended)
 # You can use -DMSE_DOXYGEN=ON to generate documentation
-cmake .. 
+cmake -DMSE_WEB_API=ON -DUSE_JEMALLOC=ON ..
 # cmake -DMSE_WEB_API=ON -DUSE_JEMALLOC=ON ..
 cmake --build . -j
 
