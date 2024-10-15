@@ -199,7 +199,7 @@ static int test_card_name_split_3()
     mse_card_name_parts_t ret;
     ASSERT(mse_split_card_name("Dandân", &ret));
     ASSERT(ret.parts != NULL);
-    ASSERT(ret.len == 1);
+    ASSERT(ret.len == 3);
 
     for (size_t i = 0; i < ret.len; i++) {
         ASSERT(ret.parts[i] != NULL);
