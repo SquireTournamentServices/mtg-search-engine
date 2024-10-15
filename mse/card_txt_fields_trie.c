@@ -51,11 +51,9 @@ static int __mse_card_trie_lookup(mse_card_trie_node_t * restrict root, char * r
 
     long c_index = mse_char_map_get_index(str[i]);
 
-    if (c_index != -1) {
-      // Fails to find
-      if (root->children[c_index] == NULL) {
-          return 1;
-      }
+    // Fails to find
+    if (root->children[c_index] == NULL) {
+        return 1;
     }
     return __mse_card_trie_lookup(root->children[c_index], str, ret, i + 1);
 }
@@ -116,11 +114,9 @@ static int __mse_card_trie_lookup_aprox(mse_card_trie_node_t * restrict root, ch
 
     long c_index = mse_char_map_get_index(str[i]);
 
-    if (c_index != -1) {
-      // Fails to find
-      if (root->children[c_index] == NULL) {
-          return 1;
-      }
+    // Fails to find
+    if (root->children[c_index] == NULL) {
+        return 1;
     }
     return __mse_card_trie_lookup_aprox(root->children[c_index], str, ret, i + 1);
 }
