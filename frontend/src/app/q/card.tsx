@@ -3,6 +3,8 @@ import Oracle from "./oracle";
 import Colour from "./colour";
 import { useMemo } from "react";
 
+const LEGENDARY = "Legendary";
+
 export default function Card(props: {
   data: {
     name: string;
@@ -26,10 +28,17 @@ export default function Card(props: {
 
   const sets = useMemo(() => {
     return props.data.sets.map((x) => x.toUpperCase()).join(", ");
-  }, [props.data]);
+  }, [props.data.sets]);
+
+  const isLegendary = useMemo(
+    () => props.data.types.includes(LEGENDARY),
+    [props.data.types],
+  );
 
   return (
-    <div className="flex flex-col rounded-xl bg-white min-h-[300px] p-5 drop-shadow">
+    <div
+      className={`flex flex-col rounded-xl bg-white min-h-[300px] p-5 drop-shadow ${isLegendary ? "border-2 border-gray-100" : ""}`}
+    >
       <div className="flex flex-row gap-3 justify-between">
         <h2 className="font-bold hyphens-auto">{props.data.name}</h2>
         <div className="flex flex-row flex-wrap w-max justify-end">
