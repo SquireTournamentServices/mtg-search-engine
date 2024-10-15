@@ -27,10 +27,10 @@ extern {CHAR_MAP_DEF};
  \________)______))
 
 */
-/// We use the latin alaphabet (and '_'), if you are not using this alphabet then I am sorry
+/// We use the latin alaphabet, arabic digits, (and '_'), if you are not using this alphabet then I am sorry
 /// Here is an ascii cat to make you feel better
 /// Gets the index for an array that uses the defined chars
-#define MSE_ALPHABET_LENGTH (26 + 1)
+#define MSE_ALPHABET_LENGTH (26 + 1 + 10)
 {GET_INDEX_DEF};"""
     with open(OUTPUT_FILE_H, "w") as f:
         f.write(output_h)
@@ -82,6 +82,8 @@ def gen_unit() -> None:
     output_unit = f"""
 #include "{OUTPUT_FILE_H}"
 
+#define MSE_UNDERSCORE_POS 26
+
 {FILE_NOTICE}
 
 {CHAR_MAP_DEF} =
@@ -94,9 +96,11 @@ def gen_unit() -> None:
     output_unit += GET_INDEX_DEF + "\n"
     output_unit += """{
     if (c == '_') {
-        return 26;
+        return MSE_UNDERSCORE_POS;
     } else if (c >= 'a' && c <= 'z'){
         return c - 'a';
+    } else if (c >= '0' && c <= '9') {
+        return MSE_UNDERSCORE_POS + c - '0';
     } else {
         return -1;
     }
