@@ -67,7 +67,7 @@ def __get_entry_val(i: int) -> int:
         return ord("_")
 
     # Letters and, numbers are good
-    if s.isalpha() and i <= ord("z"):
+    if (s.isalpha() and i <= ord("z")) or (i >= ord("0") and i <= ord("9")):
         return ord(s)
     # This letter can probably be ignored
     return 0
