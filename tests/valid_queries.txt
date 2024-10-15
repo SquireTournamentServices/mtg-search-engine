@@ -36,4 +36,4 @@ o:/.*creatures (you control )?get \+\d+\/[+-]\d+.*/ and (type:enchantment or typ
 commander=wubrg and name:progen
 "+2 mace"
 +2 mace
-Lim-Dûl's Vault
+Lim-Dul's Vault
