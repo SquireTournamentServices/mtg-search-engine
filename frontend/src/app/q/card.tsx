@@ -12,6 +12,7 @@ export default function Card(props: {
     power: string;
     toughness: string;
     types: string[];
+    sets: string[];
   };
 }) {
   const colours = [];
@@ -25,7 +26,7 @@ export default function Card(props: {
   return (
     <div className="flex flex-col rounded-xl bg-white min-h-[300px] p-5 drop-shadow">
       <div className="flex flex-row gap-3 justify-between">
-        <h2 className="font-bold">{props.data.name}</h2>
+        <h2 className="font-bold hyphens-auto">{props.data.name}</h2>
         <div className="flex flex-row flex-wrap w-max justify-end">
           {props.data.mana_cost &&
             props.data.mana_cost
@@ -55,6 +56,7 @@ export default function Card(props: {
             : ""}
         </p>
       </div>
+      <div>Printed in: {props.data.sets.join(", ")}</div>
     </div>
   );
 }
