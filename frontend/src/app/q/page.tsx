@@ -10,7 +10,9 @@ export default async function SearchResultPage({
     page?: string;
   };
 }) {
-  const query = decodeURIComponent(searchParams.query);
+  const query = decodeURIComponent(
+    searchParams.query.replaceAll("â", "a").replaceAll("û", "u"),
+  );
   const resp = await fetch(
     process.env.BACKEND_URL ?? "http://127.0.0.1:4365/api",
     {
