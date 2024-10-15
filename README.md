@@ -2,8 +2,6 @@
 This is an open source library and, standalone application that supports the searching of MTG cards
 and sets. It has a syntax that is similar to Scryfall but it can be embedded anywhere.
 
-**Work in progress**
-
 [![Frontend](https://github.com/MonarchDevelopment/mtg-search-engine/actions/workflows/frontend.yml/badge.svg)](https://github.com/MonarchDevelopment/mtg-search-engine/actions/workflows/frontend.yml)
 [![Main](https://github.com/MonarchDevelopment/mtg-search-engine/actions/workflows/main.yml/badge.svg)](https://github.com/MonarchDevelopment/mtg-search-engine/actions/workflows/main.yml)
 [![Memory tests](https://github.com/MonarchDevelopment/mtg-search-engine/actions/workflows/memtests.yml/badge.svg)](https://github.com/MonarchDevelopment/mtg-search-engine/actions/workflows/memtests.yml)
