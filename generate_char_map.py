@@ -39,7 +39,7 @@ extern {CHAR_MAP_DEF};
 def __get_entry_val(i: int) -> int:
     s: str = chr(i).lower()
     # Filter out vowels
-    if s in ["a", "e", "i", "o", "u"]:
+    if s in ["a", "â", "e", "i", "o", "u", "û"]:
         return 0
 
     # Spanish people!
