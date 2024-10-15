@@ -21,7 +21,6 @@
       gcc
 
       # Libraries
-      abseil-cpp
       jemalloc
       mbedtls
       openssl
