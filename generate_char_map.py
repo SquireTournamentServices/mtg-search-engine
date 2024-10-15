@@ -93,6 +93,8 @@ def gen_unit() -> None:
     output_unit += "{\n" + ",\n".join(entries) + "\n};\n\n"
     output_unit += GET_INDEX_DEF + "\n"
     output_unit += """{
+    c = mse_filter_char_map[c];
+
     if (c == '_') {
         return 26;
     } else if (c >= 'a' && c <= 'z'){
