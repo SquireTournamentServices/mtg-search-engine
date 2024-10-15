@@ -208,6 +208,7 @@ char *mse_filter_text(char * restrict str)
         if (c == MSE_FILTER_NO_CHAR) {
             continue;
         }
+
         if (__is_duplicate(ret, j, c)) {
             continue;
         }

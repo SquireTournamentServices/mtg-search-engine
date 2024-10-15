@@ -9,7 +9,7 @@
 #define DANDAN_F "dndn"
 
 #define DUPLICATE_TEXT "aaaaaaaabbbbbbbbbccccc123"
-#define DUPLICATE_TEXT_F "bc"
+#define DUPLICATE_TEXT_F "bc123"
 
 #define EMPTY_TEXT "      /  /  / /  /  /      / /  /  /  /  /  / /  /,    /, .  // / , ., /"
 
