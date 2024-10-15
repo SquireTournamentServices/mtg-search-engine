@@ -1,6 +1,7 @@
 import Manamoji from "./manamoji";
 import Oracle from "./oracle";
 import Colour from "./colour";
+import { useMemo } from "react";
 
 export default function Card(props: {
   data: {
@@ -22,6 +23,10 @@ export default function Card(props: {
       colours.push(c);
     }
   }
+
+  const sets = useMemo(() => {
+    return props.data.sets.map((x) => x.toUpperCase()).join(", ");
+  }, [props.data]);
 
   return (
     <div className="flex flex-col rounded-xl bg-white min-h-[300px] p-5 drop-shadow">
@@ -56,7 +61,7 @@ export default function Card(props: {
             : ""}
         </p>
       </div>
-      <div>Printed in: {props.data.sets.join(", ")}</div>
+      <div className="text-gray-800">Printed in: {sets}</div>
     </div>
   );
 }
