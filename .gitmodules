@@ -16,3 +16,6 @@
 [submodule "packcc"]
 	path = packcc
 	url = https://github.com/arithy/packcc
+[submodule "abseil"]
+	path = abseil
+	url = https://github.com/abseil/abseil-cpp

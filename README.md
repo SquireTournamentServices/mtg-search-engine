@@ -15,7 +15,6 @@ and sets. It has a syntax that is similar to Scryfall but it can be embedded any
  - openssl+
  - cURL+
  - jansson+
- - abseil+
  - c compiler *(i.e: gcc, msvc, clang)*
  - c++ compiler *(i.e: g++, msvc, clang)*
  - pthread *(see win32 pthread)*

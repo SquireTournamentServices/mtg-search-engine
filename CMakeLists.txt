@@ -95,7 +95,13 @@ find_package(CURL)
 # you need to provide your own pthreads implementation Have a look at win32
 # pthreads for example
 
-find_package(absl)
+# Assumption is that absl works
+set(ABSL_BUILD_TESTING OFF)
+set(ABSL_PROPAGATE_CXX_STD ON)
+set(ABSL_ENABLE_INSTALL ON)
+
+add_subdirectory(./abseil)
+# find_package(absl)
 set(ABSL_LIBS
     absl::base
     absl::core_headers
