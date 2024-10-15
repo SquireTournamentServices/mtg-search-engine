@@ -143,7 +143,7 @@ OPEN_BRACKET <- "("
 CLOSE_BRACKET <- ")"
 STMT_NEGATE <- "-"
 
-RAW_WORD <- [a-zA-Z0-9_]+
+RAW_WORD <- [a-zA-Z0-9_'+]+
 
 RAW_STRING <- '"' [^"]+ '"'
 

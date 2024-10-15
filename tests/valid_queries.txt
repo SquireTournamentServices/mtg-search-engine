@@ -34,3 +34,6 @@ name:"motivator" type:"creature goblin"
 name:"motivator" types:"creature goblin"
 o:/.*creatures (you control )?get \+\d+\/[+-]\d+.*/ and (type:enchantment or type:creature or type:artifact) cmc<5
 commander=wubrg and name:progen
+"+2 mace"
++2 mace
+Lim-Dûl's Vault
