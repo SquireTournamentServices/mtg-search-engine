@@ -26,8 +26,9 @@ export default async function SearchResultPage({
   if (resp.ok) {
     data = await resp.json();
   } else {
-    return <p>Error</p>;
+    return <p>There was an error: {await resp.text()}</p>;
   }
+
   const results = data.cards_total;
   const page = data.page ?? parseInt(searchParams.page, 10) ?? -1;
   const page_size = data.page_size;
@@ -52,7 +53,6 @@ export default async function SearchResultPage({
                 base_url={searchUrlFor(searchParams.query, i + 1)}
                 page={i + 1}
                 key={i}
-                currentPage={(i + 1).toString() == searchParams.page}
               />
             ))}
         </div>

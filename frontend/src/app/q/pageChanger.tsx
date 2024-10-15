@@ -1,12 +1,18 @@
+"use client";
+
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
   base_url: string;
   page: number;
-  currentPage: boolean;
 }
 
-export default function PageChanger({ base_url, page, currentPage }) {
+export default function PageChanger({ base_url, page }: Readonly<Props>) {
+  const searchParams = useSearchParams();
+  const pageNumber = searchParams.get("page") ?? '1';
+  const currentPage = pageNumber === page.toString();
+
   return (
     <Link href={base_url + "&page=" + page.toString()}>
       <h1
