@@ -4,6 +4,7 @@ import Colour from "./colour";
 import { useMemo } from "react";
 
 const LEGENDARY = "Legendary";
+const MAX_SETS_TO_SHOW = 5;
 
 export default function Card(props: {
   data: {
@@ -27,7 +28,13 @@ export default function Card(props: {
   }
 
   const sets = useMemo(() => {
-    return props.data.sets.map((x) => x.toUpperCase()).join(", ");
+    let sets = props.data.sets;
+    if (sets.length > MAX_SETS_TO_SHOW) {
+      sets = sets.slice(0, MAX_SETS_TO_SHOW);
+      sets.push(`(${sets.length - MAX_SETS_TO_SHOW}) ...`);
+    }
+
+    return sets.map((x) => x.toUpperCase()).join(", ");
   }, [props.data.sets]);
 
   const isLegendary = useMemo(
