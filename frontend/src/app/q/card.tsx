@@ -30,8 +30,8 @@ export default function Card(props: {
   const sets = useMemo(() => {
     let sets = props.data.sets;
     if (sets.length > MAX_SETS_TO_SHOW) {
-      sets = sets.slice(0, MAX_SETS_TO_SHOW - 1);
-      sets.push(`(${sets.length - MAX_SETS_TO_SHOW} more ...)`);
+      sets = sets.slice(0, MAX_SETS_TO_SHOW);
+      sets.push(`(${props.data.sets.length - MAX_SETS_TO_SHOW} more ...)`);
     }
 
     return sets.map((x) => x.toUpperCase()).join(", ");
