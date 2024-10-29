@@ -8,23 +8,19 @@ export default function Oracle(props: { oracle_text: string }) {
       {oracle.map((part) => {
         const mana = part.split("}");
         if (mana.length == 1) {
-          return (
-            <>
-              {
-                (part
-                  .split("\n")
-                  .map((x): ReactNode => <>{x}</>)
-                  .reduce((a, b) => (
-                    <>
-                      {a}
-                      <br />
-                      {b}
-                    </>
-                  )),
-                (<></>))
-              }
-            </>
-          );
+          return part
+            .split("\n")
+            .map((x): ReactNode => <>{x}</>)
+            .reduce(
+              (a, b) => (
+                <>
+                  {a}
+                  <br />
+                  {b}
+                </>
+              ),
+              <></>,
+            );
         } else {
           return (
             <>
