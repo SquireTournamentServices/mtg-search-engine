@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import Manamoji from "./manamoji";
 
 export default function Oracle(props: { oracle_text: string }) {
@@ -7,7 +8,23 @@ export default function Oracle(props: { oracle_text: string }) {
       {oracle.map((part) => {
         const mana = part.split("}");
         if (mana.length == 1) {
-          return <>{part}</>;
+          return (
+            <>
+              {
+                (part
+                  .split("\n")
+                  .map((x): ReactNode => <>{x}</>)
+                  .reduce((a, b) => (
+                    <>
+                      {a}
+                      <br />
+                      {b}
+                    </>
+                  )),
+                (<></>))
+              }
+            </>
+          );
         } else {
           return (
             <>
