@@ -24,7 +24,7 @@ USER app
 RUN mkdir build
 WORKDIR /app/build
 
-RUN cmake -DMSE_WEB_API=ON -DUSE_JEMALLOC=ON ..
+RUN cmake -DUSE_JEMALLOC=ON ..
 RUN cmake --build . -j
 
 FROM base AS app

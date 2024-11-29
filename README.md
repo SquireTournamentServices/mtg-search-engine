@@ -54,8 +54,8 @@ cd build
 
 # ./build/
 # You can use -DMSE_DOXYGEN=ON to generate documentation
-cmake -DMSE_WEB_API=ON -DUSE_JEMALLOC=ON ..
-# cmake -DMSE_WEB_API=ON -DUSE_JEMALLOC=ON ..
+cmake -DUSE_JEMALLOC=ON ..
+# cmake -DUSE_JEMALLOC=ON ..
 cmake --build . -j
 
 ctest -V -j # Runs all the tests
