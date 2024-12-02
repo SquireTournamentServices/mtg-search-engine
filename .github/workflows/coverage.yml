@@ -107,7 +107,7 @@ jobs:
         cmake --build . -j
         make mse-coverage
 
-    - uses: codecov/codecov-action@v4
+    - uses: codecov/codecov-action@v5
       with:
         files: ./build/mse-coverage.xml
         name: codecov-umbrella # optional
