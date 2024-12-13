@@ -44,6 +44,9 @@ export default async function SearchResultPage({
         ))}
       </div>
       <div className="flex flex-col">
+        {results <= 0 && (
+          <div className="text-2xl">No cards match your query.</div>
+        )}
         <p className="text-center">
           {results} Results | Page {page + 1} / {pages}
         </p>
