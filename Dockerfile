@@ -1,4 +1,4 @@
-FROM ubuntu:latest as base
+FROM ubuntu:latest AS base
 ARG DEBIAN_FRONTEND=noninteractive
 
 ENV TZ=Europe/London
