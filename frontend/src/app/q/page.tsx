@@ -44,10 +44,10 @@ export default async function SearchResultPage({
         ))}
       </div>
       <div className="flex flex-col">
-        {results <= 0 && (
-          <div className="text-2xl">No cards match your query.</div>
-        )}
         <p className="text-center">
+          {results <= 0 && (
+            <div className="text-2xl">No cards match your query.</div>
+          )}
           {results} Results | Page {page + 1} / {pages}
         </p>
         <div className="flex flex-row gap-3 w-full overflow-x-auto py-5">
