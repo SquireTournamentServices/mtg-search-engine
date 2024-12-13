@@ -247,10 +247,13 @@ static int __mse_is_vowel(char c)
 {
     switch(tolower(c)) {
     case 'a':
+    case 'â':
     case 'e':
+    case 'é':
     case 'i':
     case 'o':
     case 'u':
+    case 'û':
         return 1;
     default:
         return 0;
@@ -262,7 +265,8 @@ static int __mse_split_card_name(char * restrict name, mse_card_name_parts_t * r
     char *tmp = name;
     size_t len = strlen(name);
     for (size_t i = 0; i <= len; i++) {
-        if (__mse_filter_char(name[i]) != MSE_FILTER_NO_CHAR || __mse_is_vowel(name[i])) {
+        if (__mse_filter_char(name[i]) != MSE_FILTER_NO_CHAR
+                                          || __mse_is_vowel(name[i])) {
             continue;
         }
 
