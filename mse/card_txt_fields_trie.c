@@ -247,13 +247,10 @@ static int __mse_is_vowel(char c)
 {
     switch(tolower(c)) {
     case 'a':
-    case 'â':
     case 'e':
-    case 'é':
     case 'i':
     case 'o':
     case 'u':
-    case 'û':
         return 1;
     default:
         return 0;
