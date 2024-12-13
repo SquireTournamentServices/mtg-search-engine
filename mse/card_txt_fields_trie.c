@@ -243,7 +243,7 @@ static int __mse_insert_to_name_parts(mse_card_name_parts_t *ret, char * restric
     return 1;
 }
 
-static int __mse_is_vowel(char c)
+static int __mse_is_special_case(char c)
 {
     switch(tolower(c)) {
     case 'a':
@@ -251,6 +251,9 @@ static int __mse_is_vowel(char c)
     case 'i':
     case 'o':
     case 'u':
+    case '\'':
+    case '-':
+    case '_':
         return 1;
     default:
         return 0;
@@ -263,7 +266,7 @@ static int __mse_split_card_name(char * restrict name, mse_card_name_parts_t * r
     size_t len = strlen(name);
     for (size_t i = 0; i <= len; i++) {
         if (__mse_filter_char(name[i]) != MSE_FILTER_NO_CHAR
-                                          || __mse_is_vowel(name[i])) {
+                                          || __mse_is_special_case(name[i])) {
             continue;
         }
 
