@@ -1,14 +1,18 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import searchUrlFor from './searchUrl';
+import searchUrlFor from "./searchUrl";
 
 export default function SearchBar() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("query") ?? "";
   const [query, setQuery] = useState(initialQuery);
   const router = useRouter();
+
+  useEffect(() => {
+    setQuery(initialQuery);
+  }, [initialQuery, setQuery]);
 
   return (
     <div className="flex flex-row w-full justify-center">
