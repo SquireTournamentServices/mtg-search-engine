@@ -42,11 +42,12 @@ jobs:
       with:
         python-version: '3.9'
         cache: 'pip' # caching pip dependencies
-    - run: pip install -r requirements.txt
+    - run: pip install -r backend/requirements.txt
         
     - name: Run Tests and Coverage
       shell: bash
       run: |
+        cd backend
         mkdir -p build
         cd build
         rm -rf *

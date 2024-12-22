@@ -1,0 +1,33 @@
+services:
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - mse
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    environment:
+      BACKEND_URL: "http://backend:4365/api"
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    ports:
+      - "4365:4365"
+    networks:
+      - mse
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4365"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  mse:
+    driver: bridge

@@ -1,6 +1,7 @@
 #include "./server.h"
 #include "./async_query.h"
 #include "../testing_h/testing.h"
+#include "../mongoose/mongoose.h"
 #include <string.h>
 
 #define MIN(a, b) (a < b ? a : b)
@@ -22,7 +23,7 @@ static int __mse_get_page_number(struct mg_http_message *hm)
 
     char buffer[10];
     memset(buffer, 0, sizeof(buffer));
-    strncpy(buffer, header->ptr, MIN(sizeof(buffer), header->len));
+    strncpy(buffer, header->buf, MIN(sizeof(buffer), header->len));
 
     res = atoi(buffer);
     ASSERT(res >= 0);
@@ -31,15 +32,14 @@ static int __mse_get_page_number(struct mg_http_message *hm)
 
 static void __mse_serve(struct mg_connection *c,
                         int event,
-                        void *ev_data,
-                        void *fn_data)
+                        void *ev_data)
 {
     if (event == MG_EV_ACCEPT) {
         c->fn_data = NULL;
         requests++;
     } else if (event == MG_EV_HTTP_MSG) {
         struct mg_http_message *hm = (struct mg_http_message *) ev_data;
-        if(mg_http_match_uri(hm, "/")) {
+        if (mg_match(hm->uri, mg_str("/"), NULL)) {
             mg_http_reply(c,
                           200,
                           "",
@@ -48,12 +48,12 @@ static void __mse_serve(struct mg_connection *c,
                           MSE_PROJECT_NAME,
                           MSE_PROJECT_VERSION);
             good_requests++;
-        } else if (mg_http_match_uri(hm, "/github")) {
+        } else if (mg_match(hm->uri, mg_str("/github"), NULL)) {
             mg_http_reply(c, 301, "",
                           "<meta http-equiv=\"refresh\" content=\"0; URL=%s\" />",
                           MSE_REPO_URL);
             good_requests++;
-        } else if (mg_http_match_uri(hm, "/api")) {
+        } else if (mg_match(hm->uri, mg_str("/api"), NULL)) {
             if (hm->body.len == 0) {
                 mg_http_reply(c, 400, "", "400 - Empty request body");
                 user_error_requests++;
@@ -68,7 +68,7 @@ static void __mse_serve(struct mg_connection *c,
                 return;
             }
 
-            strncpy(query, hm->body.ptr, hm->body.len);
+            strncpy(query, hm->body.buf, hm->body.len);
             query[hm->body.len] = 0;
 
             int page_number = __mse_get_page_number(hm);
@@ -78,7 +78,7 @@ static void __mse_serve(struct mg_connection *c,
                 mg_http_reply(c, 500, "", "500 - Internal server error");
                 internal_error_requests++;
             }
-        } else if (mg_http_match_uri(hm, "/metrics")) {
+        } else if (mg_match(hm->uri, mg_str("/metrics"), NULL)) {
             mg_http_reply(c, 200, "", "mse_requests %lu\nmse_good_requests %lu\nmse_interal_error_requests %lu\nmse_user_error_requests %lu",
                           requests,
                           good_requests,

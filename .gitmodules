@@ -1,21 +1,21 @@
-[submodule "testing_h"]
-	path = testing_h
+[submodule "backend/testing_h"]
+	path = backend/testing_h
 	url = https://github.com/djpiper28/testing.h
-[submodule "strptime"]
-	path = strptime
+[submodule "backend/strptime"]
+	path = backend/strptime
 	url = https://github.com/djpiper28/strptime
-[submodule "mongoose"]
-	path = mongoose
+[submodule "backend/mongoose"]
+	path = backend/mongoose
 	url = https://github.com/cesanta/mongoose
+[submodule "backend/re2"]
+	path = backend/re2
+	url = https://github.com/google/re2
+[submodule "backend/packcc"]
+	path = backend/packcc
+	url = https://github.com/arithy/packcc
+[submodule "backend/abseil"]
+	path = backend/abseil
+	url = https://github.com/abseil/abseil-cpp
 [submodule "frontend/public/manamoji"]
 	path = frontend/public/manamoji
 	url = https://github.com/scryfall/manamoji-discord.git
-[submodule "re2"]
-	path = re2
-	url = https://github.com/google/re2
-[submodule "packcc"]
-	path = packcc
-	url = https://github.com/arithy/packcc
-[submodule "abseil"]
-	path = abseil
-	url = https://github.com/abseil/abseil-cpp

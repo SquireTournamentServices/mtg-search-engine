@@ -35,6 +35,8 @@ This project is written in C and, targets all platforms. There is an optional fr
 ### Backend / Library / CLI
 
 ```sh
+cd backend/
+
 # You might want to use a Nix shell to install things for you
 nix-shell shell.nix
 
