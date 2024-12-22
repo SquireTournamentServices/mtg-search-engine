@@ -9,6 +9,7 @@ OUTPUT_FILE_H = f"{BASENAME}.h"
 OUTPUT_FILE_U = f"{BASENAME}.c"
 
 FORMAT_ENUM = f"{PREFIX.lower()}_formats_t"
+FORMAT_LEGALITIES_ENUM = f"{PREFIX.lower()}_format_legalities_t"
 
 formats = set()
 format_legalities = set()
@@ -39,14 +40,17 @@ def gen_header() -> None:
 /// This file has a list of all formats
 """
 
-    output_h += f"typedef enum {FORMAT_ENUM}" + "{"
-
+    output_h += f"typedef enum {FORMAT_ENUM}" + "{\n"
     for format in formats:
-        output_h += f"MSE_FORMAT_{format.upper()}, "
+        output_h += f"  MSE_FORMAT_{format.upper()},\n"
+    output_h += f"  {PREFIX}_FORMATS_END\n" + "}" + f" {FORMAT_ENUM};\n"
 
-    output_h += f"{PREFIX}_FORMATS_END" + "}" + f"{FORMAT_ENUM};"
+    output_h += f"\ntypedef enum {FORMAT_LEGALITIES_ENUM}" + "{\n"
+    for legality in format_legalities:
+        output_h += f"  {PREFIX}_FORMAT_LEGALITIES_{legality.upper()},\n"
+    output_h += f"  {PREFIX}_FORMAT_LEGALITIES_END\n" + "}" + f" {FORMAT_LEGALITIES_ENUM};\n"
 
-    output_h += """
+    output_h += f"""
 int {PREFIX.lower()}_as_{FORMAT_ENUM}(char *str, {FORMAT_ENUM} *ret);
     """
 
