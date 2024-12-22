@@ -25,4 +25,4 @@ def get_atomic_cards() -> str:
 
 
 if __name__ == "__main__":
-    cards: List[dict] = get_atomic_cards()
+    get_atomic_cards()

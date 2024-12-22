@@ -51,7 +51,8 @@ def gen_header() -> None:
     output_h += f"  {PREFIX}_FORMAT_LEGALITIES_END\n" + "}" + f" {FORMAT_LEGALITIES_ENUM};\n"
 
     output_h += f"""
-int {PREFIX.lower()}_as_{FORMAT_ENUM}(char *str, {FORMAT_ENUM} *ret);
+int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(char *str, {FORMAT_ENUM} *ret);
+int {PREFIX.lower()}_str_as_{FORMAT_LEGALITIES_ENUM}(char *str, {FORMAT_ENUM} *ret);
     """
 
     with open(OUTPUT_FILE_H, "w") as f:
