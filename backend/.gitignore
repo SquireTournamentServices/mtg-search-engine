@@ -1,0 +1,13 @@
+cmake-build-debug/
+*.orig
+build/
+*.cbin
+*.pyc
+*.gch
+mse_langs.c
+mse_langs.h
+bin
+lib
+lib64
+include
+pyvenv.cfg

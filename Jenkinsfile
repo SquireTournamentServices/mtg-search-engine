@@ -20,8 +20,8 @@ pipeline {
 
         stage('Build Backend') {
             steps {
-              sh 'docker build -t mse-backend .'
-              sh 'docker tag mse-backend localhost:5000/mse-backend'
+              sh 'cd backend && docker build -t mse-backend .'
+              sh 'cd backend && docker tag mse-backend localhost:5000/mse-backend'
             }
         }
 
