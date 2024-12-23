@@ -50,9 +50,9 @@ static int free_test_card()
 }
 
 #define ORACLE_TEST_REGEX_1_MATCHES 58
-#define ORACLE_TEST_REGEX_1 ".*whenever a (creature|enchantment) enters the battlefield.*"
+#define ORACLE_TEST_REGEX_1 ".*whenever a (creature|enchantment) enters.*"
 #define ORACLE_TEST_REGEX_2_MATHCES 2
-#define ORACLE_TEST_REGEX_2 "whenever .* enters the battlefield,.*draw (a|[0-9]+) cards?.*"
+#define ORACLE_TEST_REGEX_2 "whenever .* enters,.*draw (a|[0-9]+) cards?.*"
 
 static int test_card_matches()
 {
@@ -61,7 +61,7 @@ static int test_card_matches()
 
     mse_card_t card;
     card.name = "Testing name 123";
-    card.oracle_text = "Whenever a creature enters the battlefield, pass go and collect $200.";
+    card.oracle_text = "Whenever a creature enters, pass go and collect $200.";
 
     for (size_t i = 0; i < 100; i++) {
         ASSERT(mse_card_oracle_matches(&card, &re));
