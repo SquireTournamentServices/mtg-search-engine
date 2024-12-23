@@ -47,9 +47,11 @@ def gen_header() -> None:
     # FORMAT_LEGALITIES_ENUM
     output_h += f"\ntypedef enum {FORMAT_LEGALITIES_ENUM}" + "{\n"
     for legality in format_legalities:
-        output_h += f"  {PREFIX}_FORMAT_LEGALITIES_{legality.upper()},\n"
+        output_h += f"    {PREFIX}_FORMAT_LEGALITIES_{legality.upper()},\n"
     output_h += (
-        f"  {PREFIX}_FORMAT_LEGALITIES_END\n" + "}" + f" {FORMAT_LEGALITIES_ENUM};\n\n"
+        f"    {PREFIX}_FORMAT_LEGALITIES_END\n"
+        + "}"
+        + f" {FORMAT_LEGALITIES_ENUM};\n\n"
     )
 
     # CARD_FORMAT_LEGALITIES_STRUCT
@@ -59,11 +61,11 @@ def gen_header() -> None:
     output_h += "}" + f" {CARD_FORMAT_LEGALITIES_STRUCT};\n"
 
     output_h += f"""
-int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(char *str, {FORMAT_ENUM} *ret);
-int {PREFIX.lower()}_str_as_{FORMAT_LEGALITIES_ENUM}(char *str, {FORMAT_ENUM} *ret);
+int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret);
+int {PREFIX.lower()}_str_as_{FORMAT_LEGALITIES_ENUM}(const char *str, {FORMAT_LEGALITIES_ENUM} *ret);
 
-const char *{PREFIX.lower()}_{FORMAT_LEGALITIES_ENUM}_as_str({FORMAT_ENUM} ret);
-const char *{PREFIX.lower()}_{FORMAT_ENUM}_as_str({FORMAT_ENUM} ret);
+const char *{FORMAT_ENUM}_as_str({FORMAT_ENUM} format);
+const char *{FORMAT_LEGALITIES_ENUM}_as_str({FORMAT_LEGALITIES_ENUM} format_legality);
 """
 
     with open(OUTPUT_FILE_H, "w") as f:
@@ -71,11 +73,12 @@ const char *{PREFIX.lower()}_{FORMAT_ENUM}_as_str({FORMAT_ENUM} ret);
 
 
 def gen_unit() -> None:
+    # Strings to enums
     output_unit = f"""{FILE_NOTICE}
 #include "{OUTPUT_FILE_H}"
 #include <string.h>
 
-int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(char *str, {FORMAT_ENUM} *ret)
+int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 """
     output_unit += "{\n"
 
@@ -96,7 +99,7 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(char *str, {FORMAT_ENUM} *ret)
 }
 """
 
-    output_unit += f"int {PREFIX.lower()}_str_as_{FORMAT_LEGALITIES_ENUM}(char *str, {FORMAT_ENUM} *ret)\n"
+    output_unit += f"int {PREFIX.lower()}_str_as_{FORMAT_LEGALITIES_ENUM}(const char *str, {FORMAT_LEGALITIES_ENUM} *ret)\n"
     output_unit += "{\n"
 
     i = 0
@@ -115,6 +118,40 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(char *str, {FORMAT_ENUM} *ret)
 
     output_unit += """
     return 0;
+}
+
+"""
+
+    # Enums to strings
+    output_unit += f"const char *{FORMAT_ENUM}_as_str({FORMAT_ENUM} format)\n"
+    output_unit += """{
+    switch(format) {"""
+
+    for format in formats:
+        output_unit += f"""
+    case {PREFIX}_FORMAT_{format.upper()}:
+        return "{format.lower()}";"""
+
+    output_unit += """
+    }
+    return "Invalid format.";
+}
+
+"""
+
+    output_unit += f"const char *{FORMAT_LEGALITIES_ENUM}_as_str({FORMAT_LEGALITIES_ENUM} format_legality)\n"
+
+    output_unit += """{
+    switch(format_legality) {"""
+
+    for legality in format_legalities:
+        output_unit += f"""
+    case {PREFIX}_FORMAT_LEGALITIES_{legality.upper()}:
+        return "{legality.lower()}";"""
+
+    output_unit += """
+    }
+    return "Invalid legality.";
 }
 """
 
