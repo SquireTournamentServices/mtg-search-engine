@@ -11,15 +11,18 @@ FORMAT_LEGALITIES_ENUM = f"{PREFIX.lower()}_format_legalities_t"
 CARD_FORMAT_LEGALITIES_STRUCT = f"{PREFIX.lower()}_card_format_legalities_t"
 FORMATS_FROM_JSON = f"{PREFIX.lower()}_card_formats_legalities_t_from_json"
 
-formats = set()
-format_legalities = set()
 NOT_LEGAL = "Unplayable"
-
+formats = []
+format_legalities = []
 
 def read_json_file():
     print(f"Reading all formats")
     data = read_mtg_json()
     data_j: dict = json.loads(data)
+
+    formats_set = set()
+    format_legalities_set = set()
+    format_legalities_set.add(NOT_LEGAL)
 
     for set_k in data_j["data"]:
         set_o: dict = data_j["data"][set_k]
@@ -27,10 +30,17 @@ def read_json_file():
         for card in set_o["cards"]:
             legalities = card["legalities"]
             for format in legalities:
-                formats.add(format)
-                format_legalities.add(legalities[format])
+                formats_set.add(format)
+                format_legalities_set.add(legalities[format])
 
-    format_legalities.add(NOT_LEGAL)
+    sorted_formats = list(formats_set)
+    sorted_formats.sort()
+
+    sorted_format_legalities = list(format_legalities_set)
+    sorted_format_legalities.sort()
+
+    [formats.append(f) for f in sorted_formats]
+    [format_legalities.append(f) for f in sorted_format_legalities]
     print(f"Found the following formats: {formats}")
     print(f"Found the following legalities: {format_legalities}")
 
