@@ -1,5 +1,3 @@
-import os
-import sys
 from typing import List
 from common import FILE_NOTICE
 

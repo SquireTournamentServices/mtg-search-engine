@@ -1,6 +1,10 @@
+import os
+import sys
+
 FILE = "AllPrintings.json"
 PREFIX: str = "MSE"
-FILE_NOTICE = f"""// THIS FILE IS AUTO GENERATED, SEE {__file__}
+FILE_NOTICE = f"""// THIS FILE IS AUTO GENERATED, SEE {os.path.basename(sys.argv[0])
+}
 // DO NOT MODIFY BY HAND"""
 
 

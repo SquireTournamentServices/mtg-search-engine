@@ -1,6 +1,4 @@
 import json
-import os
-import sys
 from iso639.exceptions import InvalidLanguageValue
 from iso639 import Lang
 from typing import List
