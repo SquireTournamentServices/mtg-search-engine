@@ -130,9 +130,8 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     output_unit += f"int {PREFIX.lower()}_str_as_{FORMAT_LEGALITIES_ENUM}(const char *str, {FORMAT_LEGALITIES_ENUM} *ret)\n"
     output_unit += """{
 
-    char *tmp = strdup(str);
+    char *tmp = mse_to_lower(str);
     ASSERT(tmp != NULL);
-    mse_to_lower(tmp);
 """
 
     i = 0
