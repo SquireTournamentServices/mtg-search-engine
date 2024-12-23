@@ -55,7 +55,15 @@ static int test_format_legalities_enum_to_str()
     return 1;
 }
 
+static int test_format_magic_number()
+{
+    unsigned int num = MSE_FORMAT_MAGIC_NUMBER;
+    ASSERT(num != 0);
+    return 1;
+}
+
 SUB_TEST(test_formats, {&test_format_enum_length_is_greater_than_zero, "Test format enum length is greater than zero"},
 {&test_format_enum_length_is_greater_than_zero, "Test format legality enum length is greater than zero"},
 {&test_format_enum_to_str, "Test formats to string (and reverse)"},
-{&test_format_legalities_enum_to_str, "Test format legalities to string (and reverse)"})
+{&test_format_legalities_enum_to_str, "Test format legalities to string (and reverse)"},
+{&test_format_magic_number, "Test format magic number"})

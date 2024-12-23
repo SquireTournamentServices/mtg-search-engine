@@ -38,7 +38,6 @@ add_definitions("-DMSE_OS=\"${CMAKE_SYSTEM_NAME}\"")
 add_definitions("-DMSE_REPO_URL=\"${REPO_URL}\"")
 add_definitions("-DMSE_PROJECT_VERSION=\"${CMAKE_PROJECT_VERSION}\"")
 add_definitions("-DMSE_PROJECT_NAME=\"${CMAKE_PROJECT_NAME}\"")
-add_definitions("-DMSE_BINARY_VERSION=1")
 
 # __FILENAME__
 string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)

@@ -33,8 +33,26 @@ def read_json_file():
 
 
 def gen_header() -> None:
+    print("Computing magic number for the format part of the system version number")
+    concat = "formats:"
+
+    for format in formats:
+        concat += format.casefold() + ","
+
+    concat += ";legalities:"
+    for legality in format_legalities:
+        concat += legality.casefold() + ","
+
+    magic_number = hash(concat)
+    magic_number = magic_number ^ (magic_number >> 32)
+    magic_number &= (2**21) - 1
+
+    print(f"Magic number is {magic_number}")
+
     output_h = f"""#pragma once
 {FILE_NOTICE}
+
+#define {PREFIX}_FORMAT_MAGIC_NUMBER ({magic_number}u)
 
 """
 
