@@ -40,6 +40,14 @@ static int test_format_enum_to_str()
     return 1;
 }
 
+static int test_format_legalities_enum_to_str_case_sensitive()
+{
+    mse_format_legalities_t legality_lookup;
+    ASSERT(mse_str_as_mse_format_legalities_t("Legal", &legality_lookup));
+    ASSERT(legality_lookup == MSE_FORMAT_LEGALITIES_LEGAL);
+    return 1;
+}
+
 static int test_format_legalities_enum_to_str()
 {
     for (mse_format_legalities_t legality = 0; legality < MSE_FORMAT_LEGALITIES_END; legality++) {
@@ -65,5 +73,6 @@ static int test_format_magic_number()
 SUB_TEST(test_formats, {&test_format_enum_length_is_greater_than_zero, "Test format enum length is greater than zero"},
 {&test_format_enum_length_is_greater_than_zero, "Test format legality enum length is greater than zero"},
 {&test_format_enum_to_str, "Test formats to string (and reverse)"},
+{&test_format_legalities_enum_to_str_case_sensitive, "test format legality enum lookup case sensitive"},
 {&test_format_legalities_enum_to_str, "Test format legalities to string (and reverse)"},
 {&test_format_magic_number, "Test format magic number"})

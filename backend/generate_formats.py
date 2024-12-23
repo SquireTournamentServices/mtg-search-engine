@@ -133,7 +133,7 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     char *tmp = strdup(str);
     ASSERT(tmp != NULL);
     mse_to_lower(tmp);
-    """
+"""
 
     i = 0
     for legality in format_legalities:
@@ -142,7 +142,7 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
             output_unit += "else "
         i += 1
 
-        output_unit += f'if (strcmp(str, "{legality.lower()}") == 0)' + " {\n"
+        output_unit += f'if (strcmp(tmp, "{legality.lower()}") == 0)' + " {\n"
         output_unit += (
             f"        *ret = {PREFIX}_FORMAT_LEGALITIES_{legality.upper()};\n"
         )

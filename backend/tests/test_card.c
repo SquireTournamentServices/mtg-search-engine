@@ -82,6 +82,12 @@ static int __test_card_props(mse_card_t card)
     ASSERT(_10E);
     ASSERT(_JUD);
     ASSERT(_UMA);
+
+    // Card legalities
+    ASSERT(card.format_legalities.commander == MSE_FORMAT_LEGALITIES_LEGAL);
+    ASSERT(card.format_legalities.paupercommander == MSE_FORMAT_LEGALITIES_RESTRICTED);
+    ASSERT(card.format_legalities.modern == MSE_FORMAT_LEGALITIES_LEGAL);
+    ASSERT(card.format_legalities.historic == MSE_FORMAT_LEGALITIES_UNPLAYABLE);
     return 1;
 }
 
