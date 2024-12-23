@@ -64,6 +64,7 @@ set(LANG_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.h
                       ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.c)
 add_custom_command(
   DEPENDS ${MTG_JSON_FILE}
+          ${CMAKE_CURRENT_SOURCE_DIR}/generate_languages_files.py
   OUTPUT ${LANG_SOURCE_FILES}
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_languages_files.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -71,6 +72,7 @@ add_custom_command(
 set(FILTER_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_char_map.h
                         ${CMAKE_CURRENT_BINARY_DIR}/mse_char_map.c)
 add_custom_command(
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
   OUTPUT ${FILTER_SOURCE_FILES}
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -78,7 +80,7 @@ add_custom_command(
 set(FORMAT_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_formats.h
                         ${CMAKE_CURRENT_BINARY_DIR}/mse_formats.c)
 add_custom_command(
-  DEPENDS ${MTG_JSON_FILE}
+  DEPENDS ${MTG_JSON_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/generate_formats.py
   OUTPUT ${FORMAT_SOURCE_FILES}
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_formats.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
