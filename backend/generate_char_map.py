@@ -25,6 +25,7 @@ extern {CHAR_MAP_DEF};
 */
 /// We use the latin alaphabet, arabic digits, (and '_'), if you are not using this alphabet then I am sorry
 /// Here is an ascii cat to make you feel better
+
 /// Gets the index for an array that uses the defined chars
 #define MSE_ALPHABET_LENGTH (26 + 1 + 10)
 {GET_INDEX_DEF};"""

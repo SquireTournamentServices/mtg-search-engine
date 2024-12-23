@@ -36,7 +36,6 @@ def gen_header() -> None:
     output_h = f"""#pragma once
 {FILE_NOTICE}
 
-/// This file has a list of all formats
 """
 
     # FORMAT_ENUM
