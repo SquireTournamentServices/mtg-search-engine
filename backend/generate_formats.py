@@ -42,7 +42,7 @@ def gen_header() -> None:
     output_h += f"typedef enum {FORMAT_ENUM}" + "{\n"
     for format in formats:
         output_h += f"  MSE_FORMAT_{format.upper()},\n"
-    output_h += f"  {PREFIX}_FORMATS_END\n" + "}" + f" {FORMAT_ENUM};\n"
+    output_h += f"  {PREFIX}_FORMAT_END\n" + "}" + f" {FORMAT_ENUM};\n"
 
     # FORMAT_LEGALITIES_ENUM
     output_h += f"\ntypedef enum {FORMAT_LEGALITIES_ENUM}" + "{\n"
@@ -56,7 +56,7 @@ def gen_header() -> None:
     output_h += f"typedef struct {CARD_FORMAT_LEGALITIES_STRUCT} " + "{\n"
     for format in formats:
         output_h += f"    {PREFIX.lower()}_format_legalities_t {format.lower().replace(' ', '')};\n"
-    output_h += "}" +f" {CARD_FORMAT_LEGALITIES_STRUCT};\n"
+    output_h += "}" + f" {CARD_FORMAT_LEGALITIES_STRUCT};\n"
 
     output_h += f"""
 int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(char *str, {FORMAT_ENUM} *ret);
@@ -86,7 +86,7 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(char *str, {FORMAT_ENUM} *ret)
             output_unit += "else "
         i += 1
 
-        output_unit += f'if (strcmp(str, "{format.lower()}") == 0)' + "{\n"
+        output_unit += f'if (strcmp(str, "{format.lower()}") == 0)' + " {\n"
         output_unit += f"        *ret = {PREFIX}_FORMAT_{format.upper()};\n"
         output_unit += "        return 1;\n"
         output_unit += "    }\n"
@@ -106,7 +106,7 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(char *str, {FORMAT_ENUM} *ret)
             output_unit += "else "
         i += 1
 
-        output_unit += f'if (strcmp(str, "{legality.lower()}") == 0)' + "{\n"
+        output_unit += f'if (strcmp(str, "{legality.lower()}") == 0)' + " {\n"
         output_unit += (
             f"        *ret = {PREFIX}_FORMAT_LEGALITIES_{legality.upper()};\n"
         )

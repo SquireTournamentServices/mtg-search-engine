@@ -97,6 +97,8 @@ set(PEG_PREFIX mse_query_parser)
 set(PARSER_SRC ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.c
                ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.h)
 add_custom_command(
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/packcc
+          ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.peg
   COMMAND packcc -o ${PEG_PREFIX} --lines ${PEG_DEBUG}
           ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.peg
   OUTPUT ${PARSER_SRC}
@@ -240,6 +242,8 @@ set(TESTS
     ./tests/test_save.c
     ./tests/test_re2.h
     ./tests/test_re2.c
+    ./tests/test_formats.h
+    ./tests/test_formats.c
     ./tests/system_test.h
     ./tests/system_test.c)
 set(WEB_API
@@ -264,19 +268,21 @@ if(UNIX)
                      "Generate documentation pages for ${REPO_URL}")
   endif()
 
-  include(CodeCoverage)
+  option(USE_GCOV ON)
+  if(USE_GCOV)
+    include(CodeCoverage)
+    set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
 
-  set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
-
-  append_coverage_compiler_flags()
-  setup_target_for_coverage_gcovr_xml(
-    NAME
-    mse-coverage
-    EXECUTABLE
-    mtg-search-engine-tests
-    test
-    EXCLUDE
-    ${GCOVR_EXCLUDE})
+    append_coverage_compiler_flags()
+    setup_target_for_coverage_gcovr_xml(
+      NAME
+      mse-coverage
+      EXECUTABLE
+      mtg-search-engine-tests
+      test
+      EXCLUDE
+      ${GCOVR_EXCLUDE})
+  endif()
 endif()
 
 # Add library and cli execs
