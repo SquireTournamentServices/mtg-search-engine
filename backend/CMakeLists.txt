@@ -56,6 +56,7 @@ endif()
 # Generated sources
 set(MTG_JSON_FILE ${CMAKE_CURRENT_BINARY_DIR}/AllPrintings.json)
 add_custom_command(
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/download_mtg_json.py
   OUTPUT ${MTG_JSON_FILE}
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/download_mtg_json.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
