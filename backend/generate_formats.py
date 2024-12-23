@@ -53,7 +53,7 @@ def gen_header() -> None:
     output_h += f"""
 int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(char *str, {FORMAT_ENUM} *ret);
 int {PREFIX.lower()}_str_as_{FORMAT_LEGALITIES_ENUM}(char *str, {FORMAT_ENUM} *ret);
-    """
+"""
 
     with open(OUTPUT_FILE_H, "w") as f:
         f.write(output_h)
@@ -62,8 +62,49 @@ int {PREFIX.lower()}_str_as_{FORMAT_LEGALITIES_ENUM}(char *str, {FORMAT_ENUM} *r
 def gen_unit() -> None:
     output_unit = f"""{FILE_NOTICE}
 #include "{OUTPUT_FILE_H}"
+#include <string.h>
 
-#define MSE_UNDERSCORE_POS 26"""
+int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(char *str, {FORMAT_ENUM} *ret)
+"""
+    output_unit += "{\n"
+    
+    i = 0
+    for format in formats:
+        output_unit += "    "
+        if i > 0:
+            output_unit += "else "
+        i += 1
+
+        output_unit += f'if (strcmp(str, "{format.lower()}") == 0)' + "{\n"
+        output_unit += f"        *ret = {PREFIX}_FORMAT_{format.upper()};\n"
+        output_unit += "        return 1;\n"
+        output_unit += "    }\n"
+
+    output_unit += """
+    return 0;
+}
+"""
+
+    output_unit += f"int {PREFIX.lower()}_str_as_{FORMAT_LEGALITIES_ENUM}(char *str, {FORMAT_ENUM} *ret)\n"
+    output_unit += "{\n"
+
+
+    i = 0
+    for legality in format_legalities:
+        output_unit += "    "
+        if i > 0:
+            output_unit += "else "
+        i += 1
+
+        output_unit += f'if (strcmp(str, "{legality.lower()}") == 0)' + "{\n"
+        output_unit += f"        *ret = {PREFIX}_FORMAT_LEGALITIES_{legality.upper()};\n"
+        output_unit += "        return 1;\n"
+        output_unit += "    }\n"
+
+    output_unit += """
+    return 0;
+}
+"""
 
     with open(OUTPUT_FILE_U, "wb") as f:
         f.write(output_unit.encode("utf-8"))
