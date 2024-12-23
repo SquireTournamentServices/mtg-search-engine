@@ -10,10 +10,13 @@ FORMAT_ENUM = f"{PREFIX.lower()}_formats_t"
 FORMAT_LEGALITIES_ENUM = f"{PREFIX.lower()}_format_legalities_t"
 CARD_FORMAT_LEGALITIES_STRUCT = f"{PREFIX.lower()}_card_format_legalities_t"
 FORMATS_FROM_JSON = f"{PREFIX.lower()}_card_formats_legalities_t_from_json"
+READ_FORMATS_FROM_FILE = f"{PREFIX.lower()}_read_legalities"
+WRITE_FORMATS_TO_FILE = f"{PREFIX.lower()}_write_legalities"
 
 NOT_LEGAL = "Unplayable"
 formats = []
 format_legalities = []
+
 
 def read_json_file():
     print(f"Reading all formats")
@@ -66,6 +69,7 @@ def gen_header() -> None:
 {FILE_NOTICE}
 
 #include <jansson.h>
+#include <stdio.h>
 
 #define {PREFIX}_FORMAT_MAGIC_NUMBER ({magic_number}u)
 
@@ -74,13 +78,15 @@ def gen_header() -> None:
     # FORMAT_ENUM
     output_h += f"typedef enum {FORMAT_ENUM}" + "{\n"
     for format in formats:
-        output_h += f"  MSE_FORMAT_{format.upper()},\n"
-    output_h += f"  {PREFIX}_FORMAT_END\n" + "}" + f" {FORMAT_ENUM};\n"
+        output_h += f"    MSE_FORMAT_{format.upper()},\n"
+    output_h += f"    {PREFIX}_FORMAT_END\n" + "}" + f" {FORMAT_ENUM};\n"
 
     # FORMAT_LEGALITIES_ENUM
     output_h += f"\ntypedef enum {FORMAT_LEGALITIES_ENUM}" + "{\n"
     for legality in format_legalities:
-        output_h += f"    {PREFIX}_FORMAT_LEGALITIES_{legality.upper().replace(' ', '')},\n"
+        output_h += (
+            f"    {PREFIX}_FORMAT_LEGALITIES_{legality.upper().replace(' ', '')},\n"
+        )
     output_h += (
         f"    {PREFIX}_FORMAT_LEGALITIES_END\n"
         + "}"
@@ -101,6 +107,8 @@ const char *{FORMAT_ENUM}_as_str({FORMAT_ENUM} format);
 const char *{FORMAT_LEGALITIES_ENUM}_as_str({FORMAT_LEGALITIES_ENUM} format_legality);
 
 int {FORMATS_FROM_JSON}(json_t *json, {CARD_FORMAT_LEGALITIES_STRUCT} *ret);
+int {READ_FORMATS_FROM_FILE}(FILE *f, {CARD_FORMAT_LEGALITIES_STRUCT} *ret);
+int {WRITE_FORMATS_TO_FILE}(FILE *f, {CARD_FORMAT_LEGALITIES_STRUCT} legalities);
 """
 
     with open(OUTPUT_FILE_H, "w") as f:
@@ -207,6 +215,7 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 """
 
     # I/O for formats
+    # JSON read
     output_unit += (
         f"int {FORMATS_FROM_JSON}(json_t *json, {CARD_FORMAT_LEGALITIES_STRUCT} *ret)\n"
     )
@@ -236,6 +245,38 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
         )
 
     output_unit += """    return 1;
+}
+
+"""
+
+    # File Read
+    output_unit += (
+        f"int {READ_FORMATS_FROM_FILE}(FILE *f, {CARD_FORMAT_LEGALITIES_STRUCT} *ret)\n"
+    )
+    output_unit += """{
+    int tmp = 0;
+"""
+
+    for format in formats:
+        output_unit += f"""    // Read {format}
+    ASSERT(mse_read_int(f, &tmp));
+    ret->{format.lower()} = ({FORMAT_LEGALITIES_ENUM}) tmp;
+"""
+
+    output_unit += """  return 1;
+}
+"""
+
+    # File Write
+    output_unit += f"int {WRITE_FORMATS_TO_FILE}(FILE *f, {CARD_FORMAT_LEGALITIES_STRUCT} legalities)\n"
+    output_unit += "{\n"
+
+    for format in formats:
+        output_unit += f"""    // Write {format}
+    ASSERT(mse_write_int(f, (int) legalities.{format.lower()}));
+"""
+
+    output_unit += """  return 1;
 }
 """
 

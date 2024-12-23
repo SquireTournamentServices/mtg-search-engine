@@ -233,6 +233,8 @@ int mse_write_card(FILE *f, mse_card_t card)
     for (size_t i = 0; i < card.set_codes_count; i++) {
         ASSERT(mse_write_set_code(f, card.set_codes[i]));
     }
+
+    ASSERT(mse_write_legalities(f, card.format_legalities));
     return 1;
 }
 
@@ -269,6 +271,8 @@ int mse_read_card(FILE *f, mse_card_t *card)
     if (card->oracle_text != NULL) {
         ASSERT(card->oracle_text_lower = mse_to_lower(card->oracle_text));
     }
+
+    ASSERT(mse_read_legalities(f, &card->format_legalities));
     return 1;
 }
 
