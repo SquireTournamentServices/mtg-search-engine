@@ -204,6 +204,9 @@ int mse_parse_card_json(json_t *json, mse_card_t *card)
     }
 
     ASSERT(card->name_lower = mse_to_lower(card->name));
+
+    // Read the format legalities
+    ASSERT(mse_card_formats_legalities_t_from_json(json, &card->format_legalities));
     return 1;
 }
 

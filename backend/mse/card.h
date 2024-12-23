@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <jansson.h>
 #include "./uuid.h"
+#include "mse_formats.h"
 
 typedef enum mse_colour_enum_t {
     MSE_WHITE  = 1 << 0,
@@ -40,6 +41,7 @@ typedef struct mse_card_t {
     mse_colour_enum_t colour_identity;
     size_t set_codes_count;
     mse_set_code_t *set_codes;
+    mse_card_format_legalities_t format_legalities;
 } mse_card_t;
 
 // As this is a library to search cards all the trees that this uses are trees whose payloads are cards.
