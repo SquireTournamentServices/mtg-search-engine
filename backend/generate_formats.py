@@ -265,6 +265,7 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 
     output_unit += """    return 1;
 }
+
 """
 
     # File Write
