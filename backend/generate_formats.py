@@ -263,7 +263,7 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     ret->{format.lower()} = ({FORMAT_LEGALITIES_ENUM}) tmp;
 """
 
-    output_unit += """  return 1;
+    output_unit += """    return 1;
 }
 """
 
@@ -276,7 +276,7 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     ASSERT(mse_write_int(f, (int) legalities.{format.lower()}));
 """
 
-    output_unit += """  return 1;
+    output_unit += """    return 1;
 }
 """
 
