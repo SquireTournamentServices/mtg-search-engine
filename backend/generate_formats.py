@@ -49,7 +49,7 @@ def gen_header() -> None:
     for legality in format_legalities:
         output_h += f"  {PREFIX}_FORMAT_LEGALITIES_{legality.upper()},\n"
     output_h += (
-        f"  {FORMAT_LEGALITIES_ENUM}\n" + "}" + f" {FORMAT_LEGALITIES_ENUM};\n\n"
+        f"  {PREFIX}_FORMAT_LEGALITIES_END\n" + "}" + f" {FORMAT_LEGALITIES_ENUM};\n\n"
     )
 
     # CARD_FORMAT_LEGALITIES_STRUCT
