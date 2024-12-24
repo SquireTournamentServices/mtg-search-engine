@@ -17,6 +17,7 @@
 #include "./test_parser.h"
 #include "./test_save.h"
 #include "./test_re2.h"
+#include "./test_formats.h"
 #include "./system_test.h"
 
 static int sanity_test()
@@ -32,6 +33,7 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 {&test_avl_tree, "Test AVL tree"},
 {&test_thread_pool, "Test thread pool"},
 /* Test domain specific types and funcs */
+{&test_formats, "Test formats"},
 {&test_set, "Test set"},
 {&test_card, "Test card"},
 {&test_card_txt_field_trie, "Test card field trie"},

@@ -24,4 +24,4 @@ int mse_read_tm(FILE *f, struct tm *t);
 /// strtod wrapper
 int mse_to_double(char *input, double *ret);
 
-char *mse_to_lower(char *input);
+char *mse_to_lower(const char *input);

@@ -89,7 +89,7 @@ int mse_to_double(char *input, double *ret)
     return endptr == &input[strlen(input)];
 }
 
-char *mse_to_lower(char *input)
+char *mse_to_lower(const char *input)
 {
     size_t len = strlen(input);
     char *ret = malloc(len + 1);

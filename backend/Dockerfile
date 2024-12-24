@@ -2,8 +2,7 @@ FROM ubuntu:latest AS base
 ARG DEBIAN_FRONTEND=noninteractive
 
 ENV TZ=Europe/London
-RUN apt-get update
-RUN apt-get install -y libjansson-dev libjemalloc-dev libabsl-dev libmbedtls-dev libssl-dev build-essential cmake gcovr valgrind python3 python3-pip bison flex libcurl4-openssl-dev
+RUN apt-get update && apt-get install -y libjansson-dev libjemalloc-dev libabsl-dev libmbedtls-dev libssl-dev build-essential cmake gcovr python3 python3-pip libcurl4-openssl-dev
 
 FROM base AS build
 RUN useradd app
@@ -16,26 +15,35 @@ RUN chgrp -R app /app
 USER app
 WORKDIR /app
 
-COPY . .
+COPY ./requirements.txt .
 USER root
 RUN pip3 install -r requirements.txt --break-system-packages
 USER app
 
+COPY . .
+
 RUN mkdir build
 WORKDIR /app/build
 
-RUN cmake -DUSE_JEMALLOC=ON ..
-RUN cmake --build . -j
+ENV MSE_TEST=true
+# Forces the final image size to be smaller
+RUN cmake -DUSE_JEMALLOC=ON .. && \
+  cmake --build . -j && \
+  ./mtg-search-engine-cli --generate && \
+  cp mtg-search-engine-tests .. && \
+  cp mtg-search-engine-web-api .. && \
+  cp cards.data .. && \
+  cd .. && \
+  rm -rf build
 
 FROM base AS app
 WORKDIR /app
-COPY --from=build /app/build/mtg-search-engine-web-api .
+COPY --from=build /app/mtg-search-engine-web-api .
 # Bundle tests, to allow for sanity checking the image
-COPY --from=build /app/build/mtg-search-engine-tests .
+COPY --from=build /app/mtg-search-engine-tests .
 
-# Force caching via test flag
-ENV MSE_TEST=true
-COPY --from=build /app/build/AllPrintings.json .
+# Copy in data file for startup
+COPY --from=build /app/cards.data .
 
 EXPOSE 4365
 CMD ./mtg-search-engine-web-api

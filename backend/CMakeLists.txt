@@ -38,7 +38,6 @@ add_definitions("-DMSE_OS=\"${CMAKE_SYSTEM_NAME}\"")
 add_definitions("-DMSE_REPO_URL=\"${REPO_URL}\"")
 add_definitions("-DMSE_PROJECT_VERSION=\"${CMAKE_PROJECT_VERSION}\"")
 add_definitions("-DMSE_PROJECT_NAME=\"${CMAKE_PROJECT_NAME}\"")
-add_definitions("-DMSE_BINARY_VERSION=1")
 
 # __FILENAME__
 string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
@@ -55,9 +54,18 @@ if(NOT WIN32)
 endif()
 
 # Generated sources
+set(MTG_JSON_FILE ${CMAKE_CURRENT_BINARY_DIR}/AllPrintings.json)
+add_custom_command(
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/download_mtg_json.py
+  OUTPUT ${MTG_JSON_FILE}
+  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/download_mtg_json.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
 set(LANG_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.h
                       ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.c)
 add_custom_command(
+  DEPENDS ${MTG_JSON_FILE}
+          ${CMAKE_CURRENT_SOURCE_DIR}/generate_languages_files.py
   OUTPUT ${LANG_SOURCE_FILES}
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_languages_files.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -65,8 +73,17 @@ add_custom_command(
 set(FILTER_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_char_map.h
                         ${CMAKE_CURRENT_BINARY_DIR}/mse_char_map.c)
 add_custom_command(
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
   OUTPUT ${FILTER_SOURCE_FILES}
   COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+set(FORMAT_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_formats.h
+                        ${CMAKE_CURRENT_BINARY_DIR}/mse_formats.c)
+add_custom_command(
+  DEPENDS ${MTG_JSON_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/generate_formats.py
+  OUTPUT ${FORMAT_SOURCE_FILES}
+  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_formats.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 # Pack CC executable
@@ -82,6 +99,8 @@ set(PEG_PREFIX mse_query_parser)
 set(PARSER_SRC ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.c
                ${CMAKE_CURRENT_BINARY_DIR}/${PEG_PREFIX}.h)
 add_custom_command(
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/packcc
+          ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.peg
   COMMAND packcc -o ${PEG_PREFIX} --lines ${PEG_DEBUG}
           ${CMAKE_CURRENT_SOURCE_DIR}/mse/query_parser.peg
   OUTPUT ${PARSER_SRC}
@@ -182,7 +201,8 @@ set(SRC
     ./strptime/strptime.c
     ${PARSER_SRC}
     ${FILTER_SOURCE_FILES}
-    ${LANG_SOURCE_FILES})
+    ${LANG_SOURCE_FILES}
+    ${FORMAT_SOURCE_FILES})
 set(TESTS
     ./tests/main.c
     ./tests/test_thread_pool.h
@@ -224,6 +244,8 @@ set(TESTS
     ./tests/test_save.c
     ./tests/test_re2.h
     ./tests/test_re2.c
+    ./tests/test_formats.h
+    ./tests/test_formats.c
     ./tests/system_test.h
     ./tests/system_test.c)
 set(WEB_API
@@ -248,19 +270,21 @@ if(UNIX)
                      "Generate documentation pages for ${REPO_URL}")
   endif()
 
-  include(CodeCoverage)
+  option(USE_GCOV ON)
+  if(USE_GCOV)
+    include(CodeCoverage)
+    set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
 
-  set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
-
-  append_coverage_compiler_flags()
-  setup_target_for_coverage_gcovr_xml(
-    NAME
-    mse-coverage
-    EXECUTABLE
-    mtg-search-engine-tests
-    test
-    EXCLUDE
-    ${GCOVR_EXCLUDE})
+    append_coverage_compiler_flags()
+    setup_target_for_coverage_gcovr_xml(
+      NAME
+      mse-coverage
+      EXECUTABLE
+      mtg-search-engine-tests
+      test
+      EXCLUDE
+      ${GCOVR_EXCLUDE})
+  endif()
 endif()
 
 # Add library and cli execs

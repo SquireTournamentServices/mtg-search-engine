@@ -49,7 +49,7 @@ static int __mse_write_cards_cards(FILE *f, mse_all_printings_cards_t *cards)
 
 int mse_write_cards(FILE *f, mse_all_printings_cards_t *cards)
 {
-    ASSERT(mse_write_int(f, MSE_BINARY_VERSION));
+    ASSERT(mse_write_size_t(f, MSE_BINARY_VERSION));
     ASSERT(__mse_write_cards_sets(f, cards));
     ASSERT(__mse_write_cards_cards(f, cards));
     return 1;
@@ -107,9 +107,14 @@ static int __mse_read_cards_cards(FILE *f, mse_all_printings_cards_t *cards)
 int mse_read_cards(FILE *f, mse_all_printings_cards_t *cards)
 {
     memset(cards, 0, sizeof(*cards));
-    int bin_version;
-    ASSERT(mse_read_int(f, &bin_version));
-    ASSERT(bin_version == MSE_BINARY_VERSION);
+    size_t bin_version;
+    ASSERT(mse_read_size_t(f, &bin_version));
+
+    if (bin_version != MSE_BINARY_VERSION) {
+        lprintf(LOG_ERROR, "Version mismatch! Data file is version %lu, expected version %lu\n", bin_version, MSE_BINARY_VERSION);
+        return 0;
+    }
+
     ASSERT(__mse_read_cards_sets(f, cards));
     ASSERT(__mse_read_cards_cards(f, cards));
     return 1;
@@ -129,7 +134,7 @@ int __mse_get_cards_from_file(FILE *f, mse_all_printings_cards_t *cards, mse_thr
 
 int mse_get_cards_from_file(mse_all_printings_cards_t *cards, mse_thread_pool_t *pool)
 {
-    lprintf(LOG_INFO, "Reading cards from %s\n", MSE_CARDS_FILE_NAME);
+    lprintf(LOG_INFO, "Reading cards from %s, expecting version %lu\n", MSE_CARDS_FILE_NAME, MSE_BINARY_VERSION);
 
     FILE *f = fopen(MSE_CARDS_FILE_NAME, "rb");
     ASSERT(f != NULL);
