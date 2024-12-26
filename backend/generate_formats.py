@@ -6,9 +6,13 @@ BASENAME = "mse_formats"
 OUTPUT_FILE_H = f"{BASENAME}.h"
 OUTPUT_FILE_U = f"{BASENAME}.c"
 
+# Types
 FORMAT_ENUM = f"{PREFIX.lower()}_formats_t"
 FORMAT_LEGALITIES_ENUM = f"{PREFIX.lower()}_format_legalities_t"
 CARD_FORMAT_LEGALITIES_STRUCT = f"{PREFIX.lower()}_card_format_legalities_t"
+CARD_FORMAT_LEGALITY_INDICES_STRUCT = f"{PREFIX.lower()}_format_legality_indices_t"
+
+# Functions
 FORMATS_FROM_JSON = f"{PREFIX.lower()}_card_formats_legalities_t_from_json"
 READ_FORMATS_FROM_FILE = f"{PREFIX.lower()}_read_legalities"
 WRITE_FORMATS_TO_FILE = f"{PREFIX.lower()}_write_legalities"
@@ -70,6 +74,7 @@ def gen_header() -> None:
 
 #include <jansson.h>
 #include <stdio.h>
+#include "../mse/avl_tree.h"
 
 #define {PREFIX}_FORMAT_MAGIC_NUMBER ({magic_number}u)
 
@@ -109,7 +114,16 @@ const char *{FORMAT_LEGALITIES_ENUM}_as_str({FORMAT_LEGALITIES_ENUM} format_lega
 int {FORMATS_FROM_JSON}(json_t *json, {CARD_FORMAT_LEGALITIES_STRUCT} *ret);
 int {READ_FORMATS_FROM_FILE}(FILE *f, {CARD_FORMAT_LEGALITIES_STRUCT} *ret);
 int {WRITE_FORMATS_TO_FILE}(FILE *f, {CARD_FORMAT_LEGALITIES_STRUCT} legalities);
+
 """
+
+    # FORMAT_INDICES
+    output_h += f"typedef struct {CARD_FORMAT_LEGALITY_INDICES_STRUCT} " + "{"
+    for format in formats:
+        output_h += f"\n    /// Index for cards in {format}\n"
+        for legality in format_legalities:
+            output_h += f"    mse_avl_tree_node_t *{format.lower()}_{legality.lower()}_index;\n"
+    output_h += "} " + f"{CARD_FORMAT_LEGALITY_INDICES_STRUCT};\n\n"
 
     with open(OUTPUT_FILE_H, "w") as f:
         f.write(output_h)
