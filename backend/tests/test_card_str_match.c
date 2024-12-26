@@ -1,44 +1,19 @@
 #include "./test_card_str_match.h"
 #include "../testing_h/testing.h"
 #include "../mse/card_str_match.h"
-#include "../mse/mtg_json.h"
+#include "../mse/save.h"
 #include <stdio.h>
 #include <string.h>
-#include <jansson.h>
-#include <regex.h>
 
 // Some vile testing globals
 static mse_all_printings_cards_t test_cards;
 static mse_thread_pool_t pool;
 
-static json_t *get_all_printings_cards_from_file()
-{
-    FILE *f = fopen("./AllPrintings.json", "rb");
-    ASSERT(f != NULL);
-
-    json_error_t error;
-    json_t *ret = json_loadf(f, 0, &error);
-
-    if (ret == NULL) {
-        lprintf(LOG_ERROR, "Error: %100s\n", error.text);
-    }
-    fclose(f);
-    return ret;
-}
-
 static int init_test_cards()
 {
     ASSERT(mse_init_pool(&pool));
-
-    json_t *json = get_all_printings_cards_from_file();
-    ASSERT(json != NULL);
-
-    memset(&test_cards, 0, sizeof(test_cards));
-    ASSERT(__mse_parse_all_printings_cards(&test_cards, json, &pool));
-    json_decref(json);
-
+    ASSERT(mse_get_cards_from_file(&test_cards, &pool));
     ASSERT(test_cards.card_tree != NULL);
-
     return 1;
 }
 

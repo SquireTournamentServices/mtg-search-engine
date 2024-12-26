@@ -18,7 +18,11 @@ typedef enum mse_set_generator_type_t {
     MSE_SET_GENERATOR_POWER,
     MSE_SET_GENERATOR_CMC,
     MSE_SET_GENERATOR_TOUGHNESS,
-    MSE_SET_GENERATOR_TYPE
+    MSE_SET_GENERATOR_TYPE,
+    // MSE_SET_GENERATOR_BANNED,
+    // MSE_SET_GENERATOR_LEGAL,
+    // MSE_SET_GENERATOR_RESTIRCTED,
+    // MSE_SET_GENERATOR_UNPLAYABLE,
 } mse_set_generator_type_t;
 
 /// An enum with all of the operators for a set generator
