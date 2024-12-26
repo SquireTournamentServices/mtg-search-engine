@@ -104,7 +104,7 @@ def gen_header() -> None:
     output_h += f"typedef struct {CARD_FORMAT_LEGALITIES_STRUCT} " + "{\n"
     for format in formats:
         output_h += f"    {PREFIX.lower()}_format_legalities_t {format.lower().replace(' ', '')};\n"
-    output_h += "}" + f" {CARD_FORMAT_LEGALITIES_STRUCT};\n"
+    output_h += "}" + f" {CARD_FORMAT_LEGALITIES_STRUCT};\n\n"
 
     # FORMAT_INDEXES
     output_h += f"typedef struct {CARD_FORMAT_LEGALITY_INDEXES_STRUCT} " + "{"
@@ -309,6 +309,11 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 """
     output_unit += "} mse_format_legality_index_generator_state;\n\n"
 
+    # The recrusive call to traverse the card tree
+    def inner_function_name_for(format: str, legality: str) -> str:
+        return f"__mse_generate_index_for_{format}_{legality}_r"
+
+    # The worker task for generating the index
     def function_name_for(format: str, legality: str) -> str:
         return f"__mse_generate_index_for_{format}_{legality}"
 
