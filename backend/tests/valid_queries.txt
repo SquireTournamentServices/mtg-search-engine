@@ -36,7 +36,6 @@ o:/.*creatures (you control )?get \+\d+\/[+-]\d+.*/ and (type:enchantment or typ
 commander=wubrg and name:progen
 "+2 mace"
 +2 mace
-Lim-Dul's Vault
 limduls vault
 wars toll
 dandan

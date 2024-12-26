@@ -1,44 +1,19 @@
 #include "./test_card_str_match.h"
 #include "../testing_h/testing.h"
 #include "../mse/card_str_match.h"
-#include "../mse/mtg_json.h"
+#include "../mse/save.h"
 #include <stdio.h>
 #include <string.h>
-#include <jansson.h>
-#include <regex.h>
 
 // Some vile testing globals
 static mse_all_printings_cards_t test_cards;
 static mse_thread_pool_t pool;
 
-static json_t *get_all_printings_cards_from_file()
-{
-    FILE *f = fopen("./AllPrintings.json", "rb");
-    ASSERT(f != NULL);
-
-    json_error_t error;
-    json_t *ret = json_loadf(f, 0, &error);
-
-    if (ret == NULL) {
-        lprintf(LOG_ERROR, "Error: %100s\n", error.text);
-    }
-    fclose(f);
-    return ret;
-}
-
 static int init_test_cards()
 {
     ASSERT(mse_init_pool(&pool));
-
-    json_t *json = get_all_printings_cards_from_file();
-    ASSERT(json != NULL);
-
-    memset(&test_cards, 0, sizeof(test_cards));
-    ASSERT(__mse_parse_all_printings_cards(&test_cards, json, &pool));
-    json_decref(json);
-
+    ASSERT(mse_get_cards_from_file(&test_cards, &pool));
     ASSERT(test_cards.card_tree != NULL);
-
     return 1;
 }
 
@@ -49,10 +24,10 @@ static int free_test_card()
     return 1;
 }
 
-#define ORACLE_TEST_REGEX_1_MATCHES 58
-#define ORACLE_TEST_REGEX_1 ".*whenever a (creature|enchantment) enters the battlefield.*"
+#define ORACLE_TEST_REGEX_1_MATCHES 27
+#define ORACLE_TEST_REGEX_1 ".*whenever a (creature|enchantment) enters.*"
 #define ORACLE_TEST_REGEX_2_MATHCES 2
-#define ORACLE_TEST_REGEX_2 "whenever .* enters the battlefield,.*draw (a|[0-9]+) cards?.*"
+#define ORACLE_TEST_REGEX_2 "whenever .* enters,.*draw (a|[0-9]+) cards?.*"
 
 static int test_card_matches()
 {
@@ -61,7 +36,7 @@ static int test_card_matches()
 
     mse_card_t card;
     card.name = "Testing name 123";
-    card.oracle_text = "Whenever a creature enters the battlefield, pass go and collect $200.";
+    card.oracle_text = "Whenever a creature enters, pass go and collect $200.";
 
     for (size_t i = 0; i < 100; i++) {
         ASSERT(mse_card_oracle_matches(&card, &re));

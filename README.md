@@ -56,8 +56,8 @@ cd build
 
 # ./build/
 # You can use -DMSE_DOXYGEN=ON to generate documentation
+# You can use -DUSE_GCOV=OFF to disable gcov
 cmake -DUSE_JEMALLOC=ON ..
-# cmake -DUSE_JEMALLOC=ON ..
 cmake --build . -j
 
 ctest -V -j # Runs all the tests

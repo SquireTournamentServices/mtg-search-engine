@@ -154,6 +154,13 @@ static int test_save_after_init()
     return 1;
 }
 
+static int test_version_number()
+{
+    ASSERT(MSE_BINARY_VERSION != 0);
+    return 1;
+}
+
 SUB_TEST(test_save, {&test_init_save, "Test init save"},
 {&test_get_and_save_cards, "Test get and save cards"},
-{&test_save_after_init, "Test save after init"})
+{&test_save_after_init, "Test save after init"},
+{&test_version_number, "Test binary version number"})

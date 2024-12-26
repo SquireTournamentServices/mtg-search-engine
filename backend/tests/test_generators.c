@@ -1,41 +1,19 @@
 #include "./test_generators.h"
 #include "../testing_h/testing.h"
 #include "../mse/generators.h"
+#include "../mse/save.h"
 #include <string.h>
-#include <jansson.h>
 
 #define DEFAULT_ARGUMENT "thopt"
 
 mse_thread_pool_t gen_thread_pool;
 mse_all_printings_cards_t gen_cards;
 
-static json_t *get_all_printings_cards_from_file()
-{
-    FILE *f = fopen("./AllPrintings.json", "rb");
-    ASSERT(f != NULL);
-    json_error_t error;
-    json_t *ret = json_loadf(f, 0, &error);
-
-    if (ret == NULL) {
-        lprintf(LOG_ERROR, "Error: %100s\n", error.text);
-    }
-    fclose(f);
-    return ret;
-}
-
 static int init_generator_tests()
 {
     ASSERT(mse_init_pool(&gen_thread_pool));
-
-    json_t *json = get_all_printings_cards_from_file();
-    ASSERT(json != NULL);
-
-    memset(&gen_cards, 0, sizeof(gen_cards));
-    ASSERT(__mse_parse_all_printings_cards(&gen_cards, json, &gen_thread_pool));
-    json_decref(json);
-
+    ASSERT(mse_get_cards_from_file(&gen_cards, &gen_thread_pool));
     ASSERT(gen_cards.card_tree != NULL);
-
     return 1;
 }
 

@@ -125,7 +125,7 @@
     "manaValue": 7.0,
     "name": "Ancestor's Chosen",
     "number": "1",
-    "originalText": "First strike (This creature deals combat damage before creatures without first strike.)\nWhen Ancestor's Chosen comes into play, you gain 1 life for each card in your graveyard.",
+    "originalText": "First strike (This creature deals combat damage before creatures without first strike.)\nWhen Ancestor's Chosen enters, you gain 1 life for each card in your graveyard.",
     "originalType": "Creature - Human Cleric",
     "power": "4",
     "printings": [
@@ -150,7 +150,7 @@
     "supertypes": [
 
     ],
-    "text": "First strike (This creature deals combat damage before creatures without first strike.)\nWhen Ancestor's Chosen enters the battlefield, you gain 1 life for each card in your graveyard.",
+    "text": "First strike (This creature deals combat damage before creatures without first strike.)\nWhen Ancestor's Chosen enters, you gain 1 life for each card in your graveyard.",
     "toughness": "4",
     "type": "Creature — Human Cleric",
     "types": [

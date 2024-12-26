@@ -8,7 +8,7 @@
 #include <string.h>
 #include <math.h>
 
-#define ORACLE "First strike (This creature deals combat damage before creatures without first strike.)\nWhen Ancestor's Chosen comes into play, you gain 1 life for each card in your graveyard."
+#define ORACLE "First strike (This creature deals combat damage before creatures without first strike.)\nWhen Ancestor's Chosen enters, you gain 1 life for each card in your graveyard."
 
 static int __test_card_props(mse_card_t card)
 {
@@ -23,6 +23,7 @@ static int __test_card_props(mse_card_t card)
     free(n_lower);
 
     ASSERT(card.oracle_text != NULL);
+    lprintf(LOG_WARNING, "'%s'\n'%s'\n", card.oracle_text, ORACLE);
     ASSERT(strcmp(card.oracle_text, ORACLE) == 0);
 
     ASSERT(card.oracle_text_lower != NULL);
@@ -81,6 +82,11 @@ static int __test_card_props(mse_card_t card)
     ASSERT(_10E);
     ASSERT(_JUD);
     ASSERT(_UMA);
+
+    // Card legalities
+    ASSERT(card.format_legalities.commander == MSE_FORMAT_LEGALITIES_LEGAL);
+    ASSERT(card.format_legalities.paupercommander == MSE_FORMAT_LEGALITIES_RESTRICTED);
+    ASSERT(card.format_legalities.modern == MSE_FORMAT_LEGALITIES_LEGAL);
     return 1;
 }
 
