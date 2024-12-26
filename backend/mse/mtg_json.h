@@ -4,6 +4,7 @@
 #include "./set.h"
 #include "./avl_tree.h"
 #include "./card_txt_fields_trie.h"
+#include "mse_formats.h"
 #include <jansson.h>
 
 #define MSE_ATOMIC_CARDS_URL "https://mtgjson.com/api/v5/AllPrintings.json"
@@ -57,6 +58,10 @@ typedef struct mse_cards_indexes_t {
 
     /// Colours index, this is a long list of stuff
     mse_cards_colours_indexes_t colour_index;
+
+    /// Format legality index, this is a long list of stuff,
+    /// see "mse_formats.h"
+    mse_format_legality_indexes_t format_legality_index;
 } mse_cards_indexes_t;
 
 /// This will store the atomic cards and, sets. Each card is stored once and,

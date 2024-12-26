@@ -3,6 +3,7 @@
 #include "avl_tree.h"
 #include "card_txt_fields_trie.h"
 #include "thread_pool.h"
+#include "mse_formats.h"
 #include <string.h>
 
 #define MSE_INDEX_COLOUR_NAME(colour_field, cmp_type) \
@@ -291,6 +292,18 @@ static void __mse_generate_card_name_parts_trie_task(void *__state, mse_thread_p
     sem_post(&(state->semaphore));
 }
 
+static void __mse_generate_format_legalities_task(void *__state, mse_thread_pool_t *pool)
+{
+
+    mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
+    if (!mse_generate_format_legality_indexes(&state->cards->indexes.format_legality_index,
+                                              pool))
+    {
+        state->ret = 0;
+    }
+    sem_post(&(state->semaphore));
+}
+
 #define TASK_COUNT(T) (sizeof(T) / sizeof(*T))
 
 int __mse_generate_indexes(mse_all_printings_cards_t * restrict ret, mse_thread_pool_t *pool)
@@ -305,6 +318,7 @@ int __mse_generate_indexes(mse_all_printings_cards_t * restrict ret, mse_thread_
                                                            &__mse_generate_card_name_trie_task,
                                                            &__mse_generate_card_name_parts_trie_task,
                                                            &__mse_generate_card_type_trie_task,
+                                                           &__mse_generate_format_legalities_task,
                                                            &MSE_INDEX_FIELD_NAME(power),
                                                            &MSE_INDEX_FIELD_NAME(toughness),
                                                            &MSE_INDEX_FIELD_NAME(cmc),
