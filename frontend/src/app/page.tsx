@@ -81,10 +81,10 @@ export default function Home() {
               <li>
                 set <i>(set code only i.e: m18)</i>
               </li>
-              <li>type (types)</li>
+              <li>type (types) <i>(Card types - super types, sub types, etc...)</i></li>
               <li>legal</li>
               <li>banned</li>
-              <li>unplayable (not legal i.e: un-cards)</li>
+              <li>unplayable <i>(not legal i.e: un-cards)</i></li>
               <li>restricted</li>
             </ul>
           </div>
