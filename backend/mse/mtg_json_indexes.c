@@ -297,7 +297,7 @@ static void __mse_generate_format_legalities_task(void *__state, mse_thread_pool
 
     mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
     if (!mse_generate_format_legality_indexes(&state->cards->indexes.format_legality_index,
-                                              pool))
+            pool))
     {
         state->ret = 0;
     }
@@ -314,17 +314,18 @@ int __mse_generate_indexes(mse_all_printings_cards_t * restrict ret, mse_thread_
     ASSERT(mse_init_card_trie_node(&ret->indexes.card_name_parts_trie));
     ASSERT(mse_init_card_trie_node(&ret->indexes.card_type_trie));
 
-    void (*tasks[])(void *, struct mse_thread_pool_t *) = {&__mse_generate_set_cards_index_task,
-                                                           &__mse_generate_card_name_trie_task,
-                                                           &__mse_generate_card_name_parts_trie_task,
-                                                           &__mse_generate_card_type_trie_task,
-                                                           &__mse_generate_format_legalities_task,
-                                                           &MSE_INDEX_FIELD_NAME(power),
-                                                           &MSE_INDEX_FIELD_NAME(toughness),
-                                                           &MSE_INDEX_FIELD_NAME(cmc),
-                                                           MSE_INDEX_COLOUR_FIELD_NAME(colours),
-                                                           MSE_INDEX_COLOUR_FIELD_NAME(colour_identity)
-                                                          };
+    void (*tasks[])(void *, struct mse_thread_pool_t *) = {
+        &__mse_generate_set_cards_index_task,
+        &__mse_generate_card_name_trie_task,
+        &__mse_generate_card_name_parts_trie_task,
+        &__mse_generate_card_type_trie_task,
+        &__mse_generate_format_legalities_task,
+        &MSE_INDEX_FIELD_NAME(power),
+        &MSE_INDEX_FIELD_NAME(toughness),
+        &MSE_INDEX_FIELD_NAME(cmc),
+        MSE_INDEX_COLOUR_FIELD_NAME(colours),
+        MSE_INDEX_COLOUR_FIELD_NAME(colour_identity)
+    };
 
     mse_index_generator_state_t state;
     state.ret = 1;
@@ -334,7 +335,13 @@ int __mse_generate_indexes(mse_all_printings_cards_t * restrict ret, mse_thread_
 
     // Start the tasks
     size_t len = TASK_COUNT(tasks);
-    lprintf(LOG_INFO, "Generating %lu indexes\n", len);
+    lprintf(LOG_INFO, "Generating %lu indexes\n", len
+            // Colour and colour identity indexes
+            + (0x11111 * 7 * 2)
+            // Format legality indexes
+            + (MSE_FORMAT_END * MSE_FORMAT_LEGALITIES_END)
+           );
+
     for (size_t i = 0; i < len; i++) {
         mse_task_t task = {(void *) &state, tasks[i]};
         ASSERT(mse_task_queue_enqueue(&pool->queue, task));

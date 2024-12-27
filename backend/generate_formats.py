@@ -142,6 +142,7 @@ def gen_unit() -> None:
 #include <semaphore.h>
 #include "../testing_h/testing.h"
 #include "../mse/io_utils.h"
+#include "../mse/card.h"
 
 int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 """
@@ -303,11 +304,13 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 """
 
     # Index generation
-    output_unit += "typedef struct mse_format_legality_index_generator_state {\n"
+    output_unit += "typedef struct mse_format_legality_index_generator_state_t {\n"
     output_unit += f"""    {CARD_FORMAT_LEGALITY_INDEXES_STRUCT} *index;
+    mse_avl_tree_node_t *card_tree;
     sem_t sem;
+    int ret;
 """
-    output_unit += "} mse_format_legality_index_generator_state;\n\n"
+    output_unit += "} mse_format_legality_index_generator_state_t;\n\n"
 
     # The recrusive call to traverse the card tree
     def inner_function_name_for(format: str, legality: str) -> str:
@@ -320,18 +323,19 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     for format in formats:
         output_unit += f"// Index generators for {format}\n\n"
         for legality in format_legalities:
-            output_unit += f"static int {inner_function_name_for(format, legality)}(mse_avl_tree_node_t *cards, mse_avl_tree_node_t **index) " + "{\n"
+            # Recursive function
+            output_unit += f"static int {inner_function_name_for(format, legality)}(mse_avl_tree_node_t *node, mse_avl_tree_node_t **index) " + "{\n"
             # Process current node
-            output_unit += "    mse_card_t *card = (mse_card_t *) card->payload;\n"
+            output_unit += "    mse_card_t *card = (mse_card_t *) node->payload;\n"
             output_unit += f"    if (card->format_legalities.{format} == {PREFIX.upper()}_FORMAT_LEGALITIES_{legality.upper()}) " + "{\n"
-            output_unit += """        ASSERT(mse_insert_node(index, card));
+            output_unit += """        ASSERT(mse_insert_node(index, node));
     }
 
 """
 
             # Left node recursive call
-            output_unit += "    if (cards->l != NULL) {\n"
-            output_unit += f"        if !({inner_function_name_for(format, legality)}(cards->l, index)) "
+            output_unit += "    if (node->l != NULL) {\n"
+            output_unit += f"        if (!({inner_function_name_for(format, legality)}(node->l, index))) "
             output_unit += """{
             return 0;
         }
@@ -339,8 +343,8 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 
 """
             # Right node recursive call
-            output_unit += "    if (cards->r != NULL) {\n"
-            output_unit += f"        if !({inner_function_name_for(format, legality)}(cards->r, index)) "
+            output_unit += "    if (node->r != NULL) {\n"
+            output_unit += f"        if (!({inner_function_name_for(format, legality)}(node->r, index))) "
             output_unit += """{
              return 0;
         }
@@ -352,8 +356,39 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
             output_unit += "   return 1;\n"
             output_unit += "}\n\n"
 
+            # Wrapper function for task
+            output_unit += f"static void {function_name_for(format, legality)}(void *__state, mse_thread_pool_t *pool) " + "{\n"
+            output_unit += """   mse_format_legality_index_generator_state_t *state = (mse_format_legality_index_generator_state_t*) __state;
+"""
+            output_unit += f"    if (!{inner_function_name_for(format, legality)}(state->card_tree,\n"
+            output_unit += f"        &state->index->{format.lower()}_{legality.lower()}_index))"
+            output_unit += """ {
+        state->ret = 0;
+    }
+    sem_post(&(state->sem));
+}
+
+"""
+
     output_unit += f"int {GENERATE_CARD_FORMAT_LEGALITY_INDEXES}({CARD_FORMAT_LEGALITY_INDEXES_STRUCT} *ret, mse_thread_pool_t *pool)\n"
     output_unit += """{
+    mse_format_legality_index_generator_state_t state;
+    memset(&state, 0, sizeof(state));
+
+    ASSERT(sem_init(&state.sem, 0, 0) == 0);
+
+"""
+    output_unit += f"    for(size_t i = 0; i < {len(formats) * len(format_legalities)}; i++) "+ "{\n"
+    output_unit += """        int waiting = 1;
+        while (waiting) {
+            mse_pool_try_consume(pool);
+            waiting = sem_trywait(&state.sem) != 0;
+        }
+    }
+"""
+    output_unit += """
+
+    sem_destroy(&state.sem);
     return 1;
 }"""
 
