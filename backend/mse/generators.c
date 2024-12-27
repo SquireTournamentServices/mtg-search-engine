@@ -6,6 +6,7 @@
 #include "./generator_colour.h"
 #include "../testing_h/testing.h"
 #include "generator_type.h"
+#include "mse_formats.h"
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -95,6 +96,14 @@ int mse_generate_set(mse_set_generator_t *gen,
         return mse_generate_set_cmc(gen, res, cards);
     case MSE_SET_GENERATOR_TYPE:
         return mse_generate_set_type(gen, res, cards);
+    case MSE_SET_GENERATOR_BANNED:
+        return mse_generate_banned(gen, res, cards);
+    case MSE_SET_GENERATOR_LEGAL:
+        return mse_generate_legal(gen, res, cards);
+    case MSE_SET_GENERATOR_RESTIRCTED:
+        return mse_generate_restricted(gen, res, cards);
+    case MSE_SET_GENERATOR_UNPLAYABLE:
+        return mse_generate_unplayable(gen, res, cards);
     }
     return 1;
 }

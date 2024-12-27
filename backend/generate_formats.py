@@ -129,7 +129,16 @@ const char *{FORMAT_LEGALITIES_ENUM}_as_str({FORMAT_LEGALITIES_ENUM} format_lega
 int {FORMATS_FROM_JSON}(json_t *json, {CARD_FORMAT_LEGALITIES_STRUCT} *ret);
 int {READ_FORMATS_FROM_FILE}(FILE *f, {CARD_FORMAT_LEGALITIES_STRUCT} *ret);
 int {WRITE_FORMATS_TO_FILE}(FILE *f, {CARD_FORMAT_LEGALITIES_STRUCT} legalities);
-int {GENERATE_CARD_FORMAT_LEGALITY_INDEXES}(mse_avl_tree_node_t *cards, {CARD_FORMAT_LEGALITY_INDEXES_STRUCT} *ret, mse_thread_pool_t *pool);
+int {GENERATE_CARD_FORMAT_LEGALITY_INDEXES}(mse_avl_tree_node_t *cards, 
+    {CARD_FORMAT_LEGALITY_INDEXES_STRUCT} *ret,
+    mse_thread_pool_t *pool);
+
+"""
+
+    for legality in format_legalities:
+        output_h += f"""int mse_generate_{legality} (mse_set_generator_t *gen,
+    mse_search_intermediate_t *res,
+    mse_all_printings_cards_t *cards);
 
 """
 
