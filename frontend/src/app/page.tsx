@@ -32,7 +32,7 @@ export default function Home() {
               The below query gets all mutally exclusive cards in m20 and m19.
             </p>
             <blockquote>
-              (set:m19 or set:m20) and !(set:m20 and set:m19)
+              (set:m19 or set:m20) and -(set:m20 and set:m19)
             </blockquote>
           </div>
           <div>
@@ -40,6 +40,7 @@ export default function Home() {
             <ul>
               <li>and</li>
               <li>or</li>
+              <li>-</li> (The not operator goes before a set generator i.e: -set:m18)
             </ul>
           </div>
           <div>
