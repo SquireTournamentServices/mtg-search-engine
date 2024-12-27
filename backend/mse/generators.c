@@ -100,7 +100,7 @@ int mse_generate_set(mse_set_generator_t *gen,
         return mse_generate_banned(gen, res, cards);
     case MSE_SET_GENERATOR_LEGAL:
         return mse_generate_legal(gen, res, cards);
-    case MSE_SET_GENERATOR_RESTIRCTED:
+    case MSE_SET_GENERATOR_RESTRICTED:
         return mse_generate_restricted(gen, res, cards);
     case MSE_SET_GENERATOR_UNPLAYABLE:
         return mse_generate_unplayable(gen, res, cards);

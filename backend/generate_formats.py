@@ -19,6 +19,7 @@ WRITE_FORMATS_TO_FILE = f"{PREFIX.lower()}_write_legalities"
 GENERATE_CARD_FORMAT_LEGALITY_INDEXES = (
     f"{PREFIX.lower()}_generate_format_legality_indexes"
 )
+FREE_CARD_FORMAT_LEGALITY_INDEXES = f"{PREFIX.lower()}_free_format_legality_indexes"
 
 NOT_LEGAL = "Unplayable"
 formats = []
@@ -129,16 +130,24 @@ const char *{FORMAT_LEGALITIES_ENUM}_as_str({FORMAT_LEGALITIES_ENUM} format_lega
 int {FORMATS_FROM_JSON}(json_t *json, {CARD_FORMAT_LEGALITIES_STRUCT} *ret);
 int {READ_FORMATS_FROM_FILE}(FILE *f, {CARD_FORMAT_LEGALITIES_STRUCT} *ret);
 int {WRITE_FORMATS_TO_FILE}(FILE *f, {CARD_FORMAT_LEGALITIES_STRUCT} legalities);
-int {GENERATE_CARD_FORMAT_LEGALITY_INDEXES}(mse_avl_tree_node_t *cards, 
+
+int {GENERATE_CARD_FORMAT_LEGALITY_INDEXES}(mse_avl_tree_node_t *cards,
     {CARD_FORMAT_LEGALITY_INDEXES_STRUCT} *ret,
     mse_thread_pool_t *pool);
+
+void {FREE_CARD_FORMAT_LEGALITY_INDEXES}({CARD_FORMAT_LEGALITY_INDEXES_STRUCT} *indexes);
+
+// Forward declare the types for the generators
+struct mse_set_generator_t;
+struct mse_search_intermediate_t;
+struct mse_all_printings_cards_t;
 
 """
 
     for legality in format_legalities:
-        output_h += f"""int mse_generate_{legality} (mse_set_generator_t *gen,
-    mse_search_intermediate_t *res,
-    mse_all_printings_cards_t *cards);
+        output_h += f"""int mse_generate_{legality.lower()}(struct mse_set_generator_t *gen,
+    struct mse_search_intermediate_t *res,
+    struct mse_all_printings_cards_t *cards);
 
 """
 
@@ -156,6 +165,7 @@ def gen_unit() -> None:
 #include "../testing_h/testing.h"
 #include "../mse/io_utils.h"
 #include "../mse/card.h"
+#include "../mse/generators.h"
 
 int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 """
@@ -396,6 +406,7 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 
 """
 
+    # Index generator (called by mtg_json_indexes.c)
     output_unit += f"int {GENERATE_CARD_FORMAT_LEGALITY_INDEXES}(mse_avl_tree_node_t *cards, {CARD_FORMAT_LEGALITY_INDEXES_STRUCT} *ret, mse_thread_pool_t *pool)\n"
     output_unit += """{
     mse_format_legality_index_generator_state_t state;
@@ -444,7 +455,32 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     output_unit += """    sem_destroy(&state.sem);
     ASSERT(state.ret);
     return 1;
-}"""
+}
+
+"""
+
+    # Free function
+    output_unit += f"void {FREE_CARD_FORMAT_LEGALITY_INDEXES}({CARD_FORMAT_LEGALITY_INDEXES_STRUCT} *indexes) " + "{\n"
+    for format in formats:
+        output_unit += f"    // Free indexes for {format}\n"
+        for legality in format_legalities:
+            output_unit += f"    if (indexes->{format.lower()}_{legality.lower()}_index != NULL) " + "{\n"
+            output_unit += f"        mse_free_tree(indexes->{format.lower()}_{legality.lower()}_index);\n"
+            output_unit += "    }\n\n"
+
+    output_unit += "}\n"
+
+    # Generators
+    for legality in format_legalities:
+        output_unit += f"""int mse_generate_{legality.lower()} (mse_set_generator_t *gen,
+    mse_search_intermediate_t *res,
+    mse_all_printings_cards_t *cards)
+"""
+        output_unit += """{
+    return 0;
+}
+
+"""
 
     with open(OUTPUT_FILE_U, "wb") as f:
         f.write(output_unit.encode("utf-8"))

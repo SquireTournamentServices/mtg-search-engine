@@ -3,6 +3,7 @@
 #include "./thread_pool.h"
 #include "../testing_h/testing.h"
 #include "card_txt_fields_trie.h"
+#include "mse_formats.h"
 #include <stdio.h>
 #include <string.h>
 #include <curl/curl.h>
@@ -275,6 +276,7 @@ static void __free_all_printings_cards_indexes(mse_all_printings_cards_t *cards)
     }
 
     __free_all_printings_cards_colour_indexes(cards);
+    mse_free_format_legality_indexes(&cards->indexes.format_legality_index);
 }
 
 void mse_free_all_printings_cards(mse_all_printings_cards_t *cards)

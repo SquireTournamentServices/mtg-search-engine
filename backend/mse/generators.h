@@ -22,7 +22,7 @@ typedef enum mse_set_generator_type_t {
     // Card legalities
     MSE_SET_GENERATOR_BANNED,
     MSE_SET_GENERATOR_LEGAL,
-    MSE_SET_GENERATOR_RESTIRCTED,
+    MSE_SET_GENERATOR_RESTRICTED,
     MSE_SET_GENERATOR_UNPLAYABLE,
 } mse_set_generator_type_t;
 
