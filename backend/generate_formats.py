@@ -20,6 +20,7 @@ GENERATE_CARD_FORMAT_LEGALITY_INDEXES = (
     f"{PREFIX.lower()}_generate_format_legality_indexes"
 )
 FREE_CARD_FORMAT_LEGALITY_INDEXES = f"{PREFIX.lower()}_free_format_legality_indexes"
+STRING_AS_FORMAT_ENUM = f"{PREFIX.lower()}_str_as_{FORMAT_ENUM}"
 
 NOT_LEGAL = "Unplayable"
 formats = []
@@ -121,7 +122,7 @@ def gen_header() -> None:
 
     # Function definitions
     output_h += f"""
-int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret);
+int {STRING_AS_FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret);
 int {PREFIX.lower()}_str_as_{FORMAT_LEGALITIES_ENUM}(const char *str, {FORMAT_LEGALITIES_ENUM} *ret);
 
 const char *{FORMAT_ENUM}_as_str({FORMAT_ENUM} format);
@@ -167,7 +168,7 @@ def gen_unit() -> None:
 #include "../mse/card.h"
 #include "../mse/generators.h"
 
-int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
+int {STRING_AS_FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 """
     output_unit += "{\n"
 
@@ -468,7 +469,11 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
             output_unit += f"        mse_free_tree(indexes->{format.lower()}_{legality.lower()}_index);\n"
             output_unit += "    }\n\n"
 
-    output_unit += "}\n"
+    output_unit += """}
+
+    mse_avl_tree_node_t *node =  NULL;
+
+"""
 
     # Generators
     for legality in format_legalities:
@@ -476,8 +481,35 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     mse_search_intermediate_t *res,
     mse_all_printings_cards_t *cards)
 """
-        output_unit += """{
-    return 0;
+        output_unit += "{\n"
+        output_unit += f"""    {FORMAT_ENUM} format;
+    ASSERT({STRING_AS_FORMAT_ENUM}(gen->argument, &format));
+"""
+
+        output_unit += """    switch(format) {
+"""
+
+        for format in formats:
+            output_unit += f"    case {PREFIX.upper()}_FORMAT_{format.upper()}:\n"
+            output_unit += f"         node = cards->indexes.format_legality_index.{format.lower()}_{legality.lower()}_index;\n"
+            output_unit += "        break;\n"
+
+        output_unit += """    default:
+        lprintf(LOG_ERROR, "%s is not a valid format\\n", gen->argument);
+        return 0;
+    }
+
+    ASSERT(node != NULL);
+    *res = mse_init_search_intermediate_tree(node, 1);
+
+    if (gen->negate) {
+        mse_search_intermediate_t tmp;
+        ASSERT(mse_set_negate(&tmp, cards, res));
+        mse_free_search_intermediate(res);
+        *res = tmp;
+    }
+
+    return 1;
 }
 
 """

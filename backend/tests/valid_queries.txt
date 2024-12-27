@@ -39,3 +39,9 @@ commander=wubrg and name:progen
 limduls vault
 wars toll
 dandan
+banned:commander
+banned:commander and -name:lotus
+legal:commander and type:artifact and -banned:vintage
+legal:standard
+unplayable:commander
+restricted:vintage and cmc=0
