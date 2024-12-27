@@ -57,7 +57,6 @@ export default function Home() {
               <li>{"<="} (less than or equal)</li>
               <li>{">"} (greater than)</li>
               <li>{">="} (greater than or equal)</li>
-              <li>!= (not equal)</li>
             </ul>
           </div>
           <div>
