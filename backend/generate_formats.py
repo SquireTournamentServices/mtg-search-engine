@@ -277,7 +277,7 @@ int {STRING_AS_FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     for format in formats:
         output_unit += (
             f"""    // Read {format} from JSON object
-    ret->{format.lower()} = {PREFIX.lower()}_FORMAT_LEGALITIES_{NOT_LEGAL.upper()};
+    ret->{format.lower()} = {PREFIX.upper()}_FORMAT_LEGALITIES_{NOT_LEGAL.upper()};
     json_t *{format.lower()} = json_object_get(legalities, "{format}");
     if ({format.lower()} != NULL)"""
             + " {"
