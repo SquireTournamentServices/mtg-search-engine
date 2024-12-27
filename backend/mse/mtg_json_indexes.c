@@ -296,9 +296,9 @@ static void __mse_generate_format_legalities_task(void *__state, mse_thread_pool
 {
 
     mse_index_generator_state_t *state = (mse_index_generator_state_t *) __state;
-    if (!mse_generate_format_legality_indexes(&state->cards->indexes.format_legality_index,
-            pool))
-    {
+    if (!mse_generate_format_legality_indexes(state->cards->card_tree,
+            &state->cards->indexes.format_legality_index,
+            pool)) {
         state->ret = 0;
     }
     sem_post(&(state->semaphore));
@@ -331,7 +331,7 @@ int __mse_generate_indexes(mse_all_printings_cards_t * restrict ret, mse_thread_
     state.ret = 1;
     state.cards = ret;
     state.pool = pool;
-    sem_init(&state.semaphore, 0, 0);
+    ASSERT(sem_init(&state.semaphore, 0, 0) == 0);
 
     // Start the tasks
     size_t len = TASK_COUNT(tasks);
