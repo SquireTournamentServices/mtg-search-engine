@@ -160,6 +160,10 @@ int mse_gen_type(char *str, mse_set_generator_type_t *ret)
     else __MSE_GEN_TYPE_CMP("oracle", MSE_SET_GENERATOR_ORACLE_TEXT);
     else __MSE_GEN_TYPE_CMP("type", MSE_SET_GENERATOR_TYPE);
     else __MSE_GEN_TYPE_CMP("types", MSE_SET_GENERATOR_TYPE);
+    else __MSE_GEN_TYPE_CMP("banned", MSE_SET_GENERATOR_BANNED);
+    else __MSE_GEN_TYPE_CMP("legal", MSE_SET_GENERATOR_LEGAL);
+    else __MSE_GEN_TYPE_CMP("restricted", MSE_SET_GENERATOR_RESTRICTED);
+    else __MSE_GEN_TYPE_CMP("unplayable", MSE_SET_GENERATOR_UNPLAYABLE);
 
     if (!found) {
         lprintf(LOG_ERROR, "'%s' in not a valid op_name\n", tmp);
