@@ -32,7 +32,7 @@ export default function Home() {
               The below query gets all mutally exclusive cards in m20 and m19.
             </p>
             <blockquote>
-              (set:m19 or set:m20) and !(set:m20 and set:m19)
+              (set:m19 or set:m20) and -(set:m20 and set:m19)
             </blockquote>
           </div>
           <div>
@@ -40,6 +40,7 @@ export default function Home() {
             <ul>
               <li>and</li>
               <li>or</li>
+              <li>-</li> (The not operator goes before a set generator i.e: -set:m18)
             </ul>
           </div>
           <div>
@@ -80,7 +81,11 @@ export default function Home() {
               <li>
                 set <i>(set code only i.e: m18)</i>
               </li>
-              <li>type (types)</li>
+              <li>type (types) <i>(Card types - super types, sub types, etc...)</i></li>
+              <li>legal</li>
+              <li>banned</li>
+              <li>unplayable <i>(not legal i.e: un-cards)</i></li>
+              <li>restricted</li>
             </ul>
           </div>
           <div>
