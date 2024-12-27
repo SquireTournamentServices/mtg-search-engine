@@ -66,6 +66,10 @@ int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
     case MSE_SET_GENERATOR_ORACLE_TEXT:
     case MSE_SET_GENERATOR_SET:
     case MSE_SET_GENERATOR_TYPE:
+    case MSE_SET_GENERATOR_BANNED:
+    case MSE_SET_GENERATOR_LEGAL:
+    case MSE_SET_GENERATOR_RESTRICTED:
+    case MSE_SET_GENERATOR_UNPLAYABLE:
         return __mse_is_op_set_includes(op_type);
     }
     return 0;

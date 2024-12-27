@@ -38,6 +38,7 @@ commander=wubrg and name:progen
 +2 mace
 limduls vault
 wars toll
+war's toll
 dandan
 banned:commander
 banned:commander and -name:lotus
@@ -45,3 +46,5 @@ legal:commander and type:artifact and -banned:vintage
 legal:standard
 unplayable:commander
 restricted:vintage and cmc=0
+goblin and -type:goblin
+banned:commander and c:r and type:goblin
