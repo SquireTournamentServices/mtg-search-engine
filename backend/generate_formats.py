@@ -317,6 +317,41 @@ int {PREFIX.lower()}_str_as_{FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     def function_name_for(format: str, legality: str) -> str:
         return f"__mse_generate_index_for_{format}_{legality}"
 
+    for format in formats:
+        output_unit += f"// Index generators for {format}\n\n"
+        for legality in format_legalities:
+            output_unit += f"static int {inner_function_name_for(format, legality)}(mse_avl_tree_node_t *cards, mse_avl_tree_node_t **index) " + "{\n"
+            # Process current node
+            output_unit += "    mse_card_t *card = (mse_card_t *) card->payload;\n"
+            output_unit += f"    if (card->format_legalities.{format} == {PREFIX.upper()}_FORMAT_LEGALITIES_{legality.upper()}) " + "{\n"
+            output_unit += """        ASSERT(mse_insert_node(index, card));
+    }
+
+"""
+
+            # Left node recursive call
+            output_unit += "    if (cards->l != NULL) {\n"
+            output_unit += f"        if !({inner_function_name_for(format, legality)}(cards->l, index)) "
+            output_unit += """{
+            return 0;
+        }
+    }
+
+"""
+            # Right node recursive call
+            output_unit += "    if (cards->r != NULL) {\n"
+            output_unit += f"        if !({inner_function_name_for(format, legality)}(cards->r, index)) "
+            output_unit += """{
+             return 0;
+        }
+    }
+
+"""
+
+            # Base case
+            output_unit += "   return 1;\n"
+            output_unit += "}\n\n"
+
     output_unit += f"int {GENERATE_CARD_FORMAT_LEGALITY_INDEXES}({CARD_FORMAT_LEGALITY_INDEXES_STRUCT} *ret, mse_thread_pool_t *pool)\n"
     output_unit += """{
     return 1;
