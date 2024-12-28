@@ -3,6 +3,8 @@ info:
   title: "MTG Search Engine"
   description: "Search for MTG cards, see https://monarch.djpiper28.co.uk, or https://github.com/squiretournamentservices/mtg-search-engine"
   version: 1.0.0
+schemes:
+- http
 
 servers:
   - url: "https://monarch.djpiper28.co.uk/api"
@@ -11,10 +13,42 @@ servers:
     description: "Localhost, use docker-compose"
 
 paths:
+  "/metrics":
+    get:
+      summary: "Prometheus metrics"
+      responses:
+        "200":
+          description: "List of formats"
+          content:
+            application/text:
+  "/formats":
+    get:
+      summary: "Gets a list of all formats that are supported for legal/banned/restricted/unplayable lookups"
+      responses:
+        "200":
+          description: "List of formats"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
   "/api":
     post:
+      parameters:
+        - in: header
+          name: page 
+          description: "Page number, 0 bound"
+          schema:
+            type: number 
       summary: "Query magic cards!"
       description: "This is probably the main API that you care about"
+      requestBody:
+        application/text:
+          schema:
+            type: string
+      headers:
+
       responses:
         "400":
           description: "The request has no body"
