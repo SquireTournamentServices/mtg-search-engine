@@ -1,5 +1,6 @@
 #include "./server.h"
 #include "./async_query.h"
+#include "mse_formats.h"
 #include "../testing_h/testing.h"
 #include "../mongoose/mongoose.h"
 #include <string.h>
@@ -12,6 +13,7 @@ static size_t requests = 0;
 static size_t good_requests = 0;
 static size_t internal_error_requests = 0;
 static size_t user_error_requests = 0;
+static size_t queries = 0;
 
 static int __mse_get_page_number(struct mg_http_message *hm)
 {
@@ -78,13 +80,18 @@ static void __mse_serve(struct mg_connection *c,
                 mg_http_reply(c, 500, "", "500 - Internal server error");
                 internal_error_requests++;
             }
+        } else if (mg_match(hm->uri, mg_str("/formats"), NULL)) {
+            mg_http_reply(c, 200, "", MSE_FORMATS_JSON);
+            good_requests++;
         } else if (mg_match(hm->uri, mg_str("/metrics"), NULL)) {
-            mg_http_reply(c, 200, "", "mse_requests %lu\nmse_good_requests %lu\nmse_interal_error_requests %lu\nmse_user_error_requests %lu",
+            mg_http_reply(c, 200, "", "mse_requests %lu\nmse_good_requests %lu\nmse_interal_error_requests %lu\nmse_user_error_requests %lu\nmse_total_queries %lu",
                           requests,
                           good_requests,
                           internal_error_requests,
-                          user_error_requests);
+                          user_error_requests,
+                          queries);
             good_requests++;
+            queries++;
         } else {
             mg_http_reply(c, 404, "", "404 - Page not found");
             user_error_requests++;

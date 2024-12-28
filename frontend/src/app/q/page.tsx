@@ -1,6 +1,7 @@
 import Card from "./card";
 import PageChanger from "./pageChanger";
 import searchUrlFor from "../searchUrl";
+import { defaultApiUrl } from "../apiDefaultUrl";
 
 export default async function SearchResultPage({
   searchParams,
@@ -14,7 +15,7 @@ export default async function SearchResultPage({
     searchParams.query.replaceAll("â", "a").replaceAll("û", "u"),
   );
   const resp = await fetch(
-    process.env.BACKEND_URL ?? "http://127.0.0.1:4365/api",
+    (process.env.BACKEND_URL ?? defaultApiUrl) + "/api",
     {
       method: "POST",
       body: query,
