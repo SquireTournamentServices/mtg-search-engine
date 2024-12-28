@@ -1,20 +1,28 @@
 import Card from "./card";
 import PageChanger from "./pageChanger";
 import searchUrlFor from "../searchUrl";
+import { defaultApiUrl } from "../apiDefaultUrl";
+
+export const dynamic = 'force-dynamic'
+
+interface params {
+  query: string;
+  page?: string;
+}
+
+interface Props {
+  searchParams: Promise<params>;
+}
 
 export default async function SearchResultPage({
-  searchParams,
-}: {
-  searchParams: {
-    query: string;
-    page?: string;
-  };
-}) {
+  searchParams: paramsRaw,
+}: Readonly<Props>) {
+  const searchParams = await paramsRaw;
   const query = decodeURIComponent(
     searchParams.query.replaceAll("â", "a").replaceAll("û", "u"),
   );
   const resp = await fetch(
-    process.env.BACKEND_URL ?? "http://127.0.0.1:4365/api",
+    (process.env.BACKEND_URL ?? defaultApiUrl) + "/api",
     {
       method: "POST",
       body: query,

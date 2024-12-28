@@ -1,6 +1,15 @@
+import Link from "next/link";
+import { defaultApiUrl } from "./apiDefaultUrl";
 import RandomQuery from "./randomQuery";
 
-export default function Home() {
+export const dynamic = 'force-dynamic'
+
+export default async function Home() {
+  const resp = await fetch(
+    (process.env.BACKEND_URL ?? defaultApiUrl) + "/formats",
+  );
+  const formats = (await resp.json()) as string[];
+
   return (
     <main className="flex flex-col items-center w-full h-full gap-5">
       <div className="flex flex-col justify-center gap-3 bg-white rounded-xl p-5 md:p-20 w-full">
@@ -18,6 +27,10 @@ export default function Home() {
           This search engine is not currently feature compliant with Scryfall
           yet, however this on the roadmap along with bindings for other
           programming languages and support for none-english cards.
+        </p>
+        <p>
+          You can view the API{" "}
+          <Link href={process.env.BACKEND_URL ?? defaultApiUrl}>here</Link>
         </p>
       </div>
 
@@ -40,7 +53,8 @@ export default function Home() {
             <ul>
               <li>and</li>
               <li>or</li>
-              <li>-</li> (The not operator goes before a set generator i.e: -set:m18)
+              <li>-</li> (The not operator goes before a set generator i.e:
+              -set:m18)
             </ul>
           </div>
           <div>
@@ -57,7 +71,6 @@ export default function Home() {
               <li>{"<="} (less than or equal)</li>
               <li>{">"} (greater than)</li>
               <li>{">="} (greater than or equal)</li>
-              <li>!= (not equal)</li>
             </ul>
           </div>
           <div>
@@ -81,10 +94,15 @@ export default function Home() {
               <li>
                 set <i>(set code only i.e: m18)</i>
               </li>
-              <li>type (types) <i>(Card types - super types, sub types, etc...)</i></li>
+              <li>
+                type (types){" "}
+                <i>(Card types - super types, sub types, etc...)</i>
+              </li>
               <li>legal</li>
               <li>banned</li>
-              <li>unplayable <i>(not legal i.e: un-cards)</i></li>
+              <li>
+                unplayable <i>(not legal i.e: un-cards)</i>
+              </li>
               <li>restricted</li>
             </ul>
           </div>
@@ -94,6 +112,12 @@ export default function Home() {
               A regex query looks like this:{" "}
               <blockquote>/I am a re(gex)?/</blockquote>
             </p>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold">Supported Formats</h3>
+            {formats.map((x) => (
+              <li>{x}</li>
+            ))}
           </div>
         </div>
       </div>

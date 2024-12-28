@@ -64,7 +64,7 @@ EXPOSE 3000
 ENV PORT 3000
 # set hostname to localhost
 ENV HOSTNAME "0.0.0.0"
-ENV BACKEND_URL http://mse-backend.default.svc.cluster.local:4365/api
+ENV BACKEND_URL http://mse-backend.default.svc.cluster.local:4365
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output

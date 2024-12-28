@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import searchUrlFor from "./searchUrl";
 
-export default function SearchBar() {
+function SearchBar() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("query") ?? "";
   const [query, setQuery] = useState(initialQuery);
@@ -41,5 +41,13 @@ export default function SearchBar() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function SearchBarWrapped() {
+  return (
+    <Suspense>
+      <SearchBar />
+    </Suspense>
   );
 }
