@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 interface Props {
   base_url: string;
   page: number;
 }
 
-export default function PageChanger({ base_url, page }: Readonly<Props>) {
+function PageChanger({ base_url, page }: Readonly<Props>) {
   const searchParams = useSearchParams();
-  const pageNumber = searchParams.get("page") ?? '1';
+  const pageNumber = searchParams.get("page") ?? "1";
   const currentPage = pageNumber === page.toString();
 
   return (
@@ -23,5 +24,13 @@ export default function PageChanger({ base_url, page }: Readonly<Props>) {
         {page}
       </h1>
     </Link>
+  );
+}
+
+export default function PageChangerWrapped(props: Readonly<Props>) {
+  return (
+    <Suspense>
+      <PageChanger {...props} />
+    </Suspense>
   );
 }
