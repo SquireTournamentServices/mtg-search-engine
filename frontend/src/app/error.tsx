@@ -1,13 +1,15 @@
 "use client";
 import { useEffect } from "react";
 
+interface Props {
+  error: Error & { digest?: string };
+  reset: () => void;
+}
+
 export default function Error({
   error,
   reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+}: Readonly<Props>) {
   useEffect(() => {
     console.error(error);
   }, [error]);

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { defaultApiUrl } from "./apiDefaultUrl";
 import RandomQuery from "./randomQuery";
 
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
   const resp = await fetch(
     (process.env.BACKEND_URL ?? defaultApiUrl) + "/formats",

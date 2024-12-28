@@ -3,14 +3,21 @@ import PageChanger from "./pageChanger";
 import searchUrlFor from "../searchUrl";
 import { defaultApiUrl } from "../apiDefaultUrl";
 
+export const dynamic = 'force-dynamic'
+
+interface params {
+  query: string;
+  page?: string;
+}
+
+interface Props {
+  searchParams: Promise<params>;
+}
+
 export default async function SearchResultPage({
-  searchParams,
-}: {
-  searchParams: {
-    query: string;
-    page?: string;
-  };
-}) {
+  searchParams: paramsRaw,
+}: Readonly<Props>) {
+  const searchParams = await paramsRaw;
   const query = decodeURIComponent(
     searchParams.query.replaceAll("â", "a").replaceAll("û", "u"),
   );
