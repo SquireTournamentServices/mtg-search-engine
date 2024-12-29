@@ -53,8 +53,11 @@ export default function Card(props: {
             props.data.mana_cost
               .split("{")
               .slice(1)
-              .map((mana) => (
-                <Manamoji mana_cost={mana.replace("}", "")} key={mana} />
+              .map((mana, i) => (
+                <Manamoji
+                  mana_cost={mana.replace("}", "")}
+                  key={`${mana}-${i}-${props.data.name}`}
+                />
               ))}
         </div>
       </div>
