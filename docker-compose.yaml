@@ -13,7 +13,7 @@ services:
       timeout: 10s
       retries: 3
     environment:
-      BACKEND_URL: "http://backend:4365/api"
+      BACKEND_URL: "http://backend:4365"
   backend:
     build:
       context: backend

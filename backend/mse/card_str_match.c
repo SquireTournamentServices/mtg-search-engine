@@ -280,7 +280,7 @@ static int __mse_match_cards(mse_avl_tree_node_t **ret,
     data.lock = lock_tmp;
 
     int layers = (int) floor(log2(pool->threads_count));
-    sem_init(&data.sem, 0, 0); // Each thread calls up()
+    ASSERT(sem_init(&data.sem, 0, 0) == 0); // Each thread calls up()
     int thread_cnt = __mse_match_card_worker_enqueue(&data, pool, cards_tree, layers, cmp_data);
 
     // Wait for the threads then cleanup

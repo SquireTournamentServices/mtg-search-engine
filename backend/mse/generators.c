@@ -6,6 +6,7 @@
 #include "./generator_colour.h"
 #include "../testing_h/testing.h"
 #include "generator_type.h"
+#include "mse_formats.h"
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -65,6 +66,10 @@ int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
     case MSE_SET_GENERATOR_ORACLE_TEXT:
     case MSE_SET_GENERATOR_SET:
     case MSE_SET_GENERATOR_TYPE:
+    case MSE_SET_GENERATOR_BANNED:
+    case MSE_SET_GENERATOR_LEGAL:
+    case MSE_SET_GENERATOR_RESTRICTED:
+    case MSE_SET_GENERATOR_UNPLAYABLE:
         return __mse_is_op_set_includes(op_type);
     }
     return 0;
@@ -95,6 +100,14 @@ int mse_generate_set(mse_set_generator_t *gen,
         return mse_generate_set_cmc(gen, res, cards);
     case MSE_SET_GENERATOR_TYPE:
         return mse_generate_set_type(gen, res, cards);
+    case MSE_SET_GENERATOR_BANNED:
+        return mse_generate_banned(gen, res, cards);
+    case MSE_SET_GENERATOR_LEGAL:
+        return mse_generate_legal(gen, res, cards);
+    case MSE_SET_GENERATOR_RESTRICTED:
+        return mse_generate_restricted(gen, res, cards);
+    case MSE_SET_GENERATOR_UNPLAYABLE:
+        return mse_generate_unplayable(gen, res, cards);
     }
     return 1;
 }
@@ -160,6 +173,10 @@ int mse_gen_type(char *str, mse_set_generator_type_t *ret)
     else __MSE_GEN_TYPE_CMP("oracle", MSE_SET_GENERATOR_ORACLE_TEXT);
     else __MSE_GEN_TYPE_CMP("type", MSE_SET_GENERATOR_TYPE);
     else __MSE_GEN_TYPE_CMP("types", MSE_SET_GENERATOR_TYPE);
+    else __MSE_GEN_TYPE_CMP("banned", MSE_SET_GENERATOR_BANNED);
+    else __MSE_GEN_TYPE_CMP("legal", MSE_SET_GENERATOR_LEGAL);
+    else __MSE_GEN_TYPE_CMP("restricted", MSE_SET_GENERATOR_RESTRICTED);
+    else __MSE_GEN_TYPE_CMP("unplayable", MSE_SET_GENERATOR_UNPLAYABLE);
 
     if (!found) {
         lprintf(LOG_ERROR, "'%s' in not a valid op_name\n", tmp);

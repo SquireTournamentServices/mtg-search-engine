@@ -127,6 +127,8 @@ static void __mse_async_query_worker(void *data, struct mse_thread_pool_t *pool)
     mse_async_query_t *query = (mse_async_query_t *) data;
 
     int r = __mse_jsonify_search(query);
+    clock_gettime(CLOCK_REALTIME, &query->stop);
+
     pthread_mutex_lock(&query->lock);
     query->ready = 1;
     query->err = !r;
@@ -146,6 +148,7 @@ mse_async_query_t *mse_start_async_query(char *query, int page_number, mse_t *ms
     ret->query = query;
     ret->ref_count = 2;
     ret->mse = mse;
+    clock_gettime(CLOCK_REALTIME, &ret->start);
 
     mse_task_t task;
     task.data = ret;
@@ -153,6 +156,7 @@ mse_async_query_t *mse_start_async_query(char *query, int page_number, mse_t *ms
 
     if (!mse_task_queue_enqueue(&mse->pool.queue, task)) {
         lprintf(LOG_ERROR, "Cannot enqueue task\n");
+        clock_gettime(CLOCK_REALTIME, &ret->stop);
         mse_async_query_decref(ret);
         return NULL;
     }

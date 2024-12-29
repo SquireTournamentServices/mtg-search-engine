@@ -1,6 +1,7 @@
 #include "../testing_h/testing.h"
 #include "../mse/query_parser.h"
 #include "../mse/interpretor.h"
+#include "../mse/save.h"
 #include "./test_parser.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -78,32 +79,11 @@ static int __test_next_query_exec(FILE *f)
     return 1;
 }
 
-static json_t *get_all_printings_cards_from_file()
-{
-    FILE *f = fopen("./AllPrintings.json", "rb");
-    json_error_t error;
-    json_t *ret = json_loadf(f, 0, &error);
-
-    if (ret == NULL) {
-        lprintf(LOG_ERROR, "Error: %100s\n", error.text);
-    }
-    fclose(f);
-    return ret;
-}
-
 static int init_parser_tests()
 {
     ASSERT(mse_init_pool(&pool));
-
-    json_t *json = get_all_printings_cards_from_file();
-    ASSERT(json != NULL);
-
-    memset(&cards, 0, sizeof(cards));
-    ASSERT(__mse_parse_all_printings_cards(&cards, json, &pool));
-    json_decref(json);
-
+    ASSERT(mse_get_cards_from_file(&cards, &pool));
     ASSERT(cards.card_tree != NULL);
-
     return 1;
 }
 
