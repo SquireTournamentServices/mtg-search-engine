@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
+import { Fragment, ReactNode } from "react";
 import Manamoji from "./manamoji";
 
-export default function Oracle(props: { oracle_text: string }) {
+export default function Oracle(props: { oracle_text: string; id: string }) {
   const oracle = props.oracle_text.split("{");
   return (
     <span className="text-sm">
@@ -10,7 +10,11 @@ export default function Oracle(props: { oracle_text: string }) {
         if (mana.length == 1) {
           return part
             .split("\n")
-            .map((x): ReactNode => <>{x}</>)
+            .map(
+              (x, i): ReactNode => (
+                <Fragment key={`${props.id}-${x}-${i}`}>{x}</Fragment>
+              ),
+            )
             .reduce(
               (a, b) => (
                 <>

@@ -1,5 +1,5 @@
 export default function Colour(props: { colour: number }) {
-  var colourLetter = '';
+  var colourLetter = "";
   var colour = "";
   switch (props.colour) {
     case 1 << 0:
@@ -30,7 +30,7 @@ export default function Colour(props: { colour: number }) {
 
   return (
     <div className={"rounded-full w-[1rem] h-[1rem] " + colour}>
-      <span className='absolute opacity-0'>{colourLetter}</span>
+      <span className="absolute opacity-0">{colourLetter}</span>
     </div>
   );
 }

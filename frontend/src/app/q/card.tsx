@@ -62,7 +62,7 @@ export default function Card(props: {
         <p className="text-m"> {props.data.types.join(" ")} </p>
       )}
       {props.data.oracle_text && (
-        <Oracle oracle_text={props.data.oracle_text} />
+        <Oracle oracle_text={props.data.oracle_text} id={props.data.name} />
       )}
       <div className="grow" />
       <div className="flex flex-row justify-between">

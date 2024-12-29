@@ -10,7 +10,7 @@ interface Props {
 
 export default function PageChanger({ base_url, page }: Readonly<Props>) {
   const searchParams = useSearchParams();
-  const pageNumber = searchParams.get("page") ?? '1';
+  const pageNumber = searchParams.get("page") ?? "1";
   const currentPage = pageNumber === page.toString();
 
   return (
