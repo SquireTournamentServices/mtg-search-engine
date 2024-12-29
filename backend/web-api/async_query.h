@@ -1,6 +1,7 @@
 #pragma once
 #include <pthread.h>
 #include <mse/mse.h>
+#include <time.h>
 
 #define MSE_PAGE_SIZE 52
 
@@ -13,6 +14,7 @@ typedef struct mse_async_query_t {
     int err;
     pthread_mutex_t lock;
     mse_t *mse;
+    struct timespec start, stop;
 } mse_async_query_t;
 
 /// Inits and starts a query, sets the ref count to 2 (1 for the caller and 1 for the worker)
