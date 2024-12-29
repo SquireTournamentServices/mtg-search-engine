@@ -464,11 +464,17 @@ int {STRING_AS_FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 """
 
     # Free function
-    output_unit += f"void {FREE_CARD_FORMAT_LEGALITY_INDEXES}({CARD_FORMAT_LEGALITY_INDEXES_STRUCT} *indexes) " + "{\n"
+    output_unit += (
+        f"void {FREE_CARD_FORMAT_LEGALITY_INDEXES}({CARD_FORMAT_LEGALITY_INDEXES_STRUCT} *indexes) "
+        + "{\n"
+    )
     for format in formats:
         output_unit += f"    // Free indexes for {format}\n"
         for legality in format_legalities:
-            output_unit += f"    if (indexes->{format.lower()}_{legality.lower()}_index != NULL) " + "{\n"
+            output_unit += (
+                f"    if (indexes->{format.lower()}_{legality.lower()}_index != NULL) "
+                + "{\n"
+            )
             output_unit += f"        mse_free_tree(indexes->{format.lower()}_{legality.lower()}_index);\n"
             output_unit += "    }\n\n"
 
