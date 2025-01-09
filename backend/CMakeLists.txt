@@ -5,6 +5,9 @@ project(
   VERSION 1.2
   LANGUAGES C CXX)
 
+# Clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+
 set(REPO_URL "https://github.com/djpiper28/mtg-search-engine")
 
 message(STATUS "Building ${CMAKE_PROJECT_NAME}")
