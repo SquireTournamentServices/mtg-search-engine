@@ -152,7 +152,8 @@ struct mse_all_printings_cards_t;
 
 """
 
-    output_h += f'#define {PREFIX.upper()}_FORMATS_JSON "{json.dumps(formats).replace('"', '\\"')}"'
+    format_json = json.dumps(formats).replace('"', '\\"')
+    output_h += f'#define {PREFIX.upper()}_FORMATS_JSON "{format_json}"'
 
     with open(OUTPUT_FILE_H, "w") as f:
         f.write(output_h)
