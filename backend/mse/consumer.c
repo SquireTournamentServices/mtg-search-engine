@@ -2,6 +2,8 @@
 #include "./card_str_match.h"
 #include "../testing_h/testing.h"
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 // Oracle consumers
 static int __mse_consume_set_oracle_re(mse_set_consumer_t *gen,

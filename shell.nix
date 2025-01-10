@@ -19,6 +19,7 @@
 
       # Compiler
       gcc
+      clang
 
       # Libraries
       jemalloc
