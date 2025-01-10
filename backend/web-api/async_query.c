@@ -92,12 +92,12 @@ static int __mse_jsonify_search_res_impl(mse_search_result_t *res,
 
     if (query->params.sort_asc) {
         for (size_t i = query->params.page_number * MSE_PAGE_SIZE;
-                i < res->cards_length && i < (query->params.page_number + 1) * MSE_PAGE_SIZE;
+                i < res->cards_length && i <= (query->params.page_number + 1) * MSE_PAGE_SIZE;
                 i++) {
             __mse_jsonify_search_res_card()
         }
     } else {
-        for (size_t i = (res->cards_length - query->params.page_number * MSE_PAGE_SIZE);
+        for (size_t i = ((res->cards_length - query->params.page_number * MSE_PAGE_SIZE) - 1);
                 i > 0 && i > (res->cards_length - ((query->params.page_number + 1) * MSE_PAGE_SIZE));
                 i--) {
             __mse_jsonify_search_res_card()
