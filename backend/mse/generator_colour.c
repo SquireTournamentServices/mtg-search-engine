@@ -70,8 +70,7 @@ int mse_generate_set_colours(mse_set_generator_t *gen,
     *res = mse_init_search_intermediate_tree(node, 1);
 
     if (gen->negate) {
-        if (gen->generator_op == MSE_SET_GENERATOR_OP_INCLUDES
-        || gen->generator_op == MSE_SET_GENERATOR_OP_EQUALS) {
+        if (gen->generator_op == MSE_SET_GENERATOR_OP_EQUALS) {
             mse_search_intermediate_t tmp;
             ASSERT(mse_set_negate(&tmp, cards, res));
             mse_free_search_intermediate(res);
@@ -135,8 +134,7 @@ int mse_generate_set_colour_identity(mse_set_generator_t *gen,
     *res = mse_init_search_intermediate_tree(node, 1);
 
     if (gen->negate) {
-        if (gen->generator_op == MSE_SET_GENERATOR_OP_INCLUDES
-        || gen->generator_op == MSE_SET_GENERATOR_OP_EQUALS) {
+        if (gen->generator_op == MSE_SET_GENERATOR_OP_EQUALS) {
             mse_search_intermediate_t tmp;
             ASSERT(mse_set_negate(&tmp, cards, res));
             mse_free_search_intermediate(res);

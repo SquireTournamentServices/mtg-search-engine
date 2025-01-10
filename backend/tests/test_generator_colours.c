@@ -102,10 +102,10 @@ SUB_TEST(test_generator_colours, {&test_generator_colours_lt, "Colours generator
 {&test_generator_colours_gt, "Colours generator >"},
 {&test_generator_colours_gt_inc, "Colours generator >="},
 {&test_generator_colours_eq, "Colours generator =="},
-{&test_generator_colours_inc, "Colours generator == (inc)"},
+{&test_generator_colours_inc, "Colours generator : (inc)"},
 {&test_generator_colour_identity_lt, "Colour identity generator <="},
 {&test_generator_colour_identity_lt_inc, "Colour identity generator <="},
 {&test_generator_colour_identity_gt, "Colour identity generator >"},
 {&test_generator_colour_identity_gt_inc, "Colour identity generator >="},
 {&test_generator_colour_identity_eq, "Colour identity generator =="},
-{&test_generator_colour_identity_inc, "Colour identity generator == (inc)"})
+{&test_generator_colour_identity_inc, "Colour identity generator : (inc)"})
