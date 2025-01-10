@@ -66,6 +66,21 @@ static int __mse_jsonify_card(json_t *json, mse_card_t *card)
     return 1;
 }
 
+#define __mse_jsonify_search_res_card() \
+   json_t *card = json_object(); \
+   ASSERT(card != NULL); \
+   if (!__mse_jsonify_card(card, res->cards[i])) { \
+       lprintf(LOG_ERROR, "Cannot jsonify card\n"); \
+       json_decref(card); \
+       return 0; \
+   } \
+ \
+   if (json_array_append(arr, card) != 0) { \
+       lprintf(LOG_ERROR, "Cannot append card \n"); \
+       json_decref(card); \
+       return 0; \
+   }
+
 static int __mse_jsonify_search_res_impl(mse_search_result_t *res,
         json_t *json,
         mse_async_query_t *query)
@@ -75,21 +90,17 @@ static int __mse_jsonify_search_res_impl(mse_search_result_t *res,
     ASSERT(arr);
     ASSERT(json_object_set(json, "cards", arr) == 0);
 
-    for (size_t i = query->page_number * MSE_PAGE_SIZE;
-            i < res->cards_length && i < (query->page_number + 1) * MSE_PAGE_SIZE;
-            i++) {
-        json_t *card = json_object();
-        ASSERT(card != NULL);
-        if (!__mse_jsonify_card(card, res->cards[i])) {
-            lprintf(LOG_ERROR, "Cannot jsonify card\n");
-            json_decref(card);
-            return 0;
+    if (query->params.sort_asc) {
+        for (size_t i = query->params.page_number * MSE_PAGE_SIZE;
+                i < res->cards_length && i < (query->params.page_number + 1) * MSE_PAGE_SIZE;
+                i++) {
+            __mse_jsonify_search_res_card()
         }
-
-        if (json_array_append(arr, card) != 0) {
-            lprintf(LOG_ERROR, "Cannot append card\n");
-            json_decref(card);
-            return 0;
+    } else {
+        for (size_t i = (res->cards_length - query->params.page_number * MSE_PAGE_SIZE);
+                i > 0 && i > (res->cards_length - ((query->params.page_number + 1) * MSE_PAGE_SIZE));
+                i--) {
+            __mse_jsonify_search_res_card()
         }
     }
 
@@ -97,7 +108,7 @@ static int __mse_jsonify_search_res_impl(mse_search_result_t *res,
     ASSERT(tmp = json_integer(MSE_PAGE_SIZE));
     ASSERT(json_object_set(json, "page_size", tmp) == 0);
 
-    ASSERT(tmp = json_integer(query->page_number));
+    ASSERT(tmp = json_integer(query->params.page_number));
     ASSERT(json_object_set(json, "page", tmp) == 0);
 
     ASSERT(tmp = json_integer(res->cards_length));
@@ -111,7 +122,7 @@ static int __mse_jsonify_search(mse_async_query_t *query)
 {
     mse_search_result_t res;
     ASSERT(mse_search(query->mse, &res, query->query));
-    mse_sort_search_results(&res, MSE_SORT_CARD_NAME);
+    mse_sort_search_results(&res, query->params.sort);
 
     json_t *json = json_object();
     ASSERT(json != NULL);
@@ -136,7 +147,7 @@ static void __mse_async_query_worker(void *data, struct mse_thread_pool_t *pool)
     mse_async_query_decref(query);
 }
 
-mse_async_query_t *mse_start_async_query(char *query, int page_number, mse_t *mse)
+mse_async_query_t *mse_start_async_query(char *query, mse_query_params_t params, mse_t *mse)
 {
     mse_async_query_t *ret = malloc(sizeof(*ret));
     ASSERT(ret);
@@ -144,7 +155,7 @@ mse_async_query_t *mse_start_async_query(char *query, int page_number, mse_t *ms
 
     pthread_mutex_t tmp = PTHREAD_MUTEX_INITIALIZER;
     ret->lock = tmp;
-    ret->page_number = page_number;
+    ret->params = params;
     ret->query = query;
     ret->ref_count = 2;
     ret->mse = mse;

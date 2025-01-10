@@ -1,6 +1,7 @@
 #include "./server.h"
 #include "./async_query.h"
 #include "mse_formats.h"
+#include "../mse/search.h"
 #include "../testing_h/testing.h"
 #include "../mongoose/mongoose.h"
 #include <string.h>
@@ -35,6 +36,43 @@ static int __mse_get_page_number(struct mg_http_message *hm)
 
     res = atoi(buffer);
     ASSERT(res >= 0);
+    ASSERT(res >= 0);
+    return res;
+}
+
+static int __mse_get_sort(struct mg_http_message *hm)
+{
+    int res = 0;
+    struct mg_str *header = mg_http_get_header(hm, "sort");
+    if (header == NULL) {
+        return 0;
+    }
+
+    char buffer[10];
+    memset(buffer, 0, sizeof(buffer));
+    strncpy(buffer, header->buf, MIN(sizeof(buffer), header->len));
+
+    res = atoi(buffer);
+    ASSERT(res >= 0);
+    ASSERT(res <= MSE_SORT_END);
+    return res;
+}
+
+static int __mse_get_sort_asc(struct mg_http_message *hm)
+{
+    int res = 0;
+    struct mg_str *header = mg_http_get_header(hm, "sort_asc");
+    if (header == NULL) {
+        return 0;
+    }
+
+    char buffer[10];
+    memset(buffer, 0, sizeof(buffer));
+    strncpy(buffer, header->buf, MIN(sizeof(buffer), header->len));
+
+    res = atoi(buffer);
+    ASSERT(res >= 0);
+    ASSERT(res <= 1);
     return res;
 }
 
@@ -76,9 +114,16 @@ static void __mse_serve_api(struct mg_connection *c,
     query[hm->body.len] = 0;
 
     int page_number = __mse_get_page_number(hm);
+    int sort = __mse_get_sort(hm);
+    int sort_asc = __mse_get_sort_asc(hm);
+
+    mse_query_params_t params;
+    params.page_number = page_number;
+    params.sort = sort;
+    params.sort_asc = sort_asc;
 
     lprintf(LOG_INFO, "Starting search for '%s', page %d\n", query, page_number);
-    if (!(c->fn_data = mse_start_async_query(query, page_number, mse))) {
+    if (!(c->fn_data = mse_start_async_query(query, params, mse))) {
         lprintf(LOG_ERROR, "Cannot start async query\n");
         mg_http_reply(c, 500, "", "500 - Internal server error");
         internal_error_requests++;
