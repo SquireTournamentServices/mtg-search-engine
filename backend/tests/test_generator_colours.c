@@ -95,7 +95,7 @@ COLOUR_IDENTITY_GEN_TEST(lt_inc, LT_INC, lt_inc)
 COLOUR_IDENTITY_GEN_TEST(gt, GT, gt)
 COLOUR_IDENTITY_GEN_TEST(gt_inc, GT_INC, gt_inc)
 COLOUR_IDENTITY_GEN_TEST(eq, EQUALS, eq)
-COLOUR_IDENTITY_GEN_TEST(inc, INCLUDES, eq)
+COLOUR_IDENTITY_GEN_TEST(inc, INCLUDES, gt_inc)
 
 SUB_TEST(test_generator_colours, {&test_generator_colours_lt, "Colours generator <="},
 {&test_generator_colours_lt_inc, "Colours generator <="},

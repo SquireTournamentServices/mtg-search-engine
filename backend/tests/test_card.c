@@ -236,6 +236,8 @@ static int test_colour_cmp_lt_inc()
     ASSERT(mse_colour_lt_inc(MSE_WHITE | MSE_BLUE, MSE_WUBRG));
     ASSERT(mse_colour_lt_inc(MSE_WUBRG, MSE_WUBRG));
     ASSERT(mse_colour_lt_inc(0, MSE_WHITE));
+    ASSERT(!mse_colour_lt_inc(MSE_WHITE, 0));
+    ASSERT(!mse_colour_lt_inc(MSE_WUBRG, MSE_WHITE));
     return 1;
 }
 

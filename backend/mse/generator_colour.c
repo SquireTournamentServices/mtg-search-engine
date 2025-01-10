@@ -101,11 +101,11 @@ int mse_generate_set_colour_identity(mse_set_generator_t *gen,
         case MSE_SET_GENERATOR_OP_GT:
             node = cards->indexes.colour_index.colour_identity_lt_inc.colour_indexes[colours];
             break;
+        case MSE_SET_GENERATOR_OP_INCLUDES:
         case MSE_SET_GENERATOR_OP_GT_INC:
             node = cards->indexes.colour_index.colour_identity_lt.colour_indexes[colours];
             break;
         case MSE_SET_GENERATOR_OP_EQUALS:
-        case MSE_SET_GENERATOR_OP_INCLUDES:
             // This is negated after making the search intermediate
             node = cards->indexes.colour_index.colour_identity_eq.colour_indexes[colours];
             break;
@@ -121,11 +121,11 @@ int mse_generate_set_colour_identity(mse_set_generator_t *gen,
         case MSE_SET_GENERATOR_OP_GT:
             node = cards->indexes.colour_index.colour_identity_gt.colour_indexes[colours];
             break;
+        case MSE_SET_GENERATOR_OP_INCLUDES:
         case MSE_SET_GENERATOR_OP_GT_INC:
             node = cards->indexes.colour_index.colour_identity_gt_inc.colour_indexes[colours];
             break;
         case MSE_SET_GENERATOR_OP_EQUALS:
-        case MSE_SET_GENERATOR_OP_INCLUDES:
             node = cards->indexes.colour_index.colour_identity_eq.colour_indexes[colours];
             break;
         }
