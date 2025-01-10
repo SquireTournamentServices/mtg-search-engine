@@ -193,11 +193,13 @@ static void __mse_serve(struct mg_connection *c,
 
         good_requests++;
         queries++;
-        total_query_time += (query->stop.tv_sec - query->start.tv_sec)
+
+        double query_time = (query->stop.tv_sec - query->start.tv_sec)
                             + (double) (query->stop.tv_nsec - query->start.tv_nsec)
                             / BILLION;
+        total_query_time += query_time;
 
-        if (total_query_time > 0.1f) {
+        if (query_time > 0.1f) {
             lprintf(LOG_WARNING, "It took %lfs to query '%s'\n", total_query_time, query->query);
         }
 
