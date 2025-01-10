@@ -197,6 +197,10 @@ static void __mse_serve(struct mg_connection *c,
                             + (double) (query->stop.tv_nsec - query->start.tv_nsec)
                             / BILLION;
 
+        if (total_query_time > 0.1f) {
+            lprintf(LOG_WARNING, "It took %lfs to query '%s'\n", query->query);
+        }
+
         mse_async_query_decref(query);
         c->fn_data = NULL;
     } else if ((event == MG_EV_CLOSE || event == MG_EV_ERROR) && c->is_accepted && c->fn_data != NULL) {
