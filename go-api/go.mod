@@ -1,6 +1,6 @@
 module github.com/squiretournamentservices/mtg-search-engine/go-api
 
-go 1.23.3
+go 1.20
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
