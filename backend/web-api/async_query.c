@@ -69,7 +69,7 @@ static int __mse_jsonify_card(json_t *json, mse_card_t *card)
 #define __mse_jsonify_search_res_card() \
    json_t *card = json_object(); \
    ASSERT(card != NULL); \
-   if (!__mse_jsonify_card(card, res->cards[i])) { \
+   if (!__mse_jsonify_card(card, res->cards[index])) { \
        lprintf(LOG_ERROR, "Cannot jsonify card\n"); \
        json_decref(card); \
        return 0; \
@@ -90,18 +90,16 @@ static int __mse_jsonify_search_res_impl(mse_search_result_t *res,
     ASSERT(arr);
     ASSERT(json_object_set(json, "cards", arr) == 0);
 
-    if (query->params.sort_asc) {
-        for (size_t i = query->params.page_number * MSE_PAGE_SIZE;
-                i < res->cards_length && i <= (query->params.page_number + 1) * MSE_PAGE_SIZE;
-                i++) {
-            __mse_jsonify_search_res_card()
+
+    for (size_t i = query->params.page_number * MSE_PAGE_SIZE;
+            i < res->cards_length && i <= (query->params.page_number + 1) * MSE_PAGE_SIZE;
+            i++) {
+
+        size_t index = i;
+        if (!query->params.sort_asc) {
+            index = res->cards_length - index - 1;
         }
-    } else {
-        for (size_t i = ((res->cards_length - query->params.page_number * MSE_PAGE_SIZE) - 1);
-                i > 0 && i > (res->cards_length - ((query->params.page_number + 1) * MSE_PAGE_SIZE));
-                i--) {
-            __mse_jsonify_search_res_card()
-        }
+        __mse_jsonify_search_res_card()
     }
 
     json_t *tmp = NULL;
