@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import searchUrlFor from "./searchUrl";
+import searchUrlFor, { SortType } from "./searchUrl";
 
 export default function RandomQuery() {
   const router = useRouter();
@@ -31,7 +31,7 @@ export default function RandomQuery() {
       <p
         className="px-3"
         onClick={() => {
-          router.push(searchUrlFor(query, 1));
+          router.push(searchUrlFor(query, 1, SortType.CardName, true));
         }}
       >
         🔍 {query}
