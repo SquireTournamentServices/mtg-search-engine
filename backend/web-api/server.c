@@ -198,7 +198,7 @@ static void __mse_serve(struct mg_connection *c,
                             / BILLION;
 
         if (total_query_time > 0.1f) {
-            lprintf(LOG_WARNING, "It took %lfs to query '%s'\n", query->query);
+            lprintf(LOG_WARNING, "It took %lfs to query '%s'\n", total_query_time, query->query);
         }
 
         mse_async_query_decref(query);
