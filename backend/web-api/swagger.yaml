@@ -41,6 +41,16 @@ paths:
           description: "Page number, 0 bound"
           schema:
             type: number 
+        - in: header
+          name: sort 
+          description: "Sort type number, name = 0, cmc = 1, id = 2, power = 3, toughness = 4"
+          schema:
+            type: number 
+        - in: header
+          name: sort_ascending 
+          description: "Whether to sort ascending 1 = ascending, 0 = descending"
+          schema:
+            type: number 
       summary: "Query magic cards!"
       description: "This is probably the main API that you care about"
       requestBody:

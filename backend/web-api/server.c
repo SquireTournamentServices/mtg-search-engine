@@ -38,6 +38,77 @@ static int __mse_get_page_number(struct mg_http_message *hm)
     return res;
 }
 
+static void __mse_serve_index(struct mg_connection *c,
+                              int event,
+                              void *ev_data)
+{
+    mg_http_reply(c,
+                  200,
+                  "",
+                  "<h1>To use this API POST to ./api where the body is the query. Set the 'page' header to the page of output you want.</h1>"
+                  "<a href='/github'>%s %s</a>",
+                  MSE_PROJECT_NAME,
+                  MSE_PROJECT_VERSION);
+    good_requests++;
+}
+
+static void __mse_serve_api(struct mg_connection *c,
+                            int event,
+                            void *ev_data)
+{
+    struct mg_http_message *hm = (struct mg_http_message *) ev_data;
+
+    if (hm->body.len == 0) {
+        mg_http_reply(c, 400, "", "400 - Empty request body");
+        user_error_requests++;
+        return;
+    }
+
+    char *query = malloc(hm->body.len + 1);
+    if (query == NULL) {
+        lprintf(LOG_ERROR, "Cannot alloc query string\n");
+        mg_http_reply(c, 500, "", "500 - Internal server error");
+        internal_error_requests++;
+        return;
+    }
+
+    strncpy(query, hm->body.buf, hm->body.len);
+    query[hm->body.len] = 0;
+
+    int page_number = __mse_get_page_number(hm);
+
+    lprintf(LOG_INFO, "Starting search for '%s', page %d\n", query, page_number);
+    if (!(c->fn_data = mse_start_async_query(query, page_number, mse))) {
+        lprintf(LOG_ERROR, "Cannot start async query\n");
+        mg_http_reply(c, 500, "", "500 - Internal server error");
+        internal_error_requests++;
+    }
+}
+
+static void __mse_serve_github(struct mg_connection *c,
+                               int event,
+                               void *ev_data)
+{
+    mg_http_reply(c, 301, "",
+                  "<meta http-equiv=\"refresh\" content=\"0; URL=%s\" />",
+                  MSE_REPO_URL);
+    good_requests++;
+}
+
+static void __mse_serve_metrics(struct mg_connection *c,
+                                int event,
+                                void *ev_data)
+{
+    mg_http_reply(c, 200, "", "mse_requests %lu\nmse_good_requests %lu\nmse_interal_error_requests %lu\nmse_user_error_requests %lu\nmse_total_queries %lu\nmse_total_query_time_s %lf",
+                  requests,
+                  good_requests,
+                  internal_error_requests,
+                  user_error_requests,
+                  queries,
+                  total_query_time);
+    good_requests++;
+}
+
 static void __mse_serve(struct mg_connection *c,
                         int event,
                         void *ev_data)
@@ -48,56 +119,16 @@ static void __mse_serve(struct mg_connection *c,
     } else if (event == MG_EV_HTTP_MSG) {
         struct mg_http_message *hm = (struct mg_http_message *) ev_data;
         if (mg_match(hm->uri, mg_str("/"), NULL)) {
-            mg_http_reply(c,
-                          200,
-                          "",
-                          "<h1>To use this API POST to ./api where the body is the query. Set the 'page' header to the page of output you want.</h1>"
-                          "<a href='/github'>%s %s</a>",
-                          MSE_PROJECT_NAME,
-                          MSE_PROJECT_VERSION);
-            good_requests++;
+            __mse_serve_index(c, event, ev_data);
         } else if (mg_match(hm->uri, mg_str("/github"), NULL)) {
-            mg_http_reply(c, 301, "",
-                          "<meta http-equiv=\"refresh\" content=\"0; URL=%s\" />",
-                          MSE_REPO_URL);
-            good_requests++;
+            __mse_serve_github(c, event, ev_data);
         } else if (mg_match(hm->uri, mg_str("/api"), NULL)) {
-            if (hm->body.len == 0) {
-                mg_http_reply(c, 400, "", "400 - Empty request body");
-                user_error_requests++;
-                return;
-            }
-
-            char *query = malloc(hm->body.len + 1);
-            if (query == NULL) {
-                lprintf(LOG_ERROR, "Cannot alloc query string\n");
-                mg_http_reply(c, 500, "", "500 - Internal server error");
-                internal_error_requests++;
-                return;
-            }
-
-            strncpy(query, hm->body.buf, hm->body.len);
-            query[hm->body.len] = 0;
-
-            int page_number = __mse_get_page_number(hm);
-            lprintf(LOG_INFO, "Starting search for '%s', page %d\n", query, page_number);
-            if (!(c->fn_data = mse_start_async_query(query, page_number, mse))) {
-                lprintf(LOG_ERROR, "Cannot start async query\n");
-                mg_http_reply(c, 500, "", "500 - Internal server error");
-                internal_error_requests++;
-            }
+            __mse_serve_api(c, event, ev_data);
         } else if (mg_match(hm->uri, mg_str("/formats"), NULL)) {
             mg_http_reply(c, 200, "", MSE_FORMATS_JSON);
             good_requests++;
         } else if (mg_match(hm->uri, mg_str("/metrics"), NULL)) {
-            mg_http_reply(c, 200, "", "mse_requests %lu\nmse_good_requests %lu\nmse_interal_error_requests %lu\nmse_user_error_requests %lu\nmse_total_queries %lu\nmse_total_query_time_s %lf",
-                          requests,
-                          good_requests,
-                          internal_error_requests,
-                          user_error_requests,
-                          queries,
-                          total_query_time);
-            good_requests++;
+            __mse_serve_metrics(c, event, ev_data);
         } else {
             mg_http_reply(c, 404, "", "404 - Page not found");
             user_error_requests++;
