@@ -7,6 +7,7 @@ and sets. It has a syntax that is similar to Scryfall but it can be embedded any
 [![Memory tests](https://github.com/MonarchDevelopment/mtg-search-engine/actions/workflows/memtests.yml/badge.svg)](https://github.com/MonarchDevelopment/mtg-search-engine/actions/workflows/memtests.yml)
 [![Coverage](https://github.com/SquireTournamentServices/mtg-search-engine/actions/workflows/coverage.yml/badge.svg)](https://github.com/SquireTournamentServices/mtg-search-engine/actions/workflows/coverage.yml)
 [![codecov](https://codecov.io/github/SquireTournamentServices/mtg-search-engine/graph/badge.svg?token=FK7LTBC9AC)](https://codecov.io/github/SquireTournamentServices/mtg-search-engine)
+[![API Tests](https://github.com/SquireTournamentServices/mtg-search-engine/actions/workflows/apitests.yml/badge.svg)](https://github.com/SquireTournamentServices/mtg-search-engine/actions/workflows/apitests.yml)
 
 ## Requirements
  - cmake+
