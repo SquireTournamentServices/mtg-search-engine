@@ -3,11 +3,13 @@ import PageChanger from "./pageChanger";
 import searchUrlFor from "../searchUrl";
 import { defaultApiUrl } from "../apiDefaultUrl";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
 interface params {
   query: string;
   page?: string;
+  sort?: string;
+  sort_asc?: string;
 }
 
 interface Props {
@@ -28,6 +30,8 @@ export default async function SearchResultPage({
       body: query,
       headers: {
         page: (parseInt(searchParams.page ?? "1") - 1).toString(),
+        sort: searchParams.sort ?? "0",
+        sort_asc: searchParams.sort_asc,
       },
     },
   );

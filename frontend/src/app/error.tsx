@@ -6,10 +6,7 @@ interface Props {
   reset: () => void;
 }
 
-export default function Error({
-  error,
-  reset,
-}: Readonly<Props>) {
+export default function Error({ error, reset }: Readonly<Props>) {
   useEffect(() => {
     console.error(error);
   }, [error]);
