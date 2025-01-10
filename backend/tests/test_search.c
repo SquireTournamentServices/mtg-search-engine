@@ -141,8 +141,206 @@ static int test_set_negation()
     return 1;
 }
 
+static int test_sort_same_as_current_sort()
+{
+    // Setup mock cards
+    mse_card_t card_a, card_b;
+    memset(&card_a, 0, sizeof(card_a));
+    card_b = card_a;
+
+    card_a.name = "Johnny";
+    memset(&card_a.id.bytes, 1, sizeof(card_a.id.bytes));
+
+    card_b.name = "Bing";
+    memset(&card_b.id.bytes, 2, sizeof(card_b.id.bytes));
+
+    mse_search_result_t cards;
+    memset(&cards, 0, sizeof(cards));
+    cards.current_sort = MSE_SORT_END;
+
+    cards.cards_length = 2;
+    ASSERT(cards.cards = malloc(sizeof(cards.cards) * cards.cards_length));
+
+    cards.cards[0] = &card_a;
+    cards.cards[1] = &card_b;
+
+    // Sort
+    mse_sort_search_results(&cards, MSE_SORT_CARD_NAME);
+    ASSERT(mse_avl_cmp_card_name(cards.cards[0], cards.cards[1]) < 0);
+
+    mse_sort_search_results(&cards, MSE_SORT_CARD_NAME);
+
+    ASSERT(mse_avl_cmp_card_name(cards.cards[0], cards.cards[1]) < 0);
+
+    free(cards.cards);
+    return 1;
+}
+
+static int test_sort_card_name()
+{
+    // Setup mock cards
+    mse_card_t card_a, card_b;
+    memset(&card_a, 0, sizeof(card_a));
+    card_b = card_a;
+
+    card_a.name = "Johnny";
+    memset(&card_a.id.bytes, 1, sizeof(card_a.id.bytes));
+
+    card_b.name = "Bing";
+    memset(&card_b.id.bytes, 2, sizeof(card_b.id.bytes));
+
+    mse_search_result_t cards;
+    memset(&cards, 0, sizeof(cards));
+    cards.current_sort = MSE_SORT_END;
+
+    cards.cards_length = 2;
+    ASSERT(cards.cards = malloc(sizeof(cards.cards) * cards.cards_length));
+
+    cards.cards[0] = &card_a;
+    cards.cards[1] = &card_b;
+
+    // Sort
+    mse_sort_search_results(&cards, MSE_SORT_CARD_NAME);
+    ASSERT(cards.current_sort == MSE_SORT_CARD_NAME);
+    ASSERT(mse_avl_cmp_card_name(cards.cards[0], cards.cards[1]) < 0);
+
+    free(cards.cards);
+    return 1;
+}
+
+static int test_sort_card_cmc()
+{
+    // Setup mock cards
+    mse_card_t card_a, card_b;
+    memset(&card_a, 0, sizeof(card_a));
+    card_b = card_a;
+
+    card_a.cmc = 1;
+    memset(&card_a.id.bytes, 1, sizeof(card_a.id.bytes));
+
+    card_b.cmc = 123;
+    memset(&card_b.id.bytes, 2, sizeof(card_b.id.bytes));
+
+    mse_search_result_t cards;
+    memset(&cards, 0, sizeof(cards));
+    cards.current_sort = MSE_SORT_END;
+
+    cards.cards_length = 2;
+    ASSERT(cards.cards = malloc(sizeof(cards.cards) * cards.cards_length));
+
+    cards.cards[0] = &card_a;
+    cards.cards[1] = &card_b;
+
+    // Sort
+    mse_sort_search_results(&cards, MSE_SORT_CMC);
+    ASSERT(cards.current_sort == MSE_SORT_CMC);
+    ASSERT(mse_avl_cmp_card_cmc(cards.cards[0], cards.cards[1]) < 0);
+
+    free(cards.cards);
+    return 1;
+}
+
+static int test_sort_card_uuid()
+{
+    // Setup mock cards
+    mse_card_t card_a, card_b;
+    memset(&card_a, 0, sizeof(card_a));
+    card_b = card_a;
+
+    memset(&card_a.id.bytes, 1, sizeof(card_a.id.bytes));
+    memset(&card_b.id.bytes, 2, sizeof(card_b.id.bytes));
+
+    mse_search_result_t cards;
+    memset(&cards, 0, sizeof(cards));
+    cards.current_sort = MSE_SORT_END;
+
+    cards.cards_length = 2;
+    ASSERT(cards.cards = malloc(sizeof(cards.cards) * cards.cards_length));
+
+    cards.cards[0] = &card_a;
+    cards.cards[1] = &card_b;
+
+    // Sort
+    mse_sort_search_results(&cards, MSE_SORT_UUID);
+    ASSERT(cards.current_sort == MSE_SORT_UUID);
+    ASSERT(mse_avl_cmp_card(cards.cards[0], cards.cards[1]) < 0);
+
+    free(cards.cards);
+    return 1;
+}
+
+static int test_sort_card_power()
+{
+    // Setup mock cards
+    mse_card_t card_a, card_b;
+    memset(&card_a, 0, sizeof(card_a));
+    card_b = card_a;
+
+    card_a.power = 1;
+    memset(&card_a.id.bytes, 1, sizeof(card_a.id.bytes));
+
+    card_b.power= 123;
+    memset(&card_b.id.bytes, 2, sizeof(card_b.id.bytes));
+
+    mse_search_result_t cards;
+    memset(&cards, 0, sizeof(cards));
+    cards.current_sort = MSE_SORT_END;
+
+    cards.cards_length = 2;
+    ASSERT(cards.cards = malloc(sizeof(cards.cards) * cards.cards_length));
+
+    cards.cards[0] = &card_a;
+    cards.cards[1] = &card_b;
+
+    // Sort
+    mse_sort_search_results(&cards, MSE_SORT_POWER);
+    ASSERT(cards.current_sort == MSE_SORT_POWER);
+    ASSERT(mse_avl_cmp_card_power(cards.cards[0], cards.cards[1]) < 0);
+
+    free(cards.cards);
+    return 1;
+}
+
+static int test_sort_card_toughness()
+{
+    // Setup mock cards
+    mse_card_t card_a, card_b;
+    memset(&card_a, 0, sizeof(card_a));
+    card_b = card_a;
+
+    card_a.toughness = 1;
+    memset(&card_a.id.bytes, 1, sizeof(card_a.id.bytes));
+
+    card_b.toughness = 123;
+    memset(&card_b.id.bytes, 2, sizeof(card_b.id.bytes));
+
+    mse_search_result_t cards;
+    memset(&cards, 0, sizeof(cards));
+    cards.current_sort = MSE_SORT_END;
+
+    cards.cards_length = 2;
+    ASSERT(cards.cards = malloc(sizeof(cards.cards) * cards.cards_length));
+
+    cards.cards[0] = &card_a;
+    cards.cards[1] = &card_b;
+
+    // Sort
+    mse_sort_search_results(&cards, MSE_SORT_TOUGHNESS);
+    ASSERT(cards.current_sort == MSE_SORT_TOUGHNESS);
+    ASSERT(mse_avl_cmp_card_toughness(cards.cards[0], cards.cards[1]) < 0);
+
+    free(cards.cards);
+    return 1;
+}
+
 // The finalise search and the search results are tested in the interpretor where there is a lot of test data
 
 SUB_TEST(test_search, {&test_union_tree, "Test set union on trees"},
 {&test_intersection_tree, "Test set intersection on trees"},
-{&test_set_negation, "Test set negation"})
+{&test_set_negation, "Test set negation"},
+{&test_sort_same_as_current_sort, "Test sort as same as current sort"},
+{&test_sort_card_name, "Test sort by card name"},
+{&test_sort_card_uuid, "Test sort by card UUID"},
+{&test_sort_card_power, "Test sort by card power"},
+{&test_sort_card_toughness, "Test sort by card toughness"},
+{&test_sort_card_cmc, "Test sory by card cmc"})

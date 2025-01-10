@@ -220,10 +220,8 @@ void mse_sort_search_results(mse_search_result_t *search_res, mse_search_sort_ty
         return;
     }
 
-    search_res->current_sort = sort_type;
-
     int (*sort_fn)(void *, void *) = NULL;
-    switch(search_res->current_sort) {
+    switch(sort_type) {
     case MSE_SORT_CARD_NAME:
         sort_fn = &mse_avl_cmp_card_name;
         break;
@@ -239,7 +237,13 @@ void mse_sort_search_results(mse_search_result_t *search_res, mse_search_sort_ty
     case MSE_SORT_TOUGHNESS:
         sort_fn = &mse_avl_cmp_card_toughness;
         break;
+    case MSE_SORT_END:
+    default:
+        lprintf(LOG_ERROR, "Invalid sort type %d - no sort was completed\n", search_res->current_sort);
+        return;
     }
+
+    search_res->current_sort = sort_type;
 
     if (sort_fn == NULL) {
         return;

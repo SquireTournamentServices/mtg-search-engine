@@ -50,7 +50,8 @@ typedef enum mse_search_sort_type_t {
     MSE_SORT_CMC,
     MSE_SORT_UUID,
     MSE_SORT_POWER,
-    MSE_SORT_TOUGHNESS
+    MSE_SORT_TOUGHNESS,
+    MSE_SORT_END
 } mse_search_sort_type_t;
 
 #define MSE_SORT_DEFAULT MSE_SORT_UUID
