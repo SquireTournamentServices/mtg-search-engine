@@ -51,7 +51,7 @@ COLOUR_GEN_TEST(lt_inc, LT_INC, lt_inc)
 COLOUR_GEN_TEST(gt, GT, gt)
 COLOUR_GEN_TEST(gt_inc, GT_INC, gt_inc)
 COLOUR_GEN_TEST(eq, EQUALS, eq)
-COLOUR_GEN_TEST(inc, INCLUDES, eq)
+COLOUR_GEN_TEST(inc, INCLUDES, gt_inc)
 
 #define COLOUR_IDENTITY_GEN_TEST(op_l, op_u, op) \
 static int test_tree_ci_##op_l(mse_avl_tree_node_t *node, int negate) \

@@ -72,20 +72,20 @@ int mse_avl_cmp_card_cmc(void *a, void *b);
 (__builtin_popcount((a) & (b)) == __builtin_popcount((a)))
 
 #define mse_colour_lt(a, b) \
-(__builtin_popcount((a)) < __builtin_popcount((b)) && __mse_has_max_colours((a), (b)))
+(__builtin_popcount((a)) < __builtin_popcount((b)))
 
 #define mse_colour_lt_inc(a, b) \
-(__builtin_popcount((a)) <= __builtin_popcount((b)) && __mse_has_max_colours((a), (b)))
+(__builtin_popcount((a)) <= __builtin_popcount((b)))
 
 /// Checks that a has the same colours of b at a minimum
 #define __mse_has_colours(a, b) \
 (__builtin_popcount((a) & (b)) == __builtin_popcount((b)))
 
 #define mse_colour_gt(a, b) \
-(__builtin_popcount((a)) > __builtin_popcount((b)) && __mse_has_colours((a), (b)))
+(__builtin_popcount((a)) > __builtin_popcount((b)))
 
 #define mse_colour_gt_inc(a, b) \
-(__builtin_popcount((a)) >= __builtin_popcount((b)) && __mse_has_colours((a), (b)))
+(__builtin_popcount((a)) >= __builtin_popcount((b)))
 
 #define mse_colour_eq(a, b) \
 ((a) == (b))
