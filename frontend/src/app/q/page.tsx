@@ -45,6 +45,8 @@ export default async function SearchResultPage({
 
   const results = data.cards_total;
   const page = data.page ?? parseInt(searchParams.page, 10) ?? -1;
+  const sort = data.sort ?? parseInt(searchParams.page, 10) ?? -1;
+  const sort_asc = data.sort_asc ?? parseInt(searchParams.page, 10) ?? -1;
   const page_size = data.page_size;
   const pages = Math.ceil(results / page_size);
 
@@ -67,7 +69,7 @@ export default async function SearchResultPage({
             .fill(0)
             .map((_, i) => (
               <PageChanger
-                base_url={searchUrlFor(searchParams.query, i + 1)}
+                base_url={searchUrlFor(searchParams.query, i + 1, sort, sort_asc)}
                 page={i + 1}
                 key={i}
               />
