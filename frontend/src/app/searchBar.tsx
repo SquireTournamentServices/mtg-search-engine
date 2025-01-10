@@ -30,7 +30,7 @@ function SearchBar() {
             placeholder="Search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="bg-slate-100 hover:bg-slate-200 rounded-xl w-full px-1"
+            className="bg-slate-100 hover:bg-slate-200 rounded-xl w-full px-2 py-1"
           />
           <button
             type="submit"
