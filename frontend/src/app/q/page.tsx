@@ -45,8 +45,8 @@ export default async function SearchResultPage({
 
   const results = data.cards_total;
   const page = data.page ?? parseInt(searchParams.page, 10) ?? -1;
-  const sort = parseInt(searchParams.page, 10) ?? -1;
-  const sort_asc = parseInt(searchParams.page, 10) ?? -1;
+  const sort = parseInt(searchParams.sort, 10) ?? -1;
+  const sort_asc = parseInt(searchParams.sort_asc, 10) ?? -1;
   const page_size = data.page_size;
   const pages = Math.ceil(results / page_size);
 
