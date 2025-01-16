@@ -49,7 +49,7 @@ add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
 if(NOT WIN32)
   set(CMAKE_C_FLAGS
-      "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -g -Ofast -march=native"
+      "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -Ofast -march=native"
   )
   set(CMAKE_C_FLAGS
       "${CMAKE_C_FLAGS} -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof"
@@ -93,6 +93,9 @@ add_custom_command(
 add_executable(packcc packcc/src/packcc.c)
 
 if(DEBUG)
+  if(NOT WIN32)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+  endif()
   set(PEG_DEBUG "--debug")
 else()
   set(PEG_DEBUG "")
