@@ -200,6 +200,8 @@ set(SRC
     ./mse/re2_wrapper.cpp
     ./mse/query_parser.h
     ./mse/query_parser_internals.c
+    ./mse/levenshtein_difference.h
+    ./mse/levenshtein_difference.c
     ./strptime/strptime.h
     ./strptime/strptime.c
     ${PARSER_SRC}
@@ -249,6 +251,8 @@ set(TESTS
     ./tests/test_re2.c
     ./tests/test_formats.h
     ./tests/test_formats.c
+    ./tests/test_levenshtein_difference.h
+    ./tests/test_levenshtein_difference.c
     ./tests/system_test.h
     ./tests/system_test.c)
 set(WEB_API
