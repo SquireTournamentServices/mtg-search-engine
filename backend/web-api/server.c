@@ -122,7 +122,6 @@ static void __mse_serve_api(struct mg_connection *c,
     params.sort = sort;
     params.sort_asc = sort_asc;
 
-    lprintf(LOG_INFO, "Starting search for '%s', page %d\n", query, page_number);
     if (!(c->fn_data = mse_start_async_query(query, params, mse))) {
         lprintf(LOG_ERROR, "Cannot start async query\n");
         mg_http_reply(c, 500, "", "500 - Internal server error");
@@ -200,7 +199,12 @@ static void __mse_serve(struct mg_connection *c,
         total_query_time += query_time;
 
         if (query_time > 0.1f) {
-            lprintf(LOG_WARNING, "It took %lfs to query '%s'\n", total_query_time, query->query);
+            lprintf(LOG_WARNING, "It took %lfs to query: '%s', sort: %d (asc: %d), page: %d\n",
+                    total_query_time,
+                    query->query,
+                    query->params.sort,
+                    query->params.sort_asc,
+                    query->params.page_number);
         }
 
         mse_async_query_decref(query);
