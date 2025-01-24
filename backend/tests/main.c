@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "../testing_h/testing.h"
+#include "./system_test.h"
 #include "./test_mtg_json.h"
 #include "./test_thread_pool.h"
 #include "./test_uuid.h"
@@ -18,7 +19,7 @@
 #include "./test_save.h"
 #include "./test_re2.h"
 #include "./test_formats.h"
-#include "./system_test.h"
+#include "./test_levenshtein_difference.h"
 
 static int sanity_test()
 {
@@ -27,6 +28,7 @@ static int sanity_test()
 
 SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 {&test_re2, "Test re2 wrapper"},
+{&test_levenshtein_difference, "Test Levenshtein difference"},
 /* Test common funcs and types */
 {&test_uuid, "Test UUID"},
 {&test_io_utils, "Test IO utils"},

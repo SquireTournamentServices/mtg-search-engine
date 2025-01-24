@@ -237,6 +237,10 @@ int {STRING_AS_FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     case {PREFIX}_FORMAT_{format.upper()}:
         return "{format.lower()}";"""
 
+    output_unit += f"""
+    case {PREFIX}_FORMAT_END:
+        return "Invalid format.";
+"""
     output_unit += """
     }
     return "Invalid format.";
@@ -254,6 +258,10 @@ int {STRING_AS_FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     case {PREFIX}_FORMAT_LEGALITIES_{legality.upper()}:
         return "{legality.lower()}";"""
 
+    output_unit += f"""
+    case {PREFIX}_FORMAT_LEGALITIES_END:
+        return "Invalid format.";
+"""
     output_unit += """
     }
     return "Invalid legality.";
