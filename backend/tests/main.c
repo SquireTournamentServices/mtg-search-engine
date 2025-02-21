@@ -20,6 +20,7 @@
 #include "./test_re2.h"
 #include "./test_formats.h"
 #include "./test_levenshtein_difference.h"
+#include "./test_utf8_normalisation.h"
 
 static int sanity_test()
 {
@@ -29,6 +30,7 @@ static int sanity_test()
 SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 {&test_re2, "Test re2 wrapper"},
 {&test_levenshtein_difference, "Test Levenshtein difference"},
+{&test_utf8_normalisation, "Test UTF8 normalisation"},
 /* Test common funcs and types */
 {&test_uuid, "Test UUID"},
 {&test_io_utils, "Test IO utils"},

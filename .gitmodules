@@ -19,3 +19,6 @@
 [submodule "frontend/public/manamoji"]
 	path = frontend/public/manamoji
 	url = https://github.com/scryfall/manamoji-discord.git
+[submodule "backend/utf8proc"]
+	path = backend/utf8proc
+	url = https://github.com/JuliaStrings/utf8proc

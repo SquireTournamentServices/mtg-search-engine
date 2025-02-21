@@ -7,6 +7,7 @@
 #include "mse/interpretor.h"
 #include "mse/query_parser.h"
 #include "mse_query_parser.h"
+#include "mse/utf8_normalisation.h"
 }
 
 %source{
@@ -152,12 +153,15 @@ REGEX_STRING <- '/' ( '\/' / [^/] )+ '/'
 %%
 int mse_parse_input_string(const char* input_string, mse_interp_node_t **root)
 {
+    char *normalised = mse_normalise_utf8(input_string);
+    ASSERT(normalised != NULL);
+
     *root = NULL;
 
     mse_parser_status_t ret;
     memset(&ret, 0, sizeof(ret));
     ret.input_buffer = input_string;
-    ret.input_buffer_len = strlen(input_string);
+    ret.input_buffer_len = strlen(normalised);
 
     mse_context_t *ctx = mse_create(&ret);
     while (ret.error == 0 && mse_parse(ctx, NULL));
@@ -167,8 +171,9 @@ int mse_parse_input_string(const char* input_string, mse_interp_node_t **root)
     __mse_free_parser_status(&ret);
 
     if (ret.error) {
-      lprintf(LOG_ERROR, "Cannot parse '%s'\n", input_string);
+      lprintf(LOG_ERROR, "Cannot parse '%s'\n", normalised);
     }
+    free(normalised);
 
     *root = ret.root;
     ASSERT(root != NULL);

@@ -142,8 +142,10 @@ set(ABSL_LIBS
 
 add_subdirectory(./re2)
 
+add_subdirectory(./utf8proc/)
+
 option(USE_JEMALLOC OFF)
-set(LIBS jansson CURL::libcurl pthread ${ABSL_LIBS} re2)
+set(LIBS jansson CURL::libcurl pthread ${ABSL_LIBS} re2 utf8proc)
 if(USE_JEMALLOC)
   set(LIBS ${LIBS} jemalloc)
 endif()
@@ -205,6 +207,8 @@ set(SRC
     ./mse/query_parser_internals.c
     ./mse/levenshtein_difference.h
     ./mse/levenshtein_difference.c
+    ./mse/utf8_normalisation.h
+    ./mse/utf8_normalisation.c
     ./strptime/strptime.h
     ./strptime/strptime.c
     ${PARSER_SRC}
@@ -256,6 +260,8 @@ set(TESTS
     ./tests/test_formats.c
     ./tests/test_levenshtein_difference.h
     ./tests/test_levenshtein_difference.c
+    ./tests/test_utf8_normalisation.h
+    ./tests/test_utf8_normalisation.c
     ./tests/system_test.h
     ./tests/system_test.c)
 set(WEB_API
