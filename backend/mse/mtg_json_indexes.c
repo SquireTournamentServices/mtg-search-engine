@@ -2,6 +2,7 @@
 #include "../testing_h/testing.h"
 #include "avl_tree.h"
 #include "card_txt_fields_trie.h"
+#include "testing_h/logger.h"
 #include "thread_pool.h"
 #include "mse_formats.h"
 #include <string.h>
@@ -137,8 +138,7 @@ static int __mse_add_card_to_set(mse_card_t * restrict card, mse_avl_tree_node_t
             set_code[MAX_SET_CODE_LEN] = 0;
             memcpy(set_code, card->set_codes[i], sizeof(card->set_codes[i]));
 
-            lprintf(LOG_ERROR, "Cannot find set with code %s for card %s\n", set_code, card->name);
-            return 0;
+            lprintf(LOG_WARNING, "Cannot find set with code %s for card %s\n", set_code, card->name);
         }
     }
     return 1;
