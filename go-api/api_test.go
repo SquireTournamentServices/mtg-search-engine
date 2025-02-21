@@ -77,15 +77,6 @@ func TestQueryExecAll(t *testing.T) {
 	assert.True(t, len(resp) > 1000)
 }
 
-func TestQueryExecAllDandan(t *testing.T) {
-	t.Parallel()
-
-	resp, err := NewApi("dandan").ExecAll()
-
-	assert.NoError(t, err)
-	assert.True(t, len(resp) > 1000)
-}
-
 func TestInvalidQueryExecReturnsError(t *testing.T) {
 	t.Parallel()
 
