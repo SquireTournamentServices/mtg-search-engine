@@ -18,6 +18,12 @@ pipeline {
             }
         }
 
+        stage('Push Frontend') {
+          steps {
+            sh 'docker push localhost:5000/mse-frontend'
+          }
+        }
+
         stage('Build Backend') {
             steps {
               sh 'cd backend && docker build -t mse-backend .'
@@ -25,9 +31,8 @@ pipeline {
             }
         }
 
-        stage('Push images') {
+        stage('Push Backend') {
           steps {
-            sh 'docker push localhost:5000/mse-frontend'
             sh 'docker push localhost:5000/mse-backend'
           }
         }
