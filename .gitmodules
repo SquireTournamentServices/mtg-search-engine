@@ -22,3 +22,6 @@
 [submodule "backend/utf8proc"]
 	path = backend/utf8proc
 	url = https://github.com/JuliaStrings/utf8proc
+[submodule "frontend/public/setmoji"]
+	path = frontend/public/setmoji
+	url = https://github.com/djpiper28/setmoji

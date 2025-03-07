@@ -2,9 +2,10 @@ import Manamoji from "./manamoji";
 import Oracle from "./oracle";
 import Colour from "./colour";
 import { useMemo } from "react";
+import Setmoji from "./setmoji";
 
 const LEGENDARY = "Legendary";
-const MAX_SETS_TO_SHOW = 5;
+const MAX_SETS_TO_SHOW = 10;
 
 export default function Card(props: {
   data: {
@@ -28,13 +29,12 @@ export default function Card(props: {
   }
 
   const sets = useMemo(() => {
-    let sets = props.data.sets;
+    let sets = props.data.sets.map((x) => <Setmoji code={x} />);
     if (sets.length > MAX_SETS_TO_SHOW) {
       sets = sets.slice(0, MAX_SETS_TO_SHOW);
-      sets.push(`(${props.data.sets.length - MAX_SETS_TO_SHOW} more ...)`);
+      sets.push(<p>{props.data.sets.length - MAX_SETS_TO_SHOW} more ...</p>);
     }
-
-    return sets.map((x) => x.toUpperCase()).join(", ");
+    return sets;
   }, [props.data.sets]);
 
   const isLegendary = useMemo(
@@ -80,7 +80,7 @@ export default function Card(props: {
             : ""}
         </p>
       </div>
-      <div className="text-gray-800">Printed in: {sets}</div>
+      <div className="flex flex-row flex-wrap gap-1">{sets}</div>
     </div>
   );
 }
