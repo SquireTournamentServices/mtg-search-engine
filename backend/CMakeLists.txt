@@ -56,34 +56,36 @@ endif()
 # Generated sources
 set(MTG_JSON_FILE ${CMAKE_CURRENT_BINARY_DIR}/AllPrintings.json)
 add_custom_command(
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/download_mtg_json.py
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/codegen/download_mtg_json.py
   OUTPUT ${MTG_JSON_FILE}
-  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/download_mtg_json.py
+  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/codegen/download_mtg_json.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 set(LANG_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.h
                       ${CMAKE_CURRENT_BINARY_DIR}/mse_langs.c)
 add_custom_command(
   DEPENDS ${MTG_JSON_FILE}
-          ${CMAKE_CURRENT_SOURCE_DIR}/generate_languages_files.py
+          ${CMAKE_CURRENT_SOURCE_DIR}/codegen/generate_languages_files.py
   OUTPUT ${LANG_SOURCE_FILES}
-  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_languages_files.py
+  COMMAND python3
+          ${CMAKE_CURRENT_SOURCE_DIR}/codegen/generate_languages_files.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 set(FILTER_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_char_map.h
                         ${CMAKE_CURRENT_BINARY_DIR}/mse_char_map.c)
 add_custom_command(
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/codegen/generate_char_map.py
   OUTPUT ${FILTER_SOURCE_FILES}
-  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_char_map.py
+  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/codegen/generate_char_map.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 set(FORMAT_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/mse_formats.h
                         ${CMAKE_CURRENT_BINARY_DIR}/mse_formats.c)
 add_custom_command(
-  DEPENDS ${MTG_JSON_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/generate_formats.py
+  DEPENDS ${MTG_JSON_FILE}
+          ${CMAKE_CURRENT_SOURCE_DIR}/codegen/generate_formats.py
   OUTPUT ${FORMAT_SOURCE_FILES}
-  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/generate_formats.py
+  COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/codegen/generate_formats.py
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 # Pack CC executable
