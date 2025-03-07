@@ -80,7 +80,9 @@ export default function Card(props: {
             : ""}
         </p>
       </div>
-      <div className="flex flex-row flex-wrap gap-1">{sets}</div>
+      <div className="flex flex-row flex-wrap gap-1">
+        <p>Sets:</p> {sets}
+      </div>
     </div>
   );
 }
