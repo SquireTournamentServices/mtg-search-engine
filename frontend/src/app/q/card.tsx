@@ -29,7 +29,7 @@ export default function Card(props: {
   }
 
   const sets = useMemo(() => {
-    let sets = props.data.sets.map((x) => <Setmoji code={x} />);
+    let sets = props.data.sets.map((x) => <Setmoji code={x} key={x+props.data.name} />);
     if (sets.length > MAX_SETS_TO_SHOW) {
       sets = sets.slice(0, MAX_SETS_TO_SHOW);
       sets.push(<p>{props.data.sets.length - MAX_SETS_TO_SHOW} more ...</p>);
