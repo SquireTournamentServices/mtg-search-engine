@@ -49,10 +49,7 @@ add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
 if(NOT WIN32)
   set(CMAKE_C_FLAGS
-      "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -Ofast -march=native"
-  )
-  set(CMAKE_C_FLAGS
-      "${CMAKE_C_FLAGS} -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof"
+      "-std=gnu11 -Ofast -march=native -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof -Wno-nan-infinity-disabled -Wno-embedded-directive"
   )
 endif()
 
@@ -114,6 +111,7 @@ add_custom_command(
 
 # Packages
 find_package(CURL)
+find_package(OpenSSL)
 
 # Jansson find_package is broken On non-unix systems. find_package(jansson)
 
@@ -143,6 +141,8 @@ set(ABSL_LIBS
 add_subdirectory(./vendor/re2)
 
 add_subdirectory(./vendor/utf8proc/)
+
+add_subdirectory(./vendor/facil.io/)
 
 option(USE_JEMALLOC OFF)
 set(LIBS jansson CURL::libcurl pthread ${ABSL_LIBS} re2 utf8proc)
@@ -282,8 +282,15 @@ if(UNIX)
   option(MSE_DOXYGEN OFF)
   if(MSE_DOXYGEN)
     find_package(doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
-    doxygen_add_docs(mse-docs ${SRC} ${TESTS}
-                     "Generate documentation pages for ${REPO_URL}")
+    doxygen_add_docs(
+      mse-docs
+      ${SRC}
+      ${TESTS}
+      "Generate
+      documentation
+      pages
+      for
+      ${REPO_URL}")
   endif()
 
   option(USE_GCOV ON)
@@ -322,6 +329,8 @@ target_link_libraries(
   mbedtls
   mbedcrypto
   mbedx509
+  OpenSSL::SSL
+  OpenSSL::Crypto
   mtg-search-engine)
 
 # Setup unit tests

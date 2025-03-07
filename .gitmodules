@@ -19,6 +19,9 @@
 [submodule "backend/vendor/utf8proc"]
 	path = backend/vendor/utf8proc
 	url = https://github.com/JuliaStrings/utf8proc
+[submodule "backend/vendor/facil.io"]
+	path = backend/vendor/facil.io
+	url = https://github.com/boazsegev/facil.io
 [submodule "frontend/public/manamoji"]
 	path = frontend/public/manamoji
 	url = https://github.com/scryfall/manamoji-discord.git
