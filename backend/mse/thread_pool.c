@@ -175,7 +175,7 @@ void mse_reset_pool(mse_task_queue_t *queue)
     pthread_mutex_unlock(&queue->lock);
 }
 
-int mse_init_pool(mse_thread_pool_t *p)
+int mse_num_threads()
 {
     // Default count for unsupported platforms
     int cpus = 10;
@@ -188,7 +188,12 @@ int mse_init_pool(mse_thread_pool_t *p)
 #ifdef __unix
     cpus = sysconf(_SC_NPROCESSORS_ONLN);
 #endif
+    return cpus;
+}
 
+int mse_init_pool(mse_thread_pool_t *p)
+{
+    int cpus = mse_num_threads();
     lprintf(LOG_INFO, "Created a thread pool with %d workers\n", cpus);
 
     ASSERT(mse_init_queue(&p->queue));

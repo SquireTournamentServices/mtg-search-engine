@@ -80,3 +80,6 @@ int mse_free_pool(mse_thread_pool_t *p);
 /// it should be polled such that the logic is similar to this:
 /// while (waiting_for_task()) pool_consume();
 void mse_pool_try_consume(mse_thread_pool_t *p);
+
+/// Returns the number of threads that will be spawned by default
+int mse_num_threads();

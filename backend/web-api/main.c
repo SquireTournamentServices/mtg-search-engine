@@ -1,5 +1,5 @@
-#include "../testing_h/testing.h"
-#include "./server.h"
+#include <testing_h/testing.h>
+#include "./facil_server.h"
 
 int main(int argc, char **argv)
 {
@@ -12,7 +12,7 @@ int main(int argc, char **argv)
     }
 
     lprintf(LOG_INFO, "Starting server with cards\n");
-    mse_serve(&mse);
+    mse_serve_facil(&mse);
 
     lprintf(LOG_INFO, "Freeing mse\n");
     mse_free(&mse);

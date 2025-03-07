@@ -49,7 +49,7 @@ add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
 if(NOT WIN32)
   set(CMAKE_C_FLAGS
-      "-std=gnu11 -Ofast -march=native -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof -Wno-nan-infinity-disabled -Wno-embedded-directive"
+      "-std=gnu23 -Ofast -march=native -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -Wno-deprecated-declarations -Wno-newline-eof -Wno-nan-infinity-disabled -Wno-embedded-directive"
   )
 endif()
 
@@ -272,6 +272,8 @@ set(WEB_API
     ./web-api/server.h
     ./web-api/async_query.h
     ./web-api/async_query.c
+    ./web-api/facil_server.c
+    ./web-api/facil_server.h
     ./vendor/mongoose/mongoose.c
     ./vendor/mongoose/mongoose.h)
 
@@ -333,6 +335,7 @@ target_link_libraries(
   mbedx509
   OpenSSL::SSL
   OpenSSL::Crypto
+  facil.io
   mtg-search-engine)
 
 # Setup unit tests
