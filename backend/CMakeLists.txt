@@ -90,7 +90,7 @@ add_custom_command(
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 # Pack CC executable
-add_executable(packcc packcc/src/packcc.c)
+add_executable(packcc vendor/packcc/src/packcc.c)
 
 if(DEBUG)
   if(NOT WIN32)
@@ -125,7 +125,7 @@ set(ABSL_BUILD_TESTING OFF)
 set(ABSL_PROPAGATE_CXX_STD ON)
 set(ABSL_ENABLE_INSTALL ON)
 
-add_subdirectory(./abseil)
+add_subdirectory(./vendor/abseil)
 # find_package(absl)
 set(ABSL_LIBS
     absl::base
@@ -140,9 +140,9 @@ set(ABSL_LIBS
     absl::str_format
     absl::strings)
 
-add_subdirectory(./re2)
+add_subdirectory(./vendor/re2)
 
-add_subdirectory(./utf8proc/)
+add_subdirectory(./vendor/utf8proc/)
 
 option(USE_JEMALLOC OFF)
 set(LIBS jansson CURL::libcurl pthread ${ABSL_LIBS} re2 utf8proc)
@@ -152,11 +152,11 @@ endif()
 
 # Define the sources
 set(SRC
-    ./testing_h/ansi_colour.h
-    ./testing_h/testing.h
-    ./testing_h/testing.c
-    ./testing_h/logger.h
-    ./testing_h/logger.c
+    ./vendor/testing_h/ansi_colour.h
+    ./vendor/testing_h/testing.h
+    ./vendor/testing_h/testing.c
+    ./vendor/testing_h/logger.h
+    ./vendor/testing_h/logger.c
     ./mse/card.h
     ./mse/card.c
     ./mse/card_str_match.h
@@ -209,8 +209,8 @@ set(SRC
     ./mse/levenshtein_difference.c
     ./mse/utf8_normalisation.h
     ./mse/utf8_normalisation.c
-    ./strptime/strptime.h
-    ./strptime/strptime.c
+    ./vendor/strptime/strptime.h
+    ./vendor/strptime/strptime.c
     ${PARSER_SRC}
     ${FILTER_SOURCE_FILES}
     ${LANG_SOURCE_FILES}
@@ -270,8 +270,8 @@ set(WEB_API
     ./web-api/server.h
     ./web-api/async_query.h
     ./web-api/async_query.c
-    ./mongoose/mongoose.c
-    ./mongoose/mongoose.h)
+    ./vendor/mongoose/mongoose.c
+    ./vendor/mongoose/mongoose.h)
 
 # Setup gcovr
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -306,8 +306,10 @@ endif()
 # Add library and cli execs
 add_library(mtg-search-engine OBJECT ${SRC})
 target_link_libraries(mtg-search-engine PRIVATE ${LIBS})
-target_include_directories(mtg-search-engine PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
-                                                    ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(
+  mtg-search-engine
+  PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}
+         ${CMAKE_CURRENT_SOURCE_DIR}/vendor)
 
 add_executable(mtg-search-engine-cli mse/main.c)
 target_link_libraries(mtg-search-engine-cli ${LIBS} mtg-search-engine)

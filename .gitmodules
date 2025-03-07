@@ -1,27 +1,27 @@
-[submodule "backend/testing_h"]
-	path = backend/testing_h
+[submodule "backend/vendor/testing_h"]
+	path = backend/vendor/testing_h
 	url = https://github.com/djpiper28/testing.h
-[submodule "backend/strptime"]
-	path = backend/strptime
+[submodule "backend/vendor/strptime"]
+	path = backend/vendor/strptime
 	url = https://github.com/djpiper28/strptime
-[submodule "backend/mongoose"]
-	path = backend/mongoose
+[submodule "backend/vendor/mongoose"]
+	path = backend/vendor/mongoose
 	url = https://github.com/cesanta/mongoose
-[submodule "backend/re2"]
-	path = backend/re2
+[submodule "backend/vendor/re2"]
+	path = backend/vendor/re2
 	url = https://github.com/google/re2
-[submodule "backend/packcc"]
-	path = backend/packcc
+[submodule "backend/vendor/packcc"]
+	path = backend/vendor/packcc
 	url = https://github.com/arithy/packcc
-[submodule "backend/abseil"]
-	path = backend/abseil
+[submodule "backend/vendor/abseil"]
+	path = backend/vendor/abseil
 	url = https://github.com/abseil/abseil-cpp
+[submodule "backend/vendor/utf8proc"]
+	path = backend/vendor/utf8proc
+	url = https://github.com/JuliaStrings/utf8proc
 [submodule "frontend/public/manamoji"]
 	path = frontend/public/manamoji
 	url = https://github.com/scryfall/manamoji-discord.git
-[submodule "backend/utf8proc"]
-	path = backend/utf8proc
-	url = https://github.com/JuliaStrings/utf8proc
 [submodule "frontend/public/setmoji"]
 	path = frontend/public/setmoji
 	url = https://github.com/djpiper28/setmoji
