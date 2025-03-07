@@ -270,8 +270,8 @@ set(WEB_API
     ./web-api/main.c
     ./web-api/server.c
     ./web-api/server.h
-    ./web-api/async_query.h
-    ./web-api/async_query.c
+    ./web-api/query.h
+    ./web-api/query.c
     ./web-api/facil_server.c
     ./web-api/facil_server.h
     ./vendor/mongoose/mongoose.c

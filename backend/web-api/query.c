@@ -1,4 +1,4 @@
-#include "./async_query.h"
+#include "./query.h"
 #include "../testing_h/testing.h"
 #include <string.h>
 #include <stdlib.h>
@@ -83,7 +83,7 @@ static int __mse_jsonify_card(json_t *json, mse_card_t *card)
 
 static int __mse_jsonify_search_res_impl(mse_search_result_t *res,
         json_t *json,
-        mse_async_query_t *query)
+        mse_query_t *query)
 {
     // Encode the response
     json_t *arr = json_array();
@@ -116,7 +116,7 @@ static int __mse_jsonify_search_res_impl(mse_search_result_t *res,
     return 1;
 }
 
-static int __mse_jsonify_search(mse_async_query_t *query)
+static int __mse_jsonify_search(mse_query_t *query)
 {
     mse_search_result_t res;
     ASSERT(mse_search(query->mse, &res, query->query));
@@ -131,12 +131,23 @@ static int __mse_jsonify_search(mse_async_query_t *query)
     return 1;
 }
 
+#define BILLION ((double) 1000000000L)
+
+int mse_query(mse_query_t *query)
+{
+    int r = __mse_jsonify_search(query);
+    clock_gettime(CLOCK_REALTIME, &query->stop);
+
+    query->query_time_us = (query->mse_query.stop.tv_sec - query->mse_query.start.tv_sec)
+                           + (double) (query->mse_query.stop.tv_nsec - query->mse_query.start.tv_nsec)
+                           / BILLION;
+    return r;
+}
+
 static void __mse_async_query_worker(void *data, struct mse_thread_pool_t *pool)
 {
     mse_async_query_t *query = (mse_async_query_t *) data;
-
-    int r = __mse_jsonify_search(query);
-    clock_gettime(CLOCK_REALTIME, &query->stop);
+    int r = mse_query(&query->mse_query);
 
     pthread_mutex_lock(&query->lock);
     query->ready = 1;
@@ -153,11 +164,11 @@ mse_async_query_t *mse_start_async_query(char *query, mse_query_params_t params,
 
     pthread_mutex_t tmp = PTHREAD_MUTEX_INITIALIZER;
     ret->lock = tmp;
-    ret->params = params;
-    ret->query = query;
+    ret->mse_query.params = params;
+    ret->mse_query.query = query;
+    ret->mse_query.mse = mse;
     ret->ref_count = 2;
-    ret->mse = mse;
-    clock_gettime(CLOCK_REALTIME, &ret->start);
+    clock_gettime(CLOCK_REALTIME, &ret->mse_query.start);
 
     mse_task_t task;
     task.data = ret;
@@ -165,7 +176,7 @@ mse_async_query_t *mse_start_async_query(char *query, mse_query_params_t params,
 
     if (!mse_task_queue_enqueue(&mse->pool.queue, task)) {
         lprintf(LOG_ERROR, "Cannot enqueue task\n");
-        clock_gettime(CLOCK_REALTIME, &ret->stop);
+        clock_gettime(CLOCK_REALTIME, &ret->mse_query.stop);
         mse_async_query_decref(ret);
         return NULL;
     }
@@ -181,6 +192,17 @@ int mse_async_query_poll(mse_async_query_t *query)
     return ready;
 }
 
+void mse_query_free(mse_query_t query)
+{
+    if (query.query != NULL) {
+        free(query.query);
+    }
+
+    if (query.resp != NULL) {
+        free(query.resp);
+    }
+}
+
 void mse_async_query_decref(mse_async_query_t *query)
 {
     pthread_mutex_lock(&query->lock);
@@ -191,13 +213,7 @@ void mse_async_query_decref(mse_async_query_t *query)
         return;
     }
 
-    if (query->query != NULL) {
-        free(query->query);
-    }
-
-    if (query->resp != NULL) {
-        free(query->resp);
-    }
+    mse_query_free(query->mse_query);
 
     pthread_mutex_destroy(&query->lock);
     free(query);

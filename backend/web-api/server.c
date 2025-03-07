@@ -1,5 +1,5 @@
 #include "./server.h"
-#include "./async_query.h"
+#include "./query.h"
 #include "mse_formats.h"
 #include "../mse/search.h"
 #include "../testing_h/testing.h"
@@ -183,28 +183,28 @@ static void __mse_serve(struct mg_connection *c,
             return;
         }
 
-        if (query->err || query->resp == NULL) {
-            lprintf(LOG_ERROR, "Cannot get the response err=%d, resp=%s\n", query->err, query->resp);
+        if (query->err || query->mse_query.resp == NULL) {
+            lprintf(LOG_ERROR, "Cannot get the response err=%d, resp=%s\n", query->err, query->mse_query.resp);
             mg_http_reply(c, 500, "", "500 - Internal server error");
             internal_error_requests++;
         }
-        mg_http_reply(c, 200, "", "%s", query->resp);
+        mg_http_reply(c, 200, "", "%s", query->mse_query.resp);
 
         good_requests++;
         queries++;
 
-        double query_time = (query->stop.tv_sec - query->start.tv_sec)
-                            + (double) (query->stop.tv_nsec - query->start.tv_nsec)
+        double query_time = (query->mse_query.stop.tv_sec - query->mse_query.start.tv_sec)
+                            + (double) (query->mse_query.stop.tv_nsec - query->mse_query.start.tv_nsec)
                             / BILLION;
         total_query_time += query_time;
 
         if (query_time > 0.1f) {
             lprintf(LOG_WARNING, "It took %lfs to query: '%s', sort: %d (asc: %d), page: %d\n",
                     total_query_time,
-                    query->query,
-                    query->params.sort,
-                    query->params.sort_asc,
-                    query->params.page_number);
+                    query->mse_query.query,
+                    query->mse_query.params.sort,
+                    query->mse_query.params.sort_asc,
+                    query->mse_query.params.page_number);
         }
 
         mse_async_query_decref(query);
