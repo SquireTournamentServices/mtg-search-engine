@@ -246,6 +246,7 @@ static int test_colour_cmp_gt()
     ASSERT(mse_colour_gt(MSE_WHITE | MSE_RED, MSE_WHITE));
     ASSERT(!mse_colour_gt(MSE_WHITE, MSE_WHITE));
     ASSERT(!mse_colour_gt(MSE_WHITE | MSE_BLUE, MSE_WHITE | MSE_RED));
+    ASSERT(!mse_colour_gt(MSE_WHITE | MSE_GREEN, MSE_RED));
     ASSERT(mse_colour_gt(MSE_WUBRG, MSE_WHITE | MSE_BLUE));
     return 1;
 }
