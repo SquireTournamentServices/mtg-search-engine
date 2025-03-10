@@ -21,42 +21,40 @@ mse_uuid_t mse_from_string(const char *str, int *status)
     // residue bits to creep in.
     memset(&ret, 0, sizeof(ret));
 
-    size_t j = 0;
-    for (size_t i = 0; j < 2 * sizeof(ret.bytes) && i < len; i++) {
+    size_t str_ptr = 0;
+    size_t bytes_read = 0;
+    for (; bytes_read < 2 * sizeof(ret.bytes) && str_ptr < len; str_ptr++) {
         unsigned char val = 0;
         int has_val = 0;
 
-        if (str[i] == '-') {
+        if (str[str_ptr] == '-') {
             dash_cnt++;
             if (dash_cnt > 4) {
-                lprintf(LOG_ERROR, "UUID %s has too many dashes\n", str);
                 *status = 0;
                 break;
             }
-        } else  if (str[i] >= '0' && str[i] <= '9') {
-            val = str[i] - '0';
+        } else  if (str[str_ptr] >= '0' && str[str_ptr] <= '9') {
+            val = str[str_ptr] - '0';
             has_val = 1;
-        } else if (str[i] >= 'a' && str[i] <= 'f') {
-            val = 10 + str[i] - 'a';
+        } else if (str[str_ptr] >= 'a' && str[str_ptr] <= 'f') {
+            val = 10 + str[str_ptr] - 'a';
             has_val = 1;
-        } else if (str[i] >= 'A' && str[i] <= 'F') {
-            val = 10 + str[i] - 'A';
+        } else if (str[str_ptr] >= 'A' && str[str_ptr] <= 'F') {
+            val = 10 + str[str_ptr] - 'A';
             has_val = 1;
         } else {
-            lprintf(LOG_ERROR, "Cannot read char %c (at %d in %s) as part of a UUID\n", str[i], i, str);
             *status = 0;
             break;
         }
 
         if (has_val) {
-            ret.bytes[j / 2] |= val << (j % 2 ? 0 : 4);
-            j++;
+            ret.bytes[bytes_read / 2] |= val << (bytes_read % 2 ? 0 : 4);
+            bytes_read++;
         }
     }
 
-    if (*status && j != 2 * sizeof(ret.bytes)) {
+    if (bytes_read != 2 * sizeof(ret.bytes) && str_ptr == len - 1) {
         *status = 0;
-        lprintf(LOG_ERROR, "UUID has incorrect length %s - read %lu nibbles\n", str, j);
     }
 
     return ret;
