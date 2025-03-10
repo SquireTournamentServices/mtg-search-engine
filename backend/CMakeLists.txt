@@ -49,10 +49,7 @@ add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
 if(NOT WIN32)
   set(CMAKE_C_FLAGS
-      "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -Ofast -march=native"
-  )
-  set(CMAKE_C_FLAGS
-      "${CMAKE_C_FLAGS} -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof"
+      "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -Ofast -march=native  -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof"
   )
 endif()
 
@@ -279,32 +276,6 @@ set(WEB_API
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake)
 
-if(UNIX)
-  # Setup docs
-  option(MSE_DOXYGEN OFF)
-  if(MSE_DOXYGEN)
-    find_package(doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
-    doxygen_add_docs(mse-docs ${SRC} ${TESTS}
-                     "Generate documentation pages for ${REPO_URL}")
-  endif()
-
-  option(USE_GCOV ON)
-  if(USE_GCOV)
-    include(CodeCoverage)
-    set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c")
-
-    append_coverage_compiler_flags()
-    setup_target_for_coverage_gcovr_xml(
-      NAME
-      mse-coverage
-      EXECUTABLE
-      mtg-search-engine-tests
-      test
-      EXCLUDE
-      ${GCOVR_EXCLUDE})
-  endif()
-endif()
-
 # Add library and cli execs
 add_library(mtg-search-engine OBJECT ${SRC})
 target_link_libraries(mtg-search-engine PRIVATE ${LIBS})
@@ -328,6 +299,31 @@ target_link_libraries(
 
 # Setup unit tests
 if(UNIX)
+  # Setup docs
+  option(MSE_DOXYGEN OFF)
+  if(MSE_DOXYGEN)
+    find_package(doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
+    doxygen_add_docs(mse-docs ${SRC} ${TESTS}
+                     "Generate documentation pages for ${REPO_URL}")
+  endif()
+
+  option(USE_GCOV ON)
+  if(USE_GCOV)
+    include(CodeCoverage)
+    set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c" "vendor/*")
+    link_libraries(-fsanitize=address)
+
+    append_coverage_compiler_flags()
+    setup_target_for_coverage_gcovr_xml(
+      NAME
+      mse-coverage
+      EXECUTABLE
+      mtg-search-engine-tests
+      test
+      EXCLUDE
+      ${GCOVR_EXCLUDE})
+  endif()
+
   add_executable(mtg-search-engine-tests ${TESTS})
   target_link_libraries(mtg-search-engine-tests PUBLIC ${LIBS}
                                                        mtg-search-engine)

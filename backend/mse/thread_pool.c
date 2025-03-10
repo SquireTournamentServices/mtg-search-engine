@@ -225,7 +225,7 @@ int mse_free_pool(mse_thread_pool_t *p)
         ASSERT(pthread_join(p->threads[i], &__ret) == 0);
     }
 
-    // Clear up the IPC  stuff
+    // Clear up the IPC stuff
     pthread_mutex_destroy(&queue->lock);
     sem_destroy(&queue->semaphore);
 
