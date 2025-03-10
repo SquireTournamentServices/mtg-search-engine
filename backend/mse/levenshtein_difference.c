@@ -28,5 +28,7 @@ int levenshtein_difference(char* s1, char* s2)
         }
     }
 
-    return(column[s1len]);
+    int ret = column[s1len];
+    free(column);
+    return ret;
 }
