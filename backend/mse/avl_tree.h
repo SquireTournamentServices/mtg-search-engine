@@ -23,7 +23,7 @@ void mse_print_tree(mse_avl_tree_node_t *root);
 
 int mse_insert_node(mse_avl_tree_node_t **root, mse_avl_tree_node_t *node);
 
-/// Returns 1 if the payload is in the tree, otherwise 0
+/// Returns a ptr if the payload is in the tree, otherwise NULL
 mse_avl_tree_node_t *mse_find_payload(mse_avl_tree_node_t *node, void *payload);
 
 /// Returns how many elements are in a tree

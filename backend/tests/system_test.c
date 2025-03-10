@@ -84,6 +84,17 @@ static int test_invalid_queries(mse_t *state)
     return 1;
 }
 
+static int test_card_id_lookup_invalid(mse_t *state)
+{
+    mse_card_t *card = NULL;
+    // Should fail to find
+    ASSERT(mse_card_by_id(state, "78b7b790-a045-4d7c-8a6b-40f9a198c503", &card));
+    ASSERT(mse_card_by_id(state, "Cannot parse uuid", &card));
+    ASSERT(mse_card_by_id(state, "", &card));
+    ASSERT(mse_card_by_id(state, "asdasadasdasdahsdahdjkashdajskdhasjkdhakjsdhasjkdhaskjdhajksdhasjkdhakjdhasjkdhakjsdhajskdhasjd TOO LONG", &card));
+    return 1;
+}
+
 int test_system()
 {
     // Test that it is downloaded
@@ -107,6 +118,10 @@ int test_system()
 
     lprintf(LOG_INFO, "Testing invalid queries\n");
     ASSERT(test_invalid_queries(&state));
+
+    lprintf(LOG_INFO, "Testing card by ID invalid lookups\n");
+    ASSERT(test_card_id_lookup_invalid(&state));
+
     mse_free(&state);
     return 1;
 }
