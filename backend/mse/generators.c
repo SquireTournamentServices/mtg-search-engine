@@ -26,9 +26,8 @@ int mse_init_set_generator(mse_set_generator_t *ret,
     ret->argument = malloc(buf_len);
     ASSERT(ret->argument != NULL);
 
-    // strlcpy is not defined :(
-    memset(ret->argument, 0, buf_len);
-    memcpy(ret->argument, argument, len);
+    strcpy(ret->argument, argument);
+    ret->argument[len] = 0;
     return 1;
 }
 
