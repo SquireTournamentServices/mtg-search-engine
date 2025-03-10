@@ -82,10 +82,10 @@ int mse_avl_cmp_card_cmc(void *a, void *b);
 (__builtin_popcount((a) & (b)) == __builtin_popcount((b)))
 
 #define mse_colour_gt(a, b) \
-(__builtin_popcount((a)) > __builtin_popcount((b)) && mse_has_colours(a, b))
+(__builtin_popcount((a)) > __builtin_popcount((b)) && __mse_has_colours(a, b))
 
 #define mse_colour_gt_inc(a, b) \
-(__builtin_popcount((a)) >= __builtin_popcount((b)) && mse_has_colours(a, b))
+(__builtin_popcount((a)) >= __builtin_popcount((b)) && __mse_has_colours(a, b))
 
 #define mse_colour_eq(a, b) \
 ((a) == (b))
