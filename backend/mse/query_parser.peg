@@ -14,7 +14,7 @@
 #include "testing_h/testing.h"
 #undef lprintf
 #define lprintf fprintf(LOG_STREAM, "(" ANSI_YELLOW "%s" ANSI_RESET \
-                        ":" ANSI_YELLOW "%d" ANSI_RESET ") \t", __FILE__, __LINE__ ),\
+                        ":" ANSI_YELLOW "%d" ANSI_RESET ") \t", ___FNANE, __LINE__ ),\
                         __lprintf
 #define PARSE_ASSERT(result, x) if (!(x)) \
 { \
