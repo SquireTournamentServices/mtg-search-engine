@@ -1,4 +1,4 @@
-#include "../testing_h/testing.h"
+#include <testing_h/testing.h>
 #include "./server.h"
 
 int main(int argc, char **argv)

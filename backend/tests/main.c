@@ -21,6 +21,7 @@
 #include "./test_formats.h"
 #include "./test_levenshtein_difference.h"
 #include "./test_utf8_normalisation.h"
+#include "./test_async_query.h"
 
 static int sanity_test()
 {
@@ -51,6 +52,7 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 {&test_generators, "Test generators"},
 {&test_interpretor, "Test interpretor"},
 {&test_parser, "Test parser"},
+{&test_async_query, "Test async query"},
 {&test_system, "System Test"})
 
 int main(int argc, char** argv)

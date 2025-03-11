@@ -337,7 +337,7 @@ int __mse_generate_indexes(mse_all_printings_cards_t * restrict ret, mse_thread_
     size_t len = TASK_COUNT(tasks);
     lprintf(LOG_INFO, "Generating %lu indexes\n", len
             // Colour and colour identity indexes
-            + (0x11111 * 7 * 2)
+            + (32 * 7 * 2)
             // Format legality indexes
             + (MSE_FORMAT_END * MSE_FORMAT_LEGALITIES_END)
            );

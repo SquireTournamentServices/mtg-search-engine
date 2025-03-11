@@ -208,6 +208,8 @@ set(SRC
     ./mse/levenshtein_difference.c
     ./mse/utf8_normalisation.h
     ./mse/utf8_normalisation.c
+    ./mse/async_query.h
+    ./mse/async_query.c
     ./vendor/strptime/strptime.h
     ./vendor/strptime/strptime.c
     ${PARSER_SRC}
@@ -261,16 +263,12 @@ set(TESTS
     ./tests/test_levenshtein_difference.c
     ./tests/test_utf8_normalisation.h
     ./tests/test_utf8_normalisation.c
+    ./tests/test_async_query.h
+    ./tests/test_async_query.c
     ./tests/system_test.h
     ./tests/system_test.c)
-set(WEB_API
-    ./web-api/main.c
-    ./web-api/server.c
-    ./web-api/server.h
-    ./web-api/async_query.h
-    ./web-api/async_query.c
-    ./vendor/mongoose/mongoose.c
-    ./vendor/mongoose/mongoose.h)
+set(WEB_API ./web-api/main.c ./web-api/server.c ./web-api/server.h
+            ./vendor/mongoose/mongoose.c ./vendor/mongoose/mongoose.h)
 
 # Setup gcovr
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
