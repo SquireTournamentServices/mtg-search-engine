@@ -317,7 +317,6 @@ if(UNIX)
       mse-coverage
       EXECUTABLE
       mtg-search-engine-tests
-      test
       EXCLUDE
       ${GCOVR_EXCLUDE})
   endif()
