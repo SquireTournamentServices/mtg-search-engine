@@ -28,8 +28,8 @@ static int sanity_test()
     return 1;
 }
 
-SUB_TEST(tests, {&sanity_test, "Sanity Test"},
-         /* Test common funcs and types */
+MAIN_TEST(tests, {&sanity_test, "Sanity Test"},
+          /* Test common funcs and types */
 {&test_re2, "Test re2 wrapper"},
 {&test_levenshtein_difference, "Test Levenshtein difference"},
 {&test_utf8_normalisation, "Test UTF8 normalisation"},
@@ -58,7 +58,7 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 int main(int argc, char** argv)
 {
     tzset();
-    int res = tests();
+    int res = tests(argc, argv);
     if (argc > 1) {
         return 0;
     } else {
