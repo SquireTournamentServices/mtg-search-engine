@@ -21,14 +21,15 @@
 #include "./test_formats.h"
 #include "./test_levenshtein_difference.h"
 #include "./test_utf8_normalisation.h"
+#include "./test_async_query.h"
 
 static int sanity_test()
 {
     return 1;
 }
 
-SUB_TEST(tests, {&sanity_test, "Sanity Test"},
-/* Test common funcs and types */
+MAIN_TEST(tests, {&sanity_test, "Sanity Test"},
+          /* Test common funcs and types */
 {&test_re2, "Test re2 wrapper"},
 {&test_levenshtein_difference, "Test Levenshtein difference"},
 {&test_utf8_normalisation, "Test UTF8 normalisation"},
@@ -51,12 +52,13 @@ SUB_TEST(tests, {&sanity_test, "Sanity Test"},
 {&test_generators, "Test generators"},
 {&test_interpretor, "Test interpretor"},
 {&test_parser, "Test parser"},
+{&test_async_query, "Test async query"},
 {&test_system, "System Test"})
 
 int main(int argc, char** argv)
 {
     tzset();
-    int res = tests();
+    int res = tests(argc, argv);
     if (argc > 1) {
         return 0;
     } else {

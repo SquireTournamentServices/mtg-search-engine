@@ -1,5 +1,5 @@
 #pragma once
-#include "../mse/search.h"
+#include "./search.h"
 #include <pthread.h>
 #include <mse/mse.h>
 #include <time.h>
@@ -7,14 +7,18 @@
 #define MSE_PAGE_SIZE (13 * 4)
 
 typedef struct mse_query_params_t {
+    /// 0 bound
     int page_number;
     mse_search_sort_type_t sort;
+    /// 0 = desc, 1  = asc
     int sort_asc;
 } mse_query_params_t;
 
+/// Async query, used in ../web-api/
 typedef struct mse_async_query_t {
     int ref_count;
     char *query;
+    /// JSON encoded search results
     char *resp;
     mse_query_params_t params;
     int ready;
@@ -25,7 +29,7 @@ typedef struct mse_async_query_t {
 } mse_async_query_t;
 
 /// Inits and starts a query, sets the ref count to 2 (1 for the caller and 1 for the worker)
-/// Query now belongs to the returned objected (if it is not null)
+/// Query now belongs to the returned objected (if it is not null) and will be free() ed
 mse_async_query_t *mse_start_async_query(char *query,
         mse_query_params_t params,
         mse_t *mse);

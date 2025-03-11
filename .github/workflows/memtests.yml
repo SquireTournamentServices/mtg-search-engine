@@ -46,6 +46,8 @@ jobs:
         
     - name: Run Tests and Coverage
       shell: bash
+      env:
+        MSE_TEST: 1
       run: |
         cd backend
         mkdir -p build
@@ -53,5 +55,5 @@ jobs:
         rm -rf *
         cmake .. -DCMAKE_BUILD_TYPE=TEST "-DCMAKE_C_COMPILER=/bin/gcc" "-DCMAKE_CXX_COMPILER=/bin/g++"
         cmake --build . -j
-        MSE_TEST=1 ctest -V
+        bash mem_tests.sh
     

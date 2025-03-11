@@ -13,7 +13,7 @@ def tests():
     )
 
     p = subprocess.Popen(
-        f"valgrind --num-callers=25 {VALGRIND_OPTS} ./{TEST_EXEC_NAME}",
+        f"valgrind --num-callers=25 {VALGRIND_OPTS} ./{TEST_EXEC_NAME} {sys.argv[1]}",
         shell=True,
         bufsize=4096,
         stdin=subprocess.PIPE,

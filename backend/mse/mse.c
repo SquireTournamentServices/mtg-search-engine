@@ -1,8 +1,10 @@
 #include "./mse.h"
+#include "./avl_tree.h"
 #include "./query_parser.h"
 #include "./interpretor.h"
 #include "./save.h"
 #include "../testing_h/testing.h"
+#include "uuid.h"
 #include <string.h>
 #include <time.h>
 
@@ -77,4 +79,22 @@ void mse_free(mse_t *state)
     mse_free_all_printings_cards(&state->cards);
     mse_free_pool(&state->pool);
     memset(state, 0, sizeof(*state));
+}
+
+int mse_card_by_id(mse_t *state, const char *id, mse_card_t **res)
+{
+    *res = NULL;
+
+    int status = 0;
+    mse_card_t proxy_card;
+    memset(&proxy_card, 0, sizeof(proxy_card));
+    proxy_card.id = mse_from_string(id, &status);
+    ASSERT(status);
+
+    mse_avl_tree_node_t *card_node = mse_find_payload(state->cards.card_tree, &proxy_card);
+    ASSERT(card_node != NULL);
+
+    *res = (mse_card_t *) card_node->payload;
+
+    return 1;
 }

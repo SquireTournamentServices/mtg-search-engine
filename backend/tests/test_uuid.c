@@ -70,10 +70,10 @@ static int test_uuid_from_string_invalid()
     uuid = mse_from_string("ef37a292-7f41-44db-820e-b3a6bf928902e43a36e0-89ff-43cb-8b35-960e37468623", &status);
     ASSERT(status == 0);
 
-    uuid = mse_from_string("630633f2-183f-4120-b534-2b64f70c95e2", &status);
+    uuid = mse_from_string("6306g3f2-183f-4120-b534-2b64f70c95e2", &status);
     ASSERT(status == 0);
 
-    uuid = mse_from_string("e630633f2-183f-4120-b534-2b64f70c95e", &status);
+    uuid = mse_from_string("c54a65ee-a6e5-4895-ba77-89cb5655fed", &status);
     ASSERT(status == 0);
 
     return 1;
@@ -135,7 +135,7 @@ static int test_get_set_code()
     ASSERT(mse_get_set_code("", &code) == 0);
     ASSERT(mse_get_set_code(
                "Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
-               &code) == 0);
+    &code) == 0);
 
     ASSERT(mse_get_set_code(SET_SHORT, &code));
     ASSERT(strncmp((char *) code, SET_SHORT, sizeof(code)) == 0);
@@ -166,6 +166,20 @@ static int test_min_uuid()
     return 1;
 }
 
+#define UUID_3_STR "f2d39b0a-7929-4789-a7ba-1c640f605a93"
+static int test_uuid_str_round_trip()
+{
+    int status = 0;
+    mse_uuid_t uuid = mse_from_string(UUID_3_STR, &status);
+    ASSERT(status == 1);
+
+    char *uuid_str = mse_uuid_as_string(uuid);
+    ASSERT(uuid_str != NULL);
+    ASSERT(strcmp(UUID_3_STR, uuid_str) == 0);
+    free(uuid_str);
+    return 1;
+}
+
 SUB_TEST(test_uuid, {&test_uuid_read_write, "UUID read and, write"},
 {&test_uuid_from_string, "UUID from string"},
 {&test_uuid_from_string_invalid, "UUID from string - invalid"},
@@ -173,4 +187,5 @@ SUB_TEST(test_uuid, {&test_uuid_read_write, "UUID read and, write"},
 {&test_uuid_cmp, "Test UUID compare"},
 {&test_get_set_code, "Test set code read function"},
 {&test_max_uuid, "Test max UUID"},
-{&test_min_uuid, "Test min UUID"})
+{&test_min_uuid, "Test min UUID"},
+{&test_uuid_str_round_trip, "Test UUID to string, and from string round trip"})

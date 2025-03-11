@@ -1,3 +1,4 @@
+#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -204,12 +205,14 @@ int mse_init_pool(mse_thread_pool_t *p)
 
 int mse_free_pool(mse_thread_pool_t *p)
 {
-    lprintf(LOG_INFO, "Stopping all worker threads\n");
+    lprintf(LOG_INFO, "Stopping all worker threads...\n");
     ASSERT(p != NULL);
 
     // Local alias for the queue
     mse_task_queue_t *queue = &p->queue;
+    pthread_mutex_lock(&queue->lock);
     p->running = 0;
+    pthread_mutex_unlock(&queue->lock);
 
     // Empty the queue
     mse_reset_pool(queue);
@@ -220,6 +223,7 @@ int mse_free_pool(mse_thread_pool_t *p)
     }
 
     // Slaughter all threads
+    lprintf(LOG_INFO, "Joining all worker threads...\n");
     for (size_t i = 0; i < p->threads_count; i++) {
         void *__ret;
         ASSERT(pthread_join(p->threads[i], &__ret) == 0);
@@ -231,5 +235,6 @@ int mse_free_pool(mse_thread_pool_t *p)
 
     free(p->threads);
     memset(p, 0, sizeof * p);
+    lprintf(LOG_INFO, "Thread pool cleaned.\n");
     return 1;
 }

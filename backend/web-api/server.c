@@ -1,9 +1,9 @@
 #include "./server.h"
-#include "./async_query.h"
-#include "mse_formats.h"
-#include "../mse/search.h"
-#include "../testing_h/testing.h"
-#include "../mongoose/mongoose.h"
+#include <mse_formats.h>
+#include <testing_h/testing.h>
+#include <mongoose/mongoose.h>
+#include <mse/search.h>
+#include <mse/async_query.h>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
