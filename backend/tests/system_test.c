@@ -104,10 +104,11 @@ static int test_card_id_lookup_invalid(mse_t *state)
 {
     mse_card_t *card = NULL;
     // Should fail to find
-    ASSERT(mse_card_by_id(state, "78b7b790-a045-4d7c-8a6b-40f9a198c503", &card));
-    ASSERT(mse_card_by_id(state, "Cannot parse uuid", &card));
-    ASSERT(mse_card_by_id(state, "", &card));
-    ASSERT(mse_card_by_id(state, "asdasadasdasdahsdahdjkashdajskdhasjkdhakjsdhasjkdhaskjdhajksdhasjkdhakjdhasjkdhakjsdhajskdhasjd TOO LONG", &card));
+    ASSERT(mse_card_by_id(state, "78b7b790-a045-4d7c-8a6b-40f9a198c503", &card) == 0);
+    ASSERT(mse_card_by_id(state, "Cannot parse uuid", &card) == 0);
+    ASSERT(mse_card_by_id(state, "", &card) == 0);
+    ASSERT(mse_card_by_id(state, "asdasadasdasdahsdahdjkashdajskdhasjkdhakjsdhasjkdhaskjdhajksdhasjkdhakjdhasjkdhakjsdhajskdhasjd TOO LONG", &card) == 0);
+    ASSERT(card == NULL);
     return 1;
 }
 
