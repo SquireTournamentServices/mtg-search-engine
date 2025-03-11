@@ -7,14 +7,18 @@
 #define MSE_PAGE_SIZE (13 * 4)
 
 typedef struct mse_query_params_t {
+    /// 0 bound
     int page_number;
     mse_search_sort_type_t sort;
+    /// 0 = desc, 1  = asc
     int sort_asc;
 } mse_query_params_t;
 
+/// Async query, used in ../web-api/
 typedef struct mse_async_query_t {
     int ref_count;
     char *query;
+    /// JSON encoded search results
     char *resp;
     mse_query_params_t params;
     int ready;

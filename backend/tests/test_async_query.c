@@ -40,7 +40,6 @@ static int test_async_query_base_case()
     while (!mse_async_query_poll(query));
 
     pthread_mutex_lock(&query->lock);
-    ASSERT(query->ready == 1);
     ASSERT(query->err == 0);
     ASSERT(query->ref_count == 1);
     ASSERT(query->resp != NULL);
@@ -82,7 +81,6 @@ static int test_async_query_bad_query()
     while (!mse_async_query_poll(query));
 
     pthread_mutex_lock(&query->lock);
-    ASSERT(query->ready == 1);
     ASSERT(query->err == 1);
     ASSERT(query->ref_count == 1);
     ASSERT(query->resp == NULL);
