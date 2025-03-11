@@ -29,6 +29,7 @@ static int test_format_enum_to_str()
 {
     for (mse_formats_t format = 0; format < MSE_FORMAT_END; format++) {
         const char *format_str = mse_formats_t_as_str(format);
+        ASSERT(format_str != NULL);
 
         mse_formats_t format_lookup;
         ASSERT(mse_str_as_mse_formats_t(format_str, &format_lookup));

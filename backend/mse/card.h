@@ -42,9 +42,11 @@ typedef struct mse_card_t {
     size_t set_codes_count;
     mse_set_code_t *set_codes;
     mse_card_format_legalities_t format_legalities;
+    /// Contains all of the cards information in JSON already, for use with APIs
+    json_t *json;
 } mse_card_t;
 
-// As this is a library to search cards all the trees that this uses are trees whose payloads are cards.
+/// As this is a library to search cards all the trees that this uses are trees whose payloads are cards.
 #define MSE_CARD_DEFAULT_COMPARE_FUNCTION &mse_avl_cmp_card
 #define MSE_CARD_DEFAULT_FREE_FUNCTION NULL
 

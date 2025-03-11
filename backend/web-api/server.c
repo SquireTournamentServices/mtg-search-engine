@@ -1,4 +1,5 @@
 #include "./server.h"
+#include <jansson.h>
 #include <mse_formats.h>
 #include <testing_h/testing.h>
 #include <mongoose/mongoose.h>
@@ -20,6 +21,7 @@ static size_t good_requests = 0;
 static size_t internal_error_requests = 0;
 static size_t user_error_requests = 0;
 static size_t queries = 0;
+static size_t card_lookups = 0;
 static double total_query_time = 0;
 
 static int __mse_get_page_number(struct mg_http_message *hm)
@@ -129,6 +131,54 @@ static void __mse_serve_api(struct mg_connection *c,
     }
 }
 
+static void __mse_serve_card_by_id(struct mg_connection *c,
+                                   int event,
+                                   void *ev_data)
+{
+    struct mg_http_message *hm = (struct mg_http_message *) ev_data;
+
+    if (hm->body.len == 0) {
+        mg_http_reply(c, 400, "", "400 - Empty request body");
+        user_error_requests++;
+        return;
+    }
+
+    char *id = malloc(hm->body.len + 1);
+    if (id == NULL) {
+        lprintf(LOG_ERROR, "Cannot alloc id string\n");
+        mg_http_reply(c, 500, "", "500 - Internal server error");
+        internal_error_requests++;
+        return;
+    }
+
+    strncpy(id, hm->body.buf, hm->body.len);
+    id[hm->body.len] = 0;
+
+    mse_card_t *card = NULL;
+    int success = mse_card_by_id(mse, id, &card);
+    free(id);
+
+    if (!success) {
+        lprintf(LOG_ERROR, "Cannot lookup card by id: %s", id);
+        mg_http_reply(c, 500, "", "500 - Internal server error");
+        internal_error_requests++;
+        return;
+    }
+
+    char *json = json_dumps(card->json, 0);
+    if (json != NULL) {
+        mg_http_reply(c, 500, "", "%s", json);
+        card_lookups++;
+        good_requests++;
+        free(json);
+    } else {
+        lprintf(LOG_ERROR, "Cannot lookup card by id: %s", id);
+        mg_http_reply(c, 500, "", "500 - Internal server error");
+        internal_error_requests++;
+        return;
+    }
+}
+
 static void __mse_serve_github(struct mg_connection *c,
                                int event,
                                void *ev_data)
@@ -143,13 +193,14 @@ static void __mse_serve_metrics(struct mg_connection *c,
                                 int event,
                                 void *ev_data)
 {
-    mg_http_reply(c, 200, "", "mse_requests %lu\nmse_good_requests %lu\nmse_interal_error_requests %lu\nmse_user_error_requests %lu\nmse_total_queries %lu\nmse_total_query_time_s %lf",
+    mg_http_reply(c, 200, "", "mse_requests %lu\nmse_good_requests %lu\nmse_interal_error_requests %lu\nmse_user_error_requests %lu\nmse_total_queries %lu\nmse_total_query_time_s %lf\nmse_total_card_lookups %lu",
                   requests,
                   good_requests,
                   internal_error_requests,
                   user_error_requests,
                   queries,
-                  total_query_time);
+                  total_query_time,
+                  card_lookups);
     good_requests++;
 }
 
@@ -162,12 +213,14 @@ static void __mse_serve(struct mg_connection *c,
         requests++;
     } else if (event == MG_EV_HTTP_MSG) {
         struct mg_http_message *hm = (struct mg_http_message *) ev_data;
-        if (mg_match(hm->uri, mg_str("/"), NULL)) {
+        if (mg_match(hm->uri, mg_str("/api"), NULL)) {
+            __mse_serve_api(c, event, ev_data);
+        } else if (mg_match(hm->uri, mg_str("/card_id"), NULL)) {
+            __mse_serve_api(c, event, ev_data);
+        } else if (mg_match(hm->uri, mg_str("/"), NULL)) {
             __mse_serve_index(c, event, ev_data);
         } else if (mg_match(hm->uri, mg_str("/github"), NULL)) {
             __mse_serve_github(c, event, ev_data);
-        } else if (mg_match(hm->uri, mg_str("/api"), NULL)) {
-            __mse_serve_api(c, event, ev_data);
         } else if (mg_match(hm->uri, mg_str("/formats"), NULL)) {
             mg_http_reply(c, 200, "", MSE_FORMATS_JSON);
             good_requests++;
