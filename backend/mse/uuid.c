@@ -124,11 +124,9 @@ static int __to_hex(unsigned char c)
 //                    --------8----3----8----3------------
 #define EXAMPLE_UUID "7c58134f-8116-4d49-9023-3152d114b590"
 
-static const size_t uuid_str_len = strlen(EXAMPLE_UUID);
-
 char *mse_uuid_as_string(mse_uuid_t uuid)
 {
-    char *res = (char *) malloc(uuid_str_len + 1);
+    char *res = (char *) malloc(sizeof(EXAMPLE_UUID));
     if (res == NULL) {
         return res;
     }
