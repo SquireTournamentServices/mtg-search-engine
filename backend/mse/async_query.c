@@ -165,7 +165,6 @@ mse_async_query_t *mse_start_async_query(char *query, mse_query_params_t params,
 
     if (!mse_task_queue_enqueue(&mse->pool.queue, task)) {
         lprintf(LOG_ERROR, "Cannot enqueue task\n");
-        clock_gettime(CLOCK_REALTIME, &ret->stop);
         mse_async_query_decref(ret);
         return NULL;
     }
