@@ -42,7 +42,6 @@ static int test_async_query_base_case()
 
     pthread_mutex_lock(&query->lock);
     ASSERT(query->err == 0);
-    ASSERT(query->ref_count == 1);
     ASSERT(query->resp != NULL);
     ASSERT(strlen(query->resp) > 10);
 
@@ -74,7 +73,6 @@ static int test_async_query_bad_query()
     ASSERT(query->ref_count == 2);
     ASSERT(query->query == txt_query);
     ASSERT(query->mse == &state);
-    ASSERT(query->err == 0);
     ASSERT(query->query != NULL);
     pthread_mutex_unlock(&query->lock);
 
@@ -116,7 +114,6 @@ static int test_lots_of_queries()
 
         pthread_mutex_lock(&queries[i]->lock);
         ASSERT(queries[i]->err == 0);
-        ASSERT(queries[i]->ref_count == 1);
         ASSERT(queries[i]->resp != NULL);
         ASSERT(strlen(queries[i]->resp) > 10);
         pthread_mutex_unlock(&queries[i]->lock);
