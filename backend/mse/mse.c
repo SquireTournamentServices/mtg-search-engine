@@ -84,7 +84,7 @@ void mse_free(mse_t *state)
 int mse_card_by_id(mse_t *state, const char *id, mse_card_t **res)
 {
     *res = NULL;
-    
+
     int status = 0;
     mse_card_t proxy_card;
     memset(&proxy_card, 0, sizeof(proxy_card));

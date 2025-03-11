@@ -6,24 +6,16 @@
 mse_uuid_t mse_from_string(const char *str, int *status)
 {
     mse_uuid_t ret;
-    memset(&ret, 0, sizeof(ret));
-    if (str == NULL) {
-        *status = 0;
-        lprintf(LOG_ERROR, "Cannot parse NULL string\n");
-        return ret;
-    }
-
-    size_t len = strlen(str);
-    int dash_cnt = 0;
-    *status = 1;
-
     // The values must be zeroed to make sure that the assignment using |= does not cause
     // residue bits to creep in.
     memset(&ret, 0, sizeof(ret));
 
+    size_t len = strlen(str);
+    int dash_cnt = 0;
+
     size_t str_ptr = 0;
-    size_t bytes_read = 0;
-    for (; bytes_read < 2 * sizeof(ret.bytes) && str_ptr < len; str_ptr++) {
+    size_t nibbles_read = 0;
+    for (; nibbles_read < 2 * sizeof(ret.bytes) && str_ptr < len; str_ptr++) {
         unsigned char val = 0;
         int has_val = 0;
 
@@ -48,13 +40,15 @@ mse_uuid_t mse_from_string(const char *str, int *status)
         }
 
         if (has_val) {
-            ret.bytes[bytes_read / 2] |= val << (bytes_read % 2 ? 0 : 4);
-            bytes_read++;
+            ret.bytes[nibbles_read / 2] |= val << (nibbles_read % 2 ? 0 : 4);
+            nibbles_read++;
         }
     }
 
-    if (bytes_read != 2 * sizeof(ret.bytes) && str_ptr == len - 1) {
+    if (nibbles_read != 2 * sizeof(ret.bytes) || str_ptr != len) {
         *status = 0;
+    } else {
+        *status = 1;
     }
 
     return ret;
@@ -113,4 +107,41 @@ mse_uuid_t mse_min_uuid()
     mse_uuid_t ret;
     memset(ret.bytes, 0, sizeof(ret.bytes));
     return ret;
+}
+
+static int __to_hex(unsigned char c)
+{
+    if (c >= 0xa) {
+        return 'a' + (c - 0xa);
+    } else {
+        return '0' + c;
+    }
+}
+
+#define NIBBLE_MASK 0xF
+
+//                    000000000011111111112222222222333333
+//                    --------8----3----8----3------------
+#define EXAMPLE_UUID "7c58134f-8116-4d49-9023-3152d114b590"
+
+static const size_t uuid_str_len = strlen(EXAMPLE_UUID);
+
+char *mse_uuid_as_string(mse_uuid_t uuid)
+{
+    char *res = (char *) malloc(uuid_str_len + 1);
+    if (res == NULL) {
+        return res;
+    }
+
+    for (size_t i = 0, j = 0; i < sizeof(uuid.bytes); i++) {
+        if (j == 8 || j == 13 || j == 18 || j == 23) {
+            res[j++] = '-';
+        }
+
+        res[j++] = __to_hex((uuid.bytes[i] >> 4) & NIBBLE_MASK);
+        res[j++] = __to_hex(uuid.bytes[i] & NIBBLE_MASK);
+    }
+
+    res[sizeof(EXAMPLE_UUID) - 1] = 0;
+    return res;
 }

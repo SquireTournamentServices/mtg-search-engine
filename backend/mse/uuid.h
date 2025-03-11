@@ -37,3 +37,5 @@ mse_uuid_t mse_max_uuid();
 
 /// Gets the minimum UUID, similar to mse_max_uuid
 mse_uuid_t mse_min_uuid();
+
+char *mse_uuid_as_string(mse_uuid_t uuid);
