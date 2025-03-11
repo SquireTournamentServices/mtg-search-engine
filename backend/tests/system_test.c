@@ -5,6 +5,21 @@
 #include <string.h>
 #include <unistd.h>
 
+static int __test_query_output_cards_can_be_queried(mse_t *state, mse_search_result_t res)
+{
+    for (size_t i = 0; i < res.cards_length; i++) {
+        mse_card_t *card = res.cards[i];
+        char *id_str = mse_uuid_as_string(card->id);
+        ASSERT(id_str != NULL);
+
+        mse_card_t *card_found = NULL;
+        ASSERT(mse_card_by_id(state, id_str, &card_found));
+        ASSERT(card == card_found);
+        free(id_str);
+    }
+    return 1;
+}
+
 static int test_valid_queries(mse_t *state)
 {
     FILE *f = fopen("./valid_queries.txt", "r");
@@ -35,6 +50,7 @@ static int test_valid_queries(mse_t *state)
 
         mse_search_result_t res;
         ASSERT(mse_search(state, &res, buffer));
+        ASSERT(__test_query_output_cards_can_be_queried(state, res))
         mse_sort_search_results(&res, MSE_SORT_POWER);
         mse_free_search_results(&res);
     }

@@ -28,7 +28,7 @@ static int sanity_test()
 }
 
 SUB_TEST(tests, {&sanity_test, "Sanity Test"},
-/* Test common funcs and types */
+         /* Test common funcs and types */
 {&test_re2, "Test re2 wrapper"},
 {&test_levenshtein_difference, "Test Levenshtein difference"},
 {&test_utf8_normalisation, "Test UTF8 normalisation"},
