@@ -313,11 +313,7 @@ if(UNIX)
 
     append_coverage_compiler_flags()
     setup_target_for_coverage_gcovr_xml(
-      NAME
-      mse-coverage
-      EXECUTABLE
-      mtg-search-engine-tests
-      EXCLUDE
+      NAME mse-coverage EXECUTABLE mtg-search-engine-tests EXCLUDE
       ${GCOVR_EXCLUDE})
   endif()
 
