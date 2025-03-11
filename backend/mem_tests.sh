@@ -1,5 +1,4 @@
 #!/bin/bash
 
-# Change later to reset the state of the tests folder
-python3 mem_tests.py
+./mtg-search-engine-tests help | grep "|" | grep -v "Arg | Description" | xargs -n1 python3 mem_tests.py
 
