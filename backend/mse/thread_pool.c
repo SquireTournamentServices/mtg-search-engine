@@ -197,7 +197,6 @@ int mse_init_pool(mse_thread_pool_t *p)
     p->threads = malloc(sizeof * p->threads * p->threads_count);
     for (size_t i = 0; i < p->threads_count; i++) {
         ASSERT(pthread_create(&p->threads[i], NULL, &thread_pool_consumer_func, (void *) p) == 0);
-
         ASSERT(pthread_detach(p->threads[i]) == 0);
     }
 
