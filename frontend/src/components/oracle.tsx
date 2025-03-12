@@ -8,14 +8,16 @@ interface Props {
 }
 
 function withNewLines(id: string, x: string) {
-  return x
+  const parts = x
     .split("\n")
     .map(
       (x, i): ReactNode => (
         <Fragment key={`${id} - ${x} - ${i}`}>{x} </Fragment>
       ),
-    )
-    .reduce(
+    );
+
+  if (parts.length > 1) {
+    parts.reduce(
       (a, b) => (
         <>
           {a} <br /> {b}{" "}
@@ -23,6 +25,9 @@ function withNewLines(id: string, x: string) {
       ),
       <></>,
     );
+  } else {
+    return parts;
+  }
 }
 
 export default function Oracle(props: Readonly<Props>) {
@@ -37,7 +42,7 @@ export default function Oracle(props: Readonly<Props>) {
           return (
             <>
               <Manamoji mana_cost={mana[0]} />
-              {mana.slice(1).join(" ")}{" "}
+              {mana.slice(1).map((x) => withNewLines(props.id, x))}{" "}
             </>
           );
         }
