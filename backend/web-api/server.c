@@ -209,8 +209,9 @@ static void __mse_serve(struct mg_connection *c,
 {
     if (event == MG_EV_ACCEPT) {
         c->fn_data = NULL;
-        requests++;
     } else if (event == MG_EV_HTTP_MSG) {
+        requests++;
+
         struct mg_http_message *hm = (struct mg_http_message *) ev_data;
         if (mg_match(hm->uri, mg_str("/api"), NULL)) {
             __mse_serve_api(c, event, ev_data);
