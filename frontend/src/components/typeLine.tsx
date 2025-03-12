@@ -10,7 +10,7 @@ export function TypeLine(props: Readonly<Props>) {
   return (
     <p className="text-m">
       {types.ImportantTypes.join(" ")}{" "}
-      {types.ImportantTypes.length && types.MinorTypes.length && "-"}{" "}
+      {types.ImportantTypes.length && types.MinorTypes.length ? "-" : ""}{" "}
       {types.MinorTypes.join(" ")}
     </p>
   );
