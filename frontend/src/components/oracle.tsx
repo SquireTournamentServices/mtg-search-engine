@@ -17,7 +17,7 @@ function withNewLines(id: string, x: string) {
     );
 
   if (parts.length > 1) {
-    parts.reduce(
+    return parts.reduce(
       (a, b) => (
         <>
           {a} <br /> {b}{" "}
