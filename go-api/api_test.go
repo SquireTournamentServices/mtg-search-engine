@@ -9,6 +9,7 @@ import (
 
 	api "github.com/squiretournamentservices/mtg-search-engine/go-api"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSortTypesCanBeIterated(t *testing.T) {
@@ -59,7 +60,7 @@ func TestOfficialApiValidity(t *testing.T) {
 func TestQueryExec(t *testing.T) {
 	t.Parallel()
 
-	resp, err := NewApi("goblin motivator").Exec()
+	resp, err := NewApi("goblin motivator").SearchCard()
 
 	assert.NoError(t, err)
 	assert.Equal(t, 0, resp.Page)
@@ -71,7 +72,7 @@ func TestQueryExec(t *testing.T) {
 func TestQueryExecAll(t *testing.T) {
 	t.Parallel()
 
-	resp, err := NewApi("legal:commander").ExecAll()
+	resp, err := NewApi("legal:commander").SearchCardAllPages()
 
 	assert.NoError(t, err)
 	assert.True(t, len(resp) > 1000)
@@ -80,21 +81,21 @@ func TestQueryExecAll(t *testing.T) {
 func TestInvalidQueryExecReturnsError(t *testing.T) {
 	t.Parallel()
 
-	_, err := NewApi("legal:(").Exec()
+	_, err := NewApi("legal:(").SearchCard()
 	assert.Error(t, err)
 }
 
 func TestInvalidQueryExecAllReturnsError(t *testing.T) {
 	t.Parallel()
 
-	_, err := NewApi("legal:(").ExecAll()
+	_, err := NewApi("legal:(").SearchCardAllPages()
 	assert.Error(t, err)
 }
 
 func TestSortByCardNameExec(t *testing.T) {
 	t.Parallel()
 
-	resp, err := NewApi("legal:commander and type:legendary and type:wizard and commander<u").Exec()
+	resp, err := NewApi("legal:commander and type:legendary and type:wizard and commander<u").SearchCard()
 	assert.NoError(t, err)
 
 	CardsCopy := make([]api.Card, len(resp.Cards))
@@ -108,7 +109,7 @@ func TestSortByCardNameExec(t *testing.T) {
 func TestSortByCardNameExecAll(t *testing.T) {
 	t.Parallel()
 
-	cards, err := NewApi("legal:commander and type:legendary and type:wizard and commander<u").ExecAll()
+	cards, err := NewApi("legal:commander and type:legendary and type:wizard and commander<u").SearchCardAllPages()
 	assert.NoError(t, err)
 
 	CardsCopy := make([]api.Card, len(cards))
@@ -125,7 +126,7 @@ func TestSortByCardNameExecAllDesc(t *testing.T) {
 	client := NewApi("legal:commander and type:legendary and type:wizard and commander<u")
 	client.SortDirection = api.SortDirectionDescending
 
-	cards, err := client.ExecAll()
+	cards, err := client.SearchCardAllPages()
 	assert.NoError(t, err)
 
 	CardsCopy := make([]api.Card, len(cards))
@@ -139,8 +140,25 @@ func TestSortByCardNameExecAllDesc(t *testing.T) {
 func TestComplexLookup(t *testing.T) {
 	t.Parallel()
 
-	cards, err := NewApi("type:legendary and legal:commander and (type:creature or o:/.*may be your commander.*/) and cmc<5").ExecAll()
+	cards, err := NewApi("type:legendary and legal:commander and (type:creature or o:/.*may be your commander.*/) and cmc<5").SearchCardAllPages()
 
 	assert.NoError(t, err)
 	assert.True(t, len(cards) > 5)
+}
+
+
+func TestCardLookupById(t *testing.T) {
+	t.Parallel()
+
+  api := NewApi("type:goblin and commander:r")
+  cards, err := api.SearchCardAllPages()
+
+	assert.NoError(t, err)
+	assert.True(t, len(cards) > 5)
+
+  for _, card := range cards {
+    card2, err := api.LookupCard(card.Id)
+    require.NoError(t, err)
+    require.Equal(t, card, card2)
+  }
 }

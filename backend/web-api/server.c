@@ -167,7 +167,7 @@ static void __mse_serve_card_by_id(struct mg_connection *c,
 
     char *json = json_dumps(card->json, 0);
     if (json != NULL) {
-        mg_http_reply(c, 500, "", "%s", json);
+        mg_http_reply(c, 200, "", "%s", json);
         card_lookups++;
         good_requests++;
         free(json);
@@ -175,7 +175,6 @@ static void __mse_serve_card_by_id(struct mg_connection *c,
         lprintf(LOG_ERROR, "Cannot lookup card by id: %s", id);
         mg_http_reply(c, 500, "", "500 - Internal server error");
         internal_error_requests++;
-        return;
     }
 }
 
@@ -216,7 +215,7 @@ static void __mse_serve(struct mg_connection *c,
         if (mg_match(hm->uri, mg_str("/api"), NULL)) {
             __mse_serve_api(c, event, ev_data);
         } else if (mg_match(hm->uri, mg_str("/card_id"), NULL)) {
-            __mse_serve_api(c, event, ev_data);
+            __mse_serve_card_by_id(c, event, ev_data);
         } else if (mg_match(hm->uri, mg_str("/"), NULL)) {
             __mse_serve_index(c, event, ev_data);
         } else if (mg_match(hm->uri, mg_str("/github"), NULL)) {
@@ -253,7 +252,7 @@ static void __mse_serve(struct mg_connection *c,
 
         if (query_time > 0.1f) {
             lprintf(LOG_WARNING, "It took %lfs to query: '%s', sort: %d (asc: %d), page: %d\n",
-                    total_query_time,
+                    query_time,
                     query->query,
                     query->params.sort,
                     query->params.sort_asc,
