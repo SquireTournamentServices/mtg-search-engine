@@ -90,6 +90,77 @@ paths:
                     items:
                       type: object
                       properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        mana_cost:
+                          type: string
+                        oracle_text:
+                          type: string
+                        types:
+                          type: array
+                          items:
+                            type: string
+                        power:
+                          type: number
+                        toughness:
+                          type: number
+                        cmc:
+                          type: number
+                        colours:
+                          description: "A WUBRG field array (0x11111) is WUBRG, 0x10000 is W, ..."
+                          type: number
+                        color_identity:
+                          description: "A WUBRG field array (0x11111) is WUBRG, 0x10000 is W, ..."
+                          type: number
+                        sets:
+                          type: array
+                          items:
+                            type: string
+  "/card_id":
+    post:
+      summary: "Lookup a card by its ID"
+      description: "The ID is a MTGJSON ID or the ID field of a card"
+      requestBody:
+        application/text:
+          schema:
+            type: string
+      headers:
+
+      responses:
+        "400":
+          description: "The request has no body"
+          content:
+            application/text:
+              schema:
+                type: string
+        "500":
+          description: "The query is not valid"
+          content:
+            application/text:
+              schema:
+                type: string
+        "200":
+          description: "The query is not valid"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page_size:
+                    type: number
+                  page:
+                    type: number
+                  cards_total:
+                    type: number
+                  cards:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
                         name:
                           type: string
                         mana_cost:

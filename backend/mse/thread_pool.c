@@ -141,7 +141,6 @@ static void *thread_pool_consumer_func(void *pool_raw)
     while (pool->running) {
         pool_consume(pool);
     }
-    pthread_exit(NULL);
     return NULL;
 }
 
@@ -198,6 +197,8 @@ int mse_init_pool(mse_thread_pool_t *p)
     p->threads = malloc(sizeof * p->threads * p->threads_count);
     for (size_t i = 0; i < p->threads_count; i++) {
         ASSERT(pthread_create(&p->threads[i], NULL, &thread_pool_consumer_func, (void *) p) == 0);
+
+        pthread_detach(p->threads[i]);
     }
 
     return 1;
@@ -220,13 +221,6 @@ int mse_free_pool(mse_thread_pool_t *p)
     // Wake up all the threads as the queue will be empty they should fail soon
     for (size_t i = 0; i < p->threads_count; i++) {
         sem_post(&queue->semaphore);
-    }
-
-    // Slaughter all threads
-    lprintf(LOG_INFO, "Joining all worker threads...\n");
-    for (size_t i = 0; i < p->threads_count; i++) {
-        void *__ret;
-        ASSERT(pthread_join(p->threads[i], &__ret) == 0);
     }
 
     // Clear up the IPC stuff

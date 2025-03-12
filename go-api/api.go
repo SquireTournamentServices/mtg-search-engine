@@ -12,10 +12,10 @@ import (
 
 // Use `docker compose up backend` in this project to start a server on this URL.
 // You can omit the "backend" argument if you want a frontend as well, see ../README.md
-const ApiUrlLocal = "http://localhost:4365/api"
+const ApiUrlLocal = "http://localhost:4365"
 
 // This URL is to the up to date version that @djpiper28 hosts.
-const ApiUrlOfficial = "https://monarch.djpiper28.co.uk/api/api"
+const ApiUrlOfficial = "https://monarch.djpiper28.co.uk/api"
 
 type Request struct {
 	SortType      SortType
@@ -43,6 +43,7 @@ func New(query string) Request {
 }
 
 type Card struct {
+	Id string `json:"id"`
 	// Formely known as "CMC (converted mana cost)" is how many "manas" are need to cast a spell.
 	// i.e: "{2}{R}{R}" has a mana value of 4
 	ManaValue string `json:"mana"`
@@ -54,8 +55,8 @@ type Card struct {
 	ColourIdentity Colour `json:"colour_identity"`
 	// Rules text i.e: "{T}: Target creatures gains haste until end of turn."
 	OracleText string `json:"oracle_text"`
-  // Card name
-  Name string `json:"name"`
+	// Card name
+	Name string `json:"name"`
 	// Note, if non-zero then it can be that it is a special value such as 1+* 1.5, or “π"
 	Power float32 `json:"power"`
 	// Note, if non-zero then it can be that it is a special value such as 1+* 1.5, or “π"
@@ -64,6 +65,28 @@ type Card struct {
 	Types []string `json:"types"`
 	// i.e: "m21", "sld", etc...
 	Sets []string `json:"sets"`
+}
+
+// Used for internal testing
+func (r Request) LookupCard(id string) (Card, error) {
+	resp, err := http.Post(r.Url+"/card_id", "application/json", strings.NewReader(id))
+	if resp.StatusCode != http.StatusOK {
+		return Card{}, fmt.Errorf("Illegal return value from API: %s(%d)", resp.Status, resp.StatusCode)
+	}
+
+	bodyRaw, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return Card{}, err
+	}
+
+	var card Card
+
+	err = json.Unmarshal(bodyRaw, &card)
+	if err != nil {
+		return Card{}, err
+	}
+
+	return card, nil
 }
 
 type Response struct {
@@ -75,8 +98,8 @@ type Response struct {
 	request Request `json:"-"`
 }
 
-func (r Request) Exec() (Response, error) {
-	resp, err := http.Post(r.Url, "application/json", strings.NewReader(r.Query))
+func (r Request) SearchCard() (Response, error) {
+	resp, err := http.Post(r.Url+"/api", "application/json", strings.NewReader(r.Query))
 	if err != nil {
 		return Response{}, err
 	}
@@ -102,8 +125,8 @@ func (r Request) Exec() (Response, error) {
 }
 
 // Attempts to get all of the pages for a given query
-func (r Request) ExecAll() ([]Card, error) {
-	resp, err := r.Exec()
+func (r Request) SearchCardAllPages() ([]Card, error) {
+	resp, err := r.SearchCard()
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +146,7 @@ func (r Request) ExecAll() ([]Card, error) {
 		go func(r Request) {
 			defer wg.Done()
 
-			resp, err := r.Exec()
+			resp, err := r.SearchCard()
 
 			lock.Lock()
 			defer lock.Unlock()
@@ -147,10 +170,10 @@ func (r Request) ExecAll() ([]Card, error) {
 }
 
 func (r *Response) Next() (Request, error) {
-  // Assert that the page size has not been modified
-  if r.PageSize <= 0 {
-    r.PageSize = 50
-  }
+	// Assert that the page size has not been modified
+	if r.PageSize <= 0 {
+		r.PageSize = 50
+	}
 
 	if (r.request.Page+1)*r.PageSize >= r.CardsTotal {
 		return Request{}, fmt.Errorf("No more pages for the query '%s'", r.request.Query)

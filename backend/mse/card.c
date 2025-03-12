@@ -2,6 +2,7 @@
 #include "../testing_h/testing.h"
 #include "./io_utils.h"
 #include "./utf8_normalisation.h"
+#include "uuid.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,6 +39,74 @@ mse_colour_enum_t mse_parse_colours(const char *colours)
     }
 
     return ret;
+}
+
+static int __mse_jsonify_card(mse_card_t *card)
+{
+    ASSERT(card->json = json_object());
+    json_t *tmp;
+
+    ASSERT(tmp = json_string(card->name));
+    ASSERT(json_object_set(card->json, "name", tmp) == 0);
+
+    char *id = mse_uuid_as_string(card->id);
+    ASSERT(id != NULL);
+    ASSERT(tmp = json_string(id));
+    ASSERT(json_object_set(card->json, "id", tmp) == 0);
+
+    if (card->mana_cost != NULL) {
+        ASSERT(tmp = json_string(card->mana_cost));
+        ASSERT(json_object_set(card->json, "mana_cost", tmp) == 0);
+    }
+
+    if (card->oracle_text != NULL) {
+        ASSERT(tmp = json_string(card->oracle_text));
+        ASSERT(json_object_set(card->json, "oracle_text", tmp) == 0);
+    }
+
+    ASSERT(tmp = json_array());
+    ASSERT(json_object_set(card->json, "types", tmp) == 0);
+    for (size_t i = 0; i < card->types_count; i++) {
+        json_t *type_json = json_string(card->types[i]);
+        ASSERT(type_json != NULL);
+        if (json_array_append(tmp, type_json) != 0) {
+            lprintf(LOG_ERROR, "Cannot append to type array\n");
+            json_decref(type_json);
+            return 0;
+        }
+    }
+
+    ASSERT(tmp = json_real(card->power));
+    ASSERT(json_object_set(card->json, "power", tmp) == 0);
+
+    ASSERT(tmp = json_real(card->toughness));
+    ASSERT(json_object_set(card->json, "toughness", tmp) == 0);
+
+    ASSERT(tmp = json_real(card->cmc));
+    ASSERT(json_object_set(card->json, "cmc", tmp) == 0);
+
+    ASSERT(tmp = json_integer(card->colours));
+    ASSERT(json_object_set(card->json, "colours", tmp) == 0);
+
+    ASSERT(tmp = json_integer(card->colour_identity));
+    ASSERT(json_object_set(card->json, "colour_identity", tmp) == 0);
+
+    ASSERT(tmp = json_array());
+    ASSERT(json_object_set(card->json, "sets", tmp) == 0);
+    for (size_t i = 0; i < card->set_codes_count; i++) {
+        char buffer[sizeof(*card->set_codes) + 1];
+        memset(buffer, 0, sizeof(buffer));
+        memcpy(buffer, card->set_codes[i], sizeof(buffer) - 1);
+
+        json_t *type_json = json_string(buffer);
+        ASSERT(type_json != NULL);
+        if (json_array_append(tmp, type_json) != 0) {
+            lprintf(LOG_ERROR, "Cannot append to set code array\n");
+            json_decref(type_json);
+            return 0;
+        }
+    }
+    return 1;
 }
 
 int mse_parse_card_json(json_t *json, mse_card_t *card)
@@ -225,6 +294,7 @@ int mse_parse_card_json(json_t *json, mse_card_t *card)
     // Read the format legalities
     ASSERT(
         mse_card_formats_legalities_t_from_json(json, &card->format_legalities));
+    ASSERT(__mse_jsonify_card(card));
     return 1;
 }
 
@@ -292,6 +362,7 @@ int mse_read_card(FILE *f, mse_card_t *card)
     }
 
     ASSERT(mse_read_legalities(f, &card->format_legalities));
+    ASSERT(__mse_jsonify_card(card));
     return 1;
 }
 
@@ -332,6 +403,10 @@ void mse_free_card(mse_card_t *card)
 
     if (card->set_codes != NULL) {
         free(card->set_codes);
+    }
+
+    if (card->json != NULL) {
+        json_decref(card->json);
     }
 
     memset(card, 0, sizeof(*card));

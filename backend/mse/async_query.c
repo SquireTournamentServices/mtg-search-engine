@@ -4,80 +4,9 @@
 #include <stdlib.h>
 #include <jansson.h>
 
-static int __mse_jsonify_card(json_t *json, mse_card_t *card)
-{
-    json_t *tmp;
-
-    ASSERT(tmp = json_string(card->name));
-    ASSERT(json_object_set(json, "name", tmp) == 0);
-
-    if (card->mana_cost != NULL) {
-        ASSERT(tmp = json_string(card->mana_cost));
-        ASSERT(json_object_set(json, "mana_cost", tmp) == 0);
-    }
-
-    if (card->oracle_text != NULL) {
-        ASSERT(tmp = json_string(card->oracle_text));
-        ASSERT(json_object_set(json, "oracle_text", tmp) == 0);
-    }
-
-    ASSERT(tmp = json_array());
-    ASSERT(json_object_set(json, "types", tmp) == 0);
-    for (size_t i = 0; i < card->types_count; i++) {
-        json_t *type_json = json_string(card->types[i]);
-        ASSERT(type_json != NULL);
-        if (json_array_append(tmp, type_json) != 0) {
-            lprintf(LOG_ERROR, "Cannot append to type array\n");
-            json_decref(type_json);
-            return 0;
-        }
-    }
-
-    ASSERT(tmp = json_real(card->power));
-    ASSERT(json_object_set(json, "power", tmp) == 0);
-
-    ASSERT(tmp = json_real(card->toughness));
-    ASSERT(json_object_set(json, "toughness", tmp) == 0);
-
-    ASSERT(tmp = json_real(card->cmc));
-    ASSERT(json_object_set(json, "cmc", tmp) == 0);
-
-    ASSERT(tmp = json_integer(card->colours));
-    ASSERT(json_object_set(json, "colours", tmp) == 0);
-
-    ASSERT(tmp = json_integer(card->colour_identity));
-    ASSERT(json_object_set(json, "colour_identity", tmp) == 0);
-
-    ASSERT(tmp = json_array());
-    ASSERT(json_object_set(json, "sets", tmp) == 0);
-    for (size_t i = 0; i < card->set_codes_count; i++) {
-        char buffer[sizeof(*card->set_codes) + 1];
-        memset(buffer, 0, sizeof(buffer));
-        memcpy(buffer, card->set_codes[i], sizeof(buffer) - 1);
-
-        json_t *type_json = json_string(buffer);
-        ASSERT(type_json != NULL);
-        if (json_array_append(tmp, type_json) != 0) {
-            lprintf(LOG_ERROR, "Cannot append to set code array\n");
-            json_decref(type_json);
-            return 0;
-        }
-    }
-    return 1;
-}
-
 #define __mse_jsonify_search_res_card() \
-   json_t *card = json_object(); \
-   ASSERT(card != NULL); \
-   if (!__mse_jsonify_card(card, res->cards[index])) { \
-       lprintf(LOG_ERROR, "Cannot jsonify card\n"); \
-       json_decref(card); \
-       return 0; \
-   } \
- \
-   if (json_array_append(arr, card) != 0) { \
+   if (json_array_append(arr, res->cards[index]->json) != 0) { \
        lprintf(LOG_ERROR, "Cannot append card \n"); \
-       json_decref(card); \
        return 0; \
    }
 
@@ -165,7 +94,6 @@ mse_async_query_t *mse_start_async_query(char *query, mse_query_params_t params,
 
     if (!mse_task_queue_enqueue(&mse->pool.queue, task)) {
         lprintf(LOG_ERROR, "Cannot enqueue task\n");
-        clock_gettime(CLOCK_REALTIME, &ret->stop);
         mse_async_query_decref(ret);
         return NULL;
     }

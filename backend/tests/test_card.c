@@ -34,6 +34,7 @@ static int __test_card_props(mse_card_t card)
 
     ASSERT(card.colours == card.colour_identity);
     ASSERT(card.colours == MSE_WHITE);
+    ASSERT(card.json != NULL);
 
     ASSERT(card.mana_cost != NULL);
     ASSERT(strcmp(card.mana_cost, "{5}{W}{W}") == 0);
