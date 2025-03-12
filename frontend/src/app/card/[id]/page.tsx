@@ -79,7 +79,7 @@ export default async function Page(props: Readonly<Props>) {
         </p>
       </div>
       <div className="flex flex-row flex-wrap gap-1">
-        <p>Sets:</p> {sets}
+        <p>Printed in {sets.length} Sets:</p> {sets}
       </div>
     </div>
   );
