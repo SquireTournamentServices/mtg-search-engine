@@ -10,7 +10,6 @@ interface Props {
 function withNewLines(id: string, x: string) {
   return x
     .split("\n")
-    .filter((x) => x !== "")
     .map(
       (x, i): ReactNode => (
         <Fragment key={`${id} - ${x} - ${i}`}>{x} </Fragment>
