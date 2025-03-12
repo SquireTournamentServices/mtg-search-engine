@@ -33,7 +33,25 @@ export default function Oracle(props: Readonly<Props>) {
           return (
             <>
               <Manamoji mana_cost={mana[0]} />
-              {mana.slice(1).join(" ")}{" "}
+              {mana.slice(1).map((x) =>
+                x
+                  .split("\n")
+                  .map(
+                    (x, i): ReactNode => (
+                      <Fragment key={`${props.id} - ${x} - ${i}`}>
+                        {x}{" "}
+                      </Fragment>
+                    ),
+                  )
+                  .reduce(
+                    (a, b) => (
+                      <>
+                        {a} <br /> {b}{" "}
+                      </>
+                    ),
+                    <></>,
+                  ),
+              )}{" "}
             </>
           );
         }
