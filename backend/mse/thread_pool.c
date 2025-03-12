@@ -141,6 +141,7 @@ static void *thread_pool_consumer_func(void *pool_raw)
     while (pool->running) {
         pool_consume(pool);
     }
+    pthread_exit(NULL);
     return NULL;
 }
 
