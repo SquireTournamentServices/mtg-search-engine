@@ -4,6 +4,7 @@ import Colour from "../../components//colour";
 import Setmoji from "../../components//setmoji";
 import { useMemo } from "react";
 import { type Card, MAX_SETS_TO_SHOW, LEGENDARY } from "../../model/card";
+import { TypeLine } from "../../components/typeLine";
 
 export default function Card(props: { data: Card }) {
   const colours = [];
@@ -50,7 +51,7 @@ export default function Card(props: { data: Card }) {
         </div>
       </div>
       {props.data.types && (
-        <p className="text-m"> {props.data.types.join(" ")} </p>
+        <TypeLine types={props.data.types}/>
       )}
       {props.data.oracle_text && (
         <Oracle oracle_text={props.data.oracle_text} id={props.data.name} />

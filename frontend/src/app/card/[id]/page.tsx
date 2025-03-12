@@ -4,6 +4,7 @@ import Manamoji from "../../../components/manamoji";
 import Oracle from "../../../components/oracle";
 import Colour from "../../../components/colour";
 import Setmoji from "../../../components/setmoji";
+import { TypeLine } from "../../../components/typeLine";
 
 export const dynamic = "force-dynamic";
 
@@ -60,7 +61,7 @@ export default async function Page(props: Readonly<Props>) {
               ))}
         </div>
       </div>
-      {data.types && <p className="text-lg"> {data.types.join(" ")} </p>}
+      {data.types && <TypeLine types={data.types} />}
       {data.oracle_text && (
         <Oracle oracle_text={data.oracle_text} id={data.name} large={true} />
       )}
