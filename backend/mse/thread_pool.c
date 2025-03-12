@@ -198,7 +198,7 @@ int mse_init_pool(mse_thread_pool_t *p)
     for (size_t i = 0; i < p->threads_count; i++) {
         ASSERT(pthread_create(&p->threads[i], NULL, &thread_pool_consumer_func, (void *) p) == 0);
 
-        pthread_detach(p->threads[i]);
+        ASSERT(pthread_detach(p->threads[i]) == 0);
     }
 
     return 1;
