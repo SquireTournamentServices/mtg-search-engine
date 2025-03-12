@@ -9,7 +9,9 @@ export function TypeLine(props: Readonly<Props>) {
 
   return (
     <p className="text-m">
-      {types.ImportantTypes.join(" ")} {types.ImportantTypes && "-"} {types.MinorTypes.join(" ")}
+      {types.ImportantTypes.join(" ")}{" "}
+      {types.ImportantTypes && types.MinorTypes && "-"}{" "}
+      {types.MinorTypes.join(" ")}
     </p>
   );
 }
