@@ -37,7 +37,7 @@ export default function Oracle(props: Readonly<Props>) {
           return (
             <>
               <Manamoji mana_cost={mana[0]} />
-              {mana.slice(1).map((x) => withNewLines(props.id, x))}{" "}
+              {mana.slice(1).join(" ")}{" "}
             </>
           );
         }
