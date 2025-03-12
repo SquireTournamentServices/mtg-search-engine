@@ -116,7 +116,7 @@ export default async function Home() {
           <div>
             <h3 className="text-xl font-bold">Supported Formats</h3>
             {formats.map((x) => (
-              <li>{x}</li>
+              <li key={`format-${x}`}>{x}</li>
             ))}
           </div>
         </div>

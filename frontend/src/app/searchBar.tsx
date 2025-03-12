@@ -70,7 +70,7 @@ function SearchBar() {
             value={sort}
           >
             {usableSortTypes().map((x) => (
-              <option key={x} id={`sort-type-${x}`} value={x}>
+              <option key={`sort-type-${x}`} id={`sort-type-${x}`} value={x}>
                 {sortTypeAsString(x)}
               </option>
             ))}

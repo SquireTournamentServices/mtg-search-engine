@@ -1,11 +1,16 @@
 import Image from "next/image";
 
-export default function Manamoji(props: { mana_cost: string }) {
+interface Props {
+  mana_cost: string;
+  large?: boolean;
+}
+
+export default function Manamoji(props: Readonly<Props>) {
   const img =
     "/manamoji/emojis/mana" +
     props.mana_cost.toLowerCase().replace("/", "") +
     ".png";
-  const size = 20;
+  const size = props.large ? 25 : 20;
 
   return (
     <span>

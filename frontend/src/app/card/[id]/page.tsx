@@ -1,0 +1,85 @@
+import { type Card } from "../../../model/card";
+import { defaultApiUrl } from "../../apiDefaultUrl";
+import Manamoji from "../../../components/manamoji";
+import Oracle from "../../../components/oracle";
+import Colour from "../../../components/colour";
+import Setmoji from "../../../components/setmoji";
+
+export const dynamic = "force-dynamic";
+
+interface Props {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export default async function Page(props: Readonly<Props>) {
+  const params = await props.params;
+  const resp = await fetch(
+    (process.env.BACKEND_URL ?? defaultApiUrl) + "/card_id",
+    {
+      method: "POST",
+      body: params.id,
+    },
+  );
+
+  let data: Card;
+  if (resp.ok) {
+    data = await resp.json();
+  } else {
+    return <p>There was an error: {await resp.text()}</p>;
+  }
+
+  const colours = [];
+  for (var i = 1; i < 1 << 5; i <<= 1) {
+    const c = data.colour_identity & i;
+    if (c) {
+      colours.push(c);
+    }
+  }
+
+  let sets = data.sets.map((x) => (
+    <Setmoji code={x} key={`sets-${x}-${data.id}`} />
+  ));
+
+  return (
+    <div className="flex flex-col gap-5 bg-white p-3 md:p-5 rounded-xl justify-between w-full">
+      <div className="flex flex-row gap-3 justify-between">
+        <h1 className="text-2xl font-bold hyphens-auto">{data.name}</h1>
+        <div className="flex flex-row flex-wrap w-max justify-end">
+          {data.mana_cost &&
+            data.mana_cost
+              .split("{")
+              .slice(1)
+              .map((mana, i) => (
+                <Manamoji
+                  large={true}
+                  mana_cost={mana.replace("}", "")}
+                  key={`mana-${mana}-${i}-${data.id}`}
+                />
+              ))}
+        </div>
+      </div>
+      {data.types && <p className="text-lg"> {data.types.join(" ")} </p>}
+      {data.oracle_text && (
+        <Oracle oracle_text={data.oracle_text} id={data.name} large={true} />
+      )}
+      <div className="grow" />
+      <div className="flex flex-row justify-between">
+        <div className="flex flex-row gap-1">
+          {colours.map((c) => (
+            <Colour colour={c} key={`colours-${c}-${data.id}`} />
+          ))}
+        </div>
+        <p className="text-right">
+          {data.power && data.toughness
+            ? data.power + "/" + data.toughness
+            : ""}
+        </p>
+      </div>
+      <div className="flex flex-row flex-wrap gap-1">
+        <p>Sets:</p> {sets}
+      </div>
+    </div>
+  );
+}

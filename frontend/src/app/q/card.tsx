@@ -1,25 +1,11 @@
-import Manamoji from "./manamoji";
-import Oracle from "./oracle";
-import Colour from "./colour";
+import Manamoji from "../../components/manamoji";
+import Oracle from "../../components//oracle";
+import Colour from "../../components//colour";
+import Setmoji from "../../components//setmoji";
 import { useMemo } from "react";
-import Setmoji from "./setmoji";
+import { type Card, MAX_SETS_TO_SHOW, LEGENDARY } from "../../model/card";
 
-const LEGENDARY = "Legendary";
-const MAX_SETS_TO_SHOW = 10;
-
-export default function Card(props: {
-  data: {
-    name: string;
-    mana_cost: string;
-    colours: number;
-    colour_identity: number;
-    oracle_text: string;
-    power: string;
-    toughness: string;
-    types: string[];
-    sets: string[];
-  };
-}) {
+export default function Card(props: { data: Card }) {
   const colours = [];
   for (var i = 1; i < 1 << 5; i <<= 1) {
     const c = props.data.colour_identity & i;
@@ -29,7 +15,9 @@ export default function Card(props: {
   }
 
   const sets = useMemo(() => {
-    let sets = props.data.sets.map((x) => <Setmoji code={x} key={x+props.data.name} />);
+    let sets = props.data.sets.map((x) => (
+      <Setmoji code={x} key={`set-${x}-${props.data.id}`} />
+    ));
     if (sets.length > MAX_SETS_TO_SHOW) {
       sets = sets.slice(0, MAX_SETS_TO_SHOW);
       sets.push(<p>{props.data.sets.length - MAX_SETS_TO_SHOW} more ...</p>);
@@ -56,7 +44,7 @@ export default function Card(props: {
               .map((mana, i) => (
                 <Manamoji
                   mana_cost={mana.replace("}", "")}
-                  key={`${mana}-${i}-${props.data.name}`}
+                  key={`mana-${mana}-${i}-${props.data.id}`}
                 />
               ))}
         </div>
@@ -71,7 +59,7 @@ export default function Card(props: {
       <div className="flex flex-row justify-between">
         <div className="flex flex-row gap-1">
           {colours.map((c) => (
-            <Colour colour={c} key={c} />
+            <Colour colour={c} key={`colours-${c}-${props.data.id}`} />
           ))}
         </div>
         <p className="text-right">

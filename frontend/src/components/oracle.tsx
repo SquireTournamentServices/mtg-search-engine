@@ -1,10 +1,16 @@
 import { Fragment, ReactNode } from "react";
 import Manamoji from "./manamoji";
 
-export default function Oracle(props: { oracle_text: string; id: string }) {
+interface Props {
+  oracle_text: string;
+  id: string;
+  large?: boolean;
+}
+
+export default function Oracle(props: Readonly<Props>) {
   const oracle = props.oracle_text.split("{");
   return (
-    <span className="text-sm">
+    <span className={`${props.large ? "text-md" : "text-sm"}`}>
       {oracle.map((part) => {
         const mana = part.split("}");
         if (mana.length == 1) {
@@ -12,15 +18,13 @@ export default function Oracle(props: { oracle_text: string; id: string }) {
             .split("\n")
             .map(
               (x, i): ReactNode => (
-                <Fragment key={`${props.id}-${x}-${i}`}>{x}</Fragment>
+                <Fragment key={`${props.id} - ${x} - ${i}`}>{x} </Fragment>
               ),
             )
             .reduce(
               (a, b) => (
                 <>
-                  {a}
-                  <br />
-                  {b}
+                  {a} <br /> {b}{" "}
                 </>
               ),
               <></>,
@@ -29,11 +33,11 @@ export default function Oracle(props: { oracle_text: string; id: string }) {
           return (
             <>
               <Manamoji mana_cost={mana[0]} />
-              {mana.slice(1).join(" ")}
+              {mana.slice(1).join(" ")}{" "}
             </>
           );
         }
-      })}
+      })}{" "}
     </span>
   );
 }

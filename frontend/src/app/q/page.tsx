@@ -1,7 +1,8 @@
 import Card from "./card";
-import PageChanger from "./pageChanger";
+import PageChanger from "../../components/pageChanger";
 import searchUrlFor from "../searchUrl";
 import { defaultApiUrl } from "../apiDefaultUrl";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -54,7 +55,9 @@ export default async function SearchResultPage({
     <div className="flex flex-col gap-5 pb-5 pt-5 justify-between w-full">
       <div className="w-full mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {data.cards.map((item: any) => (
-          <Card data={item} key={item} />
+          <Link href={`/card/${encodeURIComponent(item.id)}`} key={item.id}>
+            <Card data={item} />
+          </Link>
         ))}
       </div>
       <div className="flex flex-col">
@@ -76,7 +79,7 @@ export default async function SearchResultPage({
                   sort_asc === 1 ? true : false,
                 )}
                 page={i + 1}
-                key={i}
+                key={i + "page-changer"}
               />
             ))}
         </div>

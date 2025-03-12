@@ -22,7 +22,7 @@ export default function RandomQuery() {
   useEffect(() => {
     setInterval(() => {
       setQuery(queries[Math.floor(Math.random() * queries.length)]);
-    }, 1500);
+    }, 2000);
   }, []);
 
   return (
