@@ -91,6 +91,8 @@ add_custom_command(
 # Pack CC executable
 add_executable(packcc vendor/packcc/src/packcc.c)
 
+# Enabled by default to make coredumps usable
+option(DEBUG ON)
 if(DEBUG)
   if(NOT WIN32)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
