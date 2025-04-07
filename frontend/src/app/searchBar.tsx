@@ -38,7 +38,7 @@ function SearchBar() {
           e.preventDefault();
         }}
       >
-        <div className="flex flex-row bg-slate-100 rounded-xl px-3 py-1 w-64 lg:w-1/3 gap-3">
+        <div className="flex flex-row bg-slate-100 rounded-xl px-3 py-1 w-full gap-3">
           <input
             type="text"
             required
