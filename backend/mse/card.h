@@ -69,19 +69,19 @@ int mse_avl_cmp_card_cmc(void *a, void *b);
 #  define __builtin_popcount __popcnt
 #endif
 
-/// Checks that the colours in b is at most a
-#define __mse_has_max_colours(a, b) \
-(__builtin_popcount((a) & (b)) == __builtin_popcount((a)))
-
-#define mse_colour_lt(a, b) \
-(__builtin_popcount((a)) < __builtin_popcount((b)))
-
-#define mse_colour_lt_inc(a, b) \
-(__builtin_popcount((a)) <= __builtin_popcount((b)))
-
 /// Checks that a has the same colours of b at a minimum
 #define __mse_has_colours(a, b) \
 (__builtin_popcount((a) & (b)) == __builtin_popcount((b)))
+
+/// Checks that b has a subset of colours of a
+#define __mse_has_subset_colours(a, b) \
+(__builtin_popcount((a) & (b)) <= __builtin_popcount(b) && __builtin_popcount((a) & ~(b) & MSE_WUBRG) == 0)
+
+#define mse_colour_lt(a, b) \
+(__builtin_popcount((a)) < __builtin_popcount((b)) && __mse_has_subset_colours(a, b))
+
+#define mse_colour_lt_inc(a, b) \
+(__builtin_popcount((a)) <= __builtin_popcount((b)) && __mse_has_subset_colours(a, b))
 
 #define mse_colour_gt(a, b) \
 (__builtin_popcount((a)) > __builtin_popcount((b)) && __mse_has_colours(a, b))
