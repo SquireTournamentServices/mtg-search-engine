@@ -91,3 +91,6 @@ int mse_avl_cmp_card_cmc(void *a, void *b);
 
 #define mse_colour_eq(a, b) \
 ((a) == (b))
+
+#define mse_colour_not_inc(a, b) \
+(__builtin_popcount((a) & (b)) == 0)

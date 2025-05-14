@@ -37,6 +37,8 @@ int mse_generate_set_colours(mse_set_generator_t *gen,
             node = cards->indexes.colour_index.colours_lt_inc.colour_indexes[colours];
             break;
         case MSE_SET_GENERATOR_OP_INCLUDES:
+            node = cards->indexes.colour_index.colours_not_inc.colour_indexes[colours];
+            break;
         case MSE_SET_GENERATOR_OP_GT_INC:
             node = cards->indexes.colour_index.colours_lt.colour_indexes[colours];
             break;
@@ -101,6 +103,8 @@ int mse_generate_set_colour_identity(mse_set_generator_t *gen,
             node = cards->indexes.colour_index.colour_identity_lt_inc.colour_indexes[colours];
             break;
         case MSE_SET_GENERATOR_OP_INCLUDES:
+            node = cards->indexes.colour_index.colour_identity_not_inc.colour_indexes[colours];
+            break;
         case MSE_SET_GENERATOR_OP_GT_INC:
             node = cards->indexes.colour_index.colour_identity_lt.colour_indexes[colours];
             break;

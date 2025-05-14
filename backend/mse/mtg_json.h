@@ -31,7 +31,8 @@ mse_colour_index_t index_base_name##_lt; \
 mse_colour_index_t index_base_name##_lt_inc; \
 mse_colour_index_t index_base_name##_gt; \
 mse_colour_index_t index_base_name##_gt_inc; \
-mse_colour_index_t index_base_name##_eq;
+mse_colour_index_t index_base_name##_eq; \
+mse_colour_index_t index_base_name##_not_inc;
 
 /// Holds all of the colour indexes
 typedef struct mse_cards_colours_indexes_t {

@@ -109,7 +109,8 @@ MSE_INDEX_FOR_COLOUR(field, lt) \
 MSE_INDEX_FOR_COLOUR(field, lt_inc) \
 MSE_INDEX_FOR_COLOUR(field, gt) \
 MSE_INDEX_FOR_COLOUR(field, gt_inc) \
-MSE_INDEX_FOR_COLOUR(field, eq)
+MSE_INDEX_FOR_COLOUR(field, eq) \
+MSE_INDEX_FOR_COLOUR(field, not_inc)
 
 MSE_INDEX_FOR_COLOUR_FIELD(colours)
 MSE_INDEX_FOR_COLOUR_FIELD(colour_identity)
@@ -119,7 +120,8 @@ MSE_INDEX_FOR_COLOUR_FIELD(colour_identity)
 &MSE_INDEX_COLOUR_NAME(colour_field, lt_inc), \
 &MSE_INDEX_COLOUR_NAME(colour_field, gt), \
 &MSE_INDEX_COLOUR_NAME(colour_field, gt_inc), \
-&MSE_INDEX_COLOUR_NAME(colour_field, eq)
+&MSE_INDEX_COLOUR_NAME(colour_field, eq), \
+&MSE_INDEX_COLOUR_NAME(colour_field, not_inc)
 
 // Set cards index
 static int __mse_add_card_to_set(mse_card_t * restrict card, mse_avl_tree_node_t * restrict sets)

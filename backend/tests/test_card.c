@@ -273,6 +273,14 @@ static int test_colour_cmp_eq()
     return 1;
 }
 
+static int test_colour_cmp_not_inc()
+{
+    ASSERT(!mse_colour_not_inc(MSE_WHITE, MSE_WHITE | MSE_BLUE));
+    ASSERT(!mse_colour_not_inc(MSE_WHITE, MSE_WHITE));
+    ASSERT(!mse_colour_not_inc(MSE_WHITE, MSE_RED));
+    ASSERT(!mse_colour_not_inc(MSE_WHITE, 0));
+}
+
 SUB_TEST(test_card, {&test_card_parse_json, "Test parse card from JSON"},
 {&test_card_parse_json_no_original_text, "Test parse card from JSON (no original text)"},
 {&test_card_write_read, "Test card read and, write"},
@@ -282,4 +290,5 @@ SUB_TEST(test_card, {&test_card_parse_json, "Test parse card from JSON"},
 {&test_colour_cmp_lt_inc, "Test colour <="},
 {&test_colour_cmp_gt, "Test colour >"},
 {&test_colour_cmp_gt_inc, "Test colour >="},
-{&test_colour_cmp_eq, "Test colour =="})
+{&test_colour_cmp_eq, "Test colour =="},
+{&test_colour_cmp_not_inc, "Test -colour :"})
