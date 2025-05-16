@@ -142,7 +142,6 @@ static void *thread_pool_consumer_func(void *pool_raw)
         pool_consume(pool);
     }
     sem_post(&pool->queue.semaphore);
-    pthread_detach(NULL);
     return NULL;
 }
 
