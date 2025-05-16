@@ -88,7 +88,7 @@ static int test_async_query_bad_query()
     return 1;
 }
 
-#define QUERIES 1000
+#define QUERIES 100000
 
 static int test_lots_of_queries()
 {
@@ -97,7 +97,7 @@ static int test_lots_of_queries()
     params.sort = MSE_SORT_CARD_NAME;
     params.sort_asc = 1;
 
-    mse_async_query_t *queries[QUERIES];
+    mse_async_query_t **queries = malloc(sizeof(*queries) * QUERIES);
     for (size_t i = 0; i < QUERIES; i++) {
         char *txt_query = strdup("c:r and legal:commander and type:goblin");
         ASSERT(txt_query != NULL);
@@ -117,6 +117,8 @@ static int test_lots_of_queries()
         ASSERT(strlen(queries[i]->resp) > 10);
         pthread_mutex_unlock(&queries[i]->lock);
     }
+
+    free(queries);
     return 1;
 }
 
