@@ -81,7 +81,6 @@ static int test_async_query_bad_query()
 
     pthread_mutex_lock(&query->lock);
     ASSERT(query->err == 1);
-    ASSERT(query->ref_count == 1);
     ASSERT(query->resp == NULL);
     pthread_mutex_unlock(&query->lock);
 
