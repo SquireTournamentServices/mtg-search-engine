@@ -141,7 +141,8 @@ static void *thread_pool_consumer_func(void *pool_raw)
     while (pool->running) {
         pool_consume(pool);
     }
-    pthread_exit(NULL);
+    sem_post(&pool->queue.semaphore);
+    pthread_detach(NULL);
     return NULL;
 }
 
@@ -221,6 +222,12 @@ int mse_free_pool(mse_thread_pool_t *p)
     // Wake up all the threads as the queue will be empty they should fail soon
     for (size_t i = 0; i < p->threads_count; i++) {
         sem_post(&queue->semaphore);
+    }
+
+    // Wait for the threads to clean themselves up and report themselves as done
+    lprintf(LOG_INFO, "Waiting for threads to terminate...\n");
+    for (size_t i = 0; i < p->threads_count; i++) {
+        sem_wait(&queue->semaphore);
     }
 
     // Clear up the IPC stuff
