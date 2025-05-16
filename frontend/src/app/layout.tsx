@@ -24,7 +24,7 @@ export default function RootLayout({
       <body
         className={inter.className + " min-h-screen flex flex-col bg-slate-100"}
       >
-        <div className="p-5 flex flex-row md:gap-3 justify-between sticky top-0 bg-slate-900 z-50">
+        <div className="p-5 flex flex-row md:gap-3 items-center justify-between sticky top-0 bg-slate-900 z-50">
           <Link href="/" className="w-8 text-white hover:scale-125">
             <FontAwesomeIcon icon={faHome} />
           </Link>
