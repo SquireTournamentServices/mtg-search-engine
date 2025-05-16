@@ -277,8 +277,9 @@ static int test_colour_cmp_not_inc()
 {
     ASSERT(!mse_colour_not_inc(MSE_WHITE, MSE_WHITE | MSE_BLUE));
     ASSERT(!mse_colour_not_inc(MSE_WHITE, MSE_WHITE));
-    ASSERT(!mse_colour_not_inc(MSE_WHITE, MSE_RED));
-    ASSERT(!mse_colour_not_inc(MSE_WHITE, 0));
+    ASSERT(mse_colour_not_inc(MSE_WHITE, MSE_RED));
+    ASSERT(mse_colour_not_inc(MSE_WHITE, 0));
+    return 1;
 }
 
 SUB_TEST(test_card, {&test_card_parse_json, "Test parse card from JSON"},
