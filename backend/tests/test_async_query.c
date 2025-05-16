@@ -109,13 +109,18 @@ static int test_lots_of_queries()
 
     for (size_t i = 0; i < QUERIES; i++) {
         while (!mse_async_query_poll(queries[i]));
-        mse_async_query_decref(queries[i]);
 
         pthread_mutex_lock(&queries[i]->lock);
         ASSERT(queries[i]->err == 0);
         ASSERT(queries[i]->resp != NULL);
+
+        if (strlen(queries[i]->resp) <= 10) {
+            lprintf(LOG_ERROR, "Invalid query %lu, resp %s\n", i, queries[i]->resp);
+        }
+
         ASSERT(strlen(queries[i]->resp) > 10);
         pthread_mutex_unlock(&queries[i]->lock);
+        mse_async_query_decref(queries[i]);
     }
 
     free(queries);
