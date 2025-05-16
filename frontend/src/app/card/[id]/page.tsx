@@ -80,7 +80,7 @@ export default async function Page(props: Readonly<Props>) {
             : ""}
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid md:grid-cols-2 gap-2">
         {Object.keys(data.format_legalities).map((format) => {
           const legality = data.format_legalities[format];
 
