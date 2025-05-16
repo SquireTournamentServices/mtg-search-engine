@@ -5,6 +5,7 @@ import Oracle from "../../../components/oracle";
 import Colour from "../../../components/colour";
 import Setmoji from "../../../components/setmoji";
 import { TypeLine } from "../../../components/typeLine";
+import { Legality } from "../../../components/legality";
 
 export const dynamic = "force-dynamic";
 
@@ -77,6 +78,13 @@ export default async function Page(props: Readonly<Props>) {
             ? data.power + "/" + data.toughness
             : ""}
         </p>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {Object.keys(data.format_legalities).map((format) => {
+          const legality = data.format_legalities[format];
+
+          return <Legality format={format} legality={legality} />;
+        })}
       </div>
       <div className="flex flex-row flex-wrap gap-1">
         <p>Printed in {sets.length} Sets:</p> {sets}
