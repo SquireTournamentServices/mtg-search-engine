@@ -89,7 +89,7 @@ static int test_async_query_bad_query()
     return 1;
 }
 
-#define QUERIES 1000
+#define QUERIES 10000
 
 static int test_lots_of_queries()
 {
@@ -123,7 +123,6 @@ static int test_lots_of_queries()
 
 static int free_test()
 {
-    usleep(1000);
     mse_free(&state);
     return 1;
 }

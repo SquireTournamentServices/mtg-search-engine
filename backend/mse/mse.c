@@ -59,7 +59,6 @@ static int __mse_search(mse_t *state, mse_search_intermediate_t *ret, const char
         return 0;
     }
     mse_free_interp_node(root);
-    lprintf(LOG_INFO, "Finished searching for '%s', there were %lu results.\n", query, mse_tree_size(ret->node));
     return 1;
 }
 
