@@ -64,7 +64,8 @@ type Card struct {
 	// i.e: "creature", "goblin", etc...
 	Types []string `json:"types"`
 	// i.e: "m21", "sld", etc...
-	Sets []string `json:"sets"`
+	Sets             []string                  `json:"sets"`
+	FormatLegalities map[string]FormatLegality `json:"format_legalities"`
 }
 
 // Used for internal testing
