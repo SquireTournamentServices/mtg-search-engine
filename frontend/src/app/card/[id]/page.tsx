@@ -68,7 +68,8 @@ export default async function Page(props: Readonly<Props>) {
       )}
       <div className="grow" />
       <div className="flex flex-row justify-between">
-        <div className="flex flex-row gap-1">
+        <div className="flex flex-row gap-1 items-center">
+          Colour identity:
           {colours.map((c) => (
             <Colour colour={c} key={`colours-${c}-${data.id}`} />
           ))}
