@@ -312,6 +312,7 @@ int {STRING_AS_FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     output_unit += f"json_t *{FORMATS_TO_JSON}({CARD_FORMAT_LEGALITIES_STRUCT} *formats)\n"
     output_unit += """{
     json_t *ret = json_object();
+    int status = 0;
     ASSERT(ret != NULL);
 """
 
@@ -334,16 +335,24 @@ int {STRING_AS_FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 """
 
         output_unit += "    }\n"
-        output_unit += """    if (str != NULL) {
+        output_unit += "    status = str != NULL;\n"
+        output_unit += """    if (status) {
         json_decref(ret);
         return NULL;
     }
 """
-        output_unit += f"    json_object_set(ret, \"{format}\", str);\n"
+
+        output_unit += f"    status = json_object_set(ret, \"{format}\", str);\n"
+        output_unit += """    if (status) {
+        json_decref(ret);
+        return NULL;
+    }
+"""
 
     output_unit += """
     return ret;
-}"""
+}
+"""
 
     # File Read
     output_unit += (
