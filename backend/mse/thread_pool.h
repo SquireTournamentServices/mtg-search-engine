@@ -59,10 +59,6 @@ int mse_task_queue_enqueue(mse_task_queue_t *queue, mse_task_t task);
 /// This means that queries are resolved faster.
 int mse_task_queue_greedy_enqueue(mse_task_queue_t *queue, mse_task_t task);
 
-/// This will reset the task queue, it is used for freeing the pool safely by cancelling
-/// all pending tasks
-void mse_reset_pool(mse_task_queue_t *queue);
-
 typedef struct mse_thread_pool_t {
     size_t threads_count;
     pthread_t *threads;

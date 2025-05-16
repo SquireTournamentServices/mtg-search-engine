@@ -155,28 +155,6 @@ int mse_init_queue(mse_task_queue_t *queue)
     return 1;
 }
 
-void mse_reset_pool(mse_task_queue_t *queue)
-{
-    pthread_mutex_lock(&queue->lock);
-    size_t cnt = 0;
-
-    // Free all of the nodes
-    while (queue->head != NULL) {
-        mse_task_node_t *node = queue->head;
-        queue->head = queue->head->next;
-        free(node);
-        cnt++;
-    }
-
-    if (cnt > 0) {
-        lprintf(LOG_WARNING, "%ld tasks are left un-executed\n", cnt);
-    }
-
-    // Mark the queue as empty
-    queue->head = queue->tail = NULL;
-    pthread_mutex_unlock(&queue->lock);
-}
-
 int mse_init_pool(mse_thread_pool_t *p)
 {
     // Default count for unsupported platforms
@@ -216,9 +194,6 @@ int mse_free_pool(mse_thread_pool_t *p)
     pthread_mutex_lock(&queue->lock);
     p->running = 0;
     pthread_mutex_unlock(&queue->lock);
-
-    // Empty the queue
-    mse_reset_pool(queue);
 
     // Wake up all the threads as the queue will be empty they should fail soon
     for (size_t i = 0; i < p->threads_count; i++) {
