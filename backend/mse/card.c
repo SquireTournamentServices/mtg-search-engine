@@ -106,6 +106,10 @@ static int __mse_jsonify_card(mse_card_t *card)
             return 0;
         }
     }
+
+    json_t *legalities = mse_card_format_legalities_t_to_json(&card->format_legalities);
+    ASSERT(legalities != NULL);
+    ASSERT(json_object_set(card->json, "format_legalities", legalities) == 0);
     return 1;
 }
 

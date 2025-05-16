@@ -336,14 +336,14 @@ int {STRING_AS_FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 
         output_unit += "    }\n"
         output_unit += "    status = str != NULL;\n"
-        output_unit += """    if (status) {
+        output_unit += """    if (!status) {
         json_decref(ret);
         return NULL;
     }
 """
 
         output_unit += f"    status = json_object_set(ret, \"{format}\", str);\n"
-        output_unit += """    if (status) {
+        output_unit += """    if (status != 0) {
         json_decref(ret);
         return NULL;
     }
