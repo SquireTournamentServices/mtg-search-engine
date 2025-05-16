@@ -18,7 +18,7 @@ export function Legality(props: Readonly<Props>) {
 function mapLegalityToColour(legality: string): string {
   switch (legality.toLowerCase()) {
     case "legal":
-      return "bg-green-500";
+      return "bg-green-600";
     case "banned":
       return "bg-red-500";
     case "restricted":
