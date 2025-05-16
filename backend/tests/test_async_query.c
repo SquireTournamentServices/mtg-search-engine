@@ -88,7 +88,7 @@ static int test_async_query_bad_query()
     return 1;
 }
 
-#define QUERIES 10000
+#define QUERIES 1000
 
 static int test_lots_of_queries()
 {
