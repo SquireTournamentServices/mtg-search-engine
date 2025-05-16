@@ -67,6 +67,7 @@ typedef struct mse_thread_pool_t {
     size_t threads_count;
     pthread_t *threads;
     mse_task_queue_t queue;
+    sem_t close_semaphore;
     int running;
 } mse_thread_pool_t;
 

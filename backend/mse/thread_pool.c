@@ -141,7 +141,8 @@ static void *thread_pool_consumer_func(void *pool_raw)
     while (pool->running) {
         pool_consume(pool);
     }
-    sem_post(&pool->queue.semaphore);
+    sem_post(&pool->close_semaphore);
+    pthread_exit(NULL);
     return NULL;
 }
 
@@ -193,6 +194,7 @@ int mse_init_pool(mse_thread_pool_t *p)
     lprintf(LOG_INFO, "Created a thread pool with %d workers\n", cpus);
 
     ASSERT(mse_init_queue(&p->queue));
+    ASSERT(sem_init(&p->close_semaphore, 0, 0) == 0);
     p->running = 1;
     p->threads_count = cpus;
     p->threads = malloc(sizeof * p->threads * p->threads_count);
@@ -226,12 +228,13 @@ int mse_free_pool(mse_thread_pool_t *p)
     // Wait for the threads to clean themselves up and report themselves as done
     lprintf(LOG_INFO, "Waiting for threads to terminate...\n");
     for (size_t i = 0; i < p->threads_count; i++) {
-        sem_wait(&queue->semaphore);
+        sem_wait(&p->close_semaphore);
     }
 
     // Clear up the IPC stuff
     pthread_mutex_destroy(&queue->lock);
     sem_destroy(&queue->semaphore);
+    sem_destroy(&p->close_semaphore);
 
     free(p->threads);
     memset(p, 0, sizeof * p);
