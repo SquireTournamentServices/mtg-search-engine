@@ -14,6 +14,7 @@ CARD_FORMAT_LEGALITY_INDEXES_STRUCT = f"{PREFIX.lower()}_format_legality_indexes
 
 # Functions
 FORMATS_FROM_JSON = f"{PREFIX.lower()}_card_formats_legalities_t_from_json"
+FORMATS_TO_JSON = f"{PREFIX.lower()}_card_format_legalities_t_to_json"
 READ_FORMATS_FROM_FILE = f"{PREFIX.lower()}_read_legalities"
 WRITE_FORMATS_TO_FILE = f"{PREFIX.lower()}_write_legalities"
 GENERATE_CARD_FORMAT_LEGALITY_INDEXES = (
@@ -129,6 +130,7 @@ const char *{FORMAT_ENUM}_as_str({FORMAT_ENUM} format);
 const char *{FORMAT_LEGALITIES_ENUM}_as_str({FORMAT_LEGALITIES_ENUM} format_legality);
 
 int {FORMATS_FROM_JSON}(json_t *json, {CARD_FORMAT_LEGALITIES_STRUCT} *ret);
+json_t *{FORMATS_TO_JSON}({CARD_FORMAT_LEGALITIES_STRUCT} *formats);
 int {READ_FORMATS_FROM_FILE}(FILE *f, {CARD_FORMAT_LEGALITIES_STRUCT} *ret);
 int {WRITE_FORMATS_TO_FILE}(FILE *f, {CARD_FORMAT_LEGALITIES_STRUCT} legalities);
 
@@ -305,6 +307,43 @@ int {STRING_AS_FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
 }
 
 """
+
+    # JSON Write
+    output_unit += f"json_t *{FORMATS_TO_JSON}({CARD_FORMAT_LEGALITIES_STRUCT} *formats)\n"
+    output_unit += """{
+    json_t *ret = json_object();
+    ASSERT(ret != NULL);
+"""
+
+    output_unit += "    json_t *str = NULL;\n"
+    for format in formats:
+        output_unit += "    str = NULL;\n"
+        output_unit += f"    switch(formats->{format}) "
+        output_unit += "{\n"
+
+        for legality in format_legalities:
+            output_unit += f"""        case {PREFIX.upper()}_FORMAT_LEGALITIES_{legality.upper()}:
+        str = json_string(\"{legality}\");
+        break;
+
+"""
+
+        output_unit += f"""        case {PREFIX.upper()}_FORMAT_LEGALITIES_END:
+        break;
+
+"""
+
+        output_unit += "    }\n"
+        output_unit += """    if (str != NULL) {
+        json_decref(ret);
+        return NULL;
+    }
+"""
+        output_unit += f"    json_object_set(ret, \"{format}\", str);\n"
+
+    output_unit += """
+    return ret;
+}"""
 
     # File Read
     output_unit += (

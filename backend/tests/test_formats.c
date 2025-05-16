@@ -64,6 +64,16 @@ static int test_format_legalities_enum_to_str()
     return 1;
 }
 
+static int test_format_to_json()
+{
+    mse_card_format_legalities_t formats;
+    memset(&formats, 0, sizeof(formats));
+    json_t *obj = mse_card_format_legalities_t_to_json(&formats);
+    ASSERT(obj != NULL);
+    json_decref(obj);
+    return 1;
+}
+
 static int test_format_magic_number()
 {
     unsigned int num = MSE_FORMAT_MAGIC_NUMBER;
@@ -76,4 +86,5 @@ SUB_TEST(test_formats, {&test_format_enum_length_is_greater_than_zero, "Test for
 {&test_format_enum_to_str, "Test formats to string (and reverse)"},
 {&test_format_legalities_enum_to_str_case_sensitive, "test format legality enum lookup case sensitive"},
 {&test_format_legalities_enum_to_str, "Test format legalities to string (and reverse)"},
+{&test_format_to_json, "Test format to JSON"},
 {&test_format_magic_number, "Test format magic number"})
