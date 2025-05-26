@@ -7,6 +7,8 @@ export interface Card {
   oracle_text: string;
   power: string;
   toughness: string;
+  cmc: number;
+  loyalty: number;
   types: string[];
   sets: string[];
   format_legalities: Record<string, string>;

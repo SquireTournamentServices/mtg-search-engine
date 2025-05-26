@@ -263,6 +263,10 @@ static void __free_all_printings_cards_indexes(mse_all_printings_cards_t *cards)
         mse_free_tree(cards->indexes.card_cmc_tree);
     }
 
+    if (cards->indexes.card_loyalty_tree != NULL) {
+        mse_free_tree(cards->indexes.card_loyalty_tree);
+    }
+
     if (cards->indexes.card_name_trie != NULL) {
         mse_free_card_trie_node(cards->indexes.card_name_trie);
     }

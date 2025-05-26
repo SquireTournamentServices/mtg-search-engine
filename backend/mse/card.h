@@ -42,6 +42,8 @@ typedef struct mse_card_t {
     size_t set_codes_count;
     mse_set_code_t *set_codes;
     mse_card_format_legalities_t format_legalities;
+    /// 0 is no loyality
+    double loyalty;
     /// Contains all of the cards information in JSON already, for use with APIs
     json_t *json;
 } mse_card_t;
@@ -62,6 +64,7 @@ int mse_avl_cmp_card_name(void *a, void *b);
 int mse_avl_cmp_card_power(void *a, void *b);
 int mse_avl_cmp_card_toughness(void *a, void *b);
 int mse_avl_cmp_card_cmc(void *a, void *b);
+int mse_avl_cmp_card_loyalty(void *a, void *b);
 
 // Pop count on Microshit Windoze
 #ifdef _MSC_VER

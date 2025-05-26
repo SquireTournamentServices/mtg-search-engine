@@ -296,7 +296,9 @@ static int test_generator_##fname##_gt_inc_n() \
 TEST_FEILD_GENERATORS_FUNC_FOR(power, POWER)
 TEST_FEILD_GENERATORS_FUNC_FOR(toughness, TOUGHNESS)
 TEST_FEILD_GENERATORS_FUNC_FOR(cmc, CMC)
+TEST_FEILD_GENERATORS_FUNC_FOR(loyalty, LOYALTY)
 
 SUB_TEST(test_set_generators_double_fields, TEST_FEILD_GENERATORS_FOR(power),
          TEST_FEILD_GENERATORS_FOR(toughness),
-         TEST_FEILD_GENERATORS_FOR(cmc))
+         TEST_FEILD_GENERATORS_FOR(cmc),
+         TEST_FEILD_GENERATORS_FOR(loyalty))

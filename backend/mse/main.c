@@ -43,6 +43,11 @@ int main(int argc, char **argv)
 
     char buffer[1024];
     for (; printf(ANSI_YELLOW "query > " ANSI_RESET), fgets(buffer, sizeof(buffer), stdin);) {
+        size_t len = strlen(buffer);
+        if (buffer[len - 1] == '\n') {
+            buffer[len - 1] = 0;
+        }
+
         mse_search_result_t res;
         if (!mse_search(&state, &res, buffer)) {
             lprintf(LOG_ERROR, "Cannot execute query\n");

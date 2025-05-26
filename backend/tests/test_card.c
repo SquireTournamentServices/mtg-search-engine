@@ -39,6 +39,7 @@ static int __test_card_props(mse_card_t card)
     ASSERT(card.mana_cost != NULL);
     ASSERT(strcmp(card.mana_cost, "{5}{W}{W}") == 0);
 
+    ASSERT(fabs(card.loyalty) < 0.01);
     ASSERT(fabs(card.cmc - 7.0) < 0.01);
     ASSERT(fabs(card.toughness - 4.0) < 0.01);
     ASSERT(fabs(card.power - 4.0) < 0.01);
@@ -211,6 +212,7 @@ static int test_card_field_cmp()
     ASSERT(mse_avl_cmp_card_power(&a, &b) < 0);
     ASSERT(mse_avl_cmp_card_toughness(&a, &b) < 0);
     ASSERT(mse_avl_cmp_card_cmc(&a, &b) < 0);
+    ASSERT(mse_avl_cmp_card_loyalty(&a, &b) < 0);
 
     a.power = b.power + 3;
     ASSERT(mse_avl_cmp_card_power(&a, &b) > 0);

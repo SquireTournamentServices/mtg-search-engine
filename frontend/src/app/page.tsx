@@ -85,6 +85,7 @@ export default async function Home() {
               <li>power (p)</li>
               <li>toughness (t)</li>
               <li>cmc (manacost)</li>
+              <li>loyality (l)</li>
               <li>
                 colour (color c) <i>(wubrg)</i>
               </li>

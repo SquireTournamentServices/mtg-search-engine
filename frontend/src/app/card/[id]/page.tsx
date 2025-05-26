@@ -79,6 +79,7 @@ export default async function Page(props: Readonly<Props>) {
             ? data.power + "/" + data.toughness
             : ""}
         </p>
+        <p className="text-right">{data.loyalty ? `Loyalty: ${data.loyalty}` : ""}</p>
       </div>
       <div className="grid md:grid-cols-2 gap-2">
         {Object.keys(data.format_legalities).map((format) => {

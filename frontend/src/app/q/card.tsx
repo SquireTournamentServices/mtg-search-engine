@@ -50,9 +50,7 @@ export default function Card(props: { data: Card }) {
               ))}
         </div>
       </div>
-      {props.data.types && (
-        <TypeLine types={props.data.types}/>
-      )}
+      {props.data.types && <TypeLine types={props.data.types} />}
       {props.data.oracle_text && (
         <Oracle oracle_text={props.data.oracle_text} id={props.data.name} />
       )}
@@ -67,6 +65,9 @@ export default function Card(props: { data: Card }) {
           {props.data.power && props.data.toughness
             ? props.data.power + "/" + props.data.toughness
             : ""}
+        </p>
+        <p className="text-right">
+          {props.data.loyalty ? `Loyalty: ${props.data.loyalty}` : ""}
         </p>
       </div>
       <div className="flex flex-row flex-wrap gap-1">

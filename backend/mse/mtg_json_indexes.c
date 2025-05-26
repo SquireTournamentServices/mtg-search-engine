@@ -209,6 +209,7 @@ static void MSE_INDEX_FIELD_NAME(fname)(void *__state, mse_thread_pool_t *pool) 
 MSE_INDEX_FOR_FIELD(power)
 MSE_INDEX_FOR_FIELD(toughness)
 MSE_INDEX_FOR_FIELD(cmc)
+MSE_INDEX_FOR_FIELD(loyalty)
 
 static int __add_cards_to_card_name_trie(mse_avl_tree_node_t *restrict node, mse_card_trie_node_t * restrict card_name_trie)
 {
@@ -325,6 +326,7 @@ int __mse_generate_indexes(mse_all_printings_cards_t * restrict ret, mse_thread_
         &MSE_INDEX_FIELD_NAME(power),
         &MSE_INDEX_FIELD_NAME(toughness),
         &MSE_INDEX_FIELD_NAME(cmc),
+        &MSE_INDEX_FIELD_NAME(loyalty),
         MSE_INDEX_COLOUR_FIELD_NAME(colours),
         MSE_INDEX_COLOUR_FIELD_NAME(colour_identity)
     };

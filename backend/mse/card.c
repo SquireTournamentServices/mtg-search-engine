@@ -85,6 +85,9 @@ static int __mse_jsonify_card(mse_card_t *card)
     ASSERT(tmp = json_real(card->cmc));
     ASSERT(json_object_set(card->json, "cmc", tmp) == 0);
 
+    ASSERT(tmp = json_real(card->loyalty));
+    ASSERT(json_object_set(card->json, "loyalty", tmp) == 0);
+
     ASSERT(tmp = json_integer(card->colours));
     ASSERT(json_object_set(card->json, "colours", tmp) == 0);
 
@@ -239,6 +242,13 @@ int mse_parse_card_json(json_t *json, mse_card_t *card)
     ASSERT(json_is_number(cmc_o));
     card->cmc = json_number_value(cmc_o);
 
+    // Read loyalty
+    json_t *l_o = json_object_get(json, "loyalty");
+    if (l_o != NULL) {
+        ASSERT(json_is_string(l_o));
+        card->loyalty = atof(json_string_value(l_o));
+    }
+
     // Read power
     json_t *p_o = json_object_get(json, "power");
     if (p_o != NULL) {
@@ -316,6 +326,7 @@ int mse_write_card(FILE *f, mse_card_t card)
     ASSERT(mse_write_double(f, card.power));
     ASSERT(mse_write_double(f, card.toughness));
     ASSERT(mse_write_double(f, card.cmc));
+    ASSERT(mse_write_double(f, card.loyalty));
     int tmp = card.colours;
     ASSERT(mse_write_int(f, tmp));
     tmp = card.colour_identity;
@@ -347,6 +358,7 @@ int mse_read_card(FILE *f, mse_card_t *card)
     ASSERT(mse_read_double(f, &card->power));
     ASSERT(mse_read_double(f, &card->toughness));
     ASSERT(mse_read_double(f, &card->cmc));
+    ASSERT(mse_read_double(f, &card->loyalty));
     int tmp;
     ASSERT(mse_read_int(f, &tmp));
     card->colours = tmp;
@@ -456,4 +468,9 @@ int mse_avl_cmp_card_toughness(void *a, void *b)
 int mse_avl_cmp_card_cmc(void *a, void *b)
 {
     MSE_CARD_DOUBLE_AVL_CMP(a, b, cmc)
+}
+
+int mse_avl_cmp_card_loyalty(void *a, void *b)
+{
+    MSE_CARD_DOUBLE_AVL_CMP(a, b, loyalty)
 }

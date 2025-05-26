@@ -57,6 +57,7 @@ int __mse_validate_generator_op_combo(mse_set_generator_type_t gen_type,
     switch(gen_type) {
     case MSE_SET_GENERATOR_COLOUR:
     case MSE_SET_GENERATOR_CMC:
+    case MSE_SET_GENERATOR_LOYALTY:
     case MSE_SET_GENERATOR_COLOUR_IDENTITY:
     case MSE_SET_GENERATOR_POWER:
     case MSE_SET_GENERATOR_TOUGHNESS:
@@ -97,6 +98,8 @@ int mse_generate_set(mse_set_generator_t *gen,
         return mse_generate_set_toughness(gen, res, cards);
     case MSE_SET_GENERATOR_CMC:
         return mse_generate_set_cmc(gen, res, cards);
+    case MSE_SET_GENERATOR_LOYALTY:
+        return mse_generate_set_loyalty(gen, res, cards);
     case MSE_SET_GENERATOR_TYPE:
         return mse_generate_set_type(gen, res, cards);
     case MSE_SET_GENERATOR_BANNED:
@@ -135,6 +138,9 @@ static int __mse_gen_type_1_char(char c, mse_set_generator_type_t *ret)
     case 's':
         *ret = MSE_SET_GENERATOR_SET;
         break;
+    case 'l':
+        *ret = MSE_SET_GENERATOR_LOYALTY;
+        break;
     default:
         return 0;
     }
@@ -167,6 +173,7 @@ int mse_gen_type(char *str, mse_set_generator_type_t *ret)
     else __MSE_GEN_TYPE_CMP("toughness", MSE_SET_GENERATOR_TOUGHNESS);
     else __MSE_GEN_TYPE_CMP("set", MSE_SET_GENERATOR_SET);
     else __MSE_GEN_TYPE_CMP("cmc", MSE_SET_GENERATOR_CMC);
+    else __MSE_GEN_TYPE_CMP("loyalty", MSE_SET_GENERATOR_LOYALTY);
     else __MSE_GEN_TYPE_CMP("manacost", MSE_SET_GENERATOR_CMC);
     else __MSE_GEN_TYPE_CMP("name", MSE_SET_GENERATOR_NAME);
     else __MSE_GEN_TYPE_CMP("oracle", MSE_SET_GENERATOR_ORACLE_TEXT);

@@ -48,3 +48,5 @@ unplayable:commander
 restricted:vintage and cmc=0
 goblin and -type:goblin
 banned:commander and c:r and type:goblin
+type:planeswalker and loyalty=3
+type:planeswalker and l<3 and c:u

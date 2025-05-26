@@ -50,6 +50,8 @@ typedef struct mse_cards_indexes_t {
     mse_avl_tree_node_t *card_toughness_tree;
     /// Index for card cmc
     mse_avl_tree_node_t *card_cmc_tree;
+    /// Index for planeswalker loyality
+    mse_avl_tree_node_t *card_loyalty_tree;
     /// Card names trie where the full filtered name is used
     mse_card_trie_node_t *card_name_trie;
     /// Card names parts trie where the full filtered name is used
