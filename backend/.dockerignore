@@ -1,7 +1,13 @@
 .git
 .github
 .idea
-build
-frontend
 *.orig
 *.md
+
+build
+
+__pycache__
+include
+lib
+lib64
+bin
