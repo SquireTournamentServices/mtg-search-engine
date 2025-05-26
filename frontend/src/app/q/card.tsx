@@ -61,14 +61,16 @@ export default function Card(props: { data: Card }) {
             <Colour colour={c} key={`colours-${c}-${props.data.id}`} />
           ))}
         </div>
-        <p className="text-right">
-          {props.data.power && props.data.toughness
-            ? props.data.power + "/" + props.data.toughness
-            : ""}
-        </p>
-        <p className="text-right">
-          {props.data.loyalty ? `Loyalty: ${props.data.loyalty}` : ""}
-        </p>
+        <span>
+          <p className="text-right">
+            {props.data.power && props.data.toughness
+              ? props.data.power + "/" + props.data.toughness
+              : ""}
+          </p>
+          <p className="text-right">
+            {props.data.loyalty ? `Loyalty: ${props.data.loyalty}` : ""}
+          </p>
+        </span>
       </div>
       <div className="flex flex-row flex-wrap gap-1">
         <p>Sets:</p> {sets}

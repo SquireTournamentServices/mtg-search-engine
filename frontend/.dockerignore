@@ -1,2 +1,5 @@
 *.md
 *.orig
+
+node_modules
+.next

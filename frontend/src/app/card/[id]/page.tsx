@@ -74,12 +74,16 @@ export default async function Page(props: Readonly<Props>) {
             <Colour colour={c} key={`colours-${c}-${data.id}`} />
           ))}
         </div>
-        <p className="text-right">
-          {data.power && data.toughness
-            ? data.power + "/" + data.toughness
-            : ""}
-        </p>
-        <p className="text-right">{data.loyalty ? `Loyalty: ${data.loyalty}` : ""}</p>
+        <span>
+          <p className="text-right">
+            {data.power && data.toughness
+              ? data.power + "/" + data.toughness
+              : ""}
+          </p>
+          <p className="text-right">
+            {data.loyalty ? `Loyalty: ${data.loyalty}` : ""}
+          </p>
+        </span>
       </div>
       <div className="grid md:grid-cols-2 gap-2">
         {Object.keys(data.format_legalities).map((format) => {
