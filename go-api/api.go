@@ -46,7 +46,9 @@ type Card struct {
 	Id string `json:"id"`
 	// Formely known as "CMC (converted mana cost)" is how many "manas" are need to cast a spell.
 	// i.e: "{2}{R}{R}" has a mana value of 4
-	ManaValue string `json:"mana"`
+	ManaValue float32 `json:"cmc"`
+	// The amount of loyalty counters a Planeswalker starts with
+	Loyalty float32 `json:"loyalty"`
 	// Mana used to cast the spell, i.e: "{2}{R}{R}"
 	ManaCost string `json:"mana_cost"`
 	// Colours that the card is i.e: "U"
