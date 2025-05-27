@@ -47,29 +47,29 @@ static int __mse_jsonify_card(mse_card_t *card)
     json_t *tmp;
 
     ASSERT(tmp = json_string(card->name));
-    ASSERT(json_object_set(card->json, "name", tmp) == 0);
+    ASSERT(json_object_set_new(card->json, "name", tmp) == 0);
 
     char *id = mse_uuid_as_string(card->id);
     ASSERT(id != NULL);
     ASSERT(tmp = json_string(id));
-    ASSERT(json_object_set(card->json, "id", tmp) == 0);
+    ASSERT(json_object_set_new(card->json, "id", tmp) == 0);
 
     if (card->mana_cost != NULL) {
         ASSERT(tmp = json_string(card->mana_cost));
-        ASSERT(json_object_set(card->json, "mana_cost", tmp) == 0);
+        ASSERT(json_object_set_new(card->json, "mana_cost", tmp) == 0);
     }
 
     if (card->oracle_text != NULL) {
         ASSERT(tmp = json_string(card->oracle_text));
-        ASSERT(json_object_set(card->json, "oracle_text", tmp) == 0);
+        ASSERT(json_object_set_new(card->json, "oracle_text", tmp) == 0);
     }
 
     ASSERT(tmp = json_array());
-    ASSERT(json_object_set(card->json, "types", tmp) == 0);
+    ASSERT(json_object_set_new(card->json, "types", tmp) == 0);
     for (size_t i = 0; i < card->types_count; i++) {
         json_t *type_json = json_string(card->types[i]);
         ASSERT(type_json != NULL);
-        if (json_array_append(tmp, type_json) != 0) {
+        if (json_array_append_new(tmp, type_json) != 0) {
             lprintf(LOG_ERROR, "Cannot append to type array\n");
             json_decref(type_json);
             return 0;
@@ -77,25 +77,25 @@ static int __mse_jsonify_card(mse_card_t *card)
     }
 
     ASSERT(tmp = json_real(card->power));
-    ASSERT(json_object_set(card->json, "power", tmp) == 0);
+    ASSERT(json_object_set_new(card->json, "power", tmp) == 0);
 
     ASSERT(tmp = json_real(card->toughness));
-    ASSERT(json_object_set(card->json, "toughness", tmp) == 0);
+    ASSERT(json_object_set_new(card->json, "toughness", tmp) == 0);
 
     ASSERT(tmp = json_real(card->cmc));
-    ASSERT(json_object_set(card->json, "cmc", tmp) == 0);
+    ASSERT(json_object_set_new(card->json, "cmc", tmp) == 0);
 
     ASSERT(tmp = json_real(card->loyalty));
-    ASSERT(json_object_set(card->json, "loyalty", tmp) == 0);
+    ASSERT(json_object_set_new(card->json, "loyalty", tmp) == 0);
 
     ASSERT(tmp = json_integer(card->colours));
-    ASSERT(json_object_set(card->json, "colours", tmp) == 0);
+    ASSERT(json_object_set_new(card->json, "colours", tmp) == 0);
 
     ASSERT(tmp = json_integer(card->colour_identity));
-    ASSERT(json_object_set(card->json, "colour_identity", tmp) == 0);
+    ASSERT(json_object_set_new(card->json, "colour_identity", tmp) == 0);
 
     ASSERT(tmp = json_array());
-    ASSERT(json_object_set(card->json, "sets", tmp) == 0);
+    ASSERT(json_object_set_new(card->json, "sets", tmp) == 0);
     for (size_t i = 0; i < card->set_codes_count; i++) {
         char buffer[sizeof(*card->set_codes) + 1];
         memset(buffer, 0, sizeof(buffer));
@@ -103,7 +103,7 @@ static int __mse_jsonify_card(mse_card_t *card)
 
         json_t *type_json = json_string(buffer);
         ASSERT(type_json != NULL);
-        if (json_array_append(tmp, type_json) != 0) {
+        if (json_array_append_new(tmp, type_json) != 0) {
             lprintf(LOG_ERROR, "Cannot append to set code array\n");
             json_decref(type_json);
             return 0;
@@ -112,7 +112,7 @@ static int __mse_jsonify_card(mse_card_t *card)
 
     json_t *legalities = mse_card_format_legalities_t_to_json(&card->format_legalities);
     ASSERT(legalities != NULL);
-    ASSERT(json_object_set(card->json, "format_legalities", legalities) == 0);
+    ASSERT(json_object_set_new(card->json, "format_legalities", legalities) == 0);
     return 1;
 }
 

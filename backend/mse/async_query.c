@@ -17,7 +17,7 @@ static int __mse_jsonify_search_res_impl(mse_search_result_t *res,
     // Encode the response
     json_t *arr = json_array();
     ASSERT(arr);
-    ASSERT(json_object_set(json, "cards", arr) == 0);
+    ASSERT(json_object_set_new(json, "cards", arr) == 0);
 
 
     for (size_t i = query->params.page_number * MSE_PAGE_SIZE;
@@ -33,13 +33,13 @@ static int __mse_jsonify_search_res_impl(mse_search_result_t *res,
 
     json_t *tmp = NULL;
     ASSERT(tmp = json_integer(MSE_PAGE_SIZE));
-    ASSERT(json_object_set(json, "page_size", tmp) == 0);
+    ASSERT(json_object_set_new(json, "page_size", tmp) == 0);
 
     ASSERT(tmp = json_integer(query->params.page_number));
-    ASSERT(json_object_set(json, "page", tmp) == 0);
+    ASSERT(json_object_set_new(json, "page", tmp) == 0);
 
     ASSERT(tmp = json_integer(res->cards_length));
-    ASSERT(json_object_set(json, "cards_total", tmp) == 0);
+    ASSERT(json_object_set_new(json, "cards_total", tmp) == 0);
 
     ASSERT(query->resp = json_dumps(json, 0));
     return 1;

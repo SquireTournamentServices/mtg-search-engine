@@ -342,7 +342,7 @@ int {STRING_AS_FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     }
 """
 
-        output_unit += f"    status = json_object_set(ret, \"{format}\", str);\n"
+        output_unit += f"    status = json_object_set_new(ret, \"{format}\", str);\n"
         output_unit += """    if (status != 0) {
         json_decref(ret);
         return NULL;
@@ -352,6 +352,7 @@ int {STRING_AS_FORMAT_ENUM}(const char *str, {FORMAT_ENUM} *ret)
     output_unit += """
     return ret;
 }
+
 """
 
     # File Read
