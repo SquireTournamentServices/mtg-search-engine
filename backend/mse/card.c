@@ -52,6 +52,7 @@ static int __mse_jsonify_card(mse_card_t *card)
     char *id = mse_uuid_as_string(card->id);
     ASSERT(id != NULL);
     ASSERT(tmp = json_string(id));
+    free(id);
     ASSERT(json_object_set_new(card->json, "id", tmp) == 0);
 
     if (card->mana_cost != NULL) {
