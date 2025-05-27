@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <jansson.h>
 
+// cards JSON should use append not append_new as they own their JSON memory
 #define __mse_jsonify_search_res_card() \
    if (json_array_append(arr, res->cards[index]->json) != 0) { \
        lprintf(LOG_ERROR, "Cannot append card \n"); \
