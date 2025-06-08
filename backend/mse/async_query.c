@@ -22,7 +22,7 @@ static int __mse_jsonify_search_res_impl(mse_search_result_t *res,
 
 
     for (size_t i = query->params.page_number * MSE_PAGE_SIZE;
-            i < res->cards_length && i <= (query->params.page_number + 1) * MSE_PAGE_SIZE;
+            i < res->cards_length && i < (query->params.page_number + 1) * MSE_PAGE_SIZE;
             i++) {
 
         size_t index = i;

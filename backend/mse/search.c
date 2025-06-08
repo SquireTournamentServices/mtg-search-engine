@@ -169,14 +169,14 @@ int mse_finalise_search(mse_search_result_t *search_final_res, mse_search_interm
     return 1;
 }
 
-void swap(mse_card_t ** a, mse_card_t ** b)
+static void swap(mse_card_t ** a, mse_card_t ** b)
 {
     mse_card_t *temp = *a;
     *a = *b;
     *b = temp;
 }
 
-int partition(mse_card_t **arr, int low, int high, int (*sort_fn)(void *, void *))
+static int partition(mse_card_t **arr, int low, int high, int (*sort_fn)(void *, void *))
 {
     mse_card_t *pivot = arr[low];
     int i = low;
@@ -203,7 +203,7 @@ int partition(mse_card_t **arr, int low, int high, int (*sort_fn)(void *, void *
     return j;
 }
 
-void quick_sort(mse_card_t **arr, int low, int high, int (*sort_fn)(void *, void *))
+static void quick_sort(mse_card_t **arr, int low, int high, int (*sort_fn)(void *, void *))
 {
     if (low < high) {
         int partitionIndex = partition(arr, low, high, sort_fn);
