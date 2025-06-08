@@ -86,8 +86,8 @@ int mse_task_queue_enqueue(mse_task_queue_t *queue, mse_task_t task)
         queue->tail = node;
     }
 
-    sem_post(&queue->semaphore);
     pthread_mutex_unlock(&queue->lock);
+    sem_post(&queue->semaphore);
     return 1;
 }
 
@@ -110,8 +110,8 @@ int mse_task_queue_greedy_enqueue(mse_task_queue_t *queue, mse_task_t task)
         queue->head = node;
     }
 
-    sem_post(&queue->semaphore);
     pthread_mutex_unlock(&queue->lock);
+    sem_post(&queue->semaphore);
     return 1;
 }
 
@@ -123,23 +123,25 @@ void mse_pool_try_consume(mse_thread_pool_t *pool)
     }
 }
 
-static void pool_consume(mse_thread_pool_t *pool)
+static int pool_consume(mse_thread_pool_t *pool)
 {
     mse_task_t task;
     if (mse_task_queue_front(&pool->queue, &task)) {
         task.exec_func(task.data, pool);
+        return 1;
     } else {
         if (pool->running) {
             lprintf(LOG_ERROR, "Cannot consume from the thread pool\n");
         }
     }
+    return 0;
 }
 
 static void *thread_pool_consumer_func(void *pool_raw)
 {
     mse_thread_pool_t *pool = (mse_thread_pool_t *) pool_raw;
     while (pool->running) {
-        pool_consume(pool);
+        while (pool_consume(pool));
     }
     sem_post(&pool->close_semaphore);
     pthread_exit(NULL);
