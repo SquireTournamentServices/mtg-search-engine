@@ -1,5 +1,7 @@
 FROM ubuntu:latest AS base
 ARG DEBIAN_FRONTEND=noninteractive
+ARG DEBUG=ON
+ARG ADDRESS_SANITISER=OFF
 
 ENV TZ=Europe/London
 RUN apt-get update && apt-get install -y libjansson-dev libjemalloc-dev libabsl-dev libmbedtls-dev libssl-dev build-essential cmake gcovr python3 python3-pip libcurl4-openssl-dev
@@ -27,7 +29,7 @@ WORKDIR /app/build
 
 ENV MSE_TEST=true
 # Forces the final image size to be smaller
-RUN cmake -DUSE_JEMALLOC=ON .. && \
+RUN cmake -DUSE_JEMALLOC=ON -DDEBUG=$DEBUG -DADDRESS_SANITISER=$ADDRESS_SANITISER .. && \
   cmake --build . -j && \
   ./mtg-search-engine-cli --generate && \
   cp mtg-search-engine-tests .. && \

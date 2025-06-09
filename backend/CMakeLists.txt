@@ -297,28 +297,32 @@ target_link_libraries(
   mbedx509
   mtg-search-engine)
 
+option(ADDRESS_SANITISER OFF)
+if(ADDRESS_SANITISER)
+  link_libraries(-fsanitize=address)
+endif()
+
+# Setup docs
+option(MSE_DOXYGEN OFF)
+if(MSE_DOXYGEN)
+  find_package(doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
+  doxygen_add_docs(mse-docs ${SRC} ${TESTS}
+                   "Generate documentation pages for ${REPO_URL}")
+endif()
+
+option(USE_GCOV ON)
+if(USE_GCOV)
+  include(CodeCoverage)
+  set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c" "vendor/*" "web-api/*")
+
+  append_coverage_compiler_flags()
+  setup_target_for_coverage_gcovr_xml(
+    NAME mse-coverage EXECUTABLE mtg-search-engine-tests EXCLUDE
+    ${GCOVR_EXCLUDE})
+endif()
+
 # Setup unit tests
 if(UNIX)
-  # Setup docs
-  option(MSE_DOXYGEN OFF)
-  if(MSE_DOXYGEN)
-    find_package(doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
-    doxygen_add_docs(mse-docs ${SRC} ${TESTS}
-                     "Generate documentation pages for ${REPO_URL}")
-  endif()
-
-  option(USE_GCOV ON)
-  if(USE_GCOV)
-    include(CodeCoverage)
-    set(GCOVR_EXCLUDE "build/*" "tests/*" "mse/main.c" "vendor/*")
-    link_libraries(-fsanitize=address)
-
-    append_coverage_compiler_flags()
-    setup_target_for_coverage_gcovr_xml(
-      NAME mse-coverage EXECUTABLE mtg-search-engine-tests EXCLUDE
-      ${GCOVR_EXCLUDE})
-  endif()
-
   add_executable(mtg-search-engine-tests ${TESTS})
   target_link_libraries(mtg-search-engine-tests PUBLIC ${LIBS}
                                                        mtg-search-engine)
