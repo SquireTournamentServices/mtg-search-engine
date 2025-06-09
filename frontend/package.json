@@ -30,7 +30,9 @@
   "pnpm": {
     "overrides": {
       "@types/react": "19.0.10",
-      "@types/react-dom": "19.0.4"
+      "@types/react-dom": "19.0.4",
+      "postcss@<8.4.31": ">=8.4.31",
+      "next@>=15.0.0 <15.2.3": ">=15.2.3"
     }
   }
 }
