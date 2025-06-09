@@ -1,4 +1,4 @@
-name: apitests 
+name: "End to end API tests for backend" 
 
 on:
   pull_request:

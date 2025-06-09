@@ -1,4 +1,4 @@
-name: "Frontend"
+name: "Frontend Build"
 
 on:
   push:
@@ -11,32 +11,12 @@ jobs:
   configure:
     name: Configure
     runs-on: ubuntu-22.04
-    outputs:
-      tag: ${{steps.configure.outputs.tag}}
-      sha: ${{steps.configure.outputs.sha}}
-      upload_url: ${{steps.create_release.outputs.upload_url}}
 
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.12.1
         with:
           access_token: ${{github.token}} # needs other token https://github.com/styfle/cancel-workflow-action/issues/7
-
-      - name: Configure
-        id: configure
-        shell: bash
-        run: |
-          tag_regex='^refs/tags/'
-          if [[ $GITHUB_EVENT_NAME == pull-request ]]; then # pull request
-            sha="${{github.event.pull_request.head.sha}}"
-          elif [[ $GITHUB_REF =~ $tag_regex ]]; then # release
-            sha="$GITHUB_SHA"
-            tag="${GITHUB_REF/refs\/tags\//}"
-            echo "::set-output name=tag::$tag"
-          else # push to branch
-            sha="$GITHUB_SHA"
-          fi
-          echo "::set-output name=sha::$sha"
           
       - name: Checkout repository
         uses: actions/checkout@v4

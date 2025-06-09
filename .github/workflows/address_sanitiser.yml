@@ -1,4 +1,4 @@
-name: "Coverage & Backend Tests"
+name: "Backend tests with address sanitiser"
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0
 
   build-linux:
-    name: Build Linux + Code Coverage
+    name: Build Linux + Test With Address Sanitiser
     needs: configure
     runs-on: ubuntu-22.04
 
@@ -51,11 +51,6 @@ jobs:
           mkdir -p build
           cd build
           rm -rf *
-          cmake .. -DCMAKE_BUILD_TYPE=TEST -DUSE_GCOV=ON "-DCMAKE_C_COMPILER=/bin/gcc" "-DCMAKE_CXX_COMPILER=/bin/g++"
+          cmake .. -DCMAKE_BUILD_TYPE=TEST -DUSE_GCOV=ON -DADDRESS_SANITISER=ON "-DCMAKE_C_COMPILER=/bin/gcc" "-DCMAKE_CXX_COMPILER=/bin/g++"
           cmake --build . -j
           make mse-coverage -j
-
-      - uses: codecov/codecov-action@v5
-        with:
-          files: ./build/mse-coverage.xml
-          name: codecov-umbrella # optional
