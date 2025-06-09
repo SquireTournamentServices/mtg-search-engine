@@ -1,4 +1,4 @@
-module github.com/squiretournamentservices/mtg-search-engine/go-api
+module github.com/djpiper28/mtg-search-engine/go-api
 
 go 1.20
 

@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	api "github.com/squiretournamentservices/mtg-search-engine/go-api"
+	api "github.com/djpiper28/mtg-search-engine/go-api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

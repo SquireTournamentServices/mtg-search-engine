@@ -30,7 +30,7 @@ export default function RootLayout({
           </Link>
           <SearchBar />
           <Link
-            href="https://github.com/squiretournamentservices/mtg-search-engine"
+            href="https://github.com/djpiper28/mtg-search-engine"
             className="w-8 text-white hover:scale-125"
           >
             <FontAwesomeIcon icon={faGithub} />
