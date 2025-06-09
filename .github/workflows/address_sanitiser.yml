@@ -51,6 +51,6 @@ jobs:
           mkdir -p build
           cd build
           rm -rf *
-          cmake .. -DCMAKE_BUILD_TYPE=TEST -DUSE_GCOV=ON -DADDRESS_SANITISER=ON "-DCMAKE_C_COMPILER=/bin/gcc" "-DCMAKE_CXX_COMPILER=/bin/g++"
+          cmake .. -DCMAKE_BUILD_TYPE=TEST -DADDRESS_SANITISER=ON "-DCMAKE_C_COMPILER=/bin/gcc" "-DCMAKE_CXX_COMPILER=/bin/g++"
           cmake --build . -j
-          make mse-coverage -j
+          ./mtg-search-engine-tests
