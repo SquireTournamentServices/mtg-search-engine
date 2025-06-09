@@ -48,8 +48,13 @@ add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
 add_definitions("-D__FILENAME__=(&__FILE__[SOURCE_PATH_SIZE])")
 
 if(NOT WIN32)
+  set(OPTIMISATION "-Ofast")
+  if(USE_GCOV)
+    set(OPTIMISATION)
+  endif()
+
   set(CMAKE_C_FLAGS
-      "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings -Ofast -march=native  -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof"
+      "-std=gnu11 -Wpedantic -Werror -Wno-unused-parameter -Wno-overlength-strings ${OPTIMISATION} -march=native  -Wno-deprecated-declarations -Wno-strict-prototypes -Wno-newline-eof"
   )
 endif()
 

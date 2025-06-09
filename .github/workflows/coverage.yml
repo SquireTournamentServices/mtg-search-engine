@@ -2,12 +2,12 @@ name: "Coverage & Backend Tests"
 
 on:
   push:
-    branches: [ "*" ]
+    branches: ["*"]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ main ]
+    branches: [main]
   schedule:
-    - cron: '0 0 * * 5'
+    - cron: "0 0 * * 5"
 
 jobs:
   configure:
@@ -34,26 +34,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'cpp' ]
-      
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
-        
-    - name: Run Tests and Coverage
-      shell: bash
-      run: |
-        cd backend
-        mkdir -p build
-        cd build
-        rm -rf *
-        cmake .. -DCMAKE_BUILD_TYPE=TEST -DUSE_GCOV=ON "-DCMAKE_C_COMPILER=/bin/gcc" "-DCMAKE_CXX_COMPILER=/bin/g++"
-        cmake --build . -j
-        make mse-coverage -j
+        language: ["cpp"]
 
-    - uses: codecov/codecov-action@v5
-      with:
-        files: ./build/mse-coverage.xml
-        name: codecov-umbrella # optional
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: ./.github/workflows/setup
+
+      - name: Run Tests and Coverage
+        shell: bash
+        run: |
+          cd backend
+          mkdir -p build
+          cd build
+          rm -rf *
+          cmake .. -DCMAKE_BUILD_TYPE=TEST -DUSE_GCOV=ON "-DCMAKE_C_COMPILER=/bin/gcc" "-DCMAKE_CXX_COMPILER=/bin/g++"
+          cmake --build . -j
+          make mse-coverage -j
+
+      - uses: codecov/codecov-action@v5
+        with:
+          files: ./build/mse-coverage.xml
+          name: codecov-umbrella # optional

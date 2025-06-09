@@ -2,12 +2,12 @@ name: "Main (backend build test)"
 
 on:
   push:
-    branches: [ "*" ]
+    branches: ["*"]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ main ]
+    branches: [main]
   schedule:
-    - cron: '0 0 * * 5'
+    - cron: "0 0 * * 5"
 
 jobs:
   configure:
@@ -33,28 +33,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'cpp' ]
-      
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
+        language: ["cpp"]
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{matrix.language}}
-        
-    - uses: ./.github/workflows/setup
-          
-    - name: Make Release
-      shell: bash
-      run : |
-        cd backend
-        rm -rf build
-        mkdir -p build
-        cd build
-        cmake .. -DCMAKE_BUILD_TYPE=RELEASE
-        cmake --build . -j
-    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{matrix.language}}
+
+      - uses: ./.github/workflows/setup
+
+      - name: Make Release
+        shell: bash
+        run: |
+          cd backend
+          rm -rf build
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=RELEASE
+          cmake --build . -j
