@@ -26,7 +26,7 @@ export default async function Home() {
         <p>
           This search engine is not currently feature compliant with Scryfall
           yet, however this on the roadmap along with bindings for other
-          programming languages and support for none-english cards.
+          programming languages and support for none-English cards.
         </p>
         <p>
           You can view the API{" "}
@@ -120,6 +120,11 @@ export default async function Home() {
               <li key={`format-${x}`}>{x}</li>
             ))}
           </div>
+        </div>
+
+        <div className="flex flex-col justify-center gap-3 bg-white rounded-xl p-5 md:p-20 w-full">
+          Created by{" "}
+          <Link href="https://djpiper28.co.uk">Danny Piper (djpiper28)</Link>
         </div>
       </div>
     </main>
