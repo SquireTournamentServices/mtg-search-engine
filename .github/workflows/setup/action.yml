@@ -1,0 +1,20 @@
+name: setup
+
+description: Setup all of the project dependancies
+
+runs:
+  using: composite
+  steps:
+    - name: Install required build tools
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends build-essential cmake gcovr valgrind python3 bison libcurl4-openssl-dev libjansson-dev doxygen graphviz libmbedtls-dev pnpm
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+        cache: 'pip' # caching pip dependencies
+    - name: "Install deps"
+      shell: bash
+      run: pip install -r backend/requirements.txt

@@ -30,19 +30,7 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Install deps
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends build-essential \
-          cmake gcovr valgrind python3 bison \
-          libcurl4-openssl-dev libjansson-dev doxygen graphviz libmbedtls-dev
-
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.9'
-        cache: 'pip' # caching pip dependencies
-    - run: pip install -r backend/requirements.txt
+    - uses: ./.github/workflows/setup
         
     - name: Run Tests and Coverage
       shell: bash

@@ -1,4 +1,4 @@
-name: "Main (backend build test)"
+name: "Backend tests with address sanitiser"
 
 on:
   push:
@@ -20,13 +20,23 @@ jobs:
         with:
           access_token: ${{github.token}} # needs other token https://github.com/styfle/cancel-workflow-action/issues/7
 
+
       - name: Checkout
         if: steps.configure.outputs.tag != null
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Prepare release parameters
+        id: prepare
+        if: steps.configure.outputs.tag != null
+        shell: bash
+        env:
+          TAG: ${{steps.configure.outputs.tag}}
+        run: .ci/prep_release.sh
+
   build-linux:
+    name: Build Linux + Test With Address Sanitiser 
     needs: configure
     runs-on: ubuntu-22.04
 
@@ -40,21 +50,14 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: recursive
-
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{matrix.language}}
         
-    - uses: ./.github/workflows/setup
-          
-    - name: Make Release
+    - name: Run Tests and Coverage
       shell: bash
-      run : |
+      run: |
         cd backend
-        rm -rf build
         mkdir -p build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=RELEASE
+        rm -rf *
+        cmake .. -DCMAKE_BUILD_TYPE=TEST -DUSE_GCOV=ON -DADDRESS_SANITISER=ON "-DCMAKE_C_COMPILER=/bin/gcc" "-DCMAKE_CXX_COMPILER=/bin/g++"
         cmake --build . -j
-    
+        make mse-coverage -j
