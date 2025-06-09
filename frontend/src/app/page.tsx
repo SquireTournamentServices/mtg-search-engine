@@ -122,9 +122,11 @@ export default async function Home() {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center gap-3 bg-white rounded-xl p-5 md:p-20 w-full">
-          Created by{" "}
-          <Link href="https://djpiper28.co.uk">Danny Piper (djpiper28)</Link>
+        <div className="bg-white rounded-xl p-5 md:p-20 w-full">
+          <p>
+            Created by{" "}
+            <Link href="https://djpiper28.co.uk">Danny Piper (djpiper28)</Link>
+          </p>
         </div>
       </div>
     </main>
