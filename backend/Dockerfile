@@ -1,6 +1,6 @@
 FROM ubuntu:latest AS base
 ARG DEBIAN_FRONTEND=noninteractive
-ARG DEBUG=ON
+ARG DEBUG=OFF
 ARG ADDRESS_SANITISER=OFF
 
 ENV TZ=Europe/London
